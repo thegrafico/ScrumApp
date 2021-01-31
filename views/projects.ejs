@@ -1,8 +1,11 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+
     <link rel="stylesheet" href="/stylesheets/index.css">
     <link rel="stylesheet" href="/stylesheets/bootstrap.min.css">
     <link rel="stylesheet" href="/stylesheets/fontawesome/css/all.css">
@@ -19,7 +22,7 @@
         <div class="collapse navbar-collapse" id="navbarColor02">
             <ul class="navbar-nav mr-auto">
                 <li class="nav-item active">
-                    <a class="nav-link" href="index.html">
+                    <a class="nav-link" href="/">
                         <h4>Raul Pichardo </h4>
                         <span class="sr-only">(current)</span>
                     </a>
@@ -38,13 +41,13 @@
             <p class="lead"><span id="quote-span"></span></p>
             <hr class="my-4">
             <p class="lead">
-                <button class="btn btn-success btn-lg" href="#" role="button" data-toggle="modal" data-target="#exampleModalCenter">Create New Project</button>
+                <button class="btn btn-success btn-lg" href="#" role="button" data-toggle="modal" data-target="#createProjectModal">Create New Project</button>
             </p>
         </div>
     </div>
 
-    <!-- HERE IS LOADED THE MODAL -->
-    <div id="myModal"></div>
+    <!-- LOADING MODAL -->
+    <%- include('modals/createProject'); %>
 
     <div id="box-show-projects" class="container-fluid">
         <div class="row">
@@ -56,14 +59,16 @@
 
     </div>
 
+    <!-- Dependecies -->
     <script src="/javascripts/dependecies/jquery3.5.2.js"></script>
+    <script src="/javascripts/dependecies/validator.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
     <!-- change the quote  -->
     <script src="/javascripts/quotes.js"></script>
-
-    <!-- bs js -->
-
-</body>
+    <!-- Logic for modal - Projects -->
+    <script src="/javascripts/modals/projects.js"></script>
+  </body>
 
 </html>
 
