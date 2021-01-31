@@ -1,0 +1,170 @@
+#projectName {
+    font-size: 0.9em;
+    text-align: center;
+    font-weight: bold;
+    color: lemonchiffon;
+    text-transform: uppercase;
+}
+
+.fa-bars {
+    font-size: 0.9em;
+}
+
+.box-title {
+    margin-bottom: 0.5%;
+    border-bottom: 1px solid rgba(240, 240, 240, 0.2);
+}
+
+.statistics-boxs .col, .backlog-box .col{
+    margin: 1.5% 1.5% 0 1.5%;
+    background-color: #303030 !important;
+    border-radius: 2%;
+    
+}
+
+.col-title {
+    text-transform: uppercase;
+    font-weight: bold;
+    font-size: 0.9em;
+}
+
+#currentStatus {
+    color: white;
+    font-size: 1.5em;
+    text-decoration: none;
+    font-weight: bold;
+    text-transform: capitalize;
+}
+
+a {
+    color: white;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+    color: #CD5C5C;
+}
+
+.icons {
+    margin-right: 3%;
+}
+
+.status-list {
+    font-weight: bold;
+}
+
+#statusMenu li {
+    text-transform: capitalize;
+}
+
+#memberOfMonthName {
+    font-weight: normal;
+    font-size: 0.9em;
+    padding-left: 1%;
+}
+
+.user-row .col,
+.user-row .col a {
+    text-align: center;
+    color: lemonchiffon;
+    /* text-decoration: underline; */
+}
+
+.user-row .col a:hover {
+    color: rgba(255, 255, 255, 0.4);
+    text-decoration: none;
+}
+
+.fa-users {
+    color: seagreen;
+}
+
+.fa-burn {
+    color: #CD5C5C;
+}
+
+.status-list li span {
+    font-weight: normal;
+    font-size: 0.9em;
+    padding-left: 1%;
+}
+
+.memberCardIcon {
+    font-size: 0.8em;
+    margin-left: 1%;
+}
+
+#createUserTitle i,
+#addUserBtn i {
+    color: seagreen;
+    font-size: 1em;
+    margin-left: 2%;
+}
+
+#removeUserBtn i,
+#removeUserTitle i {
+    color: sienna;
+    font-size: 1em;
+    margin-left: 2%;
+}
+
+
+/* .modal-lg,
+.modal-xl {
+    max-width: 90% !important;
+} */
+
+/* ================= BACK LOAD ================= */
+.addIcon, .settings{
+    color: white;
+    font-size: 1em;
+    margin:0;
+    padding: 0;
+}
+
+.backlogTitlte{
+    border-right: 1px solid slategray;
+    margin-left: 3%;
+}
+
+#backlog-filter-btn, #backlog-save-icon-btn{
+    font-size: 0.8em;
+}
+
+
+#createNewTaskBtn, #backLogSettingsBtn{
+    font-size: 1em;
+    text-transform: capitalize;
+    font-weight: bold;
+    border: none;
+}
+
+.backlog-nav-item{
+    margin: 0 6%;
+}
+
+#box-title-title{
+    font-size: 2.5em!important;
+}
+
+@media (min-width: 768px){
+    .p-md-5 {
+        padding: 0rem !important
+        /* padding: 3rem !important; */
+    }
+
+}
+
+.table-primary th, .table-primary td, .table-primary thead th, .table-primary tbody+tbody {
+    border-color: transparent !important;
+    font-weight: bold;
+}
+
+.backlog-boxs table{
+    text-align: center;
+}
+/* 
+#createNewTask:hover{
+    color: seagreen;   
+} */

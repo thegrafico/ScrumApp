@@ -1,13 +1,24 @@
-var createError = require('http-errors');
-var express = require('express');
-var path = require('path');
-var cookieParser = require('cookie-parser');
-var logger = require('morgan');
+// create a rolling file logger based on date/time that fires process events
+const opts = {
+  // errorEventName: 'error',
+  logDirectory: 'logs/', // NOTE: folder must exist and be writable...
+  fileNamePattern: 'roll-<DATE>.log',
+  dateFormat: 'YYYY.MM.DD'
+};
 
-var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
+// ========== IMPORTS ============
+const LOG = require('simple-node-logger').createRollingFileLogger(opts);
+const createError = require('http-errors');
+const express = require('express');
+const path = require('path');
+const cookieParser = require('cookie-parser');
+const logger = require('morgan');
 
-var app = express();
+// ======== ROUTES ===============
+const indexRouter = require('./routes/projects');
+
+// App object 
+let app = express();
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -19,8 +30,8 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+// Loading routes
 app.use('/', indexRouter);
-app.use('/users', usersRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
