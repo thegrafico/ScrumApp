@@ -18,12 +18,20 @@ const seedDB = require('./seeds');
 
 // ======== ROUTES ===============
 const indexRouter = require('./routes/projects');
+const projectDetailRouter = require("./routes/projectDetail");
 
 // App object 
 let app = express();
 
 // connect to the database
 mongoose.connect('mongodb://localhost:27017/scrumAppDB', {useNewUrlParser: true, useUnifiedTopology: true}).catch(error => console.log(error));
+const connection = mongoose.connection;
+connection.once("open", function() {
+  console.log("MongoDB connected successfully");
+  // connection.db.dropCollection("Projects", function(err){
+  //   console.log("Collection removed");
+  // });
+});
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -36,10 +44,11 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 // create DB data - for testing
-seedDB();
+// seedDB();
 
 // Loading routes
 app.use('/', indexRouter);
+app.use('/project/', projectDetailRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

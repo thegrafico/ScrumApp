@@ -7,7 +7,7 @@ let projectSchema = new mongoose.Schema({
     author: {type: ObjectId, ref: "User"},
     title: String,
     description: String,
-    creationDate: {type: Date, default: Date.now}
-});
+    status: {type: String, enum: ["New", "Active", "Completed", "Deleted", "Hold", "Abandoned"], default: "New"}
+}, {timestamps: true});
 
 module.exports = mongoose.model("Projects", projectSchema);

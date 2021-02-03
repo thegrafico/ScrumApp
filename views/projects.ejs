@@ -15,8 +15,9 @@
 
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <a class="navbar-brand" href="#"> <i class="fas fa-meteor"></i></a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarColor02" aria-controls="navbarColor02" aria-expanded="false" aria-label="Toggle navigation">
-          <span class="navbar-toggler-icon"></span>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarColor02"
+            aria-controls="navbarColor02" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
         </button>
 
         <div class="collapse navbar-collapse" id="navbarColor02">
@@ -41,7 +42,8 @@
             <p class="lead"><span id="quote-span"></span></p>
             <hr class="my-4">
             <p class="lead">
-                <button class="btn btn-success btn-lg" href="#" role="button" data-toggle="modal" data-target="#createProjectModal">Create New Project</button>
+                <button class="btn btn-success btn-lg" href="#" role="button" data-toggle="modal"
+                    data-target="#createProjectModal">Create New Project</button>
             </p>
         </div>
     </div>
@@ -50,11 +52,31 @@
     <%- include('modals/createProject'); %>
 
     <div id="box-show-projects" class="container-fluid">
-        <div class="row">
 
-        </div>
+        <% for(let project of projects){ %>
+            <div class="row">
+                <% for(let i = 0; i < project.length; i++){ %>
+
+                        <div id="<%= project[i]._id %>" class="col-3 card text-white bg-dark mb-6 card-project">
+                            <a href="http://localhost:3000/project/<%= project[i]._id %>" style="color:inherit; text-decoration: inherit;display: block;">
+                                <div class="card-header">
+                                    <span class='card-title'> <%= project[i].status %> </span> - <span class='card-date'> <%= project[i].createdAt %> </span>
+                                </div>
+
+                                <div class="card-body">
+                                    <h4 class="card-title"><%= project[i].title %></h4>
+                                    <p class="card-text"><%= project[i].description %></p>
+                                </div>
+                            </a>
+                        </div>
+                <% } %>
+            </div>
+        <% } %>
+
+
     </div>
 
+    <!-- TODO: Add a footer here -->
     <div class="container-fluid">
 
     </div>
@@ -68,7 +90,7 @@
     <script src="/javascripts/quotes.js"></script>
     <!-- Logic for modal - Projects -->
     <script src="/javascripts/modals/projects.js"></script>
-  </body>
+</body>
 
 </html>
 

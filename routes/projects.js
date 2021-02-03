@@ -4,15 +4,17 @@
  * DATE: Jan 31, 2021
 */
 
-
 // ============= CONST AND DEPENDENCIES =============
 const express = require("express");
 const valid = require("validator");
+const _ = require("lodash");
 let projectCollection = require("../models/projects");
 
 let router = express.Router();
+
 // JUST FOR TESTING
 const userId = "601782de1fb2050e11bfbf1f";
+const NUM_OF_PROJECT_PER_ROW = 3;
 // ===================================================
 
 
@@ -24,9 +26,19 @@ router.get("/", async function (req, res) {
 
   // get the projects
   let projects = await projectCollection.find({author: userId}).exec();
+  // console.log(projects);
 
-  // add projects to the param so is visible in the from-site
-  params["projects"] = projects;
+  // set it to an empty array in case is undefine or empty
+  if (_.isUndefined(projects) || _.isEmpty(projects)){
+    projects = [];
+  }
+
+  /**
+   * Add the project to the frond-end
+   * Divide the project in chunk, so is easy to mantain in the user-site
+   */
+  params["projects"] = _.chunk(projects, NUM_OF_PROJECT_PER_ROW);
+  // console.log(params["projects"]);
 
   res.render("projects", params);
 });
@@ -42,6 +54,7 @@ router.post("/", function (req, res) {
 
   // validate params 
   if (projectParamsAreValid(projectName, projectDescription)) {
+    console.log("Invalid params");
     // TODO: let the user know there was an error
     res.redirect("/");
     return;
@@ -51,12 +64,13 @@ router.post("/", function (req, res) {
   let newProject = {"title": projectName, "description": projectDescription, "author": userId};
 
   // Insert into the database
-  projectCollection.create(newProject, function (err){
+  projectCollection.create(newProject, function (err, projectCreated){
     if (err) {console.log("Error creating the project: ", err); return res.redirect("/")};
-    // console.log("Project created: ", projectCreated);
+    console.log("Project created: ", projectCreated);
     res.redirect("/");
   });
 });
+
 
 /**
  * Validate if the param sent by the form are valid
@@ -64,7 +78,7 @@ router.post("/", function (req, res) {
  * @param {String} desc - description of the project 
  */
 function projectParamsAreValid(name, desc){
-  return (valid.isEmpty(name) || !valid.isAlphanumeric(name) || name.length > 50 || valid.isEmpty(desc) || desc.length > 500);
+  return (valid.isEmpty(name) || !valid.isAlphanumeric(valid.blacklist(name, ' ')) || name.length > 50 || valid.isEmpty(desc) || desc.length > 500);
 }
 
 module.exports = router;
