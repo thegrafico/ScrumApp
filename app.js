@@ -1,43 +1,33 @@
-// create a rolling file logger based on date/time that fires process events
-const opts = {
-  // errorEventName: 'error',
-  logDirectory: 'logs/', // NOTE: folder must exist and be writable...
-  fileNamePattern: 'roll-<DATE>.log',
-  dateFormat: 'YYYY.MM.DD'
-};
+
 
 // ========== IMPORTS ============
-const LOG = require('simple-node-logger').createRollingFileLogger(opts);
+const seedDB = require('./seeds'); // to test the database, create dummy data. 
 const createError = require('http-errors');
 const express = require('express');
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
-const mongoose = require('mongoose');
-const seedDB = require('./seeds');
+const connectDB = require("./config/db");
+const dotenv = require("dotenv");
+dotenv.config({path: './config/config.env'});
 
 // ======== ROUTES ===============
-const indexRouter = require('./routes/projects');
-const projectDetailRouter = require("./routes/projectDetail");
+const loginRoute          = require('./routes/login');
+const dashboardRoute      = require('./routes/dashboard');
+const projectDetailRoute  = require("./routes/projectDetail");
 
 // App object 
 let app = express();
 
-// connect to the database
-mongoose.connect('mongodb://localhost:27017/scrumAppDB', {useNewUrlParser: true, useUnifiedTopology: true}).catch(error => console.log(error));
-const connection = mongoose.connection;
-connection.once("open", function() {
-  console.log("MongoDB connected successfully");
-  // connection.db.dropCollection("Projects", function(err){
-  //   console.log("Collection removed");
-  // });
-});
+// connect to database
+connectDB();
+
+// only log if we're in development mode
+if (process.env.NODE_ENV === "development") app.use(logger('dev'));
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
-
-// app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
@@ -47,8 +37,9 @@ app.use(express.static(path.join(__dirname, 'public')));
 // seedDB();
 
 // Loading routes
-app.use('/', indexRouter);
-app.use('/project/', projectDetailRouter);
+app.use('/', dashboardRoute);
+app.use('/login', loginRoute);
+app.use('/dashboard/', projectDetailRoute);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

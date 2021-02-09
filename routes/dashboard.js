@@ -15,6 +15,7 @@ let router = express.Router();
 // JUST FOR TESTING
 const userId = "601782de1fb2050e11bfbf1f";
 const NUM_OF_PROJECT_PER_ROW = 3;
+const BASE_ROUTE = 'dashboard';
 // ===================================================
 
 
@@ -22,7 +23,7 @@ const NUM_OF_PROJECT_PER_ROW = 3;
  * METHOD: GET - show the main page for projects
  */
 router.get("/", async function (req, res) {
-  let params = { title: "Projects", createProjectFormRedirect: "/" };
+  let params = { title: "Projects", createProjectFormRedirect: "/", project_rediret: BASE_ROUTE};
 
   // get the projects
   let projects = await projectCollection.find({author: userId}).exec();
@@ -40,7 +41,7 @@ router.get("/", async function (req, res) {
   params["projects"] = _.chunk(projects, NUM_OF_PROJECT_PER_ROW);
   // console.log(params["projects"]);
 
-  res.render("projects", params);
+  res.render("dashboard", params);
 });
 
 

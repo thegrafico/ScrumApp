@@ -58,7 +58,7 @@
                 <% for(let i = 0; i < project.length; i++){ %>
 
                         <div id="<%= project[i]._id %>" class="col-3 card text-white bg-dark mb-6 card-project">
-                            <a href="http://localhost:3000/project/<%= project[i]._id %>" style="color:inherit; text-decoration: inherit;display: block;">
+                            <a href="http://localhost:3000/<%= project_rediret %>/<%= project[i]._id %>" style="color:inherit; text-decoration: inherit;display: block;">
                                 <div class="card-header">
                                     <span class='card-title'> <%= project[i].status %> </span> - <span class='card-date'> <%= project[i].createdAt %> </span>
                                 </div>
