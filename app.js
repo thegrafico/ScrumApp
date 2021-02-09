@@ -1,14 +1,18 @@
 
 
 // ========== IMPORTS ============
-const seedDB = require('./seeds'); // to test the database, create dummy data. 
-const createError = require('http-errors');
-const express = require('express');
-const path = require('path');
-const cookieParser = require('cookie-parser');
-const logger = require('morgan');
-const connectDB = require("./config/db");
-const dotenv = require("dotenv");
+const seedDB        = require('./seeds'); // to test the database, create dummy data. 
+const createError   = require('http-errors');
+const express       = require('express');
+const session       = require('express-session');
+const path          = require('path');
+const cookieParser  = require('cookie-parser');
+const logger        = require('morgan');
+const connectDB     = require('./config/db');
+const passport      = require('passport');
+const LocalStrategy = require('passport-local');
+const User          = require('./models/user');
+const dotenv        = require('dotenv');
 dotenv.config({path: './config/config.env'});
 
 // ======== ROUTES ===============
@@ -29,9 +33,36 @@ if (process.env.NODE_ENV === "development") app.use(logger('dev'));
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+// app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
+app.use(require('body-parser').urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
+
+// setting up session
+app.use(session({
+  secret: 'My_cat_and_dog_are_the_best_in_the_universe',
+  resave: false,
+  saveUninitialized: false,
+}));
+
+app.use(passport.initialize());
+app.use(passport.session());
+
+// since the User Schema is using the passport for mongoose, we can use the auth method.
+// passport.use(new LocalStrategy(User.authenticate()));
+passport.use(new LocalStrategy(
+  function(username, password, done) {
+    User.findOne({ username: username }, function (err, user) {
+      if (err) { return done(err); }
+      if (!user) { return done(null, false); }
+      if (!user.verifyPassword(password)) { return done(null, false); }
+      return done(null, user);
+    });
+  }
+));
+
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
 
 // create DB data - for testing
 // seedDB();

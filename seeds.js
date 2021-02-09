@@ -8,11 +8,13 @@ let projectCollection = require("./models/projects");
 const users = [
     {
         _id: "601782de1fb2050e11bfbf1f",
-        username: "Thegrafico",
+        username: "raul@gmail.com",
+        password: "123",
         fullName: "Raul Pichardo"
     },
     {
-        username: "Thegrafico2",
+        username: "raul02210712@gmail.com",
+        password: "123456",
         fullName: "Alexander Avalo"
     }
 ];
