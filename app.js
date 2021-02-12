@@ -9,9 +9,11 @@ const path          = require('path');
 const cookieParser  = require('cookie-parser');
 const logger        = require('morgan');
 const connectDB     = require('./config/db');
+const MongoStore    = require('connect-mongo')(session);
 const passport      = require('passport');
 const LocalStrategy = require('passport-local');
 const User          = require('./models/user');
+const middleware    = require('./middleware/auth');
 const dotenv        = require('dotenv');
 dotenv.config({path: './config/config.env'});
 
@@ -25,6 +27,9 @@ let app = express();
 
 // connect to database
 connectDB();
+
+// to store session in mongoose
+const sessionStore = new MongoStore({ url: process.env.MONGO_URI,  collection: "sessions"});
 
 // only log if we're in development mode
 if (process.env.NODE_ENV === "development") app.use(logger('dev'));
@@ -43,6 +48,8 @@ app.use(session({
   secret: 'My_cat_and_dog_are_the_best_in_the_universe',
   resave: false,
   saveUninitialized: false,
+  store: sessionStore,
+  cookie: {maxAge: 1000 * 60 * 60 * 24} // one day
 }));
 
 app.use(passport.initialize());
@@ -61,16 +68,39 @@ passport.use(new LocalStrategy(
   }
 ));
 
-passport.serializeUser(User.serializeUser());
-passport.deserializeUser(User.deserializeUser());
+passport.serializeUser(function(user, done) {
+  done(null, user.id);
+});
+ 
+passport.deserializeUser(function(id, done) {
+  User.findById(id, function (err, user) {
+    done(err, user);
+  });
+});
+
+// passport.serializeUser(User.serializeUser());
+// passport.deserializeUser(User.deserializeUser());
 
 // create DB data - for testing
 // seedDB();
-
 // Loading routes
-app.use('/', dashboardRoute);
 app.use('/login', loginRoute);
-app.use('/dashboard/', projectDetailRoute);
+
+
+// middleware to get the username
+app.use(function (req, res, next) {
+  
+  // early exit condition
+  if (!req.user) {res.redirect("/login"); return;}
+
+  res.locals.userName = req.user.fullName;
+  
+  next();
+});
+
+
+app.use('/', middleware.isUserLogin, dashboardRoute); // main page
+app.use('/dashboard/', middleware.isUserLogin, projectDetailRoute);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

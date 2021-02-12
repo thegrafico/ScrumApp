@@ -51,4 +51,13 @@ router.post("/", passport.authenticate("local", {
   }
 );
 
+/**
+ * METHOD: GET - show the main page for projects
+ */
+router.get("/logout", async function (req, res) {
+  req.logOut();
+  res.redirect('/login');
+});
+
+
 module.exports = router;

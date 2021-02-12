@@ -23,10 +23,11 @@ const BASE_ROUTE = 'dashboard';
  * METHOD: GET - show the main page for projects
  */
 router.get("/", async function (req, res) {
-  let params = { title: "Projects", createProjectFormRedirect: "/", project_rediret: BASE_ROUTE};
+
+  let params = { title: "Dashboard", createProjectFormRedirect: "/", project_rediret: BASE_ROUTE};
 
   // get the projects
-  let projects = await projectCollection.find({author: userId}).exec();
+  let projects = await projectCollection.find({author: req.user._id}).exec();
   // console.log(projects);
 
   // set it to an empty array in case is undefine or empty
