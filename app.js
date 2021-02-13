@@ -79,7 +79,7 @@ passport.deserializeUser(function(id, done) {
 });
 
 // create DB data - for testing
-// seedDB();
+seedDB();
 // Loading routes
 app.use('/login', loginRoute);
 
