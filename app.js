@@ -78,9 +78,6 @@ passport.deserializeUser(function(id, done) {
   });
 });
 
-// passport.serializeUser(User.serializeUser());
-// passport.deserializeUser(User.deserializeUser());
-
 // create DB data - for testing
 // seedDB();
 // Loading routes
@@ -94,13 +91,13 @@ app.use(function (req, res, next) {
   if (!req.user) {res.redirect("/login"); return;}
 
   res.locals.userName = req.user.fullName;
-  
+
   next();
 });
 
-
+// FUNCTIONAL ROUTES
 app.use('/', middleware.isUserLogin, dashboardRoute); // main page
-app.use('/dashboard/', middleware.isUserLogin, projectDetailRoute);
+app.use('/dashboard/', middleware.isUserLogin, projectDetailRoute); // dashboard to show project
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

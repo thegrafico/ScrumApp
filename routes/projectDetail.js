@@ -23,6 +23,7 @@ router.get("/:id", async function (req, res) {
     let projectId = req.params.id;
 
     // verify is the project exists
+    // TODO: verify if the user can access to the project
     let response = await projectCollection.findOne({_id: projectId}).catch(err => {
         console.log("Error is: ", err.reason);
     });
