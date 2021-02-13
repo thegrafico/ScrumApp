@@ -90,7 +90,7 @@ app.use(function (req, res, next) {
   // early exit condition
   if (!req.user) {res.redirect("/login"); return;}
 
-  res.locals.userName = req.user.fullName;
+  res.locals.username = req.user.fullName;
 
   next();
 });

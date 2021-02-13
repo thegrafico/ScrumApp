@@ -48,6 +48,7 @@ router.get("/", async function (req, res) {
 
 /**
  * METHOD: POST - Create a new project
+ * // TODO: validate project data
  */
 router.post("/", function (req, res) {
   // get data from the form

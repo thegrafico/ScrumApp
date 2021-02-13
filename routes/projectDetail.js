@@ -32,8 +32,8 @@ router.get("/:id", async function (req, res) {
         // TODO: show a message to the user
         return res.redirect('/');
     }
-
-    res.send("OK");
+    let params = {title: "Project"};
+    res.render("projectDetail", params);
 });
 
 module.exports = router;
