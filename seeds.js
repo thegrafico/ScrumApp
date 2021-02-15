@@ -3,7 +3,7 @@
 const mongoose = require("mongoose"); //Require DB
 let userCollection = require("./models/user");
 let projectCollection = require("./models/projects");
-let projectUsers = require("./models/projectUsers");
+let projectUsersCollection = require("./models/projectUsers");
 
 // user
 const USERS = [
@@ -14,8 +14,8 @@ const USERS = [
     fullName: "Raul Pichardo",
   },
   {
-    username: "raul02210712@gmail.com",
-    password: "123456",
+    username: "raul2@gmail.com",
+    password: "123",
     fullName: "Alexander Avalo",
   },
 ];
@@ -47,13 +47,24 @@ const PROJECTS = [
   },
 ];
 
+const INDIVIDUAL_PROJECT = [
+  {
+    _id: "6027fc80a40b46138321a5e0",
+    title: "Special Project",
+    description:
+      "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Non ad deserunt tempora suscipit hic necessitatibus, vero incidunt. Doloremque, facere voluptatum qui autem ratione unde et, pariatur. Necessitatibus, veniam, eos.",
+  }
+];
+
 // const usersInProject = [
 //   {
 
 //   },
 // ];
 
-
+/**
+ * Add user to the database
+ */
 async function addUsersToDB(){
   
   usersIds = [];
@@ -62,10 +73,12 @@ async function addUsersToDB(){
     const userInfo = await userCollection.create(USERS[index]).catch(err => { console.log("Error adding the user: ", err); throw err});
     usersIds.push(userInfo._id);
   }
-  console.log("users added: ", usersIds.length);
+  // console.log("users added: ", usersIds.length);
 
   return usersIds;
 }
+
+
 /**
  * Create project for an user 
  * @param {String} user_id - id of the user 
@@ -84,30 +97,47 @@ async function createProjectForUser(user_id, defaultProjects = PROJECTS){
     projectIds.push(projectInfo._id);
   }
 
-  console.log(`Projects create ${projectIds.length} for user: ${user_id}`);
+  // console.log(`Number of Projects create ${projectIds.length} for user: ${user_id}`);
 
 
   return projectIds;
 }
 
+/**
+ * add an user to the project
+ * @param {String} userId - id of the user
+ * @param {String} projectId -id of the project
+ */
+async function addUserToProject(userId, projectId){
+  const response = await projectUsersCollection.create({userId, projectId}).catch(err => {console.log("Error adding the user to a project: ", err);});
+  return (response != null);
+}
+
 async function seedDB() {
   
-  let justOne = true;
-
   // remove projects
   await projectCollection.deleteMany({});
-  // console.log("Projects Removed!");
+  // await projectCollection.deleteOne({_id: INDIVIDUAL_PROJECT});
 
   // remove users
   await userCollection.deleteMany({});
   // console.log("Users removed!");
 
+  // removing the users from project
+  await projectUsersCollection.deleteMany({});
+
   const usersId = await addUsersToDB();
+
+  // add one project with a specify id to the user: for testing
+  await createProjectForUser(usersId[0], INDIVIDUAL_PROJECT);
+  addUserToProject(usersId[1], INDIVIDUAL_PROJECT[0]._id);
   
   for (let i = 0; i < usersId.length; i++) {
     const id = usersId[i];
     await createProjectForUser(id);
   }
+
+
 
   // users.forEach(function (user) {
   //   // add the user to the database

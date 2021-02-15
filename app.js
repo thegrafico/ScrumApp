@@ -79,7 +79,11 @@ passport.deserializeUser(function(id, done) {
 });
 
 // create DB data - for testing
-seedDB();
+// seedDB();
+
+
+// ==================== ROUTES =================
+
 // Loading routes
 app.use('/login', loginRoute);
 
@@ -99,6 +103,7 @@ app.use(function (req, res, next) {
 app.use('/', middleware.isUserLogin, dashboardRoute); // main page
 app.use('/dashboard/', middleware.isUserLogin, projectDetailRoute); // dashboard to show project
 
+// ==================== ROUTES =================
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   next(createError(404));

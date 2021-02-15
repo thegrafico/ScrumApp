@@ -2,18 +2,19 @@
  * MAIN page for the creating and manipulation of the projects
  * AUTHOR: Raul Pichardo
  * DATE: Jan 31, 2021
-*/
+ */
 
 // ============= CONST AND DEPENDENCIES =============
 const express = require("express");
 const valid = require("validator");
 const _ = require("lodash");
 let projectCollection = require("../models/projects");
+let projectUsersCollection = require("../models/projectUsers");
+
 
 let router = express.Router();
 
 // JUST FOR TESTING
-const userId = "601782de1fb2050e11bfbf1f";
 const NUM_OF_PROJECT_PER_ROW = 3;
 const BASE_ROUTE = 'dashboard';
 // ===================================================
@@ -24,14 +25,16 @@ const BASE_ROUTE = 'dashboard';
  */
 router.get("/", async function (req, res) {
 
-  let params = { title: "Dashboard", createProjectFormRedirect: "/", project_rediret: BASE_ROUTE};
+  let params = {
+    title: "Dashboard",
+    createProjectFormRedirect: "/",
+    project_rediret: BASE_ROUTE
+  };
 
-  // get the projects
-  let projects = await projectCollection.find({author: req.user._id}).exec();
-  // console.log(projects);
+  let projects = await getProjectsForUser(req.user._id).catch(err => {console.error(err)});
 
   // set it to an empty array in case is undefine or empty
-  if (_.isUndefined(projects) || _.isEmpty(projects)){
+  if (_.isUndefined(projects) || _.isEmpty(projects)) {
     projects = [];
   }
 
@@ -57,18 +60,25 @@ router.post("/", function (req, res) {
 
   // validate params 
   if (projectParamsAreValid(projectName, projectDescription)) {
-    console.log("Invalid params");
+    console.error("Invalid params");
     // TODO: let the user know there was an error
     res.redirect("/");
     return;
   }
   // console.log("Form Paramenter are valid!");
 
-  let newProject = {"title": projectName, "description": projectDescription, "author": userId};
+  let newProject = {
+    "title": projectName,
+    "description": projectDescription,
+    "author": userId
+  };
 
   // Insert into the database
-  projectCollection.create(newProject, function (err, projectCreated){
-    if (err) {console.log("Error creating the project: ", err); return res.redirect("/")};
+  projectCollection.create(newProject, function (err, projectCreated) {
+    if (err) {
+      console.error("Error creating the project: ", err);
+      return res.redirect("/")
+    };
     console.log("Project created: ", projectCreated);
     res.redirect("/");
   });
@@ -76,11 +86,45 @@ router.post("/", function (req, res) {
 
 
 /**
+ * Get all projects the user is
+ * @param {*} userId - id of the user
+ */
+function getProjectsForUser(userId) {
+  return new Promise(async function (resolve, rejected) {
+    
+    // find all projects user is
+    let response = await projectUsersCollection.find({userId: userId}).catch(err => {
+      console.error("Error getting the projects for the user: ", err);
+    });
+   
+    if (!response || response.length == 0) {
+      rejected("Response is empty, cannot get the project for the user");
+      return;
+    }
+
+    // console.log("All my projects: ", response.length);
+
+    // get all project id
+    const projectsId = response.map( e => e.projectId);
+
+    // console.log("All my projects: ", projectsId.length);
+
+
+    let allProjects = await projectCollection.find({_id: {$in: projectsId}}).catch(err => console.error("Error getting the projects: ", err));
+    
+    console.log("All my projects: ", allProjects.length);
+
+    resolve(allProjects);
+  });
+
+}
+
+/**
  * Validate if the param sent by the form are valid
  * @param {String} name - title of the project
  * @param {String} desc - description of the project 
  */
-function projectParamsAreValid(name, desc){
+function projectParamsAreValid(name, desc) {
   return (valid.isEmpty(name) || !valid.isAlphanumeric(valid.blacklist(name, ' ')) || name.length > 50 || valid.isEmpty(desc) || desc.length > 500);
 }
 
