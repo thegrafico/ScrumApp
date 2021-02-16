@@ -32,7 +32,7 @@
 
             <div class="container-fluid statistics-boxs">
                 <div class="row">
-                    
+
                     <!--  Status box -->
                     <div class="col p-md-4">
                         <p class="col-title">Status</p>
@@ -43,15 +43,15 @@
                             <i class="fas fa-burn icons"></i>
                             <div class="form-group">
                                 <select class="custom-select">
-                                    
+
                                     <% projectStatus.forEach(function(status){ %>
 
-                                        <% if (status == project["status"]){ %>
-                                            <option selected value="<%=status%>"><%=status%></option>
+                                    <% if (status == project["status"]){ %>
+                                    <option selected value="<%=status%>"><%=status%></option>
 
-                                        <% } else {%>
-                                          <option value="<%=status%>"><%=status%></option>
-                                        <% }%>
+                                    <% } else {%>
+                                    <option value="<%=status%>"><%=status%></option>
+                                    <% }%>
 
                                     <% }); %>
                                 </select>
@@ -62,9 +62,9 @@
                             <p>Everything looks fine. Continue working</p>
 
                             <ul class="status-list list-unstyled">
-                                <li> Owner: <span id="ownerName"></span></li>
+                                <li> Owner: <span id="ownerName"> <%=projectOwner%></span></li>
                                 <li>Project Start Date: <span id="startDate"><%=creationDate%></span></li>
-                                <li>Current Sprint: </li>
+                                <li>Current Sprint: <span id="currentSprint"><%=currentSprint%></span></li>
                             </ul>
                         </div>
                     </div>
@@ -91,7 +91,7 @@
 
 
                         <div class="mt-2">
-                            <p id="NumberOfMembers"> 10 Members</p>
+                            <p id="NumberOfMembers"> <%=numberOfMember%></p>
 
                             <ul class="member-list list-unstyled">
                                 <li> <span id="memberOfMonth"> Member of the month: </span> <span
@@ -150,7 +150,7 @@
                 <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
 
                     <div class="modal-content">
-                        <form>
+                        <form action="/dashboard/<%=project['_id']%>/addmember" method="post" id="inviteUserToProject">
                             <div class="modal-header">
                                 <h5 class="modal-title" id="createUserTitle" style="width: 30%;">Add New Member <i
                                         class="fas fa-user-plus"></i> </h5> &nbsp; &nbsp;
@@ -163,9 +163,8 @@
 
                                 <fieldset>
                                     <div class="form-group">
-                                        <label for="usernameOrEmail">User</label>
-                                        <input type="text" class="form-control" id="usernameOrEmail"
-                                            placeholder="User email">
+                                        <label for="userEmail">User</label>
+                                        <input type="text" class="form-control" id="userEmail" name="userEmail" placeholder="User email">
                                     </div>
                                     <span class="text-danger" id="createUserErrorMessage"></span>
                                 </fieldset>
@@ -175,7 +174,7 @@
                             <div class="modal-footer">
                                 <button type="btnCancelUser" class="btn btn-secondary"
                                     data-dismiss="modal">Cancel</button>
-                                <button id="btnAddUser" type="button" class="btn btn-success">Send Invitation</button>
+                                <button id="btnAddUser" type="submit" class="btn btn-success">Send Invitation</button>
                             </div>
 
                         </form>
@@ -233,6 +232,9 @@
     <!-- Loading bootstrap for side var -->
     <!-- <script src="/bootstrap_dist/js/bootstrap.min.js"></script> -->
     <script src="/javascripts/dependecies/jquery3.5.2.js"></script>
+    <script src="/javascripts/dependecies/validator.min.js"></script>
+    <script src="/javascripts/helpers.js"></script>
+    <script src="/javascripts/addMember.js"></script>
     <script src="/javascripts/dependecies/bootstrap.bundle.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
 </body>

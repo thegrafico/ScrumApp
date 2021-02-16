@@ -95,6 +95,7 @@ app.use(function (req, res, next) {
   if (!req.user) {res.redirect("/login"); return;}
 
   res.locals.username = req.user.fullName;
+  res.locals.currentUserId = req.user._id;
 
   next();
 });

@@ -5,11 +5,11 @@
  */
 
 // ============= CONST AND DEPENDENCIES =============
-const express = require("express");
-const valid = require("validator");
-const _ = require("lodash");
-let projectCollection = require("../models/projects");
-let projectUsersCollection = require("../models/projectUsers");
+const express               = require("express");
+const valid                 = require("validator");
+const _                     = require("lodash");
+let projectCollection       = require("../models/projects");
+let projectUsersCollection  = require("../models/projectUsers");
 
 
 let router = express.Router();
@@ -22,6 +22,7 @@ const BASE_ROUTE = 'dashboard';
 
 /**
  * METHOD: GET - show the main page for projects
+ * https://localhost:3000/dashboard
  */
 router.get("/", async function (req, res) {
 
@@ -51,6 +52,7 @@ router.get("/", async function (req, res) {
 
 /**
  * METHOD: POST - Create a new project
+ * https://localhost:3000/dashboard
  * // TODO: validate project data
  */
 router.post("/", function (req, res) {
