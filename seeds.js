@@ -9,12 +9,12 @@ let projectUsersCollection = require("./models/projectUsers");
 const USERS = [
   {
     _id: "601782de1fb2050e11bfbf1f",
-    username: "raul@gmail.com",
+    email: "raul@gmail.com",
     password: "123",
     fullName: "Raul Pichardo",
   },
   {
-    username: "raul2@gmail.com",
+    email: "raul2@gmail.com",
     password: "123",
     fullName: "Alexander Avalo",
   },

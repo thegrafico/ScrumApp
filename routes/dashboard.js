@@ -81,7 +81,7 @@ router.post("/", function (req, res) {
       console.error("Error creating the project: ", err);
       return res.redirect("/")
     };
-    console.log("Project created: ", projectCreated);
+    // console.log("Project created: ", projectCreated);
     res.redirect("/");
   });
 });
@@ -104,17 +104,10 @@ function getProjectsForUser(userId) {
       return;
     }
 
-    // console.log("All my projects: ", response.length);
-
     // get all project id
     const projectsId = response.map( e => e.projectId);
 
-    // console.log("All my projects: ", projectsId.length);
-
-
     let allProjects = await projectCollection.find({_id: {$in: projectsId}}).catch(err => console.error("Error getting the projects: ", err));
-    
-    console.log("All my projects: ", allProjects.length);
 
     resolve(allProjects);
   });

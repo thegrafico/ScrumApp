@@ -5,16 +5,16 @@
  */
 
 // ============= CONST AND DEPENDENCIES =============
-const express               = require("express");
-const _                     = require("lodash");
-const validator             = require("validator");
-const STATUS                = require('../models/Constanst').projectStatus;
-const moment                = require('moment');
-const projectCollection     = require("../models/projects");
-const userCollection        = require("../models/user");
+const express = require("express");
+const _ = require("lodash");
+const validator = require("validator");
+const STATUS = require('../models/Constanst').projectStatus;
+const moment = require('moment');
+const projectCollection = require("../models/projects");
+const userCollection = require("../models/user");
 const projectUserCollection = require("../models/projectUsers");
-const middleware            = require("../middleware/auth");
-let router                  = express.Router();
+const middleware = require("../middleware/auth");
+let router = express.Router();
 // ===================================================
 
 
@@ -55,22 +55,95 @@ router.get("/:id", middleware.isUserInProject, async function (req, res) {
 
 /**
  * METHOD: POST - send a project invite to an user 
+ * // TODO: verify if the person adding another user is the scrum master or product owner
  */
 router.post("/:id/addmember", middleware.isUserInProject, async function (req, res) {
 
-    const { userEmail } = req.body;
+    const {
+        userEmail
+    } = req.body;
 
     // validate email
     if (!validator.isEmail(userEmail)) return res.redirect("back");
- 
+
     const projectId = req.params.id;
-    
+
     // TODO: find userid by email. then add the user to the new project
-    let response = await projectUserCollection.create({}).cat
+    let userId = await getUserIdByEmail(userEmail).catch(err => {
+        console.error(err)
+    })
+
+    if (_.isUndefined(userId) || userId == null) {
+        // TODO: add flash message 
+        return res.redirect("back");
+    }
+
+    const newMember = {
+        userId,
+        projectId
+    };
+
+    const response = await projectUserCollection
+        .create(newMember)
+        .catch((err) => {
+            console.error("Error adding the user to the project: ", err);
+        });
+
+    if (_.isUndefined(response) || _.isNull(response)) {
+        // TODO: add flash message to the user
+        res.redirect("back");
+    }
+
+    console.log("User added to the project");
     res.redirect("back");
 });
 
 /**
+ * METHOD: POST - send a project invite to an user 
+ * // TODO: verify if the person adding another user is the scrum master or product owner
+ */
+router.post("/:id/removemember", middleware.isUserInProject, async function (req, res) {
+
+    const { emailToRemove
+    } = req.body;
+
+    // validate email
+    // TODO: add flash message to the user
+    if (!validator.isEmail(emailToRemove)) return res.redirect("back");
+
+    const projectId = req.params.id;
+
+    // TODO: find userid by email. then add the user to the new project
+    let userId = await getUserIdByEmail(emailToRemove).catch(err => {
+        console.error(err)
+    })
+
+    if (_.isUndefined(userId) || userId == null) {
+        // TODO: add flash message 
+        return res.redirect("back");
+    }
+
+    const memberToRemove = {
+        userId,
+        projectId
+    };
+
+    const response = await projectUserCollection
+        .deleteOne(memberToRemove)
+        .catch((err) => {
+            console.error("Error deleting the user to the project: ", err);
+        });
+
+    if (_.isUndefined(response) || _.isNull(response)) {
+        // TODO: add flash message to the user
+        res.redirect("back");
+    }
+
+    console.log("User removed from the project");
+    res.redirect("back");
+});
+
+/**s
  * Change the mongodb date format to a more human readeble date format
  * @param {Date} mongoDate - mongodb date format
  */
@@ -97,13 +170,39 @@ async function getProjectOwnerNameById(authorId) {
 }
 
 /**
+ * Return the id of the user by email
+ * @param {String} email - email of the user
+ * @return {Promise} id of the user
+ */
+function getUserIdByEmail(email) {
+    return new Promise(async function (resolve, rejected) {
+
+        let error = undefined;
+
+        const userInfo = await userCollection.findOne({
+            email: email
+        }).catch(err => error = err);
+
+        if (_.isUndefined(userInfo)) {
+            return rejected(error);
+        }
+
+        if (userInfo == null) {
+            return rejected("This user does not exists")
+        }
+
+        return resolve(userInfo._id);
+    });
+}
+
+/**
  * get member information - # of users, user of the month
  * @param {String} projectId - id of the project 
  */
 async function getMembersInfo(projectId) {
     const numberOfMember = await projectUserCollection.where({
         "projectId": projectId
-    }).count();
+    }).countDocuments();
 
     return (numberOfMember > 1 ? `${numberOfMember} Members` : `One man army`);
 }

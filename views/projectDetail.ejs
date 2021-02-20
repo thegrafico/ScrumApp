@@ -189,7 +189,7 @@
                 <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
 
                     <div class="modal-content">
-                        <form>
+                        <form action="/dashboard/<%=project['_id']%>/removemember" method="post" id="removeUserFromProject">
                             <div class="modal-header">
                                 <h5 class="modal-title" id="removeUserTitle" style="width: 30%;">Remove Members <i
                                         class="fas fa-trash memberCardIcon"></i> </h5> &nbsp; &nbsp;
@@ -203,7 +203,7 @@
                                 <fieldset>
                                     <div class="form-group">
                                         <label for="removeUsersNameOrEmails">User(s)</label>
-                                        <input type="text" class="form-control" id="removeUsersNameOrEmails"
+                                        <input type="text" class="form-control" id="removeUsersNameOrEmails" name='emailToRemove'
                                             placeholder="User email">
                                     </div>
                                     <span class="text-danger" id="removeUserErrorMessage"></span>
@@ -214,8 +214,7 @@
                             <div class="modal-footer">
                                 <button type="btnCancelRemoveUser" class="btn btn-secondary"
                                     data-dismiss="modal">Cancel</button>
-                                <button id="btnRemoveUser" type="button" data-dismiss="modal" class="btn btn-warning">
-                                    Remove</button>
+                                <button id="btnRemoveUser" type="submit" class="btn btn-warning">Remove</button>
                             </div>
                         </form>
                     </div>
@@ -234,7 +233,7 @@
     <script src="/javascripts/dependecies/jquery3.5.2.js"></script>
     <script src="/javascripts/dependecies/validator.min.js"></script>
     <script src="/javascripts/helpers.js"></script>
-    <script src="/javascripts/addMember.js"></script>
+    <script src="/javascripts/statistics-member.js"></script>
     <script src="/javascripts/dependecies/bootstrap.bundle.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
 </body>

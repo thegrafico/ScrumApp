@@ -26,21 +26,6 @@ router.get("/", async function (req, res) {
   res.render("login", params);
 });
 
-/**
- * METHOD: POST - Create a new project
- */
-//POST LOGIN - we use the midleware to autenticar el usuario
-// router.post("/", passport.authenticate("local",
-// 	{
-// 		successRedirect: "/", // si el usuario se encuentra en la DB pues BIEN
-// 		faiulerRedirect: "/login"	// si no se encuentra pues va aqui
-// 	}) ,function(req, res){
-// });
-
-// router.post("/", async function (req, res) {
-//   console.log(req.body);
-//   res.redirect('/login');
-// });
 
 //POST LOGIN - we use the midleware to autenticar el usuario
 router.post("/", passport.authenticate("local", {
