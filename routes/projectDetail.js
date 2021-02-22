@@ -5,16 +5,16 @@
  */
 
 // ============= CONST AND DEPENDENCIES =============
-const express = require("express");
-const _ = require("lodash");
-const validator = require("validator");
-const STATUS = require('../models/Constanst').projectStatus;
-const moment = require('moment');
-const projectCollection = require("../models/projects");
-const userCollection = require("../models/user");
+const express               = require("express");
+const _                     = require("lodash");
+const validator             = require("validator");
+const STATUS                = require('../models/Constanst').projectStatus;
+const moment                = require('moment');
+const projectCollection     = require("../models/projects");
+const userCollection        = require("../models/user");
 const projectUserCollection = require("../models/projectUsers");
-const middleware = require("../middleware/auth");
-let router = express.Router();
+const middleware            = require("../middleware/auth");
+let router                  = express.Router();
 // ===================================================
 
 

@@ -22,10 +22,30 @@
 
         <!-- Page Content  -->
         <div id="content" class="p-4 p-md-5">
-            <div class="box-title">
 
-                <nav class="navbar navbar-expand-lg">
-                    <h1 class="navbar-brand" id='box-title-title'>Statistics </h1>
+            <div class="box-title">
+                <nav class="navbar navbar-expand-lg pr-4">
+                    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarColor01"
+                        aria-controls="navbarColor01" aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+
+                    <div class="collapse navbar-collapse" id="navbarColor01">
+                        <ul class="navbar-nav mr-auto">
+                            <h1 class="navbar-brand" id='box-title-title'>Statistics </h1>
+                        </ul>
+                        
+                        <div class="form-inline my-2 my-lg-0 pr-4">
+                            <!-- <input class="form-control mr-sm-2" type="text" placeholder="Search">
+                            <button class="btn btn-secondary my-2 my-sm-0" type="submit">Search</button> -->
+                            
+                            <div class="saveStatusBtn" id="saveStatusBtn">
+                                <i class="far fa-save"></i>
+                                <span class="tooltiptext">Save</span>
+                            </div>
+                           
+                        </form>
+                    </div>
                 </nav>
             </div>
 
@@ -164,7 +184,8 @@
                                 <fieldset>
                                     <div class="form-group">
                                         <label for="userEmail">User</label>
-                                        <input type="text" class="form-control" id="userEmail" name="userEmail" placeholder="User email">
+                                        <input type="text" class="form-control" id="userEmail" name="userEmail"
+                                            placeholder="User email">
                                     </div>
                                     <span class="text-danger" id="createUserErrorMessage"></span>
                                 </fieldset>
@@ -189,7 +210,8 @@
                 <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
 
                     <div class="modal-content">
-                        <form action="/dashboard/<%=project['_id']%>/removemember" method="post" id="removeUserFromProject">
+                        <form action="/dashboard/<%=project['_id']%>/removemember" method="post"
+                            id="removeUserFromProject">
                             <div class="modal-header">
                                 <h5 class="modal-title" id="removeUserTitle" style="width: 30%;">Remove Members <i
                                         class="fas fa-trash memberCardIcon"></i> </h5> &nbsp; &nbsp;
@@ -203,8 +225,8 @@
                                 <fieldset>
                                     <div class="form-group">
                                         <label for="removeUsersNameOrEmails">User(s)</label>
-                                        <input type="text" class="form-control" id="removeUsersNameOrEmails" name='emailToRemove'
-                                            placeholder="User email">
+                                        <input type="text" class="form-control" id="removeUsersNameOrEmails"
+                                            name='emailToRemove' placeholder="User email">
                                     </div>
                                     <span class="text-danger" id="removeUserErrorMessage"></span>
 

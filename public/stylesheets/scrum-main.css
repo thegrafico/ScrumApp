@@ -15,11 +15,12 @@
     border-bottom: 1px solid rgba(240, 240, 240, 0.2);
 }
 
-.statistics-boxs .col, .backlog-box .col{
+.statistics-boxs .col,
+.backlog-box .col {
     margin: 1.5% 1.5% 0 1.5%;
     background-color: #303030 !important;
     border-radius: 2%;
-    
+
 }
 
 .col-title {
@@ -116,54 +117,105 @@ a:hover {
 } */
 
 /* ================= BACK LOAD ================= */
-.addIcon, .settings{
+.addIcon,
+.settings {
     color: white;
     font-size: 1em;
-    margin:0;
+    margin: 0;
     padding: 0;
 }
 
-.backlogTitlte{
+.backlogTitlte {
     border-right: 1px solid slategray;
     margin-left: 3%;
 }
 
-#backlog-filter-btn, #backlog-save-icon-btn{
+#backlog-filter-btn,
+#backlog-save-icon-btn {
     font-size: 0.8em;
 }
 
 
-#createNewTaskBtn, #backLogSettingsBtn{
+#createNewTaskBtn,
+#backLogSettingsBtn {
     font-size: 1em;
     text-transform: capitalize;
     font-weight: bold;
     border: none;
 }
 
-.backlog-nav-item{
+.backlog-nav-item {
     margin: 0 6%;
 }
 
-#box-title-title{
-    font-size: 2.5em!important;
+#box-title-title {
+    font-size: 2.5em !important;
 }
 
-@media (min-width: 768px){
+@media (min-width: 768px) {
     .p-md-5 {
         padding: 0rem !important
-        /* padding: 3rem !important; */
+            /* padding: 3rem !important; */
     }
 
 }
 
-.table-primary th, .table-primary td, .table-primary thead th, .table-primary tbody+tbody {
+.table-primary th,
+.table-primary td,
+.table-primary thead th,
+.table-primary tbody+tbody {
     border-color: transparent !important;
     font-weight: bold;
 }
 
-.backlog-boxs table{
+.backlog-boxs table {
     text-align: center;
 }
+
+.fa-save {
+    font-size: 2.5em;
+    color:white;
+    opacity: 0.6;
+}
+
+/* Tooltip container */
+.saveStatusBtn {
+    position: relative;
+    display: inline-block;
+    border-bottom: 1px dotted black;
+  }
+  
+  .saveStatusBtn .tooltiptext {
+    visibility: hidden;
+    width: 120px;
+    background-color: rgba(0, 0, 0, 0.609);
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px 0;
+    
+    /* Position the tooltip */
+    position: absolute;
+    z-index: 1;
+    top: 100%;
+    left: 50%;
+    margin-left: -60px;
+  }
+
+  .saveStatusBtn:hover{
+    opacity: 0.5;
+    cursor: pointer;
+  }
+  
+  .saveStatusBtn:hover .tooltiptext {
+    visibility: visible;
+  }
+
+  #sidebar a{
+      font-size: 1.3em;
+      font-weight: bold;
+  }
+
 /* 
 #createNewTask:hover{
     color: seagreen;   
