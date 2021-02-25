@@ -45,12 +45,13 @@ router.get("/:id", middleware.isUserInProject, async function (req, res) {
         "project": projectInfo,
         "projectStatus": STATUS,
         "creationDate": formatDate(projectInfo["createdAt"]),
-        "currentSprint": "Not sprint found"
+        "currentSprint": "Not sprint found",
+        "activeTab": "Statistics"
     };
     params["projectOwner"] = await getProjectOwnerNameById(projectInfo["author"]);
     params["numberOfMember"] = await getMembersInfo(projectId);
 
-    res.render("projectDetail", params);
+    res.render("statistics", params);
 });
 
 /**
@@ -143,7 +144,33 @@ router.post("/:id/removemember", middleware.isUserInProject, async function (req
     res.redirect("back");
 });
 
-/**s
+/**
+ * METHOD: POST - send a project invite to an user 
+ * // TODO: verify if the person adding another user is the scrum master or product owner
+ */
+router.post("/:id/update", middleware.isUserInProject, async function (req, res) {
+    
+    // get the values that can change
+    const {status, description} = req.body;
+    const projectId = req.params.id;
+    
+    if (STATUS.includes(status)){
+        let response = await projectCollection.findByIdAndUpdate(projectId, {"status": status}, {"useFindAndModify":false}).catch(err => console.log("Error updating the status: ", err));
+
+        if (_.isUndefined(response) || _.isNull(response)){
+            return res.sendStatus(400);
+        }
+    }
+
+    res.sendStatus(200);
+});
+
+
+
+
+
+
+/**
  * Change the mongodb date format to a more human readeble date format
  * @param {Date} mongoDate - mongodb date format
  */
