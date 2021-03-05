@@ -10,35 +10,35 @@
 
             <!-- <li class="active"> -->
             <li>
-                <a href="#" class="urlBtn Statistics" role="button" id="linkToStatistics">Statistics</a>
+                <a href="/dashboard/<%=projectId%>" class="urlBtn" role="button" id="Statistics">Statistics</a>
             </li>
 
             <li>
-                <a href="#homeSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle planing">
+                <a href="#planingSubMenu" data-toggle="collapse" aria-expanded="false"  id="Planing" class="dropdown-toggle">
                     Planing
                 </a>
                 
-                <ul class="collapse list-unstyled" id="homeSubmenu">
+                <ul class="collapse list-unstyled" id="planingSubMenu">
                     <li>
-                        <a href="#" class="urlBtn backlog" role="button" id="linkToBacklog">Backlog</a>
+                        <a href="/dashboard/<%=projectId%>/planing/backlog" class="urlBtn" role="button" id="Backlog">Backlog</a>
                     </li>
                     <li>
-                        <a href="#" class="urlBtn" role="button sprintPlaning" id="linkToSprintPlaning">Sprint Planing</a>
+                        <a href="#" class="urlBtn" role="button" id="SprintPlaning">Sprint Planing</a>
                     </li>
                 </ul>
             </li>
 
             <li>
-                <a href="#pageSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle sprint">
+                <a href="#sprintSubMenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle sprint">
                     Sprint
                 </a>
                 
-                <ul class="collapse list-unstyled" id="pageSubmenu">
+                <ul class="collapse list-unstyled" id="sprintSubMenu">
                     <li>
-                        <a href="#" class="urlBtn board" role="button" id="linkToBoard">Board</a>
+                        <a href="#" class="urlBtn" role="button" id="SprintBoard">Board</a>
                     </li>
                     <li>
-                        <a href="#" class="urlBtn myTasks" role="button" id="linkToMyTask">My Tasks</a>
+                        <a href="#" class="urlBtn" role="button" id="SprintMyTask">My Tasks</a>
                     </li>
                 </ul>
             </li>

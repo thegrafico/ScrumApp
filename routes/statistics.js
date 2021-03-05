@@ -43,10 +43,12 @@ router.get("/:id", middleware.isUserInProject, async function (req, res) {
     // populating params
     let params = {
         "project": projectInfo,
+        "projectId": projectId,
         "projectStatus": STATUS,
         "creationDate": formatDate(projectInfo["createdAt"]),
         "currentSprint": "Not sprint found",
-        "activeTab": "Statistics"
+        "activeTab": "Statistics",
+        "tabTitle": "Statistics",
     };
     params["projectOwner"] = await getProjectOwnerNameById(projectInfo["author"]);
     params["numberOfMember"] = await getMembersInfo(projectId);

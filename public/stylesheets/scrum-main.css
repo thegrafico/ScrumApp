@@ -212,11 +212,11 @@ a:hover {
   }
 
   #sidebar a{
-      font-size: 1.3em;
+      font-size: 1.2em;
       font-weight: bold;
   }
 
-/* 
-#createNewTask:hover{
-    color: seagreen;   
-} */
+  .currentTab{
+    color: #f8b739 !important;
+    font-style: italic;
+  }

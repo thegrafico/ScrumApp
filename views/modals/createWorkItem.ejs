@@ -1,0 +1,111 @@
+<!-- Large modal -->
+<div class="modal fade createNewItemModal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+
+        <div class="modal-content">
+            <form method="POST" action="" id="createProjectForm">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalTitle">New work item </h5> &nbsp; &nbsp; <i class="fas fa-bolt taskIcon"></i>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span> 
+                </button>
+                </div>
+
+                <div class="modal-body">
+
+                    <fieldset>
+                        
+                        <!-- <div class="container" style="border: 1px solid red;"> -->
+                            
+                            <div class="row">
+                                
+                                <div class="col IdAndTitle">
+                                    <input type="text" name="title" id="new-item-title" placeholder="Enter title">
+                                    <span id="title-span-msg"><i class="fas fa-exclamation-circle"></i> Title cannot be empty</span>
+                                </div>
+                            </div>
+
+                            <div class="row no-m-bt">
+                                <div class="col-3">
+                                    
+                                    <div class="form-group d-flex">
+                                        <i class="fas fa-user userLogo"></i>
+                                        <select class="custom-select my-custon-select" name="userAssigned" id="assignedUser">        
+                                            <option value="1">Unassigned</option>
+                                            <option value="2">Raul</option>
+                                            <option value="3">Alex</option>
+                                            <option value="4">Lana</option>
+                                            <option value="5">Zeus</option>
+                                        </select>
+                                    </div>
+
+                                </div>
+
+                                <div class="col-1">
+                                    <span> 
+                                        <i class="fas fa-comments"></i> 0 
+                                    </span>
+                                </div>
+
+                                <div class="col-2">
+                                    <button type="button" class="btn btn-primary">Add tag</button>
+                                </div>
+                            </div>
+
+                            <div class="row create-work-item-bg">
+                                <div class="col-2 d-flex">
+                                    <span class="aling-vertically align-self-center"> State: </span>
+                                    <select class="custom-select my-custon-select " name="statusAssigned" id="statusAssigned">        
+                                        <option value="0" selected>New</option>
+                                        <option value="1">Active</option>
+                                        <option value="2">Resolved</option>
+                                        <option value="3">Block</option>
+                                        <option value="4">Closed</option>
+                                    </select>
+                                </div>
+
+                                <div class="col-4 d-flex">
+                                    <span class="aling-vertically align-self-center"> Team: </span>
+                                    <select class="custom-select my-custon-select " name="statusAssigned" id="statusAssigned">        
+                                        <option value="0" selected>Team Awesome</option>
+                                        <option value="1">Team Batman</option>
+                                        <option value="2">Resolved</option>
+                                        <option value="3">Block</option>
+                                        <option value="4">Closed</option>
+                                    </select>
+                                </div>
+
+                                <div class="col-4 d-flex">
+                                    <span class="aling-vertically align-self-center"> Iteration: </span>
+                                    <select class="custom-select my-custon-select " name="statusAssigned" id="statusAssigned">        
+                                        <option value="0" selected>Sprint 1</option>
+                                        <option value="1">Sprint 2</option>
+                                        <option value="2">Resolved</option>
+                                        <option value="3">Block</option>
+                                        <option value="4">Closed</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="col-2"></div>
+
+                                <!-- <div class="col-4 align-self-end d-flex inner-tabs">
+                                    <button type="button" class="btn btn-secondary">Details</button>
+                                    <button type="button" class="btn btn-secondary"> <i class="fas fa-history"></i></button>
+                                    <button type="button" class="btn btn-secondary"> <i class="fas fa-paperclip"></i></button>                                 
+                                </div> -->
+
+                            </div>
+
+                        <!-- </div> -->
+                        
+                    </fieldset>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button id="createProjectBtn" type="submit" value="submit" class="btn btn-primary">Create Project</button>
+                </div>
+            </form>
+        </div>
+
+    </div>

@@ -1,5 +1,5 @@
 * {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    font-family: 'Source Code Pro', monospace;
     padding: 0;
     margin: 0;
 }
@@ -29,7 +29,6 @@ i {
 .fa-space-shuttle {
     font-size: 0.7em;
 }
-
 
 /* CARDS FOR SHOWING PROJETS */
 

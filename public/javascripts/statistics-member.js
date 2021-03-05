@@ -20,6 +20,10 @@ CHANGES = {
 // =========== This function is fire as soon as the file is loaded after the HTML ===========
 $(function () {
 
+    showActiveTab();
+
+    const projectId = $("#projectId").val();
+
     // console.log($(statusSelectId).find(":selected").text())
 
     // ============================================ STATUS CARD ==========================================
@@ -33,10 +37,11 @@ $(function () {
     $(BTN_SAVE).on("click", function () {
         
         // TODO: get the id of the project
-        const url = "http://localhost:3000/dashboard/6027fc80a40b46138321a5e0/update";
+        const url = `http://localhost:3000/dashboard/${projectId}/update`;
         
         $.post(url, CHANGES, function (data, status) {
             console.log("Data: " + data + "\nStatus: " + status);
+            alert("Data: " + data + "\nStatus: " + status);
         });
 
     });
@@ -64,26 +69,3 @@ $(function () {
     // ===================================================================================================
 
 });
-
-/**
- * Validate the email of the user, if the email is invalid show a message to the user using a span element
- * @param {String} emailId - input email id 
- * @param {String} formId - form id 
- * @param {String} spanId - id of the span to show the message 
- * @param {Object} event - event fired
- */
-function validateEmail(emailId, formId, spanId, event) {
-
-    // remove the default from the form so we can control when to submit the information. 
-    event.preventDefault();
-
-    // validating the form 
-    isEmailValid = validator.isEmail($(emailId).val());
-
-    if (!isEmailValid) {
-        showErrSpanMessage(spanId, "Invalid email, please try again.");
-        return;
-    }
-
-    $(formId).trigger("submit");
-}

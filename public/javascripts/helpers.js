@@ -57,3 +57,41 @@ function hideErrSpanMessage(spanId){
     $(spanId).text('');
     $(spanId).addClass("invisible");
 }
+
+/**
+ * Validate the email of the user, if the email is invalid show a message to the user using a span element
+ * @param {String} emailId - input email id 
+ * @param {String} formId - form id 
+ * @param {String} spanId - id of the span to show the message 
+ * @param {Object} event - event fired
+ */
+function validateEmail(emailId, formId, spanId, event) {
+
+    // remove the default from the form so we can control when to submit the information. 
+    event.preventDefault();
+
+    // validating the form 
+    isEmailValid = validator.isEmail($(emailId).val());
+
+    if (!isEmailValid) {
+        showErrSpanMessage(spanId, "Invalid email, please try again.");
+        return;
+    }
+
+    $(formId).trigger("submit");
+}
+
+/**
+ * Show the current tab at the side bar
+ */
+function showActiveTab(){
+    currentTabValue = $("#currentTab").val();
+    
+    if (currentTabValue.includes(",")){
+        currentTabs = currentTabValue.split(",");
+        currentTabs.forEach(each=> {$(`#${each}`).addClass("currentTab");})
+        return;
+    }
+
+    $(`#${currentTabValue}`).addClass("currentTab");
+}
