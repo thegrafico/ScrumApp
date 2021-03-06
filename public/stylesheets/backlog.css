@@ -88,7 +88,7 @@
 }
 
 .create-work-item-bg{
-    border: 1px solid red;
+    margin-bottom: .5% !important;
     background-color: rgba(128, 128, 128, 0.2);
 }
 
@@ -124,4 +124,68 @@
 
 .inner-tabs button{
     background-color: #444 !important;
+}
+
+.desc-planing-development > div h5{
+    border-bottom: 1px solid #444;
+    margin-left: 1%;
+}
+
+.pd-p{
+    padding-bottom: 1%;
+}
+
+#description-textarea, #comment-textarea{
+    width: 100%;
+    border-radius: 5px;
+    padding: 1%;
+    background-color: rgba(128, 128, 128, 0.2);
+    color:white;
+    outline: none;
+    font-size: 1.2em;
+    border: 1px solid gray;
+}
+
+.bx-shadow:focus{
+    box-shadow: 10px 5px 5px rgba(128, 128, 128, 0.2);
+}
+
+.planing-work-item p{
+    font-size: 0.9em;
+    margin: 0;
+    padding: 0;
+    /* text-align: center; */
+}
+
+.planing-work-item input{
+    margin-bottom: 4%;
+}
+
+.addLink{
+    font-size: 0.9em;
+}
+.addLink i{
+    color: green;
+    font-size: 1em;
+}
+
+.addLink p:hover{
+    cursor: pointer;
+    opacity: 0.6;
+}
+
+.input-style{
+    background-color: transparent;
+    border: 1px solid transparent;
+    color:white;
+    outline: none;
+    border-radius: 5px;
+    width: 100%;
+    padding-left: 1%;
+    font-size: 0.9em;
+    /* border-bottom: 1px solid gray; */
+}
+
+.input-style:hover, .input-style:focus{
+    border: 1px solid gray;
 }
