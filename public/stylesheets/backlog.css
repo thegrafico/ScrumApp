@@ -189,3 +189,73 @@
 .input-style:hover, .input-style:focus{
     border: 1px solid gray;
 }
+
+.nav-pills .nav-link {
+    border: 1px solid transparent;
+    border-bottom: 1px solid gray;
+    border-radius: 0.25rem;
+}
+
+.nav-pills .nav-link:hover{
+    border: 1px solid gray;
+}
+
+#customSelect i{
+    font-size: 1em;
+}
+
+.dropdown-toggle::after{
+    content: none;
+}
+
+.cl-blue{
+    color: #2384c6;
+}
+
+.cl-danger{
+    color: #e12e1c;
+}
+
+
+.nav-pills .nav-link.active, .nav-pills .show>.nav-link {
+    background-color: transparent;
+    outline: none;
+    border: 1px solid gray;
+}
+
+.badge{
+    /* padding:1%; */
+    height: 2.2vh !important;
+    margin-right: 1.5%;
+    width: 12%;
+}
+
+.badge input{
+    padding-right: 8%;
+    background-color: transparent;
+    border: none;
+    color: white;
+    text-align: center;
+    width: 100%;
+    height: 100%;
+    padding: none;
+    outline: none;
+    font-weight: bold;
+}
+
+.rmTag{
+    position: relative;
+    right: 20%;
+    top:-10%;
+    /* border:1px solid red; */
+    padding: 5%;
+}
+
+.rmTag:hover{
+    cursor: pointer;
+}
+
+.tagsContainer{
+    max-height: 2.7vh;
+    overflow: hidden;
+}
