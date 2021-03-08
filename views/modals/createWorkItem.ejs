@@ -32,7 +32,7 @@
                                 <div class="form-group d-flex">
                                     <i class="fas fa-user userLogo"></i>
                                     <select class="custom-select my-custon-select" name="userAssigned" id="assignedUser">
-                                        <option value="1"> Unassigned </option>
+                                        <option value="0" selected> Unassigned </option>
                                         <option value="4"> Lana </option>
                                         <option value="5"> Zeus </option>
                                     </select>
@@ -57,8 +57,7 @@
                                 <div class="row">
                                     <div class="col-2 d-flex">
                                         <span class="aling-vertically align-self-center"> State: </span>
-                                        <select class="custom-select my-custon-select " name="statusAssigned"
-                                            id="statusAssigned">
+                                        <select class="custom-select my-custon-select " name="statusAssigned" id="statusAssigned">
                                             <option value="0" selected>New</option>
                                             <option value="1">Active</option>
                                             <option value="2">Resolved</option>
@@ -98,6 +97,8 @@
                                             </li>
                                         </ul>
 
+                                        <input type="hidden" name="workItemType" id="workItemType" value="">
+
                                         <!-- <select class="custom-select my-custon-select " name="statusAssigned" id="statusAssigned">        
                                             <option value="0" selected>Story</option>
                                             <option value="1">Taks</option>
@@ -108,8 +109,7 @@
 
                                     <div class="col-4 d-flex">
                                         <span class="aling-vertically align-self-center"> Iteration: </span>
-                                        <select class="custom-select my-custon-select " name="statusAssigned"
-                                            id="statusAssigned">
+                                        <select class="custom-select my-custon-select " name="statusAssigned" id="statusAssigned">
                                             <option value="0" selected>Sprint 1</option>
                                             <option value="1">Sprint 2</option>
                                             <option value="2">Resolved</option>
@@ -126,7 +126,7 @@
 
                             <div class="col">
                                 <h5 class="pd-p">Description</h5>
-                                <textarea name="" id="description-textarea" rows="10" placeholder="Enter Description."
+                                <textarea name="workItemDescription" id="description-textarea" rows="10" placeholder="Enter Description."
                                     class="bx-shadow"></textarea>
                             </div>
 
@@ -134,11 +134,11 @@
                                 <h5 class="pd-p">Planing</h5>
 
                                 <p>Story Points</p>
-                                <input type="text" name="storyPoints" class="input-style"
+                                <input type="text" name="storyPoints" class="input-style" id="workItemPoints"
                                     placeholder="Enter points: e.x 5">
 
                                 <p>Priority</p>
-                                <input type="text" name="priorityPoints" class="input-style"
+                                <input type="text" name="priorityPoints" class="input-style" id="workItemPriority"
                                     placeholder="Enter Priority: e.x 3">
 
                             </div>
@@ -163,9 +163,10 @@
 
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button id="createProjectBtn" type="submit" value="submit" class="btn btn-primary">Create
-                        Project</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    <button id="createProjectBtn" type="submit" value="submit" class="btn btn-primary">
+                        Create work item
+                    </button>
                 </div>
             </form>
         </div>
