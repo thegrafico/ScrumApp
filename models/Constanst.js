@@ -1,3 +1,3 @@
-module.exports.projectStatus = ["New", "Active", "Completed", "Deleted", "Hold", "Abandoned"];
+module.exports.projectStatus = ["New", "Active", "Completed", "Deleted", "Block", "Abandoned"];
 
 module.exports.userStatus = ["Active", "Inactive"];

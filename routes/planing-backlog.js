@@ -45,7 +45,11 @@ router.get("/:id/planing/backlog", middleware.isUserInProject, async function (r
         "projectId": projectId,
         "projectStatus": STATUS,
         "activeTab": "Backlog,Planing",
-        "tabTitle": "Backlog"
+        "tabTitle": "Backlog",
+        "assignedUsers": [{name:"Raul Pichardo", val: "01"}, {name: "Lana Pichardo", val: "02"}],
+        "statusWorkItem": STATUS,
+        "teamWorkItem": [{name: "Team Awesome", val: "01"}, {name: "Team Batman", val: "02"}],
+        "sprints": [{name: "Sprint 1", val: "01"}, {name: "Sprint 2", val: "02"}, {name: "Sprint 3", val: "03"}]
     };
    
 
