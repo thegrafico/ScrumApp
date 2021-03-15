@@ -3,9 +3,10 @@
  */
 
 // import DB
-const projectUsers = require("./projectUsers");
-const mongoose = require("mongoose");
-const projectStatus = require("./Constanst").projectStatus;
+const projectUsersCollection    = require("./projectUsers");
+const userCollection            = require("./user");
+const projectStatus             = require("./Constanst").projectStatus;
+const mongoose                  = require("mongoose");
 
 const ObjectId = mongoose.Schema.ObjectId;
 
@@ -25,6 +26,7 @@ let projectSchema = new mongoose.Schema({
 }, {
     timestamps: true
 });
+
 
 /**
  * remove all users that have this project when this project is removed
@@ -67,7 +69,7 @@ function addToProjectUsers(projectId, userId) {
             projectId
         };
 
-        const response = await projectUsers
+        const response = await projectUsersCollection
             .create(newUserInProject)
             .catch((err) => {
                 console.log("Error adding the user to the project: ", err);
@@ -86,7 +88,7 @@ function addToProjectUsers(projectId, userId) {
 function removeUsersFromProject(projectId) {
     return new Promise(async function (resolve, reject) {
         
-        const response = await projectUsers.deleteMany({_id: projectId}).catch((err) => {
+        const response = await projectUsersCollection.deleteMany({_id: projectId}).catch((err) => {
             console.log("Error removing the users from project removed: ", err);
         });
 
@@ -97,6 +99,38 @@ function removeUsersFromProject(projectId) {
         }
         resolve(true);
     });
+}
+
+/**
+ * Get all users from a project with the user information
+ * @param {String} projectId - id of the project
+ * @returns {Array} - array of object  -> [{name, id}]
+ */
+projectSchema.statics.getUsers = async (projectId) => {
+    
+    // modal to get the user info ==> [{name, id}]
+    let usersArr = [];
+
+    // get all users that belong to this project
+    const all_users = await projectUsersCollection.find({projectId}).catch(err => console.log(err));
+    
+    // get basic info as the name and id -- Later we could get more info
+    for(let i = 0; i < all_users.length; ++i){
+        
+        // get the current userId
+        const userId = all_users[i].userId;
+        
+        // get the info of that userId
+        const userInfo = await userCollection.findById(userId).catch(err => console.log(err));
+        
+        // sky only if there is not info of the user
+        if (!userInfo) continue
+        
+        // add that user to the array
+        usersArr.push({name: userInfo.fullName, id: userId});
+    }
+
+    return usersArr;
 }
 
 module.exports = mongoose.model("Projects", projectSchema);

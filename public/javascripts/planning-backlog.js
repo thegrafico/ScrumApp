@@ -2,10 +2,13 @@ const newWorkItem = {
     title: "#new-item-title",
     user: "#assignedUser",
     state: "#statusAssigned",
+    team: "#teamAssigned",
+    type: "#workItemType",
     description: "#description-textarea",
     points: "#workItemPoints",
     priority: "#workItemPriority",
-    discussion: "#comment-textarea"
+    discussion: "#comment-textarea",
+    tags: ".tagNme",
 };
 const createWorkItemModal = ".createNewItemModal";
 const currentIconId = "#currentType";
@@ -13,6 +16,9 @@ const addTagBtn = "#addTagBtn";
 const tagContainer = ".tagsContainer";
 const spanTitleMsg = "#title-span-msg";
 const rmTag = ".rmTag";
+const BTN_CHANGE_TYPE = ".btnType";
+const INPUT_TYPE_HIDDEN_ELEMENT = "#workItemType";
+const CREATE_WORK_ITEM_FORM = "#createWorkItemForm";
 
 const tagTemplate = `<span class="badge badge-secondary"> <input type="text" name="tags[]" placeholder="Enter tag " class='tagNme'> <span aria-hidden="true" class="rmTag">&times;</span>  </span>`;
 
@@ -49,16 +55,29 @@ $(function () {
         }
     });
 
-    // TODO: maybe static icons?
-    $(".btnType").on("click", function () {
-        let clickedIcon = $(this).html()
-        let currentIcon = $(currentIconId).html();
-        let temp = currentIcon;
-        // console.log(clickedIcon);
+    /**
+     * Event to change the type of the work item
+     */
+    // TODO: maybe static icons? so when the user change the element it will always be at the same location
+    $(BTN_CHANGE_TYPE).on("click", function () {
 
+        // get the current element
+        let currentIcon = $(currentIconId).html();        
+
+        // get the clicked element
+        let clickedIcon = $(this).html();
+        let selecteTextValue = $(this).text().trim().toLowerCase();
+
+        // store the current element in a temporal variable
+        let temp = currentIcon;
+
+        // clean the current element and change it with the clicked
         $(currentIconId).empty().html(clickedIcon);
+
+        // add the temporal element into the select options
         $(this).empty().html(temp)
-        // console.log(currentIcon);
+
+        $(INPUT_TYPE_HIDDEN_ELEMENT).val(selecteTextValue);
     });
 
     // Add tag
@@ -75,9 +94,19 @@ $(function () {
         }
     });
 
+    /**
+     * Event to remove the tag when the user click the 'x' button
+     */
     $(document).on("click", rmTag, function () {
         $(this).parent().remove()
-    })
+    });
+
+    $(CREATE_WORK_ITEM_FORM).on("submit", function(event){
+        // event.preventDefault();
+
+        isFormValid = validateFormWorkItem();
+
+    });
 
 });
 
@@ -113,4 +142,22 @@ function cleanModal() {
     // TODO: reset type
     // TODO: reset team depending on the user's team
     // TODO: reset sprint depending on the current sprint
+}
+
+/**
+ * This funtion validates the form to create a new WorkItem
+ */
+// TODO: change alert for other better ui messages
+function validateFormWorkItem(){
+
+    const title = $(newWorkItem["title"]).val().trim()
+    const userId = $(newWorkItem["assignedUser"]).val().trim()
+
+    // Validate title
+    if (title.length < 3){
+        alert("Title cannot be less than 3 chars");
+        return false;
+    }
+
+    return true;
 }

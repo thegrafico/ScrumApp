@@ -14,7 +14,7 @@ let userSchema = new mongoose.Schema({
 
 userSchema.plugin(passportLocalMongoose);
 
-// I am use bctypt, but you need your comparer function
+// TODO: I am use bctypt, but you need your comparer function
 userSchema.methods.verifyPassword = function(password) {
     return password == this.password
 };

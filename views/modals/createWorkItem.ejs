@@ -4,7 +4,7 @@
     <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
 
         <div class="modal-content">
-            <form method="POST" action="" id="createProjectForm">
+            <form method="POST" action="/dashboard/<%=projectId%>/planing/backlog/newWorkItem" id="createWorkItemForm">
                 <div class="modal-header">
                     <h5 class="modal-title" id="modalTitle">New work item </h5> &nbsp; &nbsp; <i class="fas fa-bolt taskIcon"></i>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -34,7 +34,7 @@
                                     <select class="custom-select my-custon-select" name="userAssigned" id="assignedUser">
                                         <option value="0" selected> Unassigned </option>
                                         <% for (user of assignedUsers){ %>
-                                            <option value="<%=user['val']%>"> <%=user["name"]%> </option>
+                                            <option value="<%=user['id']%>"> <%=user["name"]%> </option>
                                         <%}%>                                        
                                     </select>
                                 </div>
@@ -58,19 +58,19 @@
                                 <div class="row">
                                     <div class="col-2 d-flex">
                                         <span class="aling-vertically align-self-center"> State: </span>
-                                        <select class="custom-select my-custon-select " name="statusAssigned" id="statusAssigned">
+                                        <select class="custom-select my-custon-select" name="stateWorkItem" id="statusAssigned">
                                             <% for (indx in statusWorkItem){ %>
-                                                <option value="<%=indx%>" selected><%=statusWorkItem[indx]%></option>
+                                                <option value="<%=indx%>"><%=statusWorkItem[indx]%></option>
                                             <%}%>   
                                         </select>
                                     </div>
 
                                     <div class="col-4 d-flex">
                                         <span class="aling-vertically align-self-center"> Team: </span>
-                                        <select class="custom-select my-custon-select " name="statusAssigned"
-                                            id="statusAssigned">
+                                        <select class="custom-select my-custon-select " name="teamAssigned"
+                                            id="teamAssigned">
                                             <% for (team of teamWorkItem){ %>
-                                                <option value="<%=team['val']%>" selected><%=team['name']%></option>
+                                                <option value="<%=team['val']%>"><%=team['name']%></option>
                                             <%}%>  
                                         </select>
                                     </div>
@@ -94,7 +94,7 @@
                                             </li>
                                         </ul>
                                         <!-- TODO: add the value of the current selected type -->
-                                        <input type="hidden" name="workItemType" id="workItemType" value="">
+                                        <input type="hidden" name="workItemType" id="workItemType" value="story">
                                     </div>
 
                                     <div class="col-4 d-flex">
