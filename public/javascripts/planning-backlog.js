@@ -6,6 +6,7 @@ const newWorkItem = {
     type: "#workItemType",
     description: "#description-textarea",
     points: "#workItemPoints",
+    sprint: "#sprints",
     priority: "#workItemPriority",
     discussion: "#comment-textarea",
     tags: ".tagNme",
@@ -19,6 +20,7 @@ const rmTag = ".rmTag";
 const BTN_CHANGE_TYPE = ".btnType";
 const INPUT_TYPE_HIDDEN_ELEMENT = "#workItemType";
 const CREATE_WORK_ITEM_FORM = "#createWorkItemForm";
+const BTN_PLANING = "#Planing";
 
 const tagTemplate = `<span class="badge badge-secondary"> <input type="text" name="tags[]" placeholder="Enter tag " class='tagNme'> <span aria-hidden="true" class="rmTag">&times;</span>  </span>`;
 
@@ -34,6 +36,9 @@ $(function () {
 
     // show the active tab in the sidebar
     showActiveTab();
+
+    // click on planing just to show to the user in the sidebar
+    $(BTN_PLANING).click();
 
     // clean the modal to add an user
     $(createWorkItemModal).on('shown.bs.modal', function (e) {
@@ -102,9 +107,11 @@ $(function () {
     });
 
     $(CREATE_WORK_ITEM_FORM).on("submit", function(event){
-        // event.preventDefault();
-
         isFormValid = validateFormWorkItem();
+        console.log(isFormValid);
+        if (!isFormValid){
+            event.preventDefault();
+        }
 
     });
 
@@ -150,12 +157,32 @@ function cleanModal() {
 // TODO: change alert for other better ui messages
 function validateFormWorkItem(){
 
-    const title = $(newWorkItem["title"]).val().trim()
-    const userId = $(newWorkItem["assignedUser"]).val().trim()
+    const title = $(newWorkItem["title"]).val().trim();
+    // const state = $(newWorkItem["state"]).val();
+    // const teamId = $(newWorkItem["team"]).val();
+    // const type = $(newWorkItem["type"]).val();
+    // const sprint = $(newWorkItem["sprint"]).val();
+    const description = $(newWorkItem["description"]).val();
+    const points = $(newWorkItem["points"]).val();
+    const priority = $(newWorkItem["priority"]).val();
 
+    // console.log(`POINTS: ${points}, Priority: ${priority}`);
+   
     // Validate title
     if (title.length < 3){
         alert("Title cannot be less than 3 chars");
+        return false;
+    }
+
+    // validate points
+    if (!validator.isEmpty(points) && isNaN(points)){
+        alert("Points only accept numbers");
+        return false;
+    }
+
+     // validate priority
+     if (!validator.isEmpty(priority) && isNaN(priority)){
+        alert("Priority only accept numbers");
         return false;
     }
 

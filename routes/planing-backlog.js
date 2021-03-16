@@ -5,16 +5,17 @@
  */
 
 // ============= CONST AND DEPENDENCIES =============
-const express               = require("express");
-const _                     = require("lodash");
-const validator             = require("validator");
-const STATUS                = require('../models/Constanst').projectStatus;
-const moment                = require('moment');
-const projectCollection     = require("../models/projects");
-const userCollection        = require("../models/user");
+const express = require("express");
+const _ = require("lodash");
+const validator = require("validator");
+const STATUS = require('../models/Constanst').projectStatus;
+const UNASSIGNED_USER = require('../models/Constanst').UNASSIGNED_USER;
+const moment = require('moment');
+const projectCollection = require("../models/projects");
+const userCollection = require("../models/user");
 const projectUserCollection = require("../models/projectUsers");
-const middleware            = require("../middleware/auth");
-let router                  = express.Router();
+const middleware = require("../middleware/auth");
+let router = express.Router();
 // ===================================================
 
 
@@ -40,21 +41,37 @@ router.get("/:id/planing/backlog", middleware.isUserInProject, async function (r
     }
 
     // get all users for this project
-    const users = await projectCollection.getUsers(projectId);
+    let users = await projectCollection.getUsers(projectId).catch(err => console.log(err)) || [];
 
+    // Default value
+    users.unshift(UNASSIGNED_USER);
     // populating params
     let params = {
         "project": projectInfo,
         "projectId": projectId,
-        "projectStatus": STATUS,
         "activeTab": "Backlog,Planing",
         "tabTitle": "Backlog",
         "assignedUsers": users,
         "statusWorkItem": STATUS,
-        "teamWorkItem": [{name: "Team Awesome", val: "01"}, {name: "Team Batman", val: "02"}],
-        "sprints": [{name: "Sprint 1", val: "01"}, {name: "Sprint 2", val: "02"}, {name: "Sprint 3", val: "03"}]
+        "teamWorkItem": [UNASSIGNED_USER, {
+            name: "Team Awesome",
+            id: "01"
+        }, {
+            name: "Team Batman",
+            id: "02"
+        }],
+        "sprints": [{
+            name: "Sprint 1",
+            id: "01"
+        }, {
+            name: "Sprint 2",
+            id: "02"
+        }, {
+            name: "Sprint 3",
+            id: "03"
+        }]
     };
-   
+
 
     res.render("planing-backlog", params);
 });
@@ -62,7 +79,21 @@ router.get("/:id/planing/backlog", middleware.isUserInProject, async function (r
 /**
  * METHOD: GET - show the main page for projects
  */
- router.post("/:id/planing/backlog/newWorkItem", middleware.isUserInProject, async function (req, res) {
+router.post("/:id/planing/backlog/newWorkItem", middleware.isUserInProject, async function (req, res) {
+
+    // new work item
+    const {
+        title,
+        userAssigned,
+        stateWorkItem,
+        teamAssigned,
+        workItemType,
+        sprint,
+        workItemDescription,
+        storyPoints,
+        priorityPoints,
+        comments
+    } = req.body;
     console.log(req.body);
 
     res.redirect("back");
