@@ -61,11 +61,11 @@
                             <div class="col-12 mt-4">
                                 <div class="row">
                                     <div class="col-2 d-flex">
-                                        <span class="aling-vertically align-self-center"> State: </span>
-                                        <select class="custom-select my-custon-select" name="stateWorkItem" id="statusAssigned">
-                                            <% for (indx in statusWorkItem){ %>
-                                                <option value="<%=indx%>"><%=statusWorkItem[indx]%></option>
-                                            <%}%>   
+                                        <span class="aling-vertically align-self-center"> Status: </span>
+                                        <select class="custom-select my-custon-select" name="statusWorkItem" id="statusAssigned">
+                                            <% for(let i = 0; i < statusWorkItem.length; ++i){ %>
+                                                <option value="<%=i%>" selected> <%=statusWorkItem[i]%> </option>
+                                            <% } %>
                                         </select>
                                     </div>
 

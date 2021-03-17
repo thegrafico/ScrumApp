@@ -1,7 +1,7 @@
 /**
  * Main auth middleware
  */
-const projectUsersCollection = require("../models/projectUsers");
+const projectUsersCollection = require("../dbSchema/projectUsers");
 
 /**
  * Verify if the user is login 

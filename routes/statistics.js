@@ -8,11 +8,11 @@
 const express               = require("express");
 const _                     = require("lodash");
 const validator             = require("validator");
-const STATUS                = require('../models/Constanst').projectStatus;
+const STATUS                = require('../dbSchema/Constanst').projectStatus;
 const moment                = require('moment');
-const projectCollection     = require("../models/projects");
-const userCollection        = require("../models/user");
-const projectUserCollection = require("../models/projectUsers");
+const projectCollection     = require("../dbSchema/projects");
+const userCollection        = require("../dbSchema/user");
+const projectUserCollection = require("../dbSchema/projectUsers");
 const middleware            = require("../middleware/auth");
 let router                  = express.Router();
 // ===================================================

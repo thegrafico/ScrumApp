@@ -1,9 +1,9 @@
 //Esto es para prueba, este archivo crea ejemplos de prueba en la DB
 
 const mongoose = require("mongoose"); //Require DB
-let userCollection = require("./models/user");
-let projectCollection = require("./models/projects");
-let projectUsersCollection = require("./models/projectUsers");
+let userCollection = require("./dbSchema/user");
+let projectCollection = require("./dbSchema/projects");
+let projectUsersCollection = require("./dbSchema/projectUsers");
 
 // user
 const USERS = [

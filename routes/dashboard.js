@@ -8,8 +8,8 @@
 const express               = require("express");
 const valid                 = require("validator");
 const _                     = require("lodash");
-let projectCollection       = require("../models/projects");
-let projectUsersCollection  = require("../models/projectUsers");
+let projectCollection       = require("../dbSchema/projects");
+let projectUsersCollection  = require("../dbSchema/projectUsers");
 
 
 let router = express.Router();

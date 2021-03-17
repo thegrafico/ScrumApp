@@ -8,12 +8,12 @@
 const express = require("express");
 const _ = require("lodash");
 const validator = require("validator");
-const STATUS = require('../models/Constanst').projectStatus;
-const UNASSIGNED_USER = require('../models/Constanst').UNASSIGNED_USER;
+const STATUS = require('../dbSchema/Constanst').projectStatus;
+const UNASSIGNED_USER = require('../dbSchema/Constanst').UNASSIGNED_USER;
 const moment = require('moment');
-const projectCollection = require("../models/projects");
-const userCollection = require("../models/user");
-const projectUserCollection = require("../models/projectUsers");
+const projectCollection = require("../dbSchema/projects");
+const userCollection = require("../dbSchema/user");
+const projectUserCollection = require("../dbSchema/projectUsers");
 const middleware = require("../middleware/auth");
 let router = express.Router();
 // ===================================================
@@ -85,7 +85,7 @@ router.post("/:id/planing/backlog/newWorkItem", middleware.isUserInProject, asyn
     const {
         title,
         userAssigned,
-        stateWorkItem,
+        statusWorkItem,
         teamAssigned,
         workItemType,
         sprint,
@@ -95,6 +95,27 @@ router.post("/:id/planing/backlog/newWorkItem", middleware.isUserInProject, asyn
         comments
     } = req.body;
     console.log(req.body);
+
+    // Title
+    if (_.isEmpty(title) || title.length < 3){
+        res.status(400).send("Title cannot be empty and have to be grater than 3 chars.");
+        return res.redirect("back");
+    }
+
+    // User assigned
+    // TODO: Verify if the user exits
+
+    // Status
+    if (_.isEmpty(statusWorkItem) || !STATUS[parseInt(statusWorkItem)]){
+        res.status(400).send("Status cannot be empty");
+        return res.redirect("back");
+    }
+
+    // Team
+    // TODO: Verify if the team exits
+
+    // work item type
+    
 
     res.redirect("back");
 });

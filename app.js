@@ -1,18 +1,18 @@
 // ========== IMPORTS ============
-const seedDB = require('./seeds'); // to test the database, create dummy data. 
-const createError = require('http-errors');
-const express = require('express');
-const session = require('express-session');
-const path = require('path');
-const cookieParser = require('cookie-parser');
-const logger = require('morgan');
-const connectDB = require('./config/db');
-const MongoStore = require('connect-mongo')(session);
-const passport = require('passport');
-const LocalStrategy = require('passport-local');
-const User = require('./models/user');
-const middleware = require('./middleware/auth');
-const dotenv = require('dotenv');
+const seedDB          = require('./seeds'); // to test the database, create dummy data. 
+const createError     = require('http-errors');
+const express         = require('express');
+const session         = require('express-session');
+const path            = require('path');
+const cookieParser    = require('cookie-parser');
+const logger          = require('morgan');
+const connectDB       = require('./config/db');
+const MongoStore      = require('connect-mongo')(session);
+const passport        = require('passport');
+const LocalStrategy   = require('passport-local');
+const User            = require('./dbSchema/user');
+const middleware      = require('./middleware/auth');
+const dotenv          = require('dotenv');
 dotenv.config({
   path: './config/config.env'
 });
