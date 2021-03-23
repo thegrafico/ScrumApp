@@ -5,6 +5,8 @@ let userCollection          = require("./dbSchema/user");
 let projectCollection       = require("./dbSchema/projects");
 let projectUsersCollection  = require("./dbSchema/projectUsers");
 let projectTeamCollection   = require("./dbSchema/projectTeam");
+let sprintCollection        = require("./dbSchema/sprint");
+
 // user
 const USERS = [
   {
@@ -67,7 +69,31 @@ const PROJECT_TEAM = [
     projectId: "6027fc80a40b46138321a5e0",
     users: [],
   },
-]
+];
+
+const PROJECT_SPRINTS = [
+  {
+    name: "Build 0.1",
+    projectId: "6027fc80a40b46138321a5e0",
+    task: [],
+    isActive: false,
+  },
+  {
+    name: "Build 0.2",
+    projectId: "6027fc80a40b46138321a5e0",
+    task: [],
+    isActive: true,
+  }
+];
+
+/**
+ * Create sprint for a project
+ */
+async function createProjectSprint(){
+  for (let index = 0; index < PROJECT_SPRINTS.length; index++) {
+    await sprintCollection.create(PROJECT_SPRINTS[index]).catch(err => { console.log("Error Creating the sprint for the project: ", err); throw err});
+  }
+}
 
 /**
  * Create the project team
@@ -131,6 +157,9 @@ async function addUserToProject(userId, projectId){
 
 async function seedDB() {
   
+  // remove all sprint from a project
+  await sprintCollection.deleteMany({});
+
   // Remove all teams
   await projectTeamCollection.deleteMany({});
 
@@ -158,6 +187,8 @@ async function seedDB() {
 
   // create team project
   await createProjectTeam();
+
+  await createProjectSprint();
 
 }
 

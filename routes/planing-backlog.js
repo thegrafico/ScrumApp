@@ -9,14 +9,18 @@ const express                   = require("express");
 const _                         = require("lodash");
 const validator                 = require("validator");
 const STATUS                    = require('../dbSchema/Constanst').projectStatus;
-const UNASSIGNED_USER           = require('../dbSchema/Constanst').UNASSIGNED_USER;
 const moment                    = require('moment');
 const projectCollection         = require("../dbSchema/projects");
-const userCollection            = require("../dbSchema/user");
-const projectUserCollection     = require("../dbSchema/projectUsers");
+const sprintCollection          = require("../dbSchema/sprint");
 const teamProjectCollection     = require("../dbSchema/projectTeam");
 const middleware                = require("../middleware/auth");
 let router                      = express.Router();
+
+const {
+    UNASSIGNED_USER, 
+    EMPTY_SPRINT,
+} = require('../dbSchema/Constanst');
+
 // ===================================================
 
 
@@ -41,9 +45,13 @@ router.get("/:id/planing/backlog", middleware.isUserInProject, async function (r
         return res.redirect('/');
     }
 
+    // TODO: Verify which project is the user in, and set that to be the selected in the frontend
     // get all the teams for this project
-    const teams = await teamProjectCollection.find({projectId}).catch(err => console.log(err)) || [];
+    let teams = await teamProjectCollection.find({projectId}).catch(err => console.log(err)) || [];
     teams.unshift(UNASSIGNED_USER);
+
+    let sprints = await sprintCollection.find({projectId}).catch(err => console.log(err)) || [];
+    sprints.unshift(EMPTY_SPRINT);
 
     // get all users for this project -> expected an array
     let users = await projectCollection.getUsers(projectId).catch(err => console.log(err)) || [];
@@ -58,16 +66,7 @@ router.get("/:id/planing/backlog", middleware.isUserInProject, async function (r
         "assignedUsers": users,
         "statusWorkItem": STATUS,
         "teamWorkItem": teams,
-        "sprints": [{
-            name: "Sprint 1",
-            id: "01"
-        }, {
-            name: "Sprint 2",
-            id: "02"
-        }, {
-            name: "Sprint 3",
-            id: "03"
-        }]
+        "sprints": sprints,
     };
 
 
