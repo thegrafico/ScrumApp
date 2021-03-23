@@ -18,9 +18,9 @@ dotenv.config({
 });
 
 // ======== ROUTES ===============
-const loginRoute = require('./routes/login');
-const dashboardRoute = require('./routes/dashboard');
-const projectDetailRoute = require("./routes/statistics");
+const loginRoute          = require('./routes/login');
+const dashboardRoute      = require('./routes/dashboard');
+const projectDetailRoute  = require("./routes/statistics");
 const planingBacklogRoute = require("./routes/planing-backlog");
 
 // App object 
@@ -100,12 +100,9 @@ passport.deserializeUser(function (id, done) {
 // create DB data - for testing
 // seedDB();
 
-
 // ==================== ROUTES =================
-
 // Loading routes
 app.use('/login', loginRoute);
-
 
 // middleware to get the username
 app.use(function (req, res, next) {
@@ -126,7 +123,6 @@ app.use(function (req, res, next) {
 app.use('/', middleware.isUserLogin, dashboardRoute); // main page
 app.use('/dashboard/', middleware.isUserLogin, projectDetailRoute); // dashboard to show project
 app.use('/dashboard/', middleware.isUserLogin, planingBacklogRoute); // dashboard to show project
-
 
 // ==================== ROUTES =================
 // catch 404 and forward to error handler

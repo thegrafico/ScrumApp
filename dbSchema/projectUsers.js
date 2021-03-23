@@ -5,7 +5,6 @@
 // import DB
 const mongoose = require("mongoose");
 const userStatus = require('./Constanst').userStatus;
-const userCollection = require('./user');
 
 const ObjectId = mongoose.Schema.ObjectId;
 

@@ -1,10 +1,10 @@
 //Esto es para prueba, este archivo crea ejemplos de prueba en la DB
 
-const mongoose = require("mongoose"); //Require DB
-let userCollection = require("./dbSchema/user");
-let projectCollection = require("./dbSchema/projects");
-let projectUsersCollection = require("./dbSchema/projectUsers");
-
+const mongoose              = require("mongoose"); //Require DB
+let userCollection          = require("./dbSchema/user");
+let projectCollection       = require("./dbSchema/projects");
+let projectUsersCollection  = require("./dbSchema/projectUsers");
+let projectTeamCollection   = require("./dbSchema/projectTeam");
 // user
 const USERS = [
   {
@@ -56,11 +56,27 @@ const INDIVIDUAL_PROJECT = [
   }
 ];
 
-// const usersInProject = [
-//   {
+const PROJECT_TEAM = [
+  {
+    name: "Team Batman",
+    projectId: "6027fc80a40b46138321a5e0",
+    users: [],
+  },
+  {
+    name: "Team Superman",
+    projectId: "6027fc80a40b46138321a5e0",
+    users: [],
+  },
+]
 
-//   },
-// ];
+/**
+ * Create the project team
+ */
+async function createProjectTeam(){
+  for (let index = 0; index < PROJECT_TEAM.length; index++) {
+    await projectTeamCollection.create(PROJECT_TEAM[index]).catch(err => { console.log("Error Creating the team for the project: ", err); throw err});
+  }
+}
 
 /**
  * Add user to the database
@@ -115,6 +131,9 @@ async function addUserToProject(userId, projectId){
 
 async function seedDB() {
   
+  // Remove all teams
+  await projectTeamCollection.deleteMany({});
+
   // remove projects
   await projectCollection.deleteMany({});
   // await projectCollection.deleteOne({_id: INDIVIDUAL_PROJECT});
@@ -129,45 +148,18 @@ async function seedDB() {
   const usersId = await addUsersToDB();
 
   // add one project with a specify id to the user: for testing
-  await createProjectForUser(usersId[0], INDIVIDUAL_PROJECT);
-  addUserToProject(usersId[1], INDIVIDUAL_PROJECT[0]._id);
+  await createProjectForUser(usersId[0], INDIVIDUAL_PROJECT).catch(err => console.log("Error Creating project for user: ", err));
+  await addUserToProject(usersId[1], INDIVIDUAL_PROJECT[0]._id);
   
   for (let i = 0; i < usersId.length; i++) {
     const id = usersId[i];
     await createProjectForUser(id);
   }
 
+  // create team project
+  await createProjectTeam();
 
-
-  // users.forEach(function (user) {
-  //   // add the user to the database
-  //   userCollection.create(user, function (err, userCreated) {
-  //     if (err) {
-  //       console.log("Err 2: ", err);
-  //       return;
-  //     }
-  //     console.log("User created with the id: ", userCreated._id);
-
-  //     // add the project to the data base
-  //     projects.forEach(function (project) {
-  //       // console.log(userCreated._id);
-  //       project["author"] = userCreated._id;
-
-  //       // set a project id only for the first user
-  //       if (userCreated._id != "601782de1fb2050e11bfbf1f" && justOne) {project["_id"] = "6027fe5d95c3fa28d5388f6f"; justOne = false; console.log("Here")}; 
-  //       projectCollection.create(project, function (err, projectCreated) {
-  //         if (err) {
-  //           console.log("Err 3: ", err);
-  //           return;
-  //         }
-  //         console.log("Added project to user: ", projectCreated._id);
-  //         // userCollection.save();
-  //       });
-  //     });
-  //   });
-  // });
 }
-// db.getCollectionNames().forEach(function(x) {db[x].drop()})
 
-//exportar nuestra funcion seedDB
+// export our function
 module.exports = seedDB;

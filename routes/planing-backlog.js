@@ -5,17 +5,18 @@
  */
 
 // ============= CONST AND DEPENDENCIES =============
-const express = require("express");
-const _ = require("lodash");
-const validator = require("validator");
-const STATUS = require('../dbSchema/Constanst').projectStatus;
-const UNASSIGNED_USER = require('../dbSchema/Constanst').UNASSIGNED_USER;
-const moment = require('moment');
-const projectCollection = require("../dbSchema/projects");
-const userCollection = require("../dbSchema/user");
-const projectUserCollection = require("../dbSchema/projectUsers");
-const middleware = require("../middleware/auth");
-let router = express.Router();
+const express                   = require("express");
+const _                         = require("lodash");
+const validator                 = require("validator");
+const STATUS                    = require('../dbSchema/Constanst').projectStatus;
+const UNASSIGNED_USER           = require('../dbSchema/Constanst').UNASSIGNED_USER;
+const moment                    = require('moment');
+const projectCollection         = require("../dbSchema/projects");
+const userCollection            = require("../dbSchema/user");
+const projectUserCollection     = require("../dbSchema/projectUsers");
+const teamProjectCollection     = require("../dbSchema/projectTeam");
+const middleware                = require("../middleware/auth");
+let router                      = express.Router();
 // ===================================================
 
 
@@ -40,11 +41,14 @@ router.get("/:id/planing/backlog", middleware.isUserInProject, async function (r
         return res.redirect('/');
     }
 
-    // get all users for this project
-    let users = await projectCollection.getUsers(projectId).catch(err => console.log(err)) || [];
+    // get all the teams for this project
+    const teams = await teamProjectCollection.find({projectId}).catch(err => console.log(err)) || [];
+    teams.unshift(UNASSIGNED_USER);
 
-    // Default value
+    // get all users for this project -> expected an array
+    let users = await projectCollection.getUsers(projectId).catch(err => console.log(err)) || [];
     users.unshift(UNASSIGNED_USER);
+
     // populating params
     let params = {
         "project": projectInfo,
@@ -53,13 +57,7 @@ router.get("/:id/planing/backlog", middleware.isUserInProject, async function (r
         "tabTitle": "Backlog",
         "assignedUsers": users,
         "statusWorkItem": STATUS,
-        "teamWorkItem": [UNASSIGNED_USER, {
-            name: "Team Awesome",
-            id: "01"
-        }, {
-            name: "Team Batman",
-            id: "02"
-        }],
+        "teamWorkItem": teams,
         "sprints": [{
             name: "Sprint 1",
             id: "01"
