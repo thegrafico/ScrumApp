@@ -19,6 +19,7 @@ let router                      = express.Router();
 const {
     UNASSIGNED_USER, 
     EMPTY_SPRINT,
+    WORK_ITEM_TYPE,
 } = require('../dbSchema/Constanst');
 
 // ===================================================
@@ -67,6 +68,7 @@ router.get("/:id/planing/backlog", middleware.isUserInProject, async function (r
         "statusWorkItem": STATUS,
         "teamWorkItem": teams,
         "sprints": sprints,
+        "workItemType": WORK_ITEM_TYPE
     };
 
 
