@@ -23,8 +23,7 @@
                             <div class="col IdAndTitle">
                                 <input type="text" name="title" id="new-item-title" class="bx-shadow"
                                     placeholder="Enter title">
-                                <span id="title-span-msg"><i class="fas fa-exclamation-circle"></i> Title cannot be
-                                    empty</span>
+                                <span id="title-span-msg"><i class="fas fa-exclamation-circle"></i> Title cannot be empty</span>
                             </div>
                         </div>
 
@@ -63,11 +62,14 @@
                                 <div class="row">
                                     <div class="col-2 d-flex">
                                         <span class="aling-vertically align-self-center"> Status: </span>
-                                        <select class="custom-select my-custon-select" name="statusWorkItem"
-                                            id="statusAssigned">
-                                            <% for(let i = 0; i < statusWorkItem.length; ++i){ %>
-                                                <option value="<%=i%>" selected> <%=statusWorkItem[i]%> </option>
-                                            <% } %>
+                                        <select class="custom-select my-custon-select" name="statusWorkItem" id="statusAssigned">
+                                            <!-- <% for(let i = 0; i < statusWorkItem.length; i++){ %> -->
+                                                <!-- <option value="HOLA" selected> <%=statusWorkItem[i]%> </option> -->
+                                            <!-- <% } %> -->
+
+                                            <% for (status of statusWorkItem){ %>
+                                                <option value="<%=status%>"><%=status%></option>
+                                            <%}%>  
                                         </select>
                                     </div>
 

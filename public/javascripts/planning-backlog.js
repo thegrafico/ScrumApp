@@ -130,7 +130,7 @@ function cleanModal() {
     $(`${tagContainer} span`).remove();
 
     // reset state
-    $(newWorkItem["state"]).val(0);
+    $(newWorkItem["state"]).val("New");
 
     // Reset description
     $(newWorkItem["description"]).val("");

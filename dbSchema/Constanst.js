@@ -33,3 +33,7 @@ module.exports.WORK_ITEM_TYPE = [
         active: false
     }
 ];
+
+module.exports.WORK_ITEM_STATUS = [
+    
+];

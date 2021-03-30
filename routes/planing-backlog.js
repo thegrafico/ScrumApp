@@ -104,8 +104,9 @@ router.post("/:id/planing/backlog/newWorkItem", middleware.isUserInProject, asyn
     // User assigned
     // TODO: Verify if the user exits
 
+    // TODO: verify is the status is in the db
     // Status
-    if (_.isEmpty(statusWorkItem) || !STATUS[parseInt(statusWorkItem)]){
+    if (_.isEmpty(statusWorkItem) || !_.isString(statusWorkItem) ){
         res.status(400).send("Status cannot be empty");
         return res.redirect("back");
     }
