@@ -13,6 +13,7 @@ const moment                    = require('moment');
 const projectCollection         = require("../dbSchema/projects");
 const sprintCollection          = require("../dbSchema/sprint");
 const teamProjectCollection     = require("../dbSchema/projectTeam");
+const workItemCollection        = require("../dbSchema/workItem");
 const middleware                = require("../middleware/auth");
 let router                      = express.Router();
 
@@ -58,6 +59,11 @@ router.get("/:id/planing/backlog", middleware.isUserInProject, async function (r
     let users = await projectCollection.getUsers(projectId).catch(err => console.log(err)) || [];
     users.unshift(UNASSIGNED_USER);
 
+    // LOADING TABLE WORK ITEMS
+    workItems = await workItemCollection.find({projectId}).catch(err => console.error("Error getting work items: ", err)) || [];
+
+    console.log(workItems);
+
     // populating params
     let params = {
         "project": projectInfo,
@@ -70,7 +76,6 @@ router.get("/:id/planing/backlog", middleware.isUserInProject, async function (r
         "sprints": sprints,
         "workItemType": WORK_ITEM_TYPE
     };
-
 
     res.render("planing-backlog", params);
 });

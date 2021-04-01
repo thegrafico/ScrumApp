@@ -6,6 +6,7 @@ let projectCollection       = require("./dbSchema/projects");
 let projectUsersCollection  = require("./dbSchema/projectUsers");
 let projectTeamCollection   = require("./dbSchema/projectTeam");
 let sprintCollection        = require("./dbSchema/sprint");
+let workItemCollection      = require("./dbSchema/workItem");
 
 // user
 const USERS = [
@@ -60,6 +61,7 @@ const INDIVIDUAL_PROJECT = [
 
 const PROJECT_TEAM = [
   {
+    _id: "6065472735af4606af3adbc9",
     name: "Team Batman",
     projectId: "6027fc80a40b46138321a5e0",
     users: [],
@@ -73,6 +75,7 @@ const PROJECT_TEAM = [
 
 const PROJECT_SPRINTS = [
   {
+    _id: "60597543eb149246e98eb783",
     name: "Build 0.1",
     projectId: "6027fc80a40b46138321a5e0",
     task: [],
@@ -84,6 +87,19 @@ const PROJECT_SPRINTS = [
     task: [],
     isActive: true,
   }
+];
+
+const WORK_ITEMS = [
+  {
+    title: "SSRS_01",
+    projectId: "6027fc80a40b46138321a5e0",
+    assignedUser: "601782de1fb2050e11bfbf1f",
+    sprint: "60597543eb149246e98eb783",
+    storyPoints: 3,
+    teamId: "6065472735af4606af3adbc9",
+    type: "Story",
+    description: "THis is the description of the story"
+  },
 ];
 
 /**
@@ -115,7 +131,7 @@ async function addUsersToDB(){
     const userInfo = await userCollection.create(USERS[index]).catch(err => { console.log("Error adding the user: ", err); throw err});
     usersIds.push(userInfo._id);
   }
-  // console.log("users added: ", usersIds.length);
+  console.log("users added: ", usersIds.length);
 
   return usersIds;
 }
@@ -155,8 +171,19 @@ async function addUserToProject(userId, projectId){
   return (response != null);
 }
 
+async function createWorkItem(){
+  for (let index = 0; index < WORK_ITEMS.length; index++) {
+    await workItemCollection.create(WORK_ITEMS[index]).catch(err => { console.error("Error adding work item: ", err); throw err});
+  }
+}
+
+
 async function seedDB() {
-  
+  // ==================== CLEAN THE DB ==================== 
+
+  // remove work items
+  await workItemCollection.deleteMany({});
+
   // remove all sprint from a project
   await sprintCollection.deleteMany({});
 
@@ -173,11 +200,13 @@ async function seedDB() {
 
   // removing the users from project
   await projectUsersCollection.deleteMany({});
+  // ======================================================
 
   const usersId = await addUsersToDB();
 
   // add one project with a specify id to the user: for testing
   await createProjectForUser(usersId[0], INDIVIDUAL_PROJECT).catch(err => console.log("Error Creating project for user: ", err));
+  
   await addUserToProject(usersId[1], INDIVIDUAL_PROJECT[0]._id);
   
   for (let i = 0; i < usersId.length; i++) {
@@ -190,6 +219,7 @@ async function seedDB() {
 
   await createProjectSprint();
 
+  await createWorkItem();
 }
 
 // export our function
