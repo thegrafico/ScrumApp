@@ -130,6 +130,7 @@ function cleanModal() {
     $(`${tagContainer} span`).remove();
 
     // reset state
+    // TODO: set the default value to be the firts from an array from CONSTANTS.js
     $(newWorkItem["state"]).val("New");
 
     // Reset description

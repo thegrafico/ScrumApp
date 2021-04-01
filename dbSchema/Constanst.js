@@ -34,6 +34,12 @@ module.exports.WORK_ITEM_TYPE = [
     }
 ];
 
-module.exports.WORK_ITEM_STATUS = [
-    
-];
+//  STATUS FOR THE WORK ITEMS
+module.exports.WORK_ITEM_STATUS = ["New", "Active", "Completed", "Deleted", "Block", "Abandoned"];
+
+// MAX STORY POINTS
+module.exports.MAX_STORY_POINTS = 500;
+module.exports.MAX_PRIORITY_POINTS = 5;
+
+// Max length of char for work item description
+module.exports.MAX_LENGTH_DESCRIPTION = 1000;
