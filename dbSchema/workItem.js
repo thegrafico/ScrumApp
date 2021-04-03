@@ -5,7 +5,7 @@
 // import DB
 const mongoose = require("mongoose");
 const {
-    WORK_ITEM_TYPE,
+    WORK_ITEM_ICONS,
     WORK_ITEM_STATUS,
     MAX_STORY_POINTS,
     MAX_PRIORITY_POINTS,
@@ -13,7 +13,7 @@ const {
 } = require("./Constanst");
 
 // get just the name since that will be in the db
-workType = WORK_ITEM_TYPE.map((e) => e.name);
+workType = Object.keys(WORK_ITEM_ICONS);
 
 const ObjectId = mongoose.Schema.ObjectId;
 

@@ -95,13 +95,18 @@
                                             <li class="nav-item dropdown">
                                                 
                                                 <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true"  id="currentType" aria-expanded="false"> 
-                                                    <i class="fas <%=workItemType[0].icon%>"></i>   &nbsp; <%=workItemType[0].name%> 
+                                                    <% for(let key in workItemType){ %>
+                                                        <% if (workItemType[key].default){ %>
+                                                            <i class="fas <%=workItemType[key].icon%>"></i> &nbsp; <%=key%>  </a> 
+                                                            <%break;%>
+                                                        <%}%>
+                                                    <%}%>
                                                 </a>
 
                                                 <div class="dropdown-menu">
-                                                    <% for(let i = 0; i < workItemType.length; ++i){ %>
-                                                        <% if (!workItemType[i].active){ %>
-                                                            <a class="dropdown-item btnType" href="#"> <i class="fas <%=workItemType[i].icon%>"></i> &nbsp; <%=workItemType[i].name%>  </a> 
+                                                    <% for(let key in workItemType){ %>
+                                                        <% if (!workItemType[key].default){ %>
+                                                            <a class="dropdown-item btnType" href="#"> <i class="fas <%=workItemType[key].icon%>"></i> &nbsp; <%=key%>  </a> 
                                                         <%}%>
                                                     <%}%>
                                                 </div>

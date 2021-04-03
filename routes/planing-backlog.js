@@ -20,7 +20,7 @@ let router                      = express.Router();
 const {
     UNASSIGNED_USER, 
     EMPTY_SPRINT,
-    WORK_ITEM_TYPE,
+    WORK_ITEM_ICONS,
 } = require('../dbSchema/Constanst');
 
 // ===================================================
@@ -62,6 +62,7 @@ router.get("/:id/planing/backlog", middleware.isUserInProject, async function (r
     // LOADING TABLE WORK ITEMS
     workItems = await workItemCollection.find({projectId}).catch(err => console.error("Error getting work items: ", err)) || [];
 
+    // TODO: change id to something more user friendly
     console.log(workItems);
 
     // populating params
@@ -74,7 +75,8 @@ router.get("/:id/planing/backlog", middleware.isUserInProject, async function (r
         "statusWorkItem": STATUS,
         "teamWorkItem": teams,
         "sprints": sprints,
-        "workItemType": WORK_ITEM_TYPE
+        "workItemType": WORK_ITEM_ICONS,
+        "workItems": workItems
     };
 
     res.render("planing-backlog", params);

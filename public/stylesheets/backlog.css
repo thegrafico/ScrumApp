@@ -259,3 +259,7 @@
     max-height: 2.7vh;
     overflow: hidden;
 }
+
+tbody tr td i {
+    font-size: 0.8em !important;
+}

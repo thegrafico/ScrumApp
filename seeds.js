@@ -100,6 +100,17 @@ const WORK_ITEMS = [
     type: "Story",
     description: "THis is the description of the story"
   },
+
+  {
+    title: "SSRS_02",
+    projectId: "6027fc80a40b46138321a5e0",
+    // assignedUser: "601782de1fb2050e11bfbf1f",
+    sprint: "60597543eb149246e98eb783",
+    storyPoints: 5,
+    teamId: "6065472735af4606af3adbc9",
+    type: "Bug",
+    description: "THis is the description of the story"
+  },
 ];
 
 /**

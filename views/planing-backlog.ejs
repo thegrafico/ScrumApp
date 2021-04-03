@@ -69,21 +69,25 @@
                         <tr class="tableHeader">
                             <th scope="col">Order</th>
                             <th scope="col">ID</th>
+                            <th scope="col">Type</th>
                             <th scope="col">Title</th>
                             <th scope="col">State</th>
                             <th scope="col">Points</th>
-                            <th scope="col">Tags</th>
+                            <th scope="col">Priority</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <th scope="row">Default</th>
-                            <td>Column content</td>
-                            <td>Column content</td>
-                            <td>Column content</td>
-                            <td>Column content</td>
-                            <td>Column content</td>
-                        </tr>
+                        <% for (let workItem of workItems) {%>
+                            <tr>
+                                <th scope="row">Default</th>
+                                <td>Column content</td>
+                                <td> <i class="fas <%=workItemType[workItem['type']].icon%>"></i> <%=workItem["type"]%></td>
+                                <td><%=workItem["title"]%></td>
+                                <td><%=workItem["status"]%></td>
+                                <td><%=workItem["storyPoints"]%></td>
+                                <td><%=workItem["priorityPoints"]%></td>
+                            </tr>
+                        <%}%>
                     </tbody>
                 </table>
             </div>
