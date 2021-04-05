@@ -12,7 +12,6 @@ const STATUS                = require('../dbSchema/Constanst').projectStatus;
 const moment                = require('moment');
 const projectCollection     = require("../dbSchema/projects");
 const userCollection        = require("../dbSchema/user");
-const projectUserCollection = require("../dbSchema/projectUsers");
 const middleware            = require("../middleware/auth");
 let router                  = express.Router();
 // ===================================================
@@ -62,9 +61,7 @@ router.get("/:id", middleware.isUserInProject, async function (req, res) {
  */
 router.post("/:id/addmember", middleware.isUserInProject, async function (req, res) {
 
-    const {
-        userEmail
-    } = req.body;
+    const { userEmail } = req.body;
 
     // validate email
     if (!validator.isEmail(userEmail)) return res.redirect("back");
@@ -81,16 +78,17 @@ router.post("/:id/addmember", middleware.isUserInProject, async function (req, r
         return res.redirect("back");
     }
 
-    const newMember = {
-        userId,
-        projectId
-    };
+    // TODO: Verify if working
+    const currentProject = await projectCollection.findById(projectId).catch(err=> console.error("Error getting the project to add the user: ", err));
+    currentProject.users.push(userId);
+    await currentProject.save();
 
-    const response = await projectUserCollection
-        .create(newMember)
-        .catch((err) => {
-            console.error("Error adding the user to the project: ", err);
-        });
+    // TODO: add user to project
+    // const response = await projectUserCollection
+    //     .create(newMember)
+    //     .catch((err) => {
+    //         console.error("Error adding the user to the project: ", err);}
+    // );
 
     if (_.isUndefined(response) || _.isNull(response)) {
         // TODO: add flash message to the user
@@ -131,11 +129,12 @@ router.post("/:id/removemember", middleware.isUserInProject, async function (req
         projectId
     };
 
-    const response = await projectUserCollection
-        .deleteOne(memberToRemove)
-        .catch((err) => {
-            console.error("Error deleting the user to the project: ", err);
-        });
+    // TODO: revemo user from project
+    // const response = await projectUserCollection
+    //     .deleteOne(memberToRemove)
+    //     .catch((err) => {
+    //         console.error("Error deleting the user to the project: ", err);
+    //     });
 
     if (_.isUndefined(response) || _.isNull(response)) {
         // TODO: add flash message to the user
@@ -229,10 +228,12 @@ function getUserIdByEmail(email) {
  * @param {String} projectId - id of the project 
  */
 async function getMembersInfo(projectId) {
-    const numberOfMember = await projectUserCollection.where({
-        "projectId": projectId
-    }).countDocuments();
-
+    
+    // TODO: get number of users in project
+    // const numberOfMember = await projectUserCollection.where({
+    //     "projectId": projectId
+    // }).countDocuments();
+    numberOfMember = 1
     return (numberOfMember > 1 ? `${numberOfMember} Members` : `One man army`);
 }
 

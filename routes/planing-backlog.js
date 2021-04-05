@@ -63,7 +63,7 @@ router.get("/:id/planing/backlog", middleware.isUserInProject, async function (r
     workItems = await workItemCollection.find({projectId}).catch(err => console.error("Error getting work items: ", err)) || [];
 
     // TODO: change id to something more user friendly
-    console.log(workItems);
+    // console.log(workItems);
 
     // populating params
     let params = {
@@ -100,7 +100,7 @@ router.post("/:id/planing/backlog/newWorkItem", middleware.isUserInProject, asyn
         priorityPoints,
         comments
     } = req.body;
-    console.log(req.body);
+    console.log("REQUEST: ", req.body);
 
     // Title
     if (_.isEmpty(title) || title.length < 3){
@@ -110,10 +110,15 @@ router.post("/:id/planing/backlog/newWorkItem", middleware.isUserInProject, asyn
 
     // User assigned
     // TODO: Verify if the user exits
+    teamInfo = await teamProjectCollection.find({projectId: req.params.id}).catch(err => console.error(err));
+    console.log("RESPONSE: ");
+    console.log(teamInfo);
+    console.log();
+
 
     // TODO: verify is the status is in the db
     // Status
-    if (_.isEmpty(statusWorkItem) || !_.isString(statusWorkItem) ){
+    if (_.isEmpty(statusWorkItem) || !_.isString(statusWorkItem) || !STATUS.includes(statusWorkItem)){
         res.status(400).send("Status cannot be empty");
         return res.redirect("back");
     }

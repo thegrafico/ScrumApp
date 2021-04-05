@@ -3,7 +3,6 @@
 const mongoose              = require("mongoose"); //Require DB
 let userCollection          = require("./dbSchema/user");
 let projectCollection       = require("./dbSchema/projects");
-let projectUsersCollection  = require("./dbSchema/projectUsers");
 let projectTeamCollection   = require("./dbSchema/projectTeam");
 let sprintCollection        = require("./dbSchema/sprint");
 let workItemCollection      = require("./dbSchema/workItem");
@@ -160,27 +159,16 @@ async function createProjectForUser(user_id, defaultProjects = PROJECTS){
     
     // add the author of the project
     newProject["author"] = user_id;
-    
+    newProject["users"] = [user_id]; 
     const projectInfo = await projectCollection.create(newProject).catch(err => { console.error("Error adding the user: ", err); throw err});
     
     projectIds.push(projectInfo._id);
   }
-
-  // console.log(`Number of Projects create ${projectIds.length} for user: ${user_id}`);
-
+  console.log(`Number of Projects create ${projectIds.length} for user: ${user_id}`);
 
   return projectIds;
 }
 
-/**
- * add an user to the project
- * @param {String} userId - id of the user
- * @param {String} projectId -id of the project
- */
-async function addUserToProject(userId, projectId){
-  const response = await projectUsersCollection.create({userId, projectId}).catch(err => {console.log("Error adding the user to a project: ", err);});
-  return (response != null);
-}
 
 async function createWorkItem(){
   for (let index = 0; index < WORK_ITEMS.length; index++) {
@@ -209,28 +197,25 @@ async function seedDB() {
   await userCollection.deleteMany({});
   // console.log("Users removed!");
 
-  // removing the users from project
-  await projectUsersCollection.deleteMany({});
   // ======================================================
 
   const usersId = await addUsersToDB();
 
   // add one project with a specify id to the user: for testing
   await createProjectForUser(usersId[0], INDIVIDUAL_PROJECT).catch(err => console.log("Error Creating project for user: ", err));
-  
-  await addUserToProject(usersId[1], INDIVIDUAL_PROJECT[0]._id);
-  
+    
   for (let i = 0; i < usersId.length; i++) {
     const id = usersId[i];
     await createProjectForUser(id);
   }
 
-  // create team project
-  await createProjectTeam();
+  // TODO: continue here
+  // // create team project
+  // await createProjectTeam();
 
-  await createProjectSprint();
+  // await createProjectSprint();
 
-  await createWorkItem();
+  // await createWorkItem();
 }
 
 // export our function

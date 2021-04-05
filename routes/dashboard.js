@@ -9,7 +9,6 @@ const express               = require("express");
 const valid                 = require("validator");
 const _                     = require("lodash");
 let projectCollection       = require("../dbSchema/projects");
-let projectUsersCollection  = require("../dbSchema/projectUsers");
 
 
 let router = express.Router();
@@ -69,10 +68,11 @@ router.post("/", function (req, res) {
   }
   // console.log("Form Paramenter are valid!");
 
-  let newProject = {
+  const newProject = {
     "title": projectName,
     "description": projectDescription,
-    "author": userId
+    "author": userId,
+    "users": [userId],
   };
 
   // Insert into the database
@@ -95,21 +95,16 @@ function getProjectsForUser(userId) {
   return new Promise(async function (resolve, rejected) {
     
     // find all projects user is
-    let response = await projectUsersCollection.find({userId: userId}).catch(err => {
+    let userProjects = await projectCollection.find({users: userId}).catch(err => {
       console.error("Error getting the projects for the user: ", err);
     });
-   
-    if (!response || response.length == 0) {
+
+    if (!userProjects || userProjects.length == 0) {
       rejected("Response is empty, cannot get the project for the user");
       return;
     }
 
-    // get all project id
-    const projectsId = response.map( e => e.projectId);
-
-    let allProjects = await projectCollection.find({_id: {$in: projectsId}}).catch(err => console.error("Error getting the projects: ", err));
-
-    resolve(allProjects);
+    resolve(userProjects);
   });
 
 }

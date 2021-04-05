@@ -17,9 +17,6 @@
     font-size: 1.2em;
 }
 
-.table{
-    text-align: center;
-}
 
 .taskIcon{
     color:gold;
@@ -262,4 +259,5 @@
 
 tbody tr td i {
     font-size: 0.8em !important;
+    padding-right: 3%;
 }
