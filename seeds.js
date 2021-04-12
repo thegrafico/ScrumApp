@@ -3,7 +3,6 @@
 const mongoose              = require("mongoose"); //Require DB
 let userCollection          = require("./dbSchema/user");
 let projectCollection       = require("./dbSchema/projects");
-let projectTeamCollection   = require("./dbSchema/projectTeam");
 let sprintCollection        = require("./dbSchema/sprint");
 let workItemCollection      = require("./dbSchema/workItem");
 
@@ -124,10 +123,11 @@ async function createProjectSprint(){
 /**
  * Create the project team
  */
+// TODO: add team member here
 async function createProjectTeam(){
-  for (let index = 0; index < PROJECT_TEAM.length; index++) {
-    await projectTeamCollection.create(PROJECT_TEAM[index]).catch(err => { console.log("Error Creating the team for the project: ", err); throw err});
-  }
+  // for (let index = 0; index < PROJECT_TEAM.length; index++) {
+  //   await projectTeamCollection.create(PROJECT_TEAM[index]).catch(err => { console.log("Error Creating the team for the project: ", err); throw err});
+  // }
 }
 
 /**
@@ -185,9 +185,6 @@ async function seedDB() {
 
   // remove all sprint from a project
   await sprintCollection.deleteMany({});
-
-  // Remove all teams
-  await projectTeamCollection.deleteMany({});
 
   // remove projects
   await projectCollection.deleteMany({});

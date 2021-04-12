@@ -12,7 +12,6 @@ const STATUS                    = require('../dbSchema/Constanst').projectStatus
 const moment                    = require('moment');
 const projectCollection         = require("../dbSchema/projects");
 const sprintCollection          = require("../dbSchema/sprint");
-const teamProjectCollection     = require("../dbSchema/projectTeam");
 const workItemCollection        = require("../dbSchema/workItem");
 const middleware                = require("../middleware/auth");
 let router                      = express.Router();
@@ -40,8 +39,6 @@ router.get("/:id/planing/backlog", middleware.isUserInProject, async function (r
         console.log("Error is: ", err.reason);
     });
 
-    // console.log("Project information: ", projectInfo);
-
     if (_.isUndefined(projectInfo) || _.isEmpty(projectInfo)) {
         // TODO: show a message to the user
         return res.redirect('/');
@@ -49,8 +46,10 @@ router.get("/:id/planing/backlog", middleware.isUserInProject, async function (r
 
     // TODO: Verify which project is the user in, and set that to be the selected in the frontend
     // get all the teams for this project
-    let teams = await teamProjectCollection.find({projectId}).catch(err => console.log(err)) || [];
+    // TODO: use the project schema to get the teams
+    let teams = [...projectInfo.teams];
     teams.unshift(UNASSIGNED_USER);
+    // console.log("Teams: ", teams);
 
     let sprints = await sprintCollection.find({projectId}).catch(err => console.log(err)) || [];
     sprints.unshift(EMPTY_SPRINT);
