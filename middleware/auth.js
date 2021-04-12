@@ -30,7 +30,7 @@ module.exports.isUserInProject = async (req, res, next) => {
     // console.log("=============");
 
     // TODO: send a message to the user when does not belong to the project
-    if (response && response.length > 0)
+    if (userProjects && userProjects.length > 0)
         next();
     else 
         res.redirect("back");

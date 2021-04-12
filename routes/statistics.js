@@ -50,7 +50,7 @@ router.get("/:id", middleware.isUserInProject, async function (req, res) {
         "tabTitle": "Statistics",
     };
     params["projectOwner"] = await getProjectOwnerNameById(projectInfo["author"]);
-    params["numberOfMember"] = await getMembersInfo(projectId);
+    params["numberOfMember"] = await getNumberOfUsers(projectInfo.users);
 
     res.render("statistics", params);
 });
@@ -80,22 +80,20 @@ router.post("/:id/addmember", middleware.isUserInProject, async function (req, r
 
     // TODO: Verify if working
     const currentProject = await projectCollection.findById(projectId).catch(err=> console.error("Error getting the project to add the user: ", err));
-    currentProject.users.push(userId);
-    await currentProject.save();
-
-    // TODO: add user to project
-    // const response = await projectUserCollection
-    //     .create(newMember)
-    //     .catch((err) => {
-    //         console.error("Error adding the user to the project: ", err);}
-    // );
-
-    if (_.isUndefined(response) || _.isNull(response)) {
+    
+    if (_.isUndefined(currentProject) || _.isNull(currentProject)) {
         // TODO: add flash message to the user
         res.redirect("back");
     }
 
-    console.log("User added to the project");
+    // if the user does not exists, add it
+    if (!currentProject.users.includes(userId)){
+        await currentProject.users.push(userId);
+        await currentProject.save();
+        console.log("User added to the project");
+    }else{
+        console.log("User already exists");
+    }
     res.redirect("back");
 });
 
@@ -105,8 +103,7 @@ router.post("/:id/addmember", middleware.isUserInProject, async function (req, r
  */
 router.post("/:id/removemember", middleware.isUserInProject, async function (req, res) {
 
-    const { emailToRemove
-    } = req.body;
+    const { emailToRemove } = req.body;
 
     // validate email
     // TODO: add flash message to the user
@@ -124,24 +121,21 @@ router.post("/:id/removemember", middleware.isUserInProject, async function (req
         return res.redirect("back");
     }
 
-    const memberToRemove = {
-        userId,
-        projectId
-    };
+    const currentProject = await projectCollection.findById(projectId).catch(err=> console.error("Error getting the project to remove the user: ", err));
 
-    // TODO: revemo user from project
-    // const response = await projectUserCollection
-    //     .deleteOne(memberToRemove)
-    //     .catch((err) => {
-    //         console.error("Error deleting the user to the project: ", err);
-    //     });
-
-    if (_.isUndefined(response) || _.isNull(response)) {
+    if (_.isUndefined(currentProject) || _.isNull(currentProject)) {
         // TODO: add flash message to the user
         res.redirect("back");
     }
 
-    console.log("User removed from the project");
+    if (currentProject.users.includes(userId)){
+        await currentProject.users.pull({_id: userId});
+        await currentProject.save();
+        console.log("user removed");
+    }else{
+        console.log("Cannot remove a user that does not exists");
+    }
+
     res.redirect("back");
 });
 
@@ -165,10 +159,6 @@ router.post("/:id/update", middleware.isUserInProject, async function (req, res)
 
     res.sendStatus(200);
 });
-
-
-
-
 
 
 /**
@@ -225,15 +215,11 @@ function getUserIdByEmail(email) {
 
 /**
  * get member information - # of users, user of the month
- * @param {String} projectId - id of the project 
+ * @param {Array} users - id of the project 
  */
-async function getMembersInfo(projectId) {
+async function getNumberOfUsers(users) {
     
-    // TODO: get number of users in project
-    // const numberOfMember = await projectUserCollection.where({
-    //     "projectId": projectId
-    // }).countDocuments();
-    numberOfMember = 1
+    numberOfMember = users.length;
     return (numberOfMember > 1 ? `${numberOfMember} Members` : `One man army`);
 }
 
