@@ -15,6 +15,11 @@ const {
 // get just the name since that will be in the db
 workType = Object.keys(WORK_ITEM_ICONS);
 
+// get work item an default value
+const workItemStatus = Object.keys(WORK_ITEM_STATUS);
+const defaultWorkItem = workItemStatus.filter(key => WORK_ITEM_STATUS[key].default != undefined);
+
+// ID schema object
 const ObjectId = mongoose.Schema.ObjectId;
 
 let workItemSchema = new mongoose.Schema({
@@ -52,8 +57,8 @@ let workItemSchema = new mongoose.Schema({
     },
     status: {
         type: String,
-        enum: WORK_ITEM_STATUS,
-        default: WORK_ITEM_STATUS[0],
+        enum: workItemStatus,
+        default: defaultWorkItem[0],
     },
     teamId: {
         type: ObjectId,

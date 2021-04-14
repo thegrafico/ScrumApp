@@ -37,7 +37,16 @@ module.exports.WORK_ITEM_ICONS = {
 
 
 //  STATUS FOR THE WORK ITEMS
-module.exports.WORK_ITEM_STATUS = ["New", "Active", "Completed", "Deleted", "Block", "Abandoned"];
+// if we change the variable here, we need to change the fron-end js to in order to show the
+// values in the dropdown select opction
+module.exports.WORK_ITEM_STATUS = {
+    "New":          {"class": "newColor", default: true}, 
+    "Active":       {"class": "activeColor"}, 
+    "Completed":    {"class": "completedColor"}, 
+    "Deleted":      {"class": "delectedColor"}, 
+    "Block":        {"class": "blockColor"}, 
+    "Abandoned":    {"class": "abandonedColor"}
+};
 
 // MAX STORY POINTS
 module.exports.MAX_STORY_POINTS = 500;

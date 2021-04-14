@@ -20,6 +20,7 @@ const {
     UNASSIGNED_USER, 
     EMPTY_SPRINT,
     WORK_ITEM_ICONS,
+    WORK_ITEM_STATUS,
 } = require('../dbSchema/Constanst');
 
 // ===================================================
@@ -33,9 +34,7 @@ router.get("/:id/planing/backlog", middleware.isUserInProject, async function (r
     let projectId = req.params.id;
 
     // verify is the project exists
-    let projectInfo = await projectCollection.findOne({
-        _id: projectId
-    }).catch(err => {
+    let projectInfo = await projectCollection.findOne({_id: projectId}).catch(err => {
         console.log("Error is: ", err.reason);
     });
 
@@ -46,16 +45,14 @@ router.get("/:id/planing/backlog", middleware.isUserInProject, async function (r
 
     // TODO: Verify which project is the user in, and set that to be the selected in the frontend
     // get all the teams for this project
-    // TODO: use the project schema to get the teams
     let teams = [...projectInfo.teams];
     teams.unshift(UNASSIGNED_USER);
-    // console.log("Teams: ", teams);
 
     let sprints = await sprintCollection.find({projectId}).catch(err => console.log(err)) || [];
     sprints.unshift(EMPTY_SPRINT);
 
     // get all users for this project -> expected an array
-    let users = await projectCollection.getUsers(projectId).catch(err => console.log(err)) || [];
+    let users = await projectInfo.getUsers().catch(err => console.log(err)) || [];
     users.unshift(UNASSIGNED_USER);
 
     // LOADING TABLE WORK ITEMS
@@ -71,7 +68,7 @@ router.get("/:id/planing/backlog", middleware.isUserInProject, async function (r
         "activeTab": "Backlog,Planing",
         "tabTitle": "Backlog",
         "assignedUsers": users,
-        "statusWorkItem": STATUS,
+        "statusWorkItem": WORK_ITEM_STATUS,
         "teamWorkItem": teams,
         "sprints": sprints,
         "workItemType": WORK_ITEM_ICONS,

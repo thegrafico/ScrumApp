@@ -54,6 +54,7 @@ const INDIVIDUAL_PROJECT = [
     title: "Special Project",
     description:
       "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Non ad deserunt tempora suscipit hic necessitatibus, vero incidunt. Doloremque, facere voluptatum qui autem ratione unde et, pariatur. Necessitatibus, veniam, eos.",
+    teams: [{name: "Team Awesome"}, {name: "Team Batman"}],
   }
 ];
 

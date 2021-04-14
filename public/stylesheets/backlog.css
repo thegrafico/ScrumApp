@@ -261,3 +261,31 @@ tbody tr td i {
     font-size: 0.8em !important;
     padding-right: 3%;
 }
+
+/* COLORS FOR WORK ITEM */
+.newColor {
+    /* content: "•"; color: #444 !important; */
+    color: white !important;
+}
+
+.activeColor{
+    color: #375a7f;
+}
+
+.completedColor{
+    color: #28a745!important
+}
+
+.delectedColor{
+    color: #e74c3c;
+}
+
+.blockColor{
+    color: #ffc107!important
+}
+
+.abandonedColor{ 
+    color: gray
+}
+
+/* ===== END ====== */

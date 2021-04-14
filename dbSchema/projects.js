@@ -6,6 +6,7 @@
 const userCollection    = require("./user");
 const projectStatus     = require("./Constanst").projectStatus;
 const mongoose          = require("mongoose");
+const passportLocalMongoose = require("passport-local-mongoose");
 
 const ObjectId = mongoose.Schema.ObjectId;
 
@@ -23,23 +24,24 @@ let projectSchema = new mongoose.Schema({
         default: "New"
     },
     users: [{type: ObjectId, ref: "User"}],
-    teams: [{name: String, users: [{type: ObjectId, ref: "User"}]}]
+    teams: [{name: String, users: [{type: ObjectId, ref: "User"}]}],
+    sprints: [{type: ObjectId, ref: "Sprint"}],
 }, {
     timestamps: true
 });
-
+projectSchema.plugin(passportLocalMongoose);
 /**
  * Get all users from a project with the user information
  * @param {String} projectId - id of the project
  * @returns {Array} - array of object  -> [{name, id}]
  */
-projectSchema.methods.getUsers = async () => {
-    
+ projectSchema.methods.getUsers = async function() {
+
     // modal to get the user info ==> [{name, id}]
     let usersArr = [];
 
     // get all users that belong to this project
-    const all_users = this.users
+    const all_users = this.users || [];
     
     // get basic info as the name and id -- Later we could get more info
     for(let i = 0; i < all_users.length; ++i){
@@ -58,6 +60,6 @@ projectSchema.methods.getUsers = async () => {
     }
 
     return usersArr;
-}
+};
 
 module.exports = mongoose.model("Projects", projectSchema);

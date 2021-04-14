@@ -10,7 +10,6 @@ const ObjectId = mongoose.Schema.ObjectId;
 
 let sprintSchema = new mongoose.Schema({
     name: {type: String, required: true},
-    projectId: {type: ObjectId, ref: "Projects"},
     task: [
         {   
             type: ObjectId,
@@ -24,4 +23,4 @@ let sprintSchema = new mongoose.Schema({
 // set both columns to be unique ids? 
 sprintSchema.index({ "name": 1, "projectId": 1}, { "unique": true });
 
-module.exports = mongoose.model("sprint", sprintSchema);
+module.exports = mongoose.model("Sprint", sprintSchema);
