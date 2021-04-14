@@ -40,7 +40,8 @@ module.exports.WORK_ITEM_ICONS = {
 // if we change the variable here, we need to change the fron-end js to in order to show the
 // values in the dropdown select opction
 module.exports.WORK_ITEM_STATUS = {
-    "New":          {"class": "newColor", default: true}, 
+    "New":          {"class": "newColor", default: true},
+    // "New":          {"class": "newColor"},
     "Active":       {"class": "activeColor"}, 
     "Completed":    {"class": "completedColor"}, 
     "Deleted":      {"class": "delectedColor"}, 
