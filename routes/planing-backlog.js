@@ -17,10 +17,12 @@ const middleware                = require("../middleware/auth");
 let router                      = express.Router();
 
 const {
-    UNASSIGNED_USER, 
+    UNASSIGNED, 
     EMPTY_SPRINT,
     WORK_ITEM_ICONS,
     WORK_ITEM_STATUS,
+    MAX_STORY_POINTS = 500,
+    MAX_PRIORITY_POINTS = 5,
 } = require('../dbSchema/Constanst');
 
 // ===================================================
@@ -46,14 +48,14 @@ router.get("/:id/planing/backlog", middleware.isUserInProject, async function (r
     // TODO: Verify which project is the user in, and set that to be the selected in the frontend
     // get all the teams for this project
     let teams = [...projectInfo.teams];
-    teams.unshift(UNASSIGNED_USER);
+    teams.unshift(UNASSIGNED);
 
     let sprints = await sprintCollection.find({projectId}).catch(err => console.log(err)) || [];
     sprints.unshift(EMPTY_SPRINT);
 
     // get all users for this project -> expected an array
     let users = await projectInfo.getUsers().catch(err => console.log(err)) || [];
-    users.unshift(UNASSIGNED_USER);
+    users.unshift(UNASSIGNED);
 
     // LOADING TABLE WORK ITEMS
     workItems = await workItemCollection.find({projectId}).catch(err => console.error("Error getting work items: ", err)) || [];
@@ -84,10 +86,10 @@ router.get("/:id/planing/backlog", middleware.isUserInProject, async function (r
 router.post("/:id/planing/backlog/newWorkItem", middleware.isUserInProject, async function (req, res) {
 
     // new work item
-    const {
+    let {
         title,
         userAssigned,
-        statusWorkItem,
+        workItemStatus,
         teamAssigned,
         workItemType,
         sprint,
@@ -96,36 +98,98 @@ router.post("/:id/planing/backlog/newWorkItem", middleware.isUserInProject, asyn
         priorityPoints,
         comments
     } = req.body;
-    console.log("REQUEST: ", req.body);
+    // console.log("REQUEST: ", req.body);
+
+    // Fixing variables 
+    workItemStatus = capitalize(workItemStatus);
+    workItemType = capitalize(workItemType);
+    storyPoints = parseInt(storyPoints);
+    priorityPoints = parseInt(priorityPoints);
+
+    // getting project info
+    let projectInfo = await projectCollection.findOne({_id: req.params.id}).catch(err => {
+        console.log("Error is: ", err.reason);
+    });
+
+    if (_.isEmpty(projectInfo) || _.isNull(projectInfo)){
+        res.status(400).send("Cannot find any project for the information requested");
+        return res.redirect("back");
+    }
+
+    const users = projectInfo["users"];
+    const teams = projectInfo["teams"].map(element => element._id); // TODO: what would happend in case projecInfo does not have anything 
+    const sprints = projectInfo["sprints"];
+
+    // to create a new work item
+    let newWorkItem = {};
 
     // Title
     if (_.isEmpty(title) || title.length < 3){
         res.status(400).send("Title cannot be empty and have to be grater than 3 chars.");
         return res.redirect("back");
     }
+    
+    // Verify the user is in the project 
+    if (userAssigned != UNASSIGNED.id && !users.includes(userAssigned)){
+        res.status(400).send("Cannot find the user assigned for this work item");
+        return res.redirect("back");
+    }
 
-    // User assigned
-    // TODO: Verify if the user exits
-    teamInfo = await teamProjectCollection.find({projectId: req.params.id}).catch(err => console.error(err));
-    console.log("RESPONSE: ");
-    console.log(teamInfo);
-    console.log();
+    // add the user if not default 
+    if (userAssigned != UNASSIGNED.id) 
+        newWorkItem["assignedUser"] = userAssigned;
 
-
-    // TODO: verify is the status is in the db
     // Status
-    if (_.isEmpty(statusWorkItem) || !_.isString(statusWorkItem) || !STATUS.includes(statusWorkItem)){
+    if (_.isEmpty(workItemStatus) || !_.isString(workItemStatus) || !Object.keys(WORK_ITEM_STATUS).includes(workItemStatus)){
         res.status(400).send("Status cannot be empty");
         return res.redirect("back");
     }
 
-    // Team
-    // TODO: Verify if the team exits
+    // teams
+    if (teamAssigned != UNASSIGNED.id && !teams.includes(teamAssigned)){
+        res.status(400).send("Cannot find the team assigned for this work item");
+        return res.redirect("back");
+    }
 
-    // work item type
-    
+    // add the user if not default
+    // TODO: if a user was assigned to this work item, then we should add that user to the team if the user is not in the team already. 
+    if (teamAssigned != UNASSIGNED.id) 
+        newWorkItem["teamId"] = teamAssigned;
 
+    // type
+    if(Object.keys(WORK_ITEM_ICONS).includes(workItemType)){
+        newWorkItem["type"] = workItemType;
+    }
+
+    // sprint
+    if (sprints.includes(sprint)){
+        newWorkItem["sprint"] = sprint;
+    }
+
+    // points
+    if ( _.isNumber(storyPoints) && !isNaN(storyPoints) && (storyPoints >= 0  && storyPoints <= MAX_STORY_POINTS)){
+        newWorkItem["storyPoints"] = storyPoints;
+    }
+
+    // priority
+    if ( _.isNumber(priorityPoints) && !isNaN(priorityPoints) && (priorityPoints >= 0  && priorityPoints <= MAX_PRIORITY_POINTS)){
+        newWorkItem["priorityPoints"] = priorityPoints;
+    }
+
+    newWorkItem["title"] = title;
+    newWorkItem["status"] = workItemStatus;
+    newWorkItem["description"] = workItemDescription;
+    // TODO: Create new schema for comments
+    // newWorkItem["comments"]
+
+    newWorkItem = await workItemCollection.create(newWorkItem).catch(err => console.error("Error creating the work item: ", err));
+    console.log(newWorkItem);
     res.redirect("back");
 });
+
+const capitalize = (s) => {
+    if (typeof s !== 'string') return ''
+    return s.charAt(0).toUpperCase() + s.slice(1)
+  }
 
 module.exports = router;

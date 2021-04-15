@@ -1,7 +1,7 @@
 module.exports.projectStatus = ["New", "Active", "Completed", "Deleted", "Block", "Abandoned"];
 
 // TODO: change to a better name
-module.exports.UNASSIGNED_USER = {
+module.exports.UNASSIGNED = {
     name: "Unassigned",
     id: "0",
     selected: true
@@ -41,7 +41,6 @@ module.exports.WORK_ITEM_ICONS = {
 // values in the dropdown select opction
 module.exports.WORK_ITEM_STATUS = {
     "New":          {"class": "newColor", default: true},
-    // "New":          {"class": "newColor"},
     "Active":       {"class": "activeColor"}, 
     "Completed":    {"class": "completedColor"}, 
     "Deleted":      {"class": "delectedColor"}, 
