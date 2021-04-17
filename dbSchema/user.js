@@ -19,9 +19,7 @@ userSchema.methods.verifyPassword = function(password) {
     return password == this.password
 };
  
-userSchema.index({ "email": 1}, { "unique": true });
-
 // TODO: add middleware in order to remove all reference of user from other collections
 
-module.exports = mongoose.model("User", userSchema);
+module.exports = mongoose.model("Users", userSchema);
 

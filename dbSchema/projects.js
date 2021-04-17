@@ -6,7 +6,6 @@
 const userCollection    = require("./user");
 const projectStatus     = require("./Constanst").projectStatus;
 const mongoose          = require("mongoose");
-const passportLocalMongoose = require("passport-local-mongoose");
 
 const ObjectId = mongoose.Schema.ObjectId;
 
@@ -29,7 +28,6 @@ let projectSchema = new mongoose.Schema({
 }, {
     timestamps: true
 });
-projectSchema.plugin(passportLocalMongoose);
 /**
  * Get all users from a project with the user information
  * @param {String} projectId - id of the project

@@ -161,7 +161,7 @@ async function createProjectForUser(user_id, defaultProjects = PROJECTS){
     // add the author of the project
     newProject["author"] = user_id;
     newProject["users"] = [user_id]; 
-    const projectInfo = await projectCollection.create(newProject).catch(err => { console.error("Error adding the user: ", err); throw err});
+    const projectInfo = await projectCollection.create(newProject).catch(err => { console.error("Error adding the Project: ", err); throw err});
     
     projectIds.push(projectInfo._id);
   }
@@ -181,19 +181,25 @@ async function createWorkItem(){
 async function seedDB() {
   // ==================== CLEAN THE DB ==================== 
 
+  console.log("===================");
   // remove work items
-  await workItemCollection.deleteMany({});
+  let result = await workItemCollection.deleteMany({});
+  console.log("work Item removed!: ", result);
 
   // remove all sprint from a project
-  await sprintCollection.deleteMany({});
+  result = await sprintCollection.deleteMany({});
+  console.log("Sprint removed!: ", result);
 
   // remove projects
-  await projectCollection.deleteMany({});
+  result = await projectCollection.deleteMany({});
+  console.log("Project removed!: ", result);
+
   // await projectCollection.deleteOne({_id: INDIVIDUAL_PROJECT});
 
   // remove users
-  await userCollection.deleteMany({});
-  // console.log("Users removed!");
+  result= await userCollection.deleteMany({});
+  console.log("Users removed!: ", result);
+  console.log("===================");
 
   // ======================================================
 

@@ -58,10 +58,10 @@ router.get("/:id/planing/backlog", middleware.isUserInProject, async function (r
     users.unshift(UNASSIGNED);
 
     // LOADING TABLE WORK ITEMS
-    workItems = await workItemCollection.find({projectId}).catch(err => console.error("Error getting work items: ", err)) || [];
+    workItems = await workItemCollection.find().catch(err => console.error("Error getting work items: ", err)) || [];
 
     // TODO: change id to something more user friendly
-    // console.log(workItems);
+    console.log("Project: ", workItems);
 
     // populating params
     let params = {
@@ -179,11 +179,12 @@ router.post("/:id/planing/backlog/newWorkItem", middleware.isUserInProject, asyn
     newWorkItem["title"] = title;
     newWorkItem["status"] = workItemStatus;
     newWorkItem["description"] = workItemDescription;
+    newWorkItem["projectId"] = req.params.id;
+    
     // TODO: Create new schema for comments
     // newWorkItem["comments"]
 
     newWorkItem = await workItemCollection.create(newWorkItem).catch(err => console.error("Error creating the work item: ", err));
-    console.log(newWorkItem);
     res.redirect("back");
 });
 

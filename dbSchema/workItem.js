@@ -30,12 +30,12 @@ let workItemSchema = new mongoose.Schema({
     },
     projectId: {
         type: ObjectId,
-        ref: "projects",
-        require: true,
+        ref: "Projects",
+        required: [true, 'Project ID is mandatory'],
     },
     assignedUser: {
         type: ObjectId,
-        ref: "user",
+        ref: "User",
         default: null,
     },
     sprint: {
@@ -68,7 +68,7 @@ let workItemSchema = new mongoose.Schema({
     type: {
         type: String,
         enum: workType,
-        require: true,
+        required: true,
     },
     description: {
         type: String,
@@ -84,4 +84,4 @@ let workItemSchema = new mongoose.Schema({
     timestamps: true,
 });
 
-module.exports = mongoose.model("workitem", workItemSchema);
+module.exports = mongoose.model("WorkItem", workItemSchema);
