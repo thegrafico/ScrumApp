@@ -77,17 +77,19 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <% for (let workItem of workItems) {%>
+                        <% for (let i = 0; i < workItems.length; ++i) {%>
                             <tr>
-                                <th scope="row">Default</th>
+                                <th scope="row"> <%=i+1%> </th>
                                 <td>Column content</td>
-                                <td> <i class="fas <%=workItemType[workItem['type']].icon%>"></i> <%=workItem["type"]%></td>
-                                <td><%=workItem["title"]%></td>
-                                <td><%=workItem["status"]%></td>
-                                <td><%=workItem["storyPoints"]%></td>
-                                <td><%=workItem["priorityPoints"]%></td>
+                                <td> <i class="fas <%=workItemType[workItems[i]['type']].icon%>"></i> <%=workItems[i]["type"]%></td>
+                                <td><%=workItems[i]["title"]%></td>
+                                <td><i class="fa fa-circle <%=workItems[i]['status']%>Color" aria-hidden="true"></i> <%=workItems[i]["status"]%></td>
+                                <td><%=workItems[i]["storyPoints"]%></td>
+                                <td><%=workItems[i]["priorityPoints"]%></td>
                             </tr>
                         <%}%>
+
+                        
                     </tbody>
                 </table>
             </div>

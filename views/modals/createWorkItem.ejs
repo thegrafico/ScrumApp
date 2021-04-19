@@ -61,7 +61,7 @@
                         <div class="row create-work-item-bg">
                             <div class="col-12 mt-4">
                                 <div class="row">
-                                    <div class="col-2 d-flex">
+                                    <div class="col-3 d-flex">
                                         <span class="aling-vertically align-self-center"> Status: </span>
 
 
@@ -71,7 +71,7 @@
                                                 <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true"  id="currentWorkItemStatus" aria-expanded="false"> 
                                                     <% for (const [key, value] of Object.entries(statusWorkItem)) { %>
                                                         <% if (value.default){ %>
-                                                            <i class="fa fa-circle <%=value['class']%>" aria-hidden="true"></i> &nbsp; <%=key%>
+                                                            <i class="fa fa-circle <%=value['class']%>" aria-hidden="true"></i> <%=key%>
                                                             <%break;%>
                                                         <%}%>
                                                     <%}%>
@@ -81,7 +81,7 @@
 
                                                     <% for (const [key, value] of Object.entries(statusWorkItem)) { %>
                                                         <a class="dropdown-item btnWorkItemStatus" href="#">
-                                                            <span> <i class="fa fa-circle <%=value['class']%>" aria-hidden="true"></i> &nbsp; <%=key%></span>
+                                                            <span> <i class="fa fa-circle <%=value['class']%>" aria-hidden="true"></i> <%=key%></span>
                                                         </a>
                                                     <%}%>
                                                 </div>
@@ -105,7 +105,7 @@
                                 </div>
 
                                 <div class="row">
-                                    <div class="col-2 d-flex">
+                                    <div class="col-3 d-flex">
                                         <span class="aling-vertically align-self-center"> Type: </span>
 
                                         <ul class="nav nav-pills flex-column" id="customSelect">

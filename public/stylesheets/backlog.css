@@ -263,33 +263,33 @@ tbody tr td i {
 }
 
 /* COLORS FOR WORK ITEM */
-.newColor {
+.newColor, .NewColor{
     /* content: "•"; color: #444 !important; */
     color: white !important;
 }
 
-.activeColor{
-    color: #375a7f;
+.activeColor, .ActiveColor{
+    color: #375a7f !important;
 }
 
-.completedColor{
-    color: #28a745!important
+.completedColor, .CompletedColor{
+    color: #28a745 !important
 }
 
-.delectedColor{
-    color: #e74c3c;
+.delectedColor, .DeletedColor{
+    color: #e74c3c !important;
 }
 
-.blockColor{
-    color: #ffc107!important
+.blockColor, .BlockColor{
+    color: #ffc107 !important
 }
 
-.abandonedColor{ 
+.abandonedColor, .AbandonedColor{ 
     color: gray
 }
 
 .fa-circle{
-    font-size: 0.8em !important;
+    font-size: 0.7em !important;
 }
 
 /* ===== END ====== */

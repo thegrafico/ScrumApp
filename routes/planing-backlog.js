@@ -60,9 +60,6 @@ router.get("/:id/planing/backlog", middleware.isUserInProject, async function (r
     // LOADING TABLE WORK ITEMS
     workItems = await workItemCollection.find().catch(err => console.error("Error getting work items: ", err)) || [];
 
-    // TODO: change id to something more user friendly
-    console.log("Project: ", workItems);
-
     // populating params
     let params = {
         "project": projectInfo,
