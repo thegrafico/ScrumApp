@@ -33,6 +33,8 @@ const BTN_PLANING = "#Planing";
 
 const tagTemplate = `<span class="badge badge-secondary"> <input type="text" name="tags[]" placeholder="Enter tag " class='tagNme'> <span aria-hidden="true" class="rmTag">&times;</span>  </span>`;
 
+const WORK_ITEM_TABLE = "#workItemTable";
+
 const MAX_NUMBER_OF_TAGS = 4;
 const MAX_LENGTH_TITLE = 80;
 CHANGES = {
@@ -45,6 +47,9 @@ $(function () {
 
     // show the active tab in the sidebar
     showActiveTab();
+
+    // start dragg event
+    startDraggable(WORK_ITEM_TABLE);
 
     // click on planing just to show to the user in the sidebar
     $(BTN_PLANING).click();
@@ -213,4 +218,20 @@ function validateFormWorkItem(){
     }
 
     return true;
+}
+
+function startDraggable(tableId){
+
+    $(tableId).sortable({
+        items: 'tr',
+        cursor: 'row-resize',
+        axis: 'y',
+        dropOnEmpty: false,
+        start: function (e, ui) {
+            ui.item.addClass("selected");
+        },
+        stop: function (e, ui) {
+        
+        }
+    });
 }
