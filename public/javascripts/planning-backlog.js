@@ -223,7 +223,7 @@ function validateFormWorkItem(){
 function startDraggable(tableId){
 
     $(tableId).sortable({
-        items: 'tr',
+        items: 'tr.rowValues',
         cursor: 'row-resize',
         axis: 'y',
         dropOnEmpty: false,
@@ -231,7 +231,18 @@ function startDraggable(tableId){
             ui.item.addClass("selected");
         },
         stop: function (e, ui) {
-        
+            reset_order();
         }
+    });
+}
+
+/**
+ * This functions reset the counter column everytime a value is dragged to another possition
+ */
+function resetColumnOrder(){
+    let counter = 1;
+    $("th.orderColumn").each(function() {
+        $(this).text(counter);
+        counter++;
     });
 }

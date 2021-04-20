@@ -78,8 +78,8 @@
                     </thead>
                     <tbody>
                         <% for (let i = 0; i < workItems.length; ++i) {%>
-                            <tr>
-                                <th scope="row"> <%=i+1%> </th>
+                            <tr class="rowValues">
+                                <th scope="row" class="orderColumn"> <%=i+1%> </th>
                                 <td>Column content</td>
                                 <td> <i class="fas <%=workItemType[workItems[i]['type']].icon%>"></i> <%=workItems[i]["type"]%></td>
                                 <td><%=workItems[i]["title"]%></td>
