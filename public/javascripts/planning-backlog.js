@@ -231,7 +231,7 @@ function startDraggable(tableId){
             ui.item.addClass("selected");
         },
         stop: function (e, ui) {
-            reset_order();
+            resetColumnOrder();
         }
     });
 }
