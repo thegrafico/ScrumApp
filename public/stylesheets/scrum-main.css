@@ -174,7 +174,7 @@ a:hover {
 
 .fa-save {
     font-size: 2.5em;
-    color:white;
+    color: white;
     opacity: 0.6;
 }
 
@@ -183,9 +183,9 @@ a:hover {
     position: relative;
     display: inline-block;
     border-bottom: 1px dotted black;
-  }
-  
-  .saveStatusBtn .tooltiptext {
+}
+
+.saveStatusBtn .tooltiptext {
     visibility: hidden;
     width: 120px;
     background-color: rgba(0, 0, 0, 0.609);
@@ -193,30 +193,38 @@ a:hover {
     text-align: center;
     border-radius: 6px;
     padding: 5px 0;
-    
+
     /* Position the tooltip */
     position: absolute;
     z-index: 1;
     top: 100%;
     left: 50%;
     margin-left: -60px;
-  }
+}
 
-  .saveStatusBtn:hover{
+.saveStatusBtn:hover {
     opacity: 0.5;
     cursor: pointer;
-  }
-  
-  .saveStatusBtn:hover .tooltiptext {
+}
+
+.saveStatusBtn:hover .tooltiptext {
     visibility: visible;
-  }
+}
 
-  #sidebar a{
-      font-size: 1.2em;
-      font-weight: bold;
-  }
+#sidebar a {
+    font-size: 1.2em;
+    font-weight: bold;
+}
 
-  .currentTab{
+.currentTab {
     color: #f8b739 !important;
     font-style: italic;
-  }
+}
+
+.fa-caret-down{
+    font-size: 0.8em;
+}
+
+#filterDiv {
+    display: none;
+}

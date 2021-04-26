@@ -95,3 +95,8 @@ function showActiveTab(){
 
     $(`#${currentTabValue}`).addClass("currentTab");
 }
+
+function toggleFilter(){
+    let filterDiv = "#filterDiv";
+    $(filterDiv).toggle();
+}
