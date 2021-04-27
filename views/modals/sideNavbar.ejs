@@ -9,25 +9,37 @@
         <ul class="list-unstyled components mb-5">
 
             <!-- <li class="active"> -->
+            <!-- STATISTICS -->
             <li>
                 <a href="/dashboard/<%=projectId%>" class="urlBtn" role="button" id="Statistics">Statistics</a>
             </li>
 
+            <!-- PLANING -->
             <li>
                 <a href="#planingSubMenu" data-toggle="collapse" aria-expanded="false"  id="Planing" class="dropdown-toggle">
                     Planing
                 </a>
                 
                 <ul class="collapse list-unstyled" id="planingSubMenu">
+                    
+                    <!-- WORK ITEM -->
+                    <li>
+                        <a href="/dashboard/<%=projectId%>/planing/workitems" class="urlBtn" role="button" id="WorkItem">Work Item</a>
+                    </li>
+
+                    <!-- BACKLOG -->
                     <li>
                         <a href="/dashboard/<%=projectId%>/planing/backlog" class="urlBtn" role="button" id="Backlog">Backlog</a>
                     </li>
+
+                    <!-- Sprint -->
                     <li>
                         <a href="#" class="urlBtn" role="button" id="SprintPlaning">Sprint</a>
                     </li>
                 </ul>
             </li>
 
+            <!-- SPRINT -->
             <li>
                 <a href="#sprintSubMenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle sprint">
                     Sprint

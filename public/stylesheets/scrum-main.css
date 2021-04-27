@@ -226,5 +226,21 @@ a:hover {
 }
 
 #filterDiv {
-    display: none;
+    /* display: none; */
+    /* background-color: #303030 !important; */
+}
+
+.filterOptions li{
+    margin-left: 5%;
+}
+
+.filterDivisor{
+    margin-top: 4%;
+    border-top: 1px solid gray;
+}
+
+.filterDivisor button{
+    padding-top: 1%;
+    padding-bottom: 1%;
+    margin: 4% 3% 0% 0%;
 }

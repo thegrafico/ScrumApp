@@ -19,10 +19,12 @@ dotenv.config({
 });
 
 // ======== ROUTES ===============
-const loginRoute          = require('./routes/login');
-const dashboardRoute      = require('./routes/dashboard');
-const projectDetailRoute  = require("./routes/statistics");
-const planingBacklogRoute = require("./routes/planing-backlog");
+const loginRoute            = require('./routes/login');
+const dashboardRoute        = require('./routes/dashboard');
+const projectDetailRoute    = require("./routes/statistics");
+const planingBacklogRoute   = require("./routes/planing-backlog");
+const planingworkItemRoute  = require("./routes/planing-work-item");
+
 
 // App object 
 let app = express();
@@ -123,7 +125,9 @@ app.use(function (req, res, next) {
 // FUNCTIONAL ROUTES
 app.use('/', middleware.isUserLogin, dashboardRoute); // main page
 app.use('/dashboard/', middleware.isUserLogin, projectDetailRoute); // dashboard to show project
+app.use('/dashboard/', middleware.isUserLogin, planingworkItemRoute); // dashboard to show project
 app.use('/dashboard/', middleware.isUserLogin, planingBacklogRoute); // dashboard to show project
+
 
 // ==================== ROUTES =================
 // catch 404 and forward to error handler

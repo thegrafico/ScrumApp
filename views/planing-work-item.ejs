@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.gstatic.com"> 
+    <link href="https://fonts.googleapis.com/css2?family=Source+Code+Pro:ital@1&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/stylesheets/index.css">
+    <link rel="stylesheet" href="/stylesheets/bootstrap.min.css">
+    <link rel="stylesheet" href="/stylesheets/fontawesome/css/all.css">
+    <link rel="stylesheet" href="/stylesheets/scrum-main.css">
+    <link rel="stylesheet" href="/stylesheets/backlog.css">
+
+    <title><%=project["title"]%></title>
+</head>
+
+<body>
+
+    <%- include('modals/topNavbar'); %>
+
+    <div class="wrapper d-flex align-items-stretch">
+
+        <%- include('modals/sideNavbar'); %>
+
+        <!-- Page Content  -->
+        <div id="content" class="p-4 p-md-5">
+
+            <%- include('modals/titleOptionsMenu'); %>
+
+            <div class="container-fluid statistics-boxs">
+                <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+
+                    <button class="navbar-brand" id="createWorkItem" data-toggle="modal" data-target=".createNewItemModal">
+                        <i class="fas fa-plus"></i> Create Work Item
+                    </button>
+
+                    <div class="collapse navbar-collapse" id="navbarColor02">
+                        <ul class="navbar-nav mr-auto">
+                            <li class="nav-item active">
+                                <a class="nav-link" href="#">
+                                    <span class="sr-only">(current)</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="#">Sprint</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="#">Teams</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="#">About</a>
+                            </li>
+
+                        </ul>
+                        <div class="form-inline my-2 my-lg-0">
+                            <input class="form-control mr-sm-2" type="text" placeholder="Search">
+                            
+                            <button id="filterBtn" class="btn btn-secondary my-2 my-sm-0 filterBtn">
+                                <i class="fas fa-filter"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <!-- INCLUDE FILTER DIV HERE -->
+                </nav>
+
+            <%- include('modals/filter'); %>
+
+            </div>
+
+            <div class="p-4">
+                <table class="table table-hover" id="workItemTable">
+                    <thead>
+                        <tr class="tableHeader">
+                            <th scope="col">ID</th>
+                            <th scope="col">Type</th>
+                            <th scope="col">Title</th>
+                            <th scope="col">Assigned</th>
+                            <th scope="col">State</th>
+                            <th scope="col">Tags</th>
+                            <th scope="col">Comments</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% for (let i = 0; i < workItems.length; ++i) {%>
+                            <tr class="rowValues">
+                                <td>Column content</td>
+                                <td> <i class="fas <%=workItemType[workItems[i]['type']].icon%>"></i> <%=workItems[i]["type"]%></td>
+                                <td><%=workItems[i]["title"]%></td>
+                                <td>User Here</td>
+                                <td><i class="fa fa-circle <%=workItems[i]['status']%>Color" aria-hidden="true"></i> <%=workItems[i]["status"]%></td>
+                                <td>Tags</td>
+                                <td># Comments</td>
+                            </tr>
+                        <%}%>
+
+                        
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <input type="hidden" name="projectId" id="projectId" value="<%=projectId%>">
+        <input type="hidden" name="currentTab" id="currentTab" value="<%=activeTab%>">
+    </div>
+    
+    <%- include('modals/createWorkItem'); %>
+    
+    </div>
+
+
+    <script src="/javascripts/dependecies/jquery3.5.2.js"></script>
+    <script src="/javascripts/dependecies/jquery-ui.min.js"></script>
+    <script src="/javascripts/dependecies/validator.min.js"></script>
+    <script src="/javascripts/helpers.js"></script>
+    <script src="/javascripts/planning-work-item.js"></script>
+    <script src="/javascripts/dependecies/bootstrap.bundle.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+</body>
+
+</html>
+
+<!-- https://bootswatch.com/darkly/ -->
