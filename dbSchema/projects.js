@@ -3,9 +3,10 @@
  */
 
 // import DB
-const userCollection    = require("./user");
-const projectStatus     = require("./Constanst").projectStatus;
-const mongoose          = require("mongoose");
+const userCollection        = require("./user");
+const projectStatus         = require("./Constanst").projectStatus;
+const workItemCollection    = require("./workItem");
+const mongoose              =    require("mongoose");
 
 const ObjectId = mongoose.Schema.ObjectId;
 
@@ -28,9 +29,9 @@ let projectSchema = new mongoose.Schema({
 }, {
     timestamps: true
 });
+
 /**
  * Get all users from a project with the user information
- * @param {String} projectId - id of the project
  * @returns {Array} - array of object  -> [{name, id}]
  */
  projectSchema.methods.getUsers = async function() {
@@ -57,6 +58,17 @@ let projectSchema = new mongoose.Schema({
         usersArr.push({name: userInfo.fullName, id: userId});
     }
 
+    return usersArr;
+};
+
+/**
+ * Get all work items from the project 
+ * @returns {Array} - array of object  -> []
+ */
+ projectSchema.methods.getWorkItems = async function() {
+
+    let workItems = await workItemCollection.find({"projectId": this._id}).catch(err => console.error("Error getting work items: ", err)) || [];
+    
     return usersArr;
 };
 
