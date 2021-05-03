@@ -92,7 +92,7 @@ const WORK_ITEMS = [
   {
     title: "SSRS_01",
     projectId: "6027fc80a40b46138321a5e0",
-    assignedUser: "601782de1fb2050e11bfbf1f",
+    assignedUser: {name: "Raul Pichardo", id: "601782de1fb2050e11bfbf1f"},
     sprint: "60597543eb149246e98eb783",
     storyPoints: 3,
     teamId: "6065472735af4606af3adbc9",
@@ -219,7 +219,7 @@ async function seedDB() {
 
   // await createProjectSprint();
 
-  // await createWorkItem();
+  await createWorkItem();
 }
 
 // export our function

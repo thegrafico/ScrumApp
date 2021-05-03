@@ -6,7 +6,7 @@
 const userCollection        = require("./user");
 const projectStatus         = require("./Constanst").projectStatus;
 const workItemCollection    = require("./workItem");
-const mongoose              =    require("mongoose");
+const mongoose              = require("mongoose");
 
 const ObjectId = mongoose.Schema.ObjectId;
 
@@ -68,7 +68,7 @@ let projectSchema = new mongoose.Schema({
  projectSchema.methods.getWorkItems = async function() {
 
     let workItems = await workItemCollection.find({"projectId": this._id}).catch(err => console.error("Error getting work items: ", err)) || [];
-    
+
     return usersArr;
 };
 
