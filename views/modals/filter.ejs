@@ -3,66 +3,32 @@
         <div class="p-2 pr-4 pb-2">
 
             <div class="button-group">
-                <button type="button" class="btn btn-primary dropdown-toggle btn-sm" data-toggle="dropdown">Priority <i class="fas fa-caret-down"></i></button>
-
-                <ul class="dropdown-menu filterOptions">
-                    <li>
-                        <a href="#" class="small" data-value="option1" tabIndex="-1">
-                            <input type="checkbox" />&nbsp;Option 1
-                        </a>
-                    </li>
-
-                    <li>
-                        <a href="#" class="small" data-value="option2" tabIndex="-1">
-                            <input type="checkbox" />&nbsp;Option 2
-                        </a>
-                    </li>
-
-                    <div class="d-flex flex-row-reverse filterDivisor">
-                        <button type="button" class="btn btn-secondary">Clear</button>
-                    </div>
-                </ul>
-            </div>
-
-        </div>
-
-        <div class="p-2 pb-2">
-
-            <div class="button-group">
-                <button type="button" class="btn btn-primary dropdown-toggle btn-sm" data-toggle="dropdown">Points <i class="fas fa-caret-down"></i></button>
-
-                <ul class="dropdown-menu filterOptions">
-                    <li>
-                        <a href="#" class="small" data-value="option1" tabIndex="-1">
-                            <input type="checkbox" />&nbsp;Option 1
-                        </a>
-                    </li>
-
-                    <li>
-                        <a href="#" class="small" data-value="option2" tabIndex="-1">
-                            <input type="checkbox" />&nbsp;Option 2
-                        </a>
-                    </li>
-
-                    <li>
-                        <a href="#" class="small" data-value="option3" tabIndex="-1">
-                            <input type="checkbox" />&nbsp;Option 3</a>
-                    </li>
-
-                    <div class="d-flex flex-row-reverse filterDivisor">
-                        <button type="button" class="btn btn-secondary">Clear</button>
-                    </div>
-                </ul>
-            </div>
-
-        </div>
-        
-        
-        <div class="p-2 pb-2">
-            <div class="button-group">
                 <button type="button" class="btn btn-primary dropdown-toggle btn-sm" data-toggle="dropdown">State <i class="fas fa-caret-down"></i></button>
 
                 <ul class="dropdown-menu filterOptions">
+
+                    <% for (const [key, value] of Object.entries(statusWorkItem)) { %>
+                        <li>
+                            <a href="#" class="small" data-value="<%=key%>" tabIndex="-1">
+                                <input type="checkbox" />&nbsp; <i class="fa fa-circle <%=value['class']%>" aria-hidden="true"></i> <%=key%>
+                            </a>
+                        </li>
+                    <%}%>
+
+                    <div class="d-flex flex-row-reverse filterDivisor">
+                        <button type="button" class="btn btn-secondary">Clear</button>
+                    </div>
+                </ul>
+            </div>
+
+        </div>
+
+        <div class="p-2 pb-2">
+
+            <div class="button-group">
+                <button type="button" class="btn btn-primary dropdown-toggle btn-sm" data-toggle="dropdown">Assigned User <i class="fas fa-caret-down"></i></button>
+
+                <ul class="dropdown-menu filterOptions">
                     <li>
                         <a href="#" class="small" data-value="option1" tabIndex="-1">
                             <input type="checkbox" />&nbsp;Option 1
@@ -80,22 +46,29 @@
                             <input type="checkbox" />&nbsp;Option 3</a>
                     </li>
 
-                    <li>
-                        <a href="#" class="small" data-value="option4" tabIndex="-1">
-                            <input type="checkbox" />&nbsp;Option 4</a>
-                    </li>
+                    <div class="d-flex flex-row-reverse filterDivisor">
+                        <button type="button" class="btn btn-secondary">Clear</button>
+                    </div>
+                </ul>
+            </div>
 
-                    <li>
-                        <a href="#" class="small" data-value="option5" tabIndex="-1">
-                            <input type="checkbox" />&nbsp;Option 5
-                        </a>
-                    </li>
+        </div>
+        
+        
+        <div class="p-2 pb-2">
+            <div class="button-group">
+                <button type="button" class="btn btn-primary dropdown-toggle btn-sm" data-toggle="dropdown">Type <i class="fas fa-caret-down"></i></button>
 
-                    <li>
-                        <a href="#" class="small" data-value="option6" tabIndex="-1">
-                            <input type="checkbox" />&nbsp;Option 6
-                        </a>
-                    </li>
+                <ul class="dropdown-menu filterOptions" id="testing">
+
+                    <% for(let key in workItemType){ %>
+
+                        <li>
+                            <a href="#" class="small" data-value="<%=key%>" tabIndex="-1">
+                                <input type="checkbox" />&nbsp; <i class="fas <%=workItemType[key].icon%> small-fas"></i>  <%=key%>
+                            </a>
+                        </li>
+                    <%}%>
 
                     <div class="d-flex flex-row-reverse filterDivisor">
                         <button type="button" class="btn btn-secondary">Clear</button>

@@ -176,3 +176,7 @@ i {
     padding-left: 0;
     list-style: none;
 }
+
+.small-fas{
+    font-size: 0.8em;
+}
