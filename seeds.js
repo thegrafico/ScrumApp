@@ -139,7 +139,7 @@ async function addUsersToDB(){
   usersIds = [];
 
   for (let index = 0; index < USERS.length; index++) {
-    const userInfo = await userCollection.create(USERS[index]).catch(err => { console.log("Error adding the user: ", err); throw err});
+    const userInfo = await userCollection.create(USERS[index]).catch(err => { console.log(`Error adding the user [${USERS[index]["email"]}]: `, err); throw err});
     usersIds.push(userInfo._id);
   }
   console.log("users added: ", usersIds.length);
@@ -186,6 +186,8 @@ async function seedDB() {
   let result = await workItemCollection.deleteMany({});
   console.log("work Item removed!: ", result);
 
+  workItemCollection.counterReset('sequence', function(err) {console.log("Counter reset")});
+
   // remove all sprint from a project
   result = await sprintCollection.deleteMany({});
   console.log("Sprint removed!: ", result);
@@ -197,9 +199,11 @@ async function seedDB() {
   // await projectCollection.deleteOne({_id: INDIVIDUAL_PROJECT});
 
   // remove users
-  result= await userCollection.deleteMany({});
+  result = await userCollection.deleteMany({});
   console.log("Users removed!: ", result);
   console.log("===================");
+
+  // reset counter to 0
 
   // ======================================================
 

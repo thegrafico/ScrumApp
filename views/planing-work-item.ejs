@@ -85,7 +85,7 @@
                     <tbody>
                         <% for (let i = 0; i < workItems.length; ++i) {%>
                             <tr class="rowValues">
-                                <td>Column content</td>
+                                <td><%=workItems[i]["itemId"]%></td>
                                 <td> <i class="fas <%=workItemType[workItems[i]['type']].icon%>"></i> <%=workItems[i]["type"]%></td>
                                 <td><%=workItems[i]["title"]%></td>
                                 <td><%=workItems[i]["assignedUser"]["name"]%></td>

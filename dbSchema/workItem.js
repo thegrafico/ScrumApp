@@ -3,7 +3,9 @@
  */
 
 // import DB
-const mongoose = require("mongoose");
+const mongoose          = require("mongoose");
+const AutoIncrement     = require('mongoose-sequence')(mongoose);
+
 const {
     WORK_ITEM_ICONS,
     WORK_ITEM_STATUS,
@@ -23,6 +25,7 @@ const defaultWorkItem = workItemStatus.filter(key => WORK_ITEM_STATUS[key].defau
 const ObjectId = mongoose.Schema.ObjectId;
 
 let workItemSchema = new mongoose.Schema({
+    itemId: Number,
     title: {
         type: String,
         required: true,
@@ -82,5 +85,7 @@ let workItemSchema = new mongoose.Schema({
 }, {
     timestamps: true,
 });
+
+workItemSchema.plugin(AutoIncrement, {id: 'sequence', inc_field: 'itemId', reference_fields: ['projectId'] });
 
 module.exports = mongoose.model("WorkItem", workItemSchema);

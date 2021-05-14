@@ -122,6 +122,7 @@ app.use(function (req, res, next) {
   next();
 });
 
+
 // FUNCTIONAL ROUTES
 app.use('/', middleware.isUserLogin, dashboardRoute); // main page
 app.use('/dashboard/', middleware.isUserLogin, projectDetailRoute); // dashboard to show project
