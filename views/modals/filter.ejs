@@ -9,9 +9,9 @@
 
                     <% for (const [key, value] of Object.entries(statusWorkItem)) { %>
                         <li>
-                            <a href="#" class="small" data-value="<%=key%>" tabIndex="-1">
+                            <label class="small checkbox-container">
                                 <input type="checkbox" />&nbsp; <i class="fa fa-circle <%=value['class']%>" aria-hidden="true"></i> <%=key%>
-                            </a>
+                            </label>
                         </li>
                     <%}%>
 
@@ -64,9 +64,9 @@
                     <% for(let key in workItemType){ %>
 
                         <li>
-                            <a href="#" class="small" data-value="<%=key%>" tabIndex="-1">
-                                <input type="checkbox" />&nbsp; <i class="fas <%=workItemType[key].icon%> small-fas"></i>  <%=key%>
-                            </a>
+                            <label class="small checkbox-container">
+                                <input type="checkbox" class="typeCheckBox" value="<%=key%>"/>&nbsp; <i class="fas <%=workItemType[key].icon%> small-fas"></i>  <%=key%>
+                            </label>
                         </li>
                     <%}%>
 

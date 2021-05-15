@@ -180,3 +180,15 @@ i {
 .small-fas{
     font-size: 0.8em;
 }
+
+.checkbox-container {
+    /* border: 2px solid red; */
+    width: 100%;
+    /* padding: 0 5%; */
+}
+
+.checkbox-container:hover{
+    opacity: .6;
+    cursor:pointer;
+    /* border-bottom:1px solid white; */
+}
