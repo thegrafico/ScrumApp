@@ -52,11 +52,6 @@ $(function () {
     // click on planing just to show to the user in the sidebar
     $(BTN_PLANING).click();
 
-    // TODO: maybe there is a better way of not closing the filter type when clicking inside?
-    $(document).on('click', '#testing', function (e) {
-        e.stopPropagation();
-    });
-
     // clean the modal to add an user
     $(createWorkItemModal).on('shown.bs.modal', function (e) {
         $(newWorkItem["title"]).trigger("focus");

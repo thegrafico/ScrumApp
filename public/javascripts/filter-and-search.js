@@ -1,42 +1,33 @@
-
 const TYPE_CHECKBOX_CLASS = ".typeCheckBox";
-const FILTER_SEARCH_ID = "#searchTable";
+const STATE_CHECKBOX_CLASS = ".stateCheckBox";
+const FILTER_SEARCH_ID = "searchTable";
+const FILTER_GENERAL_CLASS = ".filterOptions";
+
+// Header of the table
+const filterElements = {"title": "title", "type": "type", "assigned": "assigned", "state": "state"};
 
 $(function () {
 
+    $()
+
     // filter by type
     $(TYPE_CHECKBOX_CLASS).change(function() {
+        filterTable();
+    });
 
-        const workItemTypes = $(`${TYPE_CHECKBOX_CLASS}:checked`);
-
-        if (workItemTypes.length == 0){
-            filterBy()
-            return;
-        }
-
-        const filterWorkItem = []
-        
-        for (let i = 0; i < workItemTypes.length; i++) {
-            filterWorkItem.push(workItemTypes[i].value);
-        }
-
-        filterBy("type", filterWorkItem);
-        // console.log(filterWorkItem)
-        // console.log(this.checked);
-        // // this will contain a reference to the checkbox   
-        // if (this.checked) {
-        //     // the checkbox is now checked 
-        //     console.log(this.textContent)
-        // } else {
-        //     // the checkbox is now no longer checked
-        // }
+    $(STATE_CHECKBOX_CLASS).change(function() {
+        filterTable();
     });
 
     // filter by search
-    $(FILTER_SEARCH_ID).keyup( function(){
-        alert("here");
-        filterBy();
-    })
+    $(`#${FILTER_SEARCH_ID}`).keyup( function(){
+        filterTable();
+    });
+
+    // TODO: maybe there is a better way of not closing the filter type when clicking inside?
+    $(document).on('click', FILTER_GENERAL_CLASS, function (e) {
+        e.stopPropagation();
+    });
 
 });
 
@@ -44,43 +35,94 @@ $(function () {
  * Filter table by filtering by column name and value input by the user
  * @param {String} columnName 
  */
-function filterBy(columnName="title", inputElement=null) {
+function filterTable() {
 
-    let searchInput;
-    if (!inputElement){
-        // get the input and convert it to lowercase 
-        searchInput = document.getElementById("searchTable").value.toLowerCase();
-    }else{
-        searchInput = inputElement.join("").toLowerCase();
-    }
-    
     // get the table element
-    let table = document.getElementById("workItemTable");
+    const table = document.getElementById("workItemTable");
 
     // get all row for the table
     const tableRow = table.getElementsByTagName("tr");
-    // console.log(tableRow.length);
     
+    // get the headers from the table
     const headers = getTableHeaders(tableRow[0]);
-    const columnIndx = headers.indexOf(columnName);
+    
+    const searchIndex = headers.indexOf(filterElements["title"]); // search filter by title
+    const typeIndex = headers.indexOf(filterElements["type"]); 
+    const stateIndex = headers.indexOf(filterElements["state"]);
 
+    let searchInput = getSearchInput(FILTER_SEARCH_ID);
+    let activeTypeCheckbox = getCheckboxInput(TYPE_CHECKBOX_CLASS);
+    let activeStateCheckbox = getCheckboxInput(STATE_CHECKBOX_CLASS);
+
+    // console.log("Rows: ", tableRow.length);
+
+    let style = ""
     // start looting at the element 1 since the 0 is the table header
     for (let i = 1; i < tableRow.length; i++) {
 
+        style = ""
+
         // td = tr[i].getElementsByTagName("td")[0];
-        td = tableRow[i].getElementsByTagName("td")[columnIndx];
+        td_title = tableRow[i].getElementsByTagName("td")[searchIndex];
+        td_type = tableRow[i].getElementsByTagName("td")[typeIndex];
+        td_state = tableRow[i].getElementsByTagName("td")[stateIndex];
+
         // console.log(tableRow[i]);
         // console.log(td)
         // break;
-        if (td) {
-            txtValue = td.textContent || td.innerText;
-            if (txtValue.toLowerCase().indexOf(searchInput) > -1) {
-                tableRow[i].style.display = "";
-            } else {
-                tableRow[i].style.display = "none";
-            }
+    
+        searchTxt = td_title.textContent || td_title.innerText;
+        typeTxt = td_type.textContent || td_type.innerText;
+        stateTxt = td_state.textContent || td_state.innerText;
+
+        // console.log(!searchInput, searchTxt)
+        if (searchInput && !textInColumn (searchTxt, searchInput, false)){
+            style = "none";
         }
+
+        // // console.log(searchTxt, style);
+        // // // console.log(typeTxt,activeTypeCheckbox);
+        if (activeTypeCheckbox && !textInColumn (typeTxt, activeTypeCheckbox)){
+            style = "none";
+        }
+
+        if (activeStateCheckbox && !textInColumn (stateTxt, activeStateCheckbox)){
+            style = "none"
+        }
+
+        // if (textInColumn (typeTxt, ActiveTypeCheckbox) /*|| textInColumn (td_state, activeAssignedCheckbox)*/) {
+        //     tableRow[i].style.display = "";
+        // } else {
+            // tableRow[i].style.display = "none";
+
+        // }
+        tableRow[i].style.display = style;
     }
+}
+/**
+ * 
+ * @param {String} columnText 
+ * @param {String} userChoise 
+ * @returns {Boolean} - True if the text is in the column -> Empty count as True
+ */
+function textInColumn(columnText, userChoise, activeSearch = true){
+    // console.log(columnText, userChoise);
+    if (!columnText || !userChoise){ return true};
+    
+    let textIsAvaliable;
+    
+    if (activeSearch){
+        textIsAvaliable = userChoise.toLowerCase().trim().includes(columnText.toLowerCase().trim());    
+    }else{
+        textIsAvaliable = columnText.toLowerCase().trim().includes(userChoise.toLowerCase().trim());    
+    }
+    
+    // console.log(textIsAvaliable);
+    // console.log(`User text ${userChoise.toLowerCase().trim()} is in: ${columnText} column: ${textIsAvaliable}`)
+
+    
+    return textIsAvaliable;
+    // return columnText.toLowerCase().indexOf(userChoise) > -1;
 }
 
 /**
@@ -97,4 +139,33 @@ function getTableHeaders(tableRow){
     }
 
     return headers;
+}
+
+/**
+ * Get all checkbox input
+ * @param {String} checkboxClass 
+ */
+function getCheckboxInput(checkboxClass){
+
+    const activeCheckboxes = $(`${checkboxClass}:checked`);
+
+    if (activeCheckboxes.length == 0){
+        return null;
+    }
+
+    let filterWorkItem = []
+    
+    for (let i = 0; i < activeCheckboxes.length; i++) {
+        filterWorkItem.push(activeCheckboxes[i].value);
+    }
+
+    return filterWorkItem.join(" ").toLowerCase();
+}
+
+/**
+ * Get the text inside the search
+ * @param {String} searchId 
+ */
+function getSearchInput(searchId){
+    return document.getElementById(searchId).value.toLowerCase();
 }
