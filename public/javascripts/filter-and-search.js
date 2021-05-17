@@ -31,6 +31,8 @@ $(function () {
 
 });
 
+
+// TODO: create a better way of filtering -> more dynamic
 /**
  * Filter table by filtering by column name and value input by the user
  * @param {String} columnName 
@@ -60,28 +62,23 @@ function filterTable() {
     // start looting at the element 1 since the 0 is the table header
     for (let i = 1; i < tableRow.length; i++) {
 
+        // Assume all rows are available
         style = ""
 
+        // getting the text of each column we need. COMPLETE TODO
         // td = tr[i].getElementsByTagName("td")[0];
         td_title = tableRow[i].getElementsByTagName("td")[searchIndex];
         td_type = tableRow[i].getElementsByTagName("td")[typeIndex];
         td_state = tableRow[i].getElementsByTagName("td")[stateIndex];
-
-        // console.log(tableRow[i]);
-        // console.log(td)
-        // break;
     
         searchTxt = td_title.textContent || td_title.innerText;
         typeTxt = td_type.textContent || td_type.innerText;
         stateTxt = td_state.textContent || td_state.innerText;
 
-        // console.log(!searchInput, searchTxt)
-        if (searchInput && !textInColumn (searchTxt, searchInput, false)){
+        if (searchInput && !textInColumn (searchTxt, searchInput, true)){
             style = "none";
         }
 
-        // // console.log(searchTxt, style);
-        // // // console.log(typeTxt,activeTypeCheckbox);
         if (activeTypeCheckbox && !textInColumn (typeTxt, activeTypeCheckbox)){
             style = "none";
         }
@@ -90,43 +87,34 @@ function filterTable() {
             style = "none"
         }
 
-        // if (textInColumn (typeTxt, ActiveTypeCheckbox) /*|| textInColumn (td_state, activeAssignedCheckbox)*/) {
-        //     tableRow[i].style.display = "";
-        // } else {
-            // tableRow[i].style.display = "none";
-
-        // }
         tableRow[i].style.display = style;
     }
 }
 /**
- * 
+ * Verify if the text is a substring of another text
  * @param {String} columnText 
  * @param {String} userChoise 
  * @returns {Boolean} - True if the text is in the column -> Empty count as True
  */
-function textInColumn(columnText, userChoise, activeSearch = true){
-    // console.log(columnText, userChoise);
+function textInColumn(columnText, userChoise, activeSearch = false){
+    
+    // in case the column is null or the user did not input anything
     if (!columnText || !userChoise){ return true};
     
     let textIsAvaliable;
     
+    // if the user is searching from the search input
     if (activeSearch){
         textIsAvaliable = userChoise.toLowerCase().trim().includes(columnText.toLowerCase().trim());    
     }else{
         textIsAvaliable = columnText.toLowerCase().trim().includes(userChoise.toLowerCase().trim());    
     }
     
-    // console.log(textIsAvaliable);
-    // console.log(`User text ${userChoise.toLowerCase().trim()} is in: ${columnText} column: ${textIsAvaliable}`)
-
-    
     return textIsAvaliable;
-    // return columnText.toLowerCase().indexOf(userChoise) > -1;
 }
 
 /**
- * 
+ * Get the headers of the table in an array format
  * @param {Object} tableRow - html object with all table row
  */
 function getTableHeaders(tableRow){
@@ -147,6 +135,7 @@ function getTableHeaders(tableRow){
  */
 function getCheckboxInput(checkboxClass){
 
+    // get all checked boxes
     const activeCheckboxes = $(`${checkboxClass}:checked`);
 
     if (activeCheckboxes.length == 0){
@@ -155,10 +144,11 @@ function getCheckboxInput(checkboxClass){
 
     let filterWorkItem = []
     
+    // get the value of each checkbox input
     for (let i = 0; i < activeCheckboxes.length; i++) {
         filterWorkItem.push(activeCheckboxes[i].value);
     }
-
+    
     return filterWorkItem.join(" ").toLowerCase();
 }
 
