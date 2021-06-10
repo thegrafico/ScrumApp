@@ -1,5 +1,6 @@
 const TYPE_CHECKBOX_CLASS = ".typeCheckBox";
 const STATE_CHECKBOX_CLASS = ".stateCheckBox";
+const USER_CHECKBOX_CLASS = ".userCheckbox"
 const FILTER_SEARCH_ID = "searchTable";
 const FILTER_GENERAL_CLASS = ".filterOptions";
 
@@ -8,14 +9,19 @@ const filterElements = {"title": "title", "type": "type", "assigned": "assigned"
 
 $(function () {
 
-    $()
-
     // filter by type
     $(TYPE_CHECKBOX_CLASS).change(function() {
         filterTable();
     });
 
+    // filter by state
     $(STATE_CHECKBOX_CLASS).change(function() {
+        filterTable();
+    });
+
+
+    // filter by user
+    $(USER_CHECKBOX_CLASS).change(function() {
         filterTable();
     });
 
@@ -23,6 +29,7 @@ $(function () {
     $(`#${FILTER_SEARCH_ID}`).keyup( function(){
         filterTable();
     });
+
 
     // TODO: maybe there is a better way of not closing the filter type when clicking inside?
     $(document).on('click', FILTER_GENERAL_CLASS, function (e) {
@@ -51,10 +58,12 @@ function filterTable() {
     const searchIndex = headers.indexOf(filterElements["title"]); // search filter by title
     const typeIndex = headers.indexOf(filterElements["type"]); 
     const stateIndex = headers.indexOf(filterElements["state"]);
+    const usersIndex = headers.indexOf(filterElements["assigned"]);
 
     let searchInput = getSearchInput(FILTER_SEARCH_ID);
     let activeTypeCheckbox = getCheckboxInput(TYPE_CHECKBOX_CLASS);
     let activeStateCheckbox = getCheckboxInput(STATE_CHECKBOX_CLASS);
+    let activeUsersChecbox = getCheckboxInput(USER_CHECKBOX_CLASS)
 
     // console.log("Rows: ", tableRow.length);
 
@@ -70,12 +79,14 @@ function filterTable() {
         td_title = tableRow[i].getElementsByTagName("td")[searchIndex];
         td_type = tableRow[i].getElementsByTagName("td")[typeIndex];
         td_state = tableRow[i].getElementsByTagName("td")[stateIndex];
+        td_users = tableRow[i].getElementsByTagName("td")[usersIndex];
     
         searchTxt = td_title.textContent || td_title.innerText;
         typeTxt = td_type.textContent || td_type.innerText;
         stateTxt = td_state.textContent || td_state.innerText;
+        usersTxt = td_users.textContent || td_users.innerText;
 
-        if (searchInput && !textInColumn (searchTxt, searchInput, true)){
+        if (searchInput && !textInColumn (searchTxt, searchInput, false)){
             style = "none";
         }
 
@@ -84,6 +95,10 @@ function filterTable() {
         }
 
         if (activeStateCheckbox && !textInColumn (stateTxt, activeStateCheckbox)){
+            style = "none"
+        }
+
+        if (activeUsersChecbox && !textInColumn (usersTxt, activeUsersChecbox)){
             style = "none"
         }
 
@@ -96,7 +111,7 @@ function filterTable() {
  * @param {String} userChoise 
  * @returns {Boolean} - True if the text is in the column -> Empty count as True
  */
-function textInColumn(columnText, userChoise, activeSearch = false){
+function textInColumn(columnText, userChoise, desactiveSearch = true){
     
     // in case the column is null or the user did not input anything
     if (!columnText || !userChoise){ return true};
@@ -104,7 +119,7 @@ function textInColumn(columnText, userChoise, activeSearch = false){
     let textIsAvaliable;
     
     // if the user is searching from the search input
-    if (activeSearch){
+    if (desactiveSearch){
         textIsAvaliable = userChoise.toLowerCase().trim().includes(columnText.toLowerCase().trim());    
     }else{
         textIsAvaliable = columnText.toLowerCase().trim().includes(userChoise.toLowerCase().trim());    
@@ -146,7 +161,7 @@ function getCheckboxInput(checkboxClass){
     
     // get the value of each checkbox input
     for (let i = 0; i < activeCheckboxes.length; i++) {
-        filterWorkItem.push(activeCheckboxes[i].value);
+        filterWorkItem.push(activeCheckboxes[i].value.toLowerCase());
     }
     
     return filterWorkItem.join(" ").toLowerCase();

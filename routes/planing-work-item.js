@@ -54,7 +54,7 @@ router.get("/:id/planing/workitems", middleware.isUserInProject, async function 
     // get all users for this project -> expected an array
     let users = await projectInfo.getUsers().catch(err => console.log(err)) || [];
     users.unshift(UNASSIGNED);
-    // console.log(users);
+    console.log(users);
     // LOADING TABLE WORK ITEMS
     workItems = await workItemCollection.find({projectId}).catch(err => console.error("Error getting work items: ", err)) || [];
     // console.log(workItems);

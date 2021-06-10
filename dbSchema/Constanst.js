@@ -2,7 +2,7 @@ module.exports.projectStatus = ["New", "Active", "Completed", "Deleted", "Block"
 
 // TODO: change to a better name
 module.exports.UNASSIGNED = {
-    name: "Unassigned",
+    name: "unassigned",
     id: "0",
     selected: true
 };

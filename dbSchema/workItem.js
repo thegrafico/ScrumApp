@@ -37,7 +37,7 @@ let workItemSchema = new mongoose.Schema({
         required: [true, 'Project ID is mandatory'],
     },
     assignedUser: {
-        name: {type: String, default: "Unnasigned"},
+        name: {type: String, default: "unassigned"},
         id: {type: ObjectId, ref: "User", default: null}
     },
     sprint: {

@@ -28,23 +28,16 @@
             <div class="button-group">
                 <button type="button" class="btn btn-primary dropdown-toggle btn-sm" data-toggle="dropdown">Assigned User <i class="fas fa-caret-down"></i></button>
 
-                <ul class="dropdown-menu filterOptions">
-                    <li>
-                        <a href="#" class="small" data-value="option1" tabIndex="-1">
-                            <input type="checkbox" />&nbsp;Option 1
-                        </a>
-                    </li>
+                <ul class="dropdown-menu filterOptions" id="filterUser">
 
-                    <li>
-                        <a href="#" class="small" data-value="option2" tabIndex="-1">
-                            <input type="checkbox" />&nbsp;Option 2
-                        </a>
-                    </li>
+                    <% for(let user of assignedUsers){ %>
 
-                    <li>
-                        <a href="#" class="small" data-value="option3" tabIndex="-1">
-                            <input type="checkbox" />&nbsp;Option 3</a>
-                    </li>
+                        <li>
+                            <label class="small checkbox-container">
+                                <input type="checkbox" class="userCheckbox" value="<%=user['name']%>"/>&nbsp; <i class="fas fa-user small-fas"></i>  <%=user['name']%>
+                            </label>
+                        </li>
+                    <%}%>
 
                     <div class="d-flex flex-row-reverse filterDivisor">
                         <button type="button" class="btn btn-secondary">Clear</button>
@@ -59,7 +52,7 @@
             <div class="button-group">
                 <button type="button" class="btn btn-primary dropdown-toggle btn-sm" data-toggle="dropdown">Type <i class="fas fa-caret-down"></i></button>
 
-                <ul class="dropdown-menu filterOptions" id="testing">
+                <ul class="dropdown-menu filterOptions" id="filterType">
 
                     <% for(let key in workItemType){ %>
 
