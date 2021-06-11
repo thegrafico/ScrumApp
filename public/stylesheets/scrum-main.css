@@ -225,10 +225,6 @@ a:hover {
     font-size: 0.8em;
 }
 
-#filterDiv {
-    /* display: none; */
-    /* background-color: #303030 !important; */
-}
 
 .filterOptions li{
     margin-left: 5%;
@@ -243,4 +239,19 @@ a:hover {
     padding-top: 1%;
     padding-bottom: 1%;
     margin: 4% 3% 0% 0%;
+}
+
+/* TABLE FOR SHOWING VALUES */
+
+#workItemTable{
+    table-layout: fixed;
+    width: 100%;  
+}
+
+#workItemTable td {
+    /* border: 2px solid #000; */
+    /* width: 60px; */
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
