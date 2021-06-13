@@ -29,6 +29,9 @@ const BTN_CHANGE_WORK_ITEM_STATUS = ".btnWorkItemStatus";
 const CURRENT_WORK_ITEM_STATUS = "#currentWorkItemStatus";
 const INPUT_WORK_ITEM_STATUS = "#workItemStatus";
 
+// CHECKBOX ROW ELEMENT IN TABLE
+const TABLE_ROW_CHECKBOX_ELEMENT = ".checkboxRowElement";
+
 const CREATE_WORK_ITEM_FORM = "#createWorkItemForm";
 const BTN_PLANING = "#Planing";
 
@@ -38,6 +41,7 @@ const WORK_ITEM_TABLE = "#workItemTable";
 
 const MAX_NUMBER_OF_TAGS = 4;
 const MAX_LENGTH_TITLE = 80;
+const HIGHLIGT_CLASS = "highligtRow";
 CHANGES = {
     "status": null,
     "description": null
@@ -51,6 +55,27 @@ $(function () {
 
     // click on planing just to show to the user in the sidebar
     $(BTN_PLANING).click();
+
+    // TESTING WITH CHECKBOX IN ROW
+    // TODO: Move this to another place or maybe add a function to handle the events in the checkbox
+    $(TABLE_ROW_CHECKBOX_ELEMENT).on("click", function(){
+        
+        // get the parent element. In this case, it will be the the label element
+        let _parent = $( this ).parent();
+
+        // since we are changing the whole row, we need the element that has everything inside
+        let granFather = $(_parent).parent().parent();
+
+        if (_parent.hasClass("invisible")){
+            _parent.removeClass("invisible");
+            granFather.addClass(HIGHLIGT_CLASS);
+        }else{
+            _parent.addClass("invisible");
+            granFather.removeClass(HIGHLIGT_CLASS);
+        }
+    });
+
+
 
     // clean the modal to add an user
     $(createWorkItemModal).on('shown.bs.modal', function (e) {
