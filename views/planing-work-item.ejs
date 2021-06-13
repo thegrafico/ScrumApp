@@ -44,13 +44,13 @@
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="#">Sprint</a>
+                                <a class="nav-link" href="#">Columns options</a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link" href="#">Teams</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="#">About</a>
+                                <a class="nav-link" href="#">View</a>
                             </li>
 
                         </ul>
@@ -73,6 +73,7 @@
                 <table class="table table-hover" id="workItemTable">
                     <thead>
                         <tr class="tableHeader">
+                            <th class="tableCheckBoxRowHeader"></th>
                             <th scope="col">ID</th>
                             <th scope="col">Type</th>
                             <th scope="col">Title</th>
@@ -85,9 +86,14 @@
                     <tbody>
                         <% for (let i = 0; i < workItems.length; ++i) {%>
                             <tr class="rowValues">
-                                <td><%=workItems[i]["itemId"]%></td>
+                                <td class="tableCheckBoxRowElement"> 
+                                    <label for="tableCheckBoxRowElement"> 
+                                        <input type="checkbox" id="tableCheckBoxRowElement" />
+                                    </label> 
+                                </td> 
+                                <td> <%=workItems[i]["itemId"]%></td>
                                 <td> <i class="fas <%=workItemType[workItems[i]['type']].icon%>"></i> <%=workItems[i]["type"]%></td>
-                                <td><%=workItems[i]["title"]%></td>
+                                <td class="openStory">  <%=workItems[i]["title"]%> </td>
                                 <td><%=workItems[i]["assignedUser"]["name"]%></td>
                                 <td><i class="fa fa-circle <%=workItems[i]['status']%>Color" aria-hidden="true"></i> <%=workItems[i]["status"]%></td>
                                 <td>Tags</td>

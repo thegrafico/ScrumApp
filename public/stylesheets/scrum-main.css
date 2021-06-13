@@ -255,3 +255,37 @@ a:hover {
     text-overflow: ellipsis;
     white-space: nowrap;
 }
+
+.openStory:hover{
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+
+/* 
+    ================================================================
+    CHECKBOX Style for each row of the table
+*/
+.tableCheckBoxRowHeader{
+    /* border: 1px solid red; */
+    max-width: 2%;
+    width: 2%;
+}
+
+.tableCheckBoxRowElement input{
+    transform: scale(1.2);
+    visibility: hidden;
+}
+
+.tableCheckBoxRowElement input:hover{
+    cursor: pointer;
+}
+
+.table-hover tbody tr:hover input{
+    visibility:visible;
+}
+
+/* 
+    ================================================================
+   END STYLE
+*/
