@@ -1,17 +1,6 @@
-<!DOCTYPE html>
-<html lang="en">
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><%= title %></title>
-
-    <link rel="stylesheet" href="/stylesheets/index.css">
-    <link rel="stylesheet" href="/stylesheets/bootstrap.min.css">
-    <link rel="stylesheet" href="/stylesheets/fontawesome/css/all.css">
-</head>
-
-<body>
+<!--  Header and Styles -->
+<%- include('modals/header'); %>
 
     <%- include('modals/topNavbar'); %>
 
@@ -25,7 +14,8 @@
             <hr class="my-4">
             <p class="lead">
                 <button class="btn btn-success btn-lg" href="#" role="button" data-toggle="modal"
-                    data-target="#createProjectModal">Create New Project</button>
+                    data-target="#createProjectModal">Create New Project
+                </button>
             </p>
         </div>
     </div>
@@ -63,19 +53,5 @@
 
     </div>
 
-    <!-- Dependecies -->
-    <script src="/javascripts/dependecies/jquery3.5.2.js"></script>
-    <script src="/javascripts/dependecies/validator.min.js"></script>
-    <script src="/javascripts/helpers.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-
-    <!-- change the quote  -->
-    <script src="/javascripts/quotes.js"></script>
-    <!-- Logic for modal - Projects -->
-    <script src="/javascripts/modals/projects.js"></script>
-</body>
-
-</html>
-
-
-<!-- https://bootswatch.com/darkly/ -->
+   <!-- Footer and scripts -->
+   <%- include('modals/footer'); %>

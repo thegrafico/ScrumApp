@@ -15,19 +15,7 @@
     border-bottom: 1px solid rgba(240, 240, 240, 0.2);
 }
 
-.statistics-boxs .col,
-.backlog-box .col {
-    margin: 1.5% 1.5% 0 1.5%;
-    background-color: #303030 !important;
-    border-radius: 2%;
 
-}
-
-.col-title {
-    text-transform: uppercase;
-    font-weight: bold;
-    font-size: 0.9em;
-}
 
 #currentStatus {
     color: white;
@@ -51,18 +39,8 @@ a:hover {
     margin-right: 3%;
 }
 
-.status-list {
-    font-weight: bold;
-}
-
 #statusMenu li {
     text-transform: capitalize;
-}
-
-#memberOfMonthName {
-    font-weight: normal;
-    font-size: 0.9em;
-    padding-left: 1%;
 }
 
 .user-row .col,
@@ -90,26 +68,6 @@ a:hover {
     font-size: 0.9em;
     padding-left: 1%;
 }
-
-.memberCardIcon {
-    font-size: 0.8em;
-    margin-left: 1%;
-}
-
-#createUserTitle i,
-#addUserBtn i {
-    color: seagreen;
-    font-size: 1em;
-    margin-left: 2%;
-}
-
-#removeUserBtn i,
-#removeUserTitle i {
-    color: sienna;
-    font-size: 1em;
-    margin-left: 2%;
-}
-
 
 /* .modal-lg,
 .modal-xl {

@@ -13,13 +13,6 @@ nav>a {
     cursor: default;
 }
 
-.box-main-text {
-    width: 70%;
-    margin-top: 2%;
-    margin-left: 15%;
-}
-
-
 /* ICONS */
 
 i {
@@ -37,10 +30,6 @@ i {
     padding-bottom: 5% !important;
 }
 
-#box-show-projects {
-    width: 70%;
-}
-
 .row {
     margin-bottom: 2%;
 }
@@ -51,25 +40,6 @@ i {
 
 .card:first-child {
     margin-left: 10%;
-}
-
-.card-title {
-    font-size: 1.2em;
-    text-transform: uppercase;
-}
-
-.card-date {
-    font-size: 0.9em;
-    font-style: italic;
-    color: rgba(255, 255, 255, 0.5);
-}
-
-
-/* CARD FOR PROJECT */
-
-#box-show-projects .row .card-project:hover {
-    cursor: pointer;
-    background-color: rgba(232, 232, 232, 0.2) !important;
 }
 
 #content {

@@ -1,0 +1,28 @@
+.box-main-text {
+    width: 70%;
+    margin-top: 2%;
+    margin-left: 15%;
+}
+
+#box-show-projects {
+    width: 70%;
+}
+
+/* CARD FOR PROJECT */
+
+#box-show-projects .row .card-project:hover {
+    cursor: pointer;
+    background-color: rgba(232, 232, 232, 0.2) !important;
+}
+
+.card-title {
+    font-size: 1.2em;
+    text-transform: uppercase;
+}
+
+.card-date {
+    font-size: 0.9em;
+    font-style: italic;
+    color: rgba(255, 255, 255, 0.5);
+}
+

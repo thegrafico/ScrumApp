@@ -9,6 +9,7 @@ const express               = require("express");
 const valid                 = require("validator");
 const _                     = require("lodash");
 let projectCollection       = require("../dbSchema/projects");
+const { dashboardPath }     = require("../middleware/includes");
 
 
 let router = express.Router();
@@ -28,7 +29,9 @@ router.get("/", async function (req, res) {
   let params = {
     title: "Dashboard",
     createProjectFormRedirect: "/",
-    project_rediret: BASE_ROUTE
+    project_rediret: BASE_ROUTE,
+    stylesPath: dashboardPath["styles"],
+    scriptsPath: dashboardPath["scripts"],
   };
 
   let projects = await getProjectsForUser(req.user._id).catch(err => {console.error(err)});

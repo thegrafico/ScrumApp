@@ -14,6 +14,7 @@ const projectCollection     = require("../dbSchema/projects");
 const userCollection        = require("../dbSchema/user");
 const middleware            = require("../middleware/auth");
 let router                  = express.Router();
+const { statisticsPath }    = require("../middleware/includes");
 // ===================================================
 
 
@@ -41,6 +42,7 @@ router.get("/:id", middleware.isUserInProject, async function (req, res) {
 
     // populating params
     let params = {
+        "title": projectInfo["title"],
         "project": projectInfo,
         "projectId": projectId,
         "projectStatus": STATUS,
@@ -48,6 +50,8 @@ router.get("/:id", middleware.isUserInProject, async function (req, res) {
         "currentSprint": "Not sprint found",
         "activeTab": "Statistics",
         "tabTitle": "Statistics",
+        "stylesPath": statisticsPath["styles"],
+        "scriptsPath": statisticsPath["scripts"],
     };
     params["projectOwner"] = await getProjectOwnerNameById(projectInfo["author"]);
     params["numberOfMember"] = await getNumberOfUsers(projectInfo.users);

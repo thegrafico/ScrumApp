@@ -15,7 +15,7 @@ const sprintCollection          = require("../dbSchema/sprint");
 const workItemCollection        = require("../dbSchema/workItem");
 const middleware                = require("../middleware/auth");
 let router                      = express.Router();
-
+const { planigWorkItemPath }    = require("../middleware/includes");
 const {
     UNASSIGNED, 
     EMPTY_SPRINT,
@@ -61,6 +61,7 @@ router.get("/:id/planing/workitems", middleware.isUserInProject, async function 
 
     // populating params
     let params = {
+        "title": projectInfo["title"],
         "project": projectInfo,
         "projectId": projectId,
         "activeTab": "WorkItem,Planing",
@@ -70,7 +71,9 @@ router.get("/:id/planing/workitems", middleware.isUserInProject, async function 
         "teamWorkItem": teams,
         "sprints": sprints,
         "workItemType": WORK_ITEM_ICONS,
-        "workItems": workItems
+        "workItems": workItems,
+        "stylesPath": planigWorkItemPath["style"],
+        "scriptsPath": planigWorkItemPath["scripts"]
     };
 
     res.render("planing-work-item", params);

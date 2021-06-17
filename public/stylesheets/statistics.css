@@ -1,0 +1,42 @@
+.statistics-boxs .col,
+.backlog-box .col {
+    margin: 1.5% 1.5% 0 1.5%;
+    background-color: #303030 !important;
+    border-radius: 2%;
+
+}
+
+.status-list {
+    font-weight: bold;
+}
+
+.col-title {
+    text-transform: uppercase;
+    font-weight: bold;
+    font-size: 0.9em;
+}
+
+#memberOfMonthName {
+    font-weight: normal;
+    font-size: 0.9em;
+    padding-left: 1%;
+}
+
+#createUserTitle i,
+#addUserBtn i {
+    color: seagreen;
+    font-size: 1em;
+    margin-left: 2%;
+}
+
+.memberCardIcon {
+    font-size: 0.8em;
+    margin-left: 1%;
+}
+
+#removeUserBtn i,
+#removeUserTitle i {
+    color: sienna;
+    font-size: 1em;
+    margin-left: 2%;
+}
