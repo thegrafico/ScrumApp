@@ -219,6 +219,11 @@ a:hover {
     text-decoration: underline;
 }
 
+.tableColumnID{
+    /* border: 1px solid red; */
+    width: 8%;
+}
+
 
 /* 
     ================================================================

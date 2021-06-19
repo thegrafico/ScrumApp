@@ -23,9 +23,6 @@ const {
     WORK_ITEM_STATUS,
 } = require('../dbSchema/Constanst');
 
-// ===================================================
-
-
 /**
  * METHOD: GET - show the main page for projects
  */
@@ -54,11 +51,10 @@ router.get("/:id/planing/workitems", middleware.isUserInProject, async function 
     // get all users for this project -> expected an array
     let users = await projectInfo.getUsers().catch(err => console.log(err)) || [];
     users.unshift(UNASSIGNED);
-    console.log(users);
+
     // LOADING TABLE WORK ITEMS
     workItems = await workItemCollection.find({projectId}).catch(err => console.error("Error getting work items: ", err)) || [];
     // console.log(workItems);
-    console.log(planigWorkItemPath);
 
     // populating params
     let params = {
@@ -78,6 +74,53 @@ router.get("/:id/planing/workitems", middleware.isUserInProject, async function 
     };
 
     res.render("planing-work-item", params);
+});
+
+/**
+ * METHOD: GET - show the main page for projects
+ */
+ router.get("/:id/planing/workitems/:workItemId", middleware.isUserInProject, async function (req, res) {
+
+    let projectId = req.params.id;
+
+    // verify is the project exists
+    let projectInfo = await projectCollection.findOne({_id: projectId}).catch(err => {
+        console.log("Error is: ", err.reason);
+    });
+    
+    if (_.isUndefined(projectInfo) || _.isEmpty(projectInfo)) {
+        // TODO: show a message to the user
+        return res.redirect('/');
+    }
+
+    // // TODO: Verify which project is the user in, and set that to be the selected in the frontend
+    // // get all the teams for this project
+    // let teams = [...projectInfo.teams];
+    // teams.unshift(UNASSIGNED);
+
+    let sprints = await sprintCollection.find({projectId}).catch(err => console.log(err)) || [];
+    sprints.unshift(EMPTY_SPRINT);
+
+    // get all users for this project -> expected an array
+    let users = await projectInfo.getUsers().catch(err => console.log(err)) || [];
+    users.unshift(UNASSIGNED);
+    // console.log(users);
+
+    // populating params
+    let params = {
+        "title": projectInfo["title"],
+        "project": projectInfo,
+        "projectId": projectId,
+        "activeTab": "WorkItem,Planing",
+        "tabTitle": "Work Item",
+        "assignedUsers": users,
+        "statusWorkItem": WORK_ITEM_STATUS,
+        "workItemType": WORK_ITEM_ICONS,
+        "stylesPath": planigWorkItemPath["styles"],
+        "scriptsPath": planigWorkItemPath["scripts"]
+    };
+
+    res.render("work-item", params);
 });
 
 module.exports = router;

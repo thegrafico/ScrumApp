@@ -58,7 +58,7 @@
                     <thead>
                         <tr class="tableHeader">
                             <th class="tableCheckBoxRowHeader"></th>
-                            <th scope="col">ID</th>
+                            <th scope="col" class="tableColumnID">ID</th>
                             <th scope="col">Type</th>
                             <th scope="col">Title</th>
                             <th scope="col">Assigned</th>
@@ -75,9 +75,10 @@
                                         <input type="checkbox" class="checkboxRowElement" />
                                     </label> 
                                 </td> 
-                                <td> <%=workItems[i]["itemId"]%></td>
+                                <td class="tableColumnID"> <%=workItems[i]["itemId"]%></td>
                                 <td> <i class="fas <%=workItemType[workItems[i]['type']].icon%>"></i> <%=workItems[i]["type"]%></td>
-                                <td class="openStory">  <%=workItems[i]["title"]%> </td>
+                                <!-- TODO: CHANGE TO A BETTER LINK -->
+                                <td class="openStory"> <a href="workitems/<%=workItems[i]['_id']%>" target="_blank">  <%=workItems[i]["title"]%> </a> </td>
                                 <td><%=workItems[i]["assignedUser"]["name"]%></td>
                                 <td><i class="fa fa-circle <%=workItems[i]['status']%>Color" aria-hidden="true"></i> <%=workItems[i]["status"]%></td>
                                 <td>Tags</td>
@@ -93,19 +94,5 @@
     </div>
     
     <%- include('modals/createWorkItem'); %>
-    
-    </div>
-    
-    <script src="/javascripts/dependecies/jquery3.5.2.js"></script>
-    <script src="/javascripts/dependecies/jquery-ui.min.js"></script>
-    <script src="/javascripts/dependecies/validator.min.js"></script>
-    <script src="/javascripts/helpers.js"></script>
-    <script src="/javascripts/planning-work-item.js"></script>
-    <script src="/javascripts/dependecies/bootstrap.bundle.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
-    <script src="/javascripts/filter-and-search.js"></script>
-</body>
 
-</html>
-
-<!-- https://bootswatch.com/darkly/ -->
+<%- include('modals/footer'); %>
