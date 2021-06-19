@@ -16,7 +16,11 @@ module.exports = {
         scripts: ["/javascripts/statistics-member.js", "/javascripts/dependecies/bootstrap.bundle.min.js"]
     },
     planigWorkItemPath: {
-        styles: ["/stylesheets/scrum-main.css", "/stylesheets/work-item.css",], 
-        scripts: ["https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js","/javascripts/planning-work-item.js", "/javascripts/dependecies/jquery-ui.min.js", "/javascripts/filter-and-search.js"]
+        styles: ["/stylesheets/scrum-main.css","/stylesheets/backlog.css"], 
+        scripts: [
+            // "https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js",
+            // "/javascripts/planning-work-item.js", "/javascripts/dependecies/jquery-ui.min.js", 
+            // "/javascripts/filter-and-search.js"
+        ]
     }
 }

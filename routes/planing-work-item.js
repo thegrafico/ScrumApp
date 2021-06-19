@@ -58,6 +58,7 @@ router.get("/:id/planing/workitems", middleware.isUserInProject, async function 
     // LOADING TABLE WORK ITEMS
     workItems = await workItemCollection.find({projectId}).catch(err => console.error("Error getting work items: ", err)) || [];
     // console.log(workItems);
+    console.log(planigWorkItemPath);
 
     // populating params
     let params = {
@@ -72,7 +73,7 @@ router.get("/:id/planing/workitems", middleware.isUserInProject, async function 
         "sprints": sprints,
         "workItemType": WORK_ITEM_ICONS,
         "workItems": workItems,
-        "stylesPath": planigWorkItemPath["style"],
+        "stylesPath": planigWorkItemPath["styles"],
         "scriptsPath": planigWorkItemPath["scripts"]
     };
 
