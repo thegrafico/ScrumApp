@@ -67,9 +67,31 @@ let projectSchema = new mongoose.Schema({
  */
  projectSchema.methods.getWorkItems = async function() {
 
-    let workItems = await workItemCollection.find({"projectId": this._id}).catch(err => console.error("Error getting work items: ", err)) || [];
+    const workItems = await workItemCollection.find({"projectId": this._id}).catch(err => console.error("Error getting work items: ", err)) || [];
+    
+    // TODO: verify if workItems has something
+    return workItems;
+};
 
-    return usersArr;
+/**
+ * Get all work items from the project 
+ * @param {String} -> workItemId
+ * @returns {Array} - array of object  -> []
+ */
+ projectSchema.methods.getWorkItem = async function(workItemId) {
+
+    // Verify if the param is a string and not empty
+    if (workItemId == undefined || typeof(workItemId) != typeof("")){
+        console.error("Param is undefine");
+        return [];
+    }
+
+    const workItem = await workItemCollection
+        .find({"projectId": this._id, "_id": workItemId})
+        .catch(err => console.error("Error getting work items: ", err)) || [];
+    
+    // TODO: verify if workItems has something
+    return workItem;
 };
 
 module.exports = mongoose.model("Projects", projectSchema);
