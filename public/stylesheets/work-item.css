@@ -1,0 +1,12 @@
+.work-item-wrapper{
+    padding: 1%;    
+}
+
+.modal-header{
+    justify-content:start;
+}
+
+.modal-header > i{
+    font-size: 1.5em;
+}
+

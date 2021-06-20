@@ -16,7 +16,7 @@ module.exports = {
         scripts: ["/javascripts/statistics-member.js", "/javascripts/dependecies/bootstrap.bundle.min.js"]
     },
     planigWorkItemPath: {
-        styles: ["/stylesheets/scrum-main.css","/stylesheets/backlog.css"], 
+        styles: ["/stylesheets/scrum-main.css","/stylesheets/backlog.css", "/stylesheets/work-item.css"], 
         scripts: [
             "/javascripts/planning-work-item.js", 
             "/javascripts/dependecies/bootstrap.bundle.min.js",

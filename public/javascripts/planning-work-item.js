@@ -86,14 +86,22 @@ $(function () {
         cleanModal();
     });
 
+
+    // ================== CHEKING TITLE ERRORS =================
+
+    //  PRIOR check if the title has already something in it
+    if ($(newWorkItem["title"]).val().length == 0){
+        showElement(spanTitleMsg);
+    }
+
     // When title input is changed
     $(newWorkItem["title"]).on("input", function () {
-        let inputLength = ($(this).val()).length
-
-        if (inputLength > 0) {
-            $(spanTitleMsg).addClass("d-none");
+        
+        // Using functions from helper.js in order to show or hide the elements
+        if ( (($(this).val()).length) > 0) {
+            hideElement(spanTitleMsg);
         } else {
-            $(spanTitleMsg).removeClass("d-none");
+            showElement(spanTitleMsg);
         }
     });
 

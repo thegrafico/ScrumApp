@@ -81,22 +81,23 @@ router.get("/:id/planing/workitems", middleware.isUserInProject, async function 
  */
  router.get("/:id/planing/workitems/:workItemId", middleware.isUserInProject, async function (req, res) {
 
-    let projectId = req.params.id;
+    const projectId = req.params.id;
+    const workItemId = req.params.workItemId;
 
     // verify is the project exists
     let projectInfo = await projectCollection.findOne({_id: projectId}).catch(err => {
         console.log("Error is: ", err.reason);
     });
-    
+
     if (_.isUndefined(projectInfo) || _.isEmpty(projectInfo)) {
         // TODO: show a message to the user
         return res.redirect('/');
     }
 
-    // // TODO: Verify which project is the user in, and set that to be the selected in the frontend
-    // // get all the teams for this project
-    // let teams = [...projectInfo.teams];
-    // teams.unshift(UNASSIGNED);
+    // TODO: Verify which project is the user in, and set that to be the selected in the frontend
+    // get all the teams for this project
+    let teams = [...projectInfo.teams];
+    teams.unshift(UNASSIGNED);
 
     let sprints = await sprintCollection.find({projectId}).catch(err => console.log(err)) || [];
     sprints.unshift(EMPTY_SPRINT);
@@ -104,7 +105,20 @@ router.get("/:id/planing/workitems", middleware.isUserInProject, async function 
     // get all users for this project -> expected an array
     let users = await projectInfo.getUsers().catch(err => console.log(err)) || [];
     users.unshift(UNASSIGNED);
-    // console.log(users);
+
+    // Load work item specify data
+    // TODO: this should be done first in order to know if the work item exist 
+    let workItem = await projectInfo.getWorkItem(workItemId).catch(err => console.error("Error getting work items: ", err)) || [];
+    
+    if (_.isUndefined(workItem) || _.isEmpty(workItem)){
+        // TODO: show a redirect message to the user
+        console.error("Cannot get workItem requested.");
+        return res.redirect("back");
+    }
+
+
+    console.log(WORK_ITEM_STATUS);
+    console.log(workItem);
 
     // populating params
     let params = {
@@ -115,7 +129,10 @@ router.get("/:id/planing/workitems", middleware.isUserInProject, async function 
         "tabTitle": "Work Item",
         "assignedUsers": users,
         "statusWorkItem": WORK_ITEM_STATUS,
+        "teamWorkItem": teams,
+        "sprints": sprints,
         "workItemType": WORK_ITEM_ICONS,
+        "workItem": workItem,
         "stylesPath": planigWorkItemPath["styles"],
         "scriptsPath": planigWorkItemPath["scripts"]
     };

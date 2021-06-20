@@ -87,7 +87,7 @@ let projectSchema = new mongoose.Schema({
     }
 
     const workItem = await workItemCollection
-        .find({"projectId": this._id, "_id": workItemId})
+        .findOne({"projectId": this._id, "_id": workItemId})
         .catch(err => console.error("Error getting work items: ", err)) || [];
     
     // TODO: verify if workItems has something

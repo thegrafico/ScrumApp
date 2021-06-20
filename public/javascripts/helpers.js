@@ -50,6 +50,23 @@ function showErrSpanMessage(spanId, message){
 }
 
 /**
+ * show an HTML element if the element has the class d-none
+ * @param {String} elementId - id of the span to show
+ */
+function showElement(elementId){
+    $(elementId).removeClass("d-none");
+    $(elementId).removeClass("invisible");
+}
+
+/**
+ * Hide a HTML element
+ * @param {String} elementId - id of the span to show
+ */
+function hideElement(elementId){
+    $(elementId).addClass("d-none");
+    $(elementId).addClass("invisible");
+}
+/**
  * hide a span element
  * @param {String} spanId id of the span message 
  */
@@ -85,6 +102,7 @@ function validateEmail(emailId, formId, spanId, event) {
  * Show the current tab at the side bar
  */
 function showActiveTab(){
+
     currentTabValue = $("#currentTab").val();
     
     if (currentTabValue.includes(",")){
