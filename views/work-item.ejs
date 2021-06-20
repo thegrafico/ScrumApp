@@ -81,6 +81,7 @@
                                     </span>
                                 </div>
 
+                                <!-- TODO: add tags -->
                                 <div class="col tagsContainer">
                                     <button type="button" id="addTagBtn" class="btn btn-primary">
                                         Add tag
@@ -134,9 +135,15 @@
                                             <span class="aling-vertically align-self-center"> Team: </span>
                                             <select class="custom-select my-custon-select " name="teamAssigned" id="teamAssigned">
                                                 <% for (team of teamWorkItem){ %>
-                                                    <option value="<%=team['id']%>">
-                                                        <%=team['name']%>
-                                                    </option>
+                                                    <% if (team.selected || (workItem["teamId"] && (team["id"].toString() === workItem["teamId"].toString()))) {%>
+                                                        <option value="<%=team['id']%>" selected>
+                                                            <%=team["name"]%>
+                                                        </option>
+                                                    <%}else {%>
+                                                        <option value="<%=team['id']%>">
+                                                            <%=team["name"]%>
+                                                        </option>
+                                                    <%}%>
                                                 <%}%>
                                             </select>
                                         </div>
@@ -155,7 +162,7 @@
                                                         aria-haspopup="true" id="currentType"
                                                         aria-expanded="false">
                                                         <% for(let key in workItemType){ %>
-                                                            <% if (workItemType[key].default){ %>
+                                                            <% if (key.toString() === workItem["type"]){ %>
                                                                 <i class="fas <%=workItemType[key].icon%>"></i> &nbsp;
                                                                 <%=key%>
                                                                 <%break;%>
@@ -182,9 +189,16 @@
                                             <select class="custom-select my-custon-select "
                                                 name="sprint" id="sprints">
                                                 <% for (sprint of sprints){ %>
-                                                    <option value="<%=sprint['id']%>">
-                                                        <%=sprint['name']%>
-                                                    </option>
+
+                                                    <% if (sprint.selected || (workItem["sprint"] && (sprint["id"].toString() === workItem["sprint"].toString()))) {%>
+                                                        <option value="<%=sprint['id']%>" selected>
+                                                            <%=sprint["name"]%>
+                                                        </option>
+                                                    <%}else {%>
+                                                        <option value="<%=sprint['id']%>">
+                                                            <%=sprint["name"]%>
+                                                        </option>
+                                                    <%}%>
                                                 <%}%>
                                             </select>
                                         </div>
@@ -197,24 +211,35 @@
 
                                 <div class="col">
                                     <h5 class="pd-p">Description</h5>
-                                    <textarea name="workItemDescription" id="description-textarea"
+                                    <textarea name="workItemDescription" 
+                                        id="description-textarea"
                                         rows="10" placeholder="Enter Description."
-                                        class="bx-shadow"></textarea>
+                                        class="bx-shadow"
+                                        ><%=workItem['description']%></textarea>
                                 </div>
 
                                 <div class="col-3 planing-work-item">
                                     <h5 class="pd-p">Planing</h5>
 
                                     <p>Story Points</p>
-                                    <input type="text" name="storyPoints" class="input-style"
-                                        id="workItemPoints" placeholder="Enter points: i.e 5">
+                                    <input type="text" 
+                                        name="storyPoints" 
+                                        class="input-style"
+                                        id="workItemPoints" 
+                                        placeholder="Enter points: i.e 5" 
+                                        value="<%=workItem['storyPoints']%>">
 
                                     <p>Priority</p>
-                                    <input type="text" name="priorityPoints" class="input-style"
-                                        id="workItemPriority" placeholder="Enter Priority: i.e 3">
+                                    <input type="text" 
+                                        name="priorityPoints" 
+                                        class="input-style"
+                                        id="workItemPriority" 
+                                        placeholder="Enter Priority: i.e 3"
+                                        value="<%=workItem['priorityPoints']%>">
 
                                 </div>
 
+                                <!-- TODO: Finish this functionality -->
                                 <div class="col-3 addLink">
                                     <h5 class="pd-p">Related work</h5>
                                     <p> <i class="fas fa-plus "></i> Add link</p>
@@ -226,10 +251,10 @@
                                 <div class="col-6">
                                     <!-- TODO: add post button -->
                                     <h5 class="pd-p">Discussion</h5>
-                                    <textarea name="comments" id="comment-textarea" rows="4"
-                                        placeholder="Add a comment for this story." class="bx-shadow">
-                                    </textarea>
-
+                                    <textarea name="comments" 
+                                        id="comment-textarea" rows="4"
+                                        placeholder="Add a comment for this story." 
+                                        class="bx-shadow"></textarea>
                                 </div>
                             </div>
 
