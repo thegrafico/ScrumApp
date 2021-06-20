@@ -21,8 +21,6 @@ userSchema.plugin(passportLocalMongoose);
 userSchema.methods.verifyPassword = function(password) {
     return password == this.password
 };
- 
-// TODO: add middleware in order to remove all reference of user from other collections
 
 module.exports = mongoose.model("Users", userSchema);
 

@@ -13,6 +13,7 @@ const moment                    = require('moment');
 const projectCollection         = require("../dbSchema/projects");
 const sprintCollection          = require("../dbSchema/sprint");
 const workItemCollection        = require("../dbSchema/workItem");
+const userCollection            = require("../dbSchema/user");
 const middleware                = require("../middleware/auth");
 let router                      = express.Router();
 
@@ -95,7 +96,7 @@ router.post("/:id/planing/backlog/newWorkItem", middleware.isUserInProject, asyn
         priorityPoints,
         comments
     } = req.body;
-    // console.log("REQUEST: ", req.body);
+    console.log("REQUEST: ", req.body);
 
     // Fixing variables 
     workItemStatus = capitalize(workItemStatus);
@@ -132,9 +133,19 @@ router.post("/:id/planing/backlog/newWorkItem", middleware.isUserInProject, asyn
         return res.redirect("back");
     }
 
-    // add the user if not default 
-    if (userAssigned != UNASSIGNED.id) 
-        newWorkItem["assignedUser"] = userAssigned;
+    // USER 
+    if (userAssigned != UNASSIGNED.id) {
+        const _user = await userCollection
+            .findOne({_id: userAssigned})
+            .catch(err => console.error("Cannot get the user: ", err));
+
+        // -- 
+        if (_user){
+            newWorkItem["assignedUser"] = {name: _user["fullName"],'id': userAssigned};
+        }else{
+            console.error("User was not found when creating work item");
+        }
+    }
 
     // Status
     if (_.isEmpty(workItemStatus) || !_.isString(workItemStatus) || !Object.keys(WORK_ITEM_STATUS).includes(workItemStatus)){
@@ -182,6 +193,8 @@ router.post("/:id/planing/backlog/newWorkItem", middleware.isUserInProject, asyn
     // newWorkItem["comments"]
 
     newWorkItem = await workItemCollection.create(newWorkItem).catch(err => console.error("Error creating the work item: ", err));
+    
+    console.log("ELEMENT CREATED: ", newWorkItem)
     res.redirect("back");
 });
 
