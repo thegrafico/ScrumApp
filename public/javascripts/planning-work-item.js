@@ -32,6 +32,9 @@ const INPUT_WORK_ITEM_STATUS = "#workItemStatus";
 // CHECKBOX ROW ELEMENT IN TABLE
 const TABLE_ROW_CHECKBOX_ELEMENT = ".checkboxRowElement";
 
+// TRASH CAN ICON
+const TRASH_BTN = "#trashBtn"; 
+
 const CREATE_WORK_ITEM_FORM = "#createWorkItemForm";
 const BTN_PLANING = "#Planing";
 
@@ -41,11 +44,7 @@ const WORK_ITEM_TABLE = "#workItemTable";
 
 const MAX_NUMBER_OF_TAGS = 4;
 const MAX_LENGTH_TITLE = 80;
-const HIGHLIGT_CLASS = "highligtRow";
-CHANGES = {
-    "status": null,
-    "description": null
-};
+const HIGHLIGST_CLASS = "highligtRow";
 
 // =========== This function is fire as soon as the file is loaded after the HTML ===========
 $(function () {
@@ -56,7 +55,6 @@ $(function () {
     // click on planing just to show to the user in the sidebar
     $(BTN_PLANING).click();
 
-    // TESTING WITH CHECKBOX IN ROW
     // TODO: Move this to another place or maybe add a function to handle the events in the checkbox
     $(TABLE_ROW_CHECKBOX_ELEMENT).on("click", function(){
         
@@ -66,16 +64,26 @@ $(function () {
         // since we are changing the whole row, we need the element that has everything inside
         let granFather = $(_parent).parent().parent();
 
+        let atLeastOneCheckBoxIsChecked = ($(`${TABLE_ROW_CHECKBOX_ELEMENT}:checked`).length > 0);
+    
+        enableTrashButton(atLeastOneCheckBoxIsChecked);
+        
         if (_parent.hasClass("invisible")){
             _parent.removeClass("invisible");
-            granFather.addClass(HIGHLIGT_CLASS);
+            granFather.addClass(HIGHLIGST_CLASS);
         }else{
             _parent.addClass("invisible");
-            granFather.removeClass(HIGHLIGT_CLASS);
+            granFather.removeClass(HIGHLIGST_CLASS);
         }
     });
 
+    // REMOVE THE WORK ITEMS SELECTED IN CHECKBOX
+    // TODO: Create a database modal to store deleted element
+    $(TRASH_BTN).on("click", function(){
+        alert("FOR NOW");
+    });
 
+    // ==================== CLEANING THE MODAL WHEM OPEN =================
 
     // clean the modal to add an user
     $(createWorkItemModal).on('shown.bs.modal', function (e) {
@@ -85,7 +93,6 @@ $(function () {
     $(createWorkItemModal).on('show.bs.modal', function (e) {
         cleanModal();
     });
-
 
     // ================== CHEKING TITLE ERRORS =================
 
@@ -256,6 +263,23 @@ function validateFormWorkItem(){
     }
 
     return true;
+}
+
+/**
+ * Enable the functionality for the trash button
+ * @param {Boolean} enable - True if wants to enable the trash button, false if wants to disable
+ */
+function enableTrashButton(enable){
+    
+    if (enable){
+        $(TRASH_BTN).attr("disabled", false);
+        $(`${TRASH_BTN} i`).removeClass("grayColor");
+        $(`${TRASH_BTN} i`).addClass("redColor");
+    }else{
+        $(TRASH_BTN).attr("disabled", true);
+        $(`${TRASH_BTN} i`).removeClass("redColor");
+        $(`${TRASH_BTN} i`).addClass("grayColor");
+    }
 }
 
 
