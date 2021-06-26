@@ -38,6 +38,7 @@ const TRASH_BTN = "#trashBtn";
 const CREATE_WORK_ITEM_FORM = "#createWorkItemForm";
 const BTN_PLANING = "#Planing";
 
+// TAG TEMPLATE FOR WORK ITEM
 const tagTemplate = `<span class="badge badge-secondary"> <input type="text" name="tags[]" placeholder="Enter tag " class='tagNme'> <span aria-hidden="true" class="rmTag">&times;</span>  </span>`;
 
 const WORK_ITEM_TABLE = "#workItemTable";

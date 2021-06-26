@@ -7,6 +7,9 @@ module.exports.UNASSIGNED = {
     selected: true
 };
 
+// max number of tags per work item
+module.exports.MAX_NUMBER_OF_TAGS_PER_WORK_ITEM = 3;
+
 module.exports.userStatus = ["Active", "Inactive"];
 
 // SPRINTS CONSTANTS

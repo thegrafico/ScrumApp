@@ -94,15 +94,18 @@ router.post("/:id/planing/backlog/newWorkItem", middleware.isUserInProject, asyn
         workItemDescription,
         storyPoints,
         priorityPoints,
-        comments
+        comments,
+        tags
     } = req.body;
-    console.log("REQUEST: ", req.body);
 
     // Fixing variables 
     workItemStatus = capitalize(workItemStatus);
     workItemType = capitalize(workItemType);
     storyPoints = parseInt(storyPoints);
     priorityPoints = parseInt(priorityPoints);
+    tags = tags || []; // give a default value in case undefined
+
+    console.log("REQUEST: ", req.body, tags);
 
     // getting project info
     let projectInfo = await projectCollection.findOne({_id: req.params.id}).catch(err => {
@@ -121,19 +124,19 @@ router.post("/:id/planing/backlog/newWorkItem", middleware.isUserInProject, asyn
     // to create a new work item
     let newWorkItem = {};
 
-    // Title
+    // ============ Title ==============
     if (_.isEmpty(title) || title.length < 3){
         res.status(400).send("Title cannot be empty and have to be grater than 3 chars.");
         return res.redirect("back");
     }
     
+    // =========== USER ID ================
     // Verify the user is in the project 
     if (userAssigned != UNASSIGNED.id && !users.includes(userAssigned)){
         res.status(400).send("Cannot find the user assigned for this work item");
         return res.redirect("back");
     }
 
-    // USER 
     if (userAssigned != UNASSIGNED.id) {
         const _user = await userCollection
             .findOne({_id: userAssigned})
@@ -146,6 +149,7 @@ router.post("/:id/planing/backlog/newWorkItem", middleware.isUserInProject, asyn
             console.error("User was not found when creating work item");
         }
     }
+    // ================== STATUS ================
 
     // Status
     if (_.isEmpty(workItemStatus) || !_.isString(workItemStatus) || !Object.keys(WORK_ITEM_STATUS).includes(workItemStatus)){
@@ -153,7 +157,7 @@ router.post("/:id/planing/backlog/newWorkItem", middleware.isUserInProject, asyn
         return res.redirect("back");
     }
 
-    // teams
+    // =============== TEAMS =============
     if (teamAssigned != UNASSIGNED.id && !teams.includes(teamAssigned)){
         res.status(400).send("Cannot find the team assigned for this work item");
         return res.redirect("back");
@@ -164,24 +168,30 @@ router.post("/:id/planing/backlog/newWorkItem", middleware.isUserInProject, asyn
     if (teamAssigned != UNASSIGNED.id) 
         newWorkItem["teamId"] = teamAssigned;
 
-    // type
+    //  ================= TYPE ================
     if(Object.keys(WORK_ITEM_ICONS).includes(workItemType)){
         newWorkItem["type"] = workItemType;
     }
 
-    // sprint
+    // =============== SPRINT ==============
     if (sprints.includes(sprint)){
         newWorkItem["sprint"] = sprint;
     }
 
-    // points
+    // ================ POINTS ===============
     if ( _.isNumber(storyPoints) && !isNaN(storyPoints) && (storyPoints >= 0  && storyPoints <= MAX_STORY_POINTS)){
         newWorkItem["storyPoints"] = storyPoints;
     }
 
-    // priority
+    // ================== priority ===============
     if ( _.isNumber(priorityPoints) && !isNaN(priorityPoints) && (priorityPoints >= 0  && priorityPoints <= MAX_PRIORITY_POINTS)){
         newWorkItem["priorityPoints"] = priorityPoints;
+    }
+
+    // ============== TAGS =================
+    // if there is tags available
+    if (!(_.isEmpty(tags))){
+        newWorkItem["tags"] = tags;
     }
 
     newWorkItem["title"] = title;
@@ -194,7 +204,7 @@ router.post("/:id/planing/backlog/newWorkItem", middleware.isUserInProject, asyn
 
     newWorkItem = await workItemCollection.create(newWorkItem).catch(err => console.error("Error creating the work item: ", err));
     
-    console.log("ELEMENT CREATED: ", newWorkItem)
+    console.log("Was work item created: ", newWorkItem != undefined);
     res.redirect("back");
 });
 

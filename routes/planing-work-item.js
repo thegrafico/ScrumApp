@@ -116,10 +116,6 @@ router.get("/:id/planing/workitems", middleware.isUserInProject, async function 
         return res.redirect("back");
     }
 
-
-    console.log(WORK_ITEM_STATUS);
-    console.log(workItem);
-
     // populating params
     let params = {
         "title": projectInfo["title"],

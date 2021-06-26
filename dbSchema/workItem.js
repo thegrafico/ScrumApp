@@ -12,6 +12,7 @@ const {
     MAX_STORY_POINTS,
     MAX_PRIORITY_POINTS,
     MAX_LENGTH_DESCRIPTION,
+    MAX_NUMBER_OF_TAGS_PER_WORK_ITEM
 } = require("./Constanst");
 
 // get just the name since that will be in the db
@@ -78,14 +79,28 @@ let workItemSchema = new mongoose.Schema({
         trim: true,
         maxLength: MAX_LENGTH_DESCRIPTION,
     },
-    comments: [{
+    comments: [{ 
         type: ObjectId,
         ref: "workItemComments",
-    }, ],
+    }],
+    tags: {
+        type: [String],
+        validdate: [limitOfTags, "{PATH} exceeds the limit of elements"]
+    }
 }, {
     timestamps: true,
 });
 
 workItemSchema.plugin(AutoIncrement, {id: 'sequence', inc_field: 'itemId', reference_fields: ['projectId'] });
+
+/**
+ * Function to validate the max number of tags can a work item has
+ * @param {Array} tags 
+ */
+// TODO: create a constans for this value
+function limitOfTags(tags){
+    return tags.length <= MAX_NUMBER_OF_TAGS_PER_WORK_ITEM;
+}
+
 
 module.exports = mongoose.model("WorkItem", workItemSchema);
