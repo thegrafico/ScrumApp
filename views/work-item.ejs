@@ -77,7 +77,7 @@
                                 <!-- TODO: add comments number from the db -->
                                 <div class="col-1">
                                     <span>
-                                        <i class="fas fa-comments"></i> <%=workItem['comments'].length%>
+                                        <i class="fas fa-comments"></i> <span id="numberOfCommentSpan"> <%=workItem['comments'].length%></span>
                                     </span>
                                 </div>
 
@@ -271,11 +271,12 @@
                                     <button id="add-comment"type="button" class="btn btn-success">Add</button>
                                 </div>
 
-                                <% if (workItem['comments'] && workItem['comments'].length > 0){%>
+                              
 
-                                    <div class="col-6 comments-container">
-                                        <h5 class="pd-p">Comments</h5>
-                                        <div class="user-comments-container">
+                                <div class="col-6 comments-container">
+                                    <h5 class="pd-p">Comments</h5>
+                                    <div class="user-comments-container">
+                                        <% if (workItem['comments'] && workItem['comments'].length > 0){%>
                                             
                                             <% for (let comment of workItem['comments'].reverse()) {%>
                                                 <div>
@@ -285,13 +286,12 @@
                                                     class="bx-shadow"><%=comment%></textarea>
                                                 </div>
                                             <%}%>    
-                                        </div>
+                                        <%}%>
                                     </div>
-                                <%}%>
+                                </div>
+
                             </div>
-
                         </fieldset>
-
                     </div>
                 </form>
             </div>

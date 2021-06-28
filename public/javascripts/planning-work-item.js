@@ -17,6 +17,9 @@ const newWorkItem = {
 };
 const createWorkItemModal = ".createNewItemModal";
 
+// Symbol to replaces
+const REPLACE_SYMBOL = "???***";
+
 const addTagBtn = "#addTagBtn";
 const FILTER_BTN = "#filterBtn"
 const tagContainer = ".tagsContainer";
@@ -53,9 +56,13 @@ const CREATE_WORK_ITEM_FORM = "#createWorkItemForm";
 const BTN_PLANING = "#Planing";
 
 // TAG TEMPLATE FOR WORK ITEM
-const tagTemplate = `<span class="badge badge-secondary"> <input type="text" name="tags[]" placeholder="Enter tag " class='tagNme'> <span aria-hidden="true" class="rmTag">&times;</span>  </span>`;
+const TAG_TEMPLATE = `<span class="badge badge-secondary"> <input type="text" name="tags[]" placeholder="Enter tag " class='tagNme'> <span aria-hidden="true" class="rmTag">&times;</span>  </span>`;
+const COMMENT_HTML_TEMPLATE = `<div> <textarea name="comments" id="comment-textarea" rows="4" placeholder="Add a comment for this story." class="bx-shadow">${REPLACE_SYMBOL}</textarea></div>`;
+const USER_COMMENT_CONTAINER = ".user-comments-container";
+const NUMBER_OF_COMMENTS_SPAN = "#numberOfCommentSpan";
 
 const WORK_ITEM_TABLE = "#workItemTable";
+
 
 const MAX_NUMBER_OF_TAGS = 4;
 const MAX_LENGTH_TITLE = 80;
@@ -106,8 +113,8 @@ $(function () {
         }
 
         // TODO: clean text before inserting in database
-        if ( (comment && comment.length > 0)){
-            addCommentToWorkItem(projectId, workItemId, comment);
+        if ( (comment && comment.trim().length > 0)){
+            addCommentToWorkItem(projectId, workItemId, comment.trim());
         }else{
             // TODO: show a message to the user that empty comment cannot be added
             alert("Cannot add an empty comment.")
@@ -172,7 +179,7 @@ $(function () {
         let childrens = ($(tagContainer).children()).length;
 
         if (childrens <= MAX_NUMBER_OF_TAGS) {
-            $(tagContainer).append(tagTemplate)
+            $(tagContainer).append(TAG_TEMPLATE)
         } else {
             alert(`Each story cannot have more than ${MAX_NUMBER_OF_TAGS} tags`);
         }
@@ -326,16 +333,51 @@ function enableTrashButton(enable){
  * @param {String} comment 
  */
 function addCommentToWorkItem(projectId, workItemId, comment){
-    const api_link_add_comment = `/dashboard/api/${projectId}/addCommentToWorkItem/${workItemId}`;
-    const request_data = {comment}
+    
+    // TODO: check for projectId, workItemId
 
-    $.post(
-        api_link_add_comment, 
-        request_data,
-        function(data, status){
-            console.log("Data: " + data + "\nStatus: " + status);
+    // link to make the request
+    const api_link_add_comment = `/dashboard/api/${projectId}/addCommentToWorkItem/${workItemId}`;
+    
+    // check of comments
+    if (comment.trim().length == 0){
+        console.error("Cannot add empty comment");
+        return;
+    }
+
+    // Data to make the request
+    const request_data = {comment: comment.trim()}
+
+    // Assign handlers immediately after making the request,
+    const response = $.post( api_link_add_comment, request_data, 
+        function() {
+            console.log("Sent!");
+        })
+        .done(function() {
+
+            // since the request is done (Success), we can add the html 
+            const comment_html = COMMENT_HTML_TEMPLATE.replace(REPLACE_SYMBOL, comment);
+            addToHtml(USER_COMMENT_CONTAINER, comment_html);
+
+            // update the number of comments
+            let currentNumberOfComments = parseInt($(NUMBER_OF_COMMENTS_SPAN).text().trim());
+            $(NUMBER_OF_COMMENTS_SPAN).text(++currentNumberOfComments);
+            
+        })
+        .fail(function(data, status) {
+            // const code = data.status; // Getting status code
+            console.log( `Error: ${data}. Status: ${status}` );
         }
     );
+}
+
+/**
+ * Add html to an container
+ * @param {String} containerId 
+ * @param {String} html 
+ */
+function addToHtml(containerId, html){
+    $(containerId).append(html);
 }
 
 

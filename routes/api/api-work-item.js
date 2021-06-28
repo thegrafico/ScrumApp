@@ -9,6 +9,8 @@ let router                      = express.Router();
  */
 router.post("/api/:id/addCommentToWorkItem/:workItemId", middleware.isUserInProject, async function (req, res) {
     
+
+    // return res.status(400).send("Error");
     console.log("Getting request...");
     
     // TODO: Verify if project exist and work item
