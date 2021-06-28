@@ -79,13 +79,13 @@ let workItemSchema = new mongoose.Schema({
         trim: true,
         maxLength: MAX_LENGTH_DESCRIPTION,
     },
-    comments: [{ 
-        type: ObjectId,
-        ref: "workItemComments",
-    }],
+    comments: {
+        type: [String],
+        // validate: [limitOfText, "{PATH} exceeds the limit of text a comment can have"]
+    },
     tags: {
         type: [String],
-        validdate: [limitOfTags, "{PATH} exceeds the limit of elements"]
+        validate: [limitOfTags, "{PATH} exceeds the limit of elements"]
     }
 }, {
     timestamps: true,

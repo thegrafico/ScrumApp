@@ -1,3 +1,7 @@
+/**
+ * Front-end JS Code for planing-work-item route
+ */
+
 const newWorkItem = {
     title: "#new-item-title",
     user: "#assignedUser",
@@ -34,6 +38,16 @@ const TABLE_ROW_CHECKBOX_ELEMENT = ".checkboxRowElement";
 
 // TRASH CAN ICON
 const TRASH_BTN = "#trashBtn"; 
+
+// ADD COMMENT - BUTTON
+const BTN_ADD_COMMENT = "#add-comment";
+const TEXT_AREA_ID = "#comment-textarea";
+
+// WORK Item ID
+const WORK_ITEM_ID = "#workItemId";
+
+// PROJECT ID
+const PROJECT_ID = "#projectId";
 
 const CREATE_WORK_ITEM_FORM = "#createWorkItemForm";
 const BTN_PLANING = "#Planing";
@@ -75,6 +89,28 @@ $(function () {
         }else{
             _parent.addClass("invisible");
             granFather.removeClass(HIGHLIGST_CLASS);
+        }
+    });
+
+    // ADD COMMENT 
+    $(BTN_ADD_COMMENT).on("click", function(){
+        
+        const comment = $(TEXT_AREA_ID).val();
+        const workItemId = $(WORK_ITEM_ID).val();
+        const projectId = $(PROJECT_ID).val();
+    
+        if (workItemId == undefined || projectId == undefined){
+            // TODO: add a message to the UI
+            alert("There is a problem getting the information for this work item");
+            return;
+        }
+
+        // TODO: clean text before inserting in database
+        if ( (comment && comment.length > 0)){
+            addCommentToWorkItem(projectId, workItemId, comment);
+        }else{
+            // TODO: show a message to the user that empty comment cannot be added
+            alert("Cannot add an empty comment.")
         }
     });
 
@@ -281,6 +317,25 @@ function enableTrashButton(enable){
         $(`${TRASH_BTN} i`).removeClass("redColor");
         $(`${TRASH_BTN} i`).addClass("grayColor");
     }
+}
+
+/**
+ * Add a comment to a work item for a project
+ * @param {String} projectId 
+ * @param {String} workItemId 
+ * @param {String} comment 
+ */
+function addCommentToWorkItem(projectId, workItemId, comment){
+    const api_link_add_comment = `/dashboard/api/${projectId}/addCommentToWorkItem/${workItemId}`;
+    const request_data = {comment}
+
+    $.post(
+        api_link_add_comment, 
+        request_data,
+        function(data, status){
+            console.log("Data: " + data + "\nStatus: " + status);
+        }
+    );
 }
 
 

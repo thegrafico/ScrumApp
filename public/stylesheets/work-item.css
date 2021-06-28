@@ -69,3 +69,27 @@
 .redColor{
     color: rgba(255, 0, 0, 0.719);
 }
+
+/* COMMENTS ON WORK ITEMS */
+
+.comments-container{
+    margin-top: -6%;
+}
+
+.user-comments-container{
+    /* border: 1px solid red; */
+    max-height: 20vh;
+    width: 99%;
+    margin: auto;
+    overflow-y: scroll;
+}
+.user-comments-container > div{
+    /* margin-top: 2%; */
+    /* background-color:#444; */
+    margin-bottom: 2%;
+
+}
+
+#add-comment{
+    margin-left: 90%; width: 10%; margin-right: 0;
+}

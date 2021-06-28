@@ -24,6 +24,7 @@ const dashboardRoute        = require('./routes/dashboard');
 const projectDetailRoute    = require("./routes/statistics");
 const planingBacklogRoute   = require("./routes/planing-backlog");
 const planingworkItemRoute  = require("./routes/planing-work-item");
+const apiWorkItemRoute      = require("./routes/api/api-work-item"); 
 
 
 // App object 
@@ -129,6 +130,8 @@ app.use('/dashboard/', middleware.isUserLogin, projectDetailRoute); // dashboard
 app.use('/dashboard/', middleware.isUserLogin, planingworkItemRoute); // dashboard to show project
 app.use('/dashboard/', middleware.isUserLogin, planingBacklogRoute); // dashboard to show project
 
+// API - Route
+app.use('/dashboard/', middleware.isUserLogin, apiWorkItemRoute); // dashboard to show project
 
 // ==================== ROUTES =================
 // catch 404 and forward to error handler
