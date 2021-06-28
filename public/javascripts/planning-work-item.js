@@ -39,6 +39,9 @@ const INPUT_WORK_ITEM_STATUS = "#workItemStatus";
 // CHECKBOX ROW ELEMENT IN TABLE
 const TABLE_ROW_CHECKBOX_ELEMENT = ".checkboxRowElement";
 
+// SAVE WORK ITEM BTN
+const SAVE_WORK_ITEM_BTN = "#saveStatusBtn";
+
 // TRASH CAN ICON
 const TRASH_BTN = "#trashBtn"; 
 
@@ -334,7 +337,11 @@ function enableTrashButton(enable){
  */
 function addCommentToWorkItem(projectId, workItemId, comment){
     
-    // TODO: check for projectId, workItemId
+    if (projectId == undefined || workItemId == undefined){
+        // TODO: add error message to the user
+        alert("Error getting the paramenters to add the comment to work item");
+        return;
+    }
 
     // link to make the request
     const api_link_add_comment = `/dashboard/api/${projectId}/addCommentToWorkItem/${workItemId}`;
@@ -357,7 +364,7 @@ function addCommentToWorkItem(projectId, workItemId, comment){
 
             // since the request is done (Success), we can add the html 
             const comment_html = COMMENT_HTML_TEMPLATE.replace(REPLACE_SYMBOL, comment);
-            addToHtml(USER_COMMENT_CONTAINER, comment_html);
+            addToHtml(USER_COMMENT_CONTAINER, comment_html); // Helper function
 
             // update the number of comments
             let currentNumberOfComments = parseInt($(NUMBER_OF_COMMENTS_SPAN).text().trim());
@@ -365,19 +372,12 @@ function addCommentToWorkItem(projectId, workItemId, comment){
             
         })
         .fail(function(data, status) {
+            //TODO: add error message to the user
             // const code = data.status; // Getting status code
             console.log( `Error: ${data}. Status: ${status}` );
         }
     );
 }
 
-/**
- * Add html to an container
- * @param {String} containerId 
- * @param {String} html 
- */
-function addToHtml(containerId, html){
-    $(containerId).append(html);
-}
 
 

@@ -17,7 +17,6 @@ $(function (){
 
     // BTN when the user submit the form information to create a new project
     $(btnSubmitForm).on("click", function(event){
-        
         // remove the default from the form so we can control when to submit the information. 
         event.preventDefault();
 

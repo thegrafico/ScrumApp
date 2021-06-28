@@ -114,7 +114,20 @@ function showActiveTab(){
     $(`#${currentTabValue}`).addClass("currentTab");
 }
 
+/**
+ * Toggle the filter element
+ */
 function toggleFilter(){
     let filterDiv = "#filterDiv";
     $(filterDiv).toggle();
+}
+
+
+/**
+ * Add html to an container
+ * @param {String} containerId 
+ * @param {String} html 
+ */
+ function addToHtml(containerId, html){
+    $(containerId).append(html);
 }

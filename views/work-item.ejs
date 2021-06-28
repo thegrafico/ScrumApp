@@ -39,9 +39,7 @@
                                             placeholder="Enter title">        
                                         </div>
                                     </div>
-                                    
                                 </div>
-                                
 
                                 <div class="col ml-12">
                                     <span id="title-span-msg" class="d-none">
@@ -74,15 +72,13 @@
 
                                 </div>
 
-                                <!-- TODO: add comments number from the db -->
                                 <div class="col-1">
                                     <span>
                                         <i class="fas fa-comments"></i> <span id="numberOfCommentSpan"> <%=workItem['comments'].length%></span>
                                     </span>
                                 </div>
 
-                                <!-- TODO: add tags -->
-                                <div class="col tagsContainer">
+                                <div class="col-7 tagsContainer">
                                     <button type="button" id="addTagBtn" class="btn btn-primary">
                                         Add tag
                                     </button>
@@ -93,7 +89,14 @@
                                             <span aria-hidden="true" class="rmTag">&times;</span>  
                                         </span>
                                     <%}%>
-                                    
+                                </div>
+
+                                <!-- BUTTON TO SAVE THE WORK ITEM STATUS -->
+                                <div class="col">
+                                    <div class="saveStatusBtn" id="saveStatusBtn">
+                                        <i class="far fa-save"></i>
+                                        <span class="tooltiptext">Save</span>
+                                    </div>
                                 </div>
                             </div>
 
