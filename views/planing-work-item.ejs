@@ -58,7 +58,7 @@
 
             </div>
 
-            <div class="p-4">
+            <div class="p-4" id="table-container">
                 <table class="table table-hover" id="workItemTable">
                     <thead>
                         <tr class="tableHeader">
@@ -76,8 +76,8 @@
                         <% for (let i = 0; i < workItems.length; ++i) {%>
                             <tr class="rowValues">
                                 <td class="tableCheckBoxRowElement"> 
-                                    <label for="checkboxRowElement" class="invisible"> 
-                                        <input type="checkbox" class="checkboxRowElement" />
+                                    <label for="checkboxRowElement" class="invisible labelcheckbox"> 
+                                        <input type="checkbox" name="checkboxWorkItem[]" value="<%=workItems[i]['_id']%>" class="checkboxRowElement" />
                                     </label> 
                                 </td> 
                                 <td class="tableColumnID"> <%=workItems[i]["itemId"]%></td>

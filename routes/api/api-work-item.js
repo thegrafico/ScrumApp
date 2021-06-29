@@ -42,4 +42,36 @@ router.post("/api/:id/addCommentToWorkItem/:workItemId", middleware.isUserInProj
     res.status(200).send("Comment was added successfully!");
 });
 
+/**
+ * METHOD: POST - REMOVE WORK ITEMS FROM PROJECT
+ */
+ router.post("/api/:id/removeWorkItems", middleware.isUserInProject, async function (req, res) {
+    
+    console.log("Getting request to remove work items...");
+    
+    // TODO: Verify if project exist and work item
+    const projectId = req.params.id;
+    
+    let  { workItemsId } = req.body;
+
+    // is a string
+    if (workItemsId && workItemsId.length > 0){
+    
+        // Add the comment to the DB
+        const result = await workItemCollection.deleteMany({projectId: projectId, _id: workItemsId}).catch(
+            err => console.error("Error removing work items: ", err)
+        );
+
+        if (!result){
+            res.status(400).send("Error removing work items. Please try later.");
+            return;
+        }
+    }else{
+        res.status(400).send("Error removing work items");
+        return;
+    }
+
+    res.status(200).send("Work items were removed successfully!");
+});
+
 module.exports = router;

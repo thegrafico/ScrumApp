@@ -129,5 +129,30 @@ function toggleFilter(){
  * @param {String} html 
  */
  function addToHtml(containerId, html){
-    $(containerId).append(html);
+    $(containerId).prepend(html);
+}
+
+/**
+ * Send a request to the backend
+ * @param {String} link - Link where the request goes
+ * @param {Object} data - Object with the data to be send
+ * @returns {Promise} True if the request was sent successfully
+ */
+ function make_post_request(link, data){
+    return new Promise( (resolve, reject) => {
+        // Assign handlers immediately after making the request,
+        const response = $.post( link, data, 
+            function() {
+                console.log("Sent!");
+            })
+            .done(function() {
+                return resolve(true);
+                
+                
+            })
+            .fail(function(data, status) {
+                return reject({data, status});
+            }
+        );
+    });
 }

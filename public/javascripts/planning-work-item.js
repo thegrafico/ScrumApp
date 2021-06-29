@@ -127,7 +127,15 @@ $(function () {
     // REMOVE THE WORK ITEMS SELECTED IN CHECKBOX
     // TODO: Create a database modal to store deleted element
     $(TRASH_BTN).on("click", function(){
-        alert("FOR NOW");
+        
+        let row_checked = []
+        $(".checkboxRowElement:checked").each(function(){
+            row_checked.push($(this).val())
+        });
+
+        const projectId = $(PROJECT_ID).val();
+        removeWorkItems(projectId, row_checked);
+
     });
 
     // ==================== CLEANING THE MODAL WHEM OPEN =================
@@ -197,11 +205,9 @@ $(function () {
 
     $(CREATE_WORK_ITEM_FORM).on("submit", function(event){
         isFormValid = validateFormWorkItem();
-        console.log(isFormValid);
         if (!isFormValid){
             event.preventDefault();
         }
-
     });
 
     // TOGGLE THE FILTER
@@ -335,7 +341,7 @@ function enableTrashButton(enable){
  * @param {String} workItemId 
  * @param {String} comment 
  */
-function addCommentToWorkItem(projectId, workItemId, comment){
+async function addCommentToWorkItem(projectId, workItemId, comment){
     
     if (projectId == undefined || workItemId == undefined){
         // TODO: add error message to the user
@@ -355,29 +361,49 @@ function addCommentToWorkItem(projectId, workItemId, comment){
     // Data to make the request
     const request_data = {comment: comment.trim()}
 
-    // Assign handlers immediately after making the request,
-    const response = $.post( api_link_add_comment, request_data, 
-        function() {
-            console.log("Sent!");
-        })
-        .done(function() {
+    const response = await make_post_request(api_link_add_comment,request_data).catch(err=> {
+        console.error("Error adding the comment: ", err);
+    });
+    
+    if (response){
+        // since the request is done (Success), we can add the html 
+        const comment_html = COMMENT_HTML_TEMPLATE.replace(REPLACE_SYMBOL, comment);
+        addToHtml(USER_COMMENT_CONTAINER, comment_html); // Helper function
 
-            // since the request is done (Success), we can add the html 
-            const comment_html = COMMENT_HTML_TEMPLATE.replace(REPLACE_SYMBOL, comment);
-            addToHtml(USER_COMMENT_CONTAINER, comment_html); // Helper function
-
-            // update the number of comments
-            let currentNumberOfComments = parseInt($(NUMBER_OF_COMMENTS_SPAN).text().trim());
-            $(NUMBER_OF_COMMENTS_SPAN).text(++currentNumberOfComments);
-            
-        })
-        .fail(function(data, status) {
-            //TODO: add error message to the user
-            // const code = data.status; // Getting status code
-            console.log( `Error: ${data}. Status: ${status}` );
-        }
-    );
+        // update the number of comments
+        let currentNumberOfComments = parseInt($(NUMBER_OF_COMMENTS_SPAN).text().trim());
+        $(NUMBER_OF_COMMENTS_SPAN).text(++currentNumberOfComments);
+    }else{
+        // TODO: add error message to the user 
+    }
 }
 
+/**
+ * Remove the work item from the project
+ * @param {Array} workItemsId - Array with all work item ids 
+ */
+async function removeWorkItems(projectId, workItemsId){
+    const api_link_remove_work_items =`/dashboard/api/${projectId}/removeWorkItems`;
 
+    if (!workItemsId || workItemsId.length == 0){
+        console.error("Cannot find the work items to remove");
+        return;
+    }
 
+    const request_data = {workItemsId};
+
+    const response = await make_post_request(api_link_remove_work_items, request_data).catch(err=> {
+        console.error("Error adding the comment: ", err);
+    });
+
+    if (response){
+        $(".checkboxRowElement:checked").parent().parent().parent().each(function(){
+           $(this).remove();
+        });
+
+        // disable the trash button again
+        enableTrashButton(false);
+    }else{
+        // TODO: show error message to the user
+    }
+}

@@ -218,66 +218,67 @@
                                 </div>
                             </div>
 
-                            <div class="row desc-planing-development">
+                            <div id="main-body-container">
 
-                                <div class="col">
-                                    <h5 class="pd-p">Description</h5>
-                                    <textarea name="workItemDescription" 
-                                        id="description-textarea"
-                                        rows="8" placeholder="Enter Description."
-                                        class="bx-shadow"
-                                        ><%=workItem['description']%></textarea>
-                                </div>
+                                <div class="row desc-planing-development">
 
-                                <div class="col-3 planing-work-item">
-                                    <h5 class="pd-p">Planing</h5>
-
-                                    <p>Story Points</p>
-                                    <input type="text" 
-                                        name="storyPoints" 
-                                        class="input-style"
-                                        id="workItemPoints" 
-                                        placeholder="Enter points: i.e 5" 
-                                        value="<%=workItem['storyPoints']%>">
-
-                                    <p>Priority</p>
-                                    <input type="text" 
-                                        name="priorityPoints" 
-                                        class="input-style"
-                                        id="workItemPriority" 
-                                        placeholder="Enter Priority: i.e 3"
-                                        value="<%=workItem['priorityPoints']%>">
-
-                                </div>
-
-                                <!-- TODO: Finish this functionality -->
-                                <div class="col-3 addLink">
-                                    <h5 class="pd-p">Related work</h5>
-                                    <p> <i class="fas fa-plus "></i> Add link</p>
-                                </div>
-                                
-
-                            </div>
-
-                            <div class="row desc-planing-development" >
-                                <div class="col-6">
-
-                                    <div>
-                                        <!-- TODO: add post button -->
-                                        <h5 class="pd-p">Discussion</h5>
-                                        <textarea name="comments" 
-                                            id="comment-textarea" rows="4"
-                                            placeholder="Add a comment for this story." 
-                                            class="bx-shadow"></textarea>
+                                    <div class="col">
+                                        <h5 class="pd-p">Description</h5>
+                                        <textarea name="workItemDescription" 
+                                            id="description-textarea"
+                                            rows="8" placeholder="Enter Description."
+                                            class="bx-shadow"
+                                            ><%=workItem['description']%></textarea>
                                     </div>
 
-                                    <button id="add-comment"type="button" class="btn btn-success">Add</button>
+                                    <div class="col-3 planing-work-item">
+                                        <h5 class="pd-p">Planing</h5>
+
+                                        <p>Story Points</p>
+                                        <input type="text" 
+                                            name="storyPoints" 
+                                            class="input-style"
+                                            id="workItemPoints" 
+                                            placeholder="Enter points: i.e 5" 
+                                            value="<%=workItem['storyPoints']%>">
+
+                                        <p>Priority</p>
+                                        <input type="text" 
+                                            name="priorityPoints" 
+                                            class="input-style"
+                                            id="workItemPriority" 
+                                            placeholder="Enter Priority: i.e 3"
+                                            value="<%=workItem['priorityPoints']%>">
+
+                                    </div>
+
+                                    <!-- TODO: Finish this functionality -->
+                                    <div class="col-3 addLink">
+                                        <h5 class="pd-p">Related work</h5>
+                                        <p> <i class="fas fa-plus "></i> Add link</p>
+                                    </div>
+                                    
+
                                 </div>
 
-                              
+                                <div class="row desc-planing-development" >
+                                    <div class="col-6">
 
+                                        <div>
+                                            <!-- TODO: add post button -->
+                                            <h5 class="pd-p">Discussion</h5>
+                                            <textarea name="comments" 
+                                                id="comment-textarea" rows="4"
+                                                placeholder="Add a comment for this story." 
+                                                class="bx-shadow"></textarea>
+                                        </div>
+
+                                        <button id="add-comment"type="button" class="btn btn-success">Add</button>
+                                    </div>
+                                </div>
+
+                                <!-- TODO: There is a bug when the comment is added that is being added at the end -->
                                 <div class="col-6 comments-container">
-                                    <h5 class="pd-p">Comments</h5>
                                     <div class="user-comments-container">
                                         <% if (workItem['comments'] && workItem['comments'].length > 0){%>
                                             
@@ -292,7 +293,6 @@
                                         <%}%>
                                     </div>
                                 </div>
-
                             </div>
                         </fieldset>
                     </div>
