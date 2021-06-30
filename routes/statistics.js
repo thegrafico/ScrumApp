@@ -72,7 +72,6 @@ router.post("/:id/addmember", middleware.isUserInProject, async function (req, r
 
     const projectId = req.params.id;
 
-    // TODO: find userid by email. then add the user to the new project
     let userId = await getUserIdByEmail(userEmail).catch(err => {
         console.error(err)
     })

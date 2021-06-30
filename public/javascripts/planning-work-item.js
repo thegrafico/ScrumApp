@@ -66,7 +66,6 @@ const NUMBER_OF_COMMENTS_SPAN = "#numberOfCommentSpan";
 
 const WORK_ITEM_TABLE = "#workItemTable";
 
-
 const MAX_NUMBER_OF_TAGS = 4;
 const MAX_LENGTH_TITLE = 80;
 const HIGHLIGST_CLASS = "highligtRow";
@@ -79,8 +78,9 @@ $(function () {
 
     // click on planing just to show to the user in the sidebar
     $(BTN_PLANING).click();
-
-    // TODO: Move this to another place or maybe add a function to handle the events in the checkbox
+    /**
+     * CHECKBOX BOR WORK ITEM TABLE 
+     */
     $(TABLE_ROW_CHECKBOX_ELEMENT).on("click", function(){
         
         // get the parent element. In this case, it will be the the label element
@@ -181,6 +181,7 @@ $(function () {
     // TODO: maybe static icons? so when the user change the element it will always be at the same location
     $(BTN_CHANGE_WORK_ITEM_STATUS).on("click", function () {
         updateCustomSelect(this, CURRENT_WORK_ITEM_STATUS, INPUT_WORK_ITEM_STATUS);
+
     });
 
     // Add tag
@@ -277,7 +278,7 @@ function updateCustomSelect(currentElement, tagCurrentItem, tagInputItem){
     // add the temporal element into the select options
     // $(currentElement).empty().html(temp)
 
-    $(tagInputItem).val(selecteTextValue);
+    $(tagInputItem).val(selecteTextValue).trigger("change");
 }
 
 /**
@@ -373,6 +374,9 @@ async function addCommentToWorkItem(projectId, workItemId, comment){
         // update the number of comments
         let currentNumberOfComments = parseInt($(NUMBER_OF_COMMENTS_SPAN).text().trim());
         $(NUMBER_OF_COMMENTS_SPAN).text(++currentNumberOfComments);
+
+        // clean the textarea for the user
+        $(TEXT_AREA_ID).val('');
     }else{
         // TODO: add error message to the user 
     }

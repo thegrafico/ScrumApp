@@ -140,7 +140,6 @@ function toggleFilter(){
  */
  function make_post_request(link, data){
     return new Promise( (resolve, reject) => {
-        // Assign handlers immediately after making the request,
         const response = $.post( link, data, 
             function() {
                 console.log("Sent!");
@@ -155,4 +154,19 @@ function toggleFilter(){
             }
         );
     });
+}
+
+/**
+ * Return the value of the new value if is different from current
+ * @param {Object} currentVal 
+ * @param {Object} newVal 
+ * @returns new value if current and new are different, otherwise retun undefined 
+ */
+ function swap(currentVal, newVal){
+
+    if (currentVal != newVal){
+        return newVal;
+    }
+
+    return undefined;
 }
