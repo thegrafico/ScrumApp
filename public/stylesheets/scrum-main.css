@@ -160,13 +160,17 @@ a:hover {
     margin-left: -60px;
 }
 
-.saveStatusBtn:hover {
+.saveBtnContainer:hover .tooltiptext {
+    visibility: visible;
+}
+
+.saveBtnContainer:hover{
     opacity: 0.5;
     cursor: pointer;
 }
 
-.saveStatusBtn:hover .tooltiptext {
-    visibility: visible;
+.saveBtnContainer i{
+    color:royalblue;
 }
 
 #sidebar a {

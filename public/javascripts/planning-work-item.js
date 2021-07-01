@@ -2,7 +2,7 @@
  * Front-end JS Code for planing-work-item route
  */
 
-const newWorkItem = {
+const WORK_ITEM = {
     title: "#new-item-title",
     user: "#assignedUser",
     state: "#workItemStatus",
@@ -28,13 +28,11 @@ const rmTag = ".rmTag";
 
 // WORK ITEM TYPE
 const BTN_CHANGE_WORK_ITEM_TYPE = ".btnType";
-const INPUT_TYPE_HIDDEN_ELEMENT = "#workItemType";
 const CURRENT_WORK_ITEM_TYPE = "#currentType";
 
 // WORK ITEM STATUS
 const BTN_CHANGE_WORK_ITEM_STATUS = ".btnWorkItemStatus";
 const CURRENT_WORK_ITEM_STATUS = "#currentWorkItemStatus";
-const INPUT_WORK_ITEM_STATUS = "#workItemStatus";
 
 // CHECKBOX ROW ELEMENT IN TABLE
 const TABLE_ROW_CHECKBOX_ELEMENT = ".checkboxRowElement";
@@ -47,7 +45,6 @@ const TRASH_BTN = "#trashBtn";
 
 // ADD COMMENT - BUTTON
 const BTN_ADD_COMMENT = "#add-comment";
-const TEXT_AREA_ID = "#comment-textarea";
 
 // WORK Item ID
 const WORK_ITEM_ID = "#workItemId";
@@ -105,7 +102,7 @@ $(function () {
     // ADD COMMENT 
     $(BTN_ADD_COMMENT).on("click", function(){
         
-        const comment = $(TEXT_AREA_ID).val();
+        const comment = $(WORK_ITEM["discussion"]).val();
         const workItemId = $(WORK_ITEM_ID).val();
         const projectId = $(PROJECT_ID).val();
     
@@ -142,7 +139,7 @@ $(function () {
 
     // clean the modal to add an user
     $(createWorkItemModal).on('shown.bs.modal', function (e) {
-        $(newWorkItem["title"]).trigger("focus");
+        $(WORK_ITEM["title"]).trigger("focus");
     });
 
     $(createWorkItemModal).on('show.bs.modal', function (e) {
@@ -152,12 +149,12 @@ $(function () {
     // ================== CHEKING TITLE ERRORS =================
 
     //  PRIOR check if the title has already something in it
-    if ($(newWorkItem["title"]).val().length == 0){
+    if ($(WORK_ITEM["title"]).val().length == 0){
         showElement(spanTitleMsg);
     }
 
     // When title input is changed
-    $(newWorkItem["title"]).on("input", function () {
+    $(WORK_ITEM["title"]).on("input", function () {
         
         // Using functions from helper.js in order to show or hide the elements
         if ( (($(this).val()).length) > 0) {
@@ -172,7 +169,7 @@ $(function () {
      */
     // TODO: maybe static icons? so when the user change the element it will always be at the same location
     $(BTN_CHANGE_WORK_ITEM_TYPE).on("click", function () {
-        updateCustomSelect(this, CURRENT_WORK_ITEM_TYPE, INPUT_TYPE_HIDDEN_ELEMENT);
+        updateCustomSelect(this, CURRENT_WORK_ITEM_TYPE, WORK_ITEM["type"]);
     });
 
     /**
@@ -180,7 +177,7 @@ $(function () {
      */
     // TODO: maybe static icons? so when the user change the element it will always be at the same location
     $(BTN_CHANGE_WORK_ITEM_STATUS).on("click", function () {
-        updateCustomSelect(this, CURRENT_WORK_ITEM_STATUS, INPUT_WORK_ITEM_STATUS);
+        updateCustomSelect(this, CURRENT_WORK_ITEM_STATUS, WORK_ITEM["state"]);
 
     });
 
@@ -223,30 +220,30 @@ $(function () {
 function cleanModal() {
 
     // reset title
-    $(newWorkItem["title"]).val("");
+    $(WORK_ITEM["title"]).val("");
     $(spanTitleMsg).removeClass("d-none");
 
     // reset assigned user
-    $(newWorkItem["user"]).val(0);
+    $(WORK_ITEM["user"]).val(0);
 
     // reset tags
     $(`${tagContainer} span`).remove();
 
     // reset state
     // TODO: set the default value to be the firts from an array from CONSTANTS.js
-    $(newWorkItem["state"]).val("New");
+    $(WORK_ITEM["state"]).val("New");
 
     // Reset description
-    $(newWorkItem["description"]).val("");
+    $(WORK_ITEM["description"]).val("");
 
     // reset points
-    $(newWorkItem["points"]).val("");
+    $(WORK_ITEM["points"]).val("");
 
     // reset priority
-    $(newWorkItem["priority"]).val("");
+    $(WORK_ITEM["priority"]).val("");
 
     // reset discussion
-    $(newWorkItem["discussion"]).val("");
+    $(WORK_ITEM["discussion"]).val("");
 
 
     // TODO: reset links
@@ -263,14 +260,14 @@ function cleanModal() {
  */
 function updateCustomSelect(currentElement, tagCurrentItem, tagInputItem){
     // // get the current element
-    let currentIcon = $(tagCurrentItem).html();        
+    // let currentIcon = $(tagCurrentItem).html();        
 
     // get the clicked element
     let clickedIcon = $(currentElement).html();
     let selecteTextValue = $(currentElement).text().trim().toLowerCase();
 
     // store the current element in a temporal variable
-    let temp = currentIcon;
+    // let temp = currentIcon;
 
     // clean the current element and change it with the clicked
     $(tagCurrentItem).empty().html(clickedIcon);
@@ -287,14 +284,14 @@ function updateCustomSelect(currentElement, tagCurrentItem, tagInputItem){
 // TODO: change alert for other better ui messages
 function validateFormWorkItem(){
 
-    const title = $(newWorkItem["title"]).val().trim();
-    // const state = $(newWorkItem["state"]).val();
-    // const teamId = $(newWorkItem["team"]).val();
-    // const type = $(newWorkItem["type"]).val();
-    // const sprint = $(newWorkItem["sprint"]).val();
-    const description = $(newWorkItem["description"]).val();
-    const points = $(newWorkItem["points"]).val();
-    const priority = $(newWorkItem["priority"]).val();
+    const title = $(WORK_ITEM["title"]).val().trim();
+    // const state = $(WORK_ITEM["state"]).val();
+    // const teamId = $(WORK_ITEM["team"]).val();
+    // const type = $(WORK_ITEM["type"]).val();
+    // const sprint = $(WORK_ITEM["sprint"]).val();
+    const description = $(WORK_ITEM["description"]).val();
+    const points = $(WORK_ITEM["points"]).val();
+    const priority = $(WORK_ITEM["priority"]).val();
 
     // console.log(`POINTS: ${points}, Priority: ${priority}`);
    
@@ -376,7 +373,7 @@ async function addCommentToWorkItem(projectId, workItemId, comment){
         $(NUMBER_OF_COMMENTS_SPAN).text(++currentNumberOfComments);
 
         // clean the textarea for the user
-        $(TEXT_AREA_ID).val('');
+        $(WORK_ITEM["discussion"]).val('');
     }else{
         // TODO: add error message to the user 
     }

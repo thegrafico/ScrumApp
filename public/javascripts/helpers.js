@@ -164,6 +164,7 @@ function toggleFilter(){
  */
  function swap(currentVal, newVal){
 
+    // console.log(`Current: ${currentVal}, New: ${newVal}. Result ${currentVal != newVal}`);
     if (currentVal != newVal){
         return newVal;
     }
