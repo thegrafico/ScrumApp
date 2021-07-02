@@ -11,6 +11,9 @@ let newAssignedUser = undefined;
 // Status
 let newWorkItemStatus = undefined;
 
+// tags
+let newTags = undefined; 
+
 // Team
 let newTeam = undefined;
 
@@ -29,6 +32,7 @@ let newStoryPoints = undefined;
 // Priority Points
 let newPriorityPoints = undefined;
 
+// Save button 
 const SAVE_BTN_CONTAINER = "#saveStatusBtn";
 const ENABLE_SAVE_BTN_CLASS = "saveBtnContainer";
 $(function () {
@@ -36,6 +40,7 @@ $(function () {
     const currentTitle          = $(WORK_ITEM["title"]).val();
     const currentAssignedUser   = $(WORK_ITEM["user"]).val();
     const currentStatus         = $(WORK_ITEM["state"]).val().toLowerCase();
+    const currentTags           = $(WORK_ITEM["tags"]).map((_,element) => element.value).get();
     const currentTeam           = $(WORK_ITEM["team"]).val().toLowerCase();
     const currentType           = $(WORK_ITEM["type"]).val().toLowerCase();
     const currentIteration      = $(WORK_ITEM["sprint"]).val().toLowerCase();
@@ -57,8 +62,20 @@ $(function () {
 
     });
 
-    // TODO: Add on changes tags
+    // Tags - if the div changes, then we update
+    $(TAG_CONTAINER).change(function(){
+        
+        // get all the tags available
+        let tags_available = $(WORK_ITEM["tags"]).map((_,element) => element.value).get();
 
+        // using lodash in order to know if the array has changed
+        let arrayAreEqual = _.isEqual(_.sortBy(tags_available), _.sortBy(currentTags));
+
+        newTags = tags_available ? !arrayAreEqual : undefined;
+
+        activeSaveButton();
+    });
+    
     // Status - select
     $(WORK_ITEM["state"]).change(function(){
         newWorkItemStatus = swap(currentStatus, $(this).val() || "");
@@ -112,7 +129,7 @@ function activeSaveButton(){
 
     // get the status of all possibles changes in the work item
     let somethingHasChanged = (newWorkItemTitle || newAssignedUser || newWorkItemStatus || newTeam
-        || newType || newIteration || newDescription || newStoryPoints || newPriorityPoints);
+        || newType || newIteration || newDescription || newStoryPoints || newPriorityPoints || newTags);
     // -- 
 
     if (somethingHasChanged){

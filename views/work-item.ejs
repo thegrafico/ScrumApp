@@ -78,14 +78,14 @@
                                     </span>
                                 </div>
 
-                                <div class="col-7 tagsContainer">
+                                <div class="col-7 tagsContainer" id="tagsContainer">
                                     <button type="button" id="addTagBtn" class="btn btn-primary">
                                         Add tag
                                     </button>
 
                                     <% for (let tag of workItem["tags"]){ %>
                                         <span class="badge badge-secondary"> 
-                                            <input type="text" name="tags[]" value="<%=tag%>" placeholder="Enter tag " class='tagNme '> 
+                                            <input type="text" name="tags[]" autocomplete="off" value="<%=tag%>" placeholder="Enter tag " class='tagNme'> 
                                             <span aria-hidden="true" class="rmTag">&times;</span>  
                                         </span>
                                     <%}%>

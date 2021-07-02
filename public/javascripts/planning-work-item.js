@@ -22,7 +22,7 @@ const REPLACE_SYMBOL = "???***";
 
 const addTagBtn = "#addTagBtn";
 const FILTER_BTN = "#filterBtn"
-const tagContainer = ".tagsContainer";
+const TAG_CONTAINER = "#tagsContainer";
 const spanTitleMsg = "#title-span-msg";
 const rmTag = ".rmTag";
 
@@ -56,7 +56,7 @@ const CREATE_WORK_ITEM_FORM = "#createWorkItemForm";
 const BTN_PLANING = "#Planing";
 
 // TAG TEMPLATE FOR WORK ITEM
-const TAG_TEMPLATE = `<span class="badge badge-secondary"> <input type="text" name="tags[]" placeholder="Enter tag " class='tagNme'> <span aria-hidden="true" class="rmTag">&times;</span>  </span>`;
+const TAG_TEMPLATE = `<span class="badge badge-secondary"> <input type="text" autocomplete="off" name="tags[]" placeholder="Enter tag " class='tagNme'> <span aria-hidden="true" class="rmTag">&times;</span>  </span>`;
 const COMMENT_HTML_TEMPLATE = `<div> <textarea name="comments" id="comment-textarea" rows="4" placeholder="Add a comment for this story." class="bx-shadow">${REPLACE_SYMBOL}</textarea></div>`;
 const USER_COMMENT_CONTAINER = ".user-comments-container";
 const NUMBER_OF_COMMENTS_SPAN = "#numberOfCommentSpan";
@@ -185,10 +185,10 @@ $(function () {
     $(addTagBtn).on("click", function () {
 
         // get number of element
-        let childrens = ($(tagContainer).children()).length;
+        let childrens = ($(TAG_CONTAINER).children()).length;
 
         if (childrens <= MAX_NUMBER_OF_TAGS) {
-            $(tagContainer).append(TAG_TEMPLATE)
+            $(TAG_CONTAINER).append(TAG_TEMPLATE)
         } else {
             alert(`Each story cannot have more than ${MAX_NUMBER_OF_TAGS} tags`);
         }
@@ -198,7 +198,10 @@ $(function () {
      * Event to remove the tag when the user click the 'x' button
      */
     $(document).on("click", rmTag, function () {
-        $(this).parent().remove()
+        $(this).parent().remove();
+        
+        // Trigger the tags container in oder to active the save button
+        $("#tagsContainer").trigger("change");
     });
 
     $(CREATE_WORK_ITEM_FORM).on("submit", function(event){
@@ -227,7 +230,7 @@ function cleanModal() {
     $(WORK_ITEM["user"]).val(0);
 
     // reset tags
-    $(`${tagContainer} span`).remove();
+    $(`${TAG_CONTAINER} span`).remove();
 
     // reset state
     // TODO: set the default value to be the firts from an array from CONSTANTS.js
