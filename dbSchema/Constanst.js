@@ -7,9 +7,6 @@ module.exports.UNASSIGNED = {
     selected: true
 };
 
-// max number of tags per work item
-module.exports.MAX_NUMBER_OF_TAGS_PER_WORK_ITEM = 3;
-
 module.exports.userStatus = ["Active", "Inactive"];
 
 // SPRINTS CONSTANTS
@@ -50,6 +47,11 @@ module.exports.WORK_ITEM_STATUS = {
     "Block":        {"class": "blockColor"}, 
     "Abandoned":    {"class": "abandonedColor"}
 };
+
+// max number of tags per work item
+module.exports.MAX_NUMBER_OF_TAGS_PER_WORK_ITEM = 3;
+
+module.exports.MAX_LENGTH_TITLE = 80;
 
 // MAX STORY POINTS
 module.exports.MAX_STORY_POINTS = 500;

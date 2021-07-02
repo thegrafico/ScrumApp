@@ -28,7 +28,7 @@ const ObjectId = mongoose.Schema.ObjectId;
 let workItemSchema = new mongoose.Schema({
     itemId: Number,
     title: {
-        type: String,
+        type: String,  //const MAX_LENGTH_TITLE = 80;
         required: true,
         trim: true,
     },

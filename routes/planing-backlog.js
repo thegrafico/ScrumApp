@@ -24,6 +24,7 @@ const {
     WORK_ITEM_STATUS,
     MAX_STORY_POINTS = 500,
     MAX_PRIORITY_POINTS = 5,
+    capitalize
 } = require('../dbSchema/Constanst');
 
 // ===================================================
@@ -94,7 +95,6 @@ router.post("/:id/planing/backlog/newWorkItem", middleware.isUserInProject, asyn
         workItemDescription,
         storyPoints,
         priorityPoints,
-        comments,
         tags
     } = req.body;
 
@@ -208,9 +208,5 @@ router.post("/:id/planing/backlog/newWorkItem", middleware.isUserInProject, asyn
     res.redirect("back");
 });
 
-const capitalize = (s) => {
-    if (typeof s !== 'string') return ''
-    return s.charAt(0).toUpperCase() + s.slice(1)
-  }
 
 module.exports = router;

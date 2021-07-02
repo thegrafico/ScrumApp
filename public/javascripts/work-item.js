@@ -1,36 +1,21 @@
 /**
  * This file is to save the work item when something has changed
+ * WORK_ITEM is declared in planning-work-item.js
+ * swap function is inside helpers.js
 */
-// All this variables are declared in the planning-work-item.js - public
-// Title
-let newWorkItemTitle = undefined;
 
-// Assigned User
-let newAssignedUser = undefined;
-
-// Status
-let newWorkItemStatus = undefined;
-
-// tags
-let newTags = undefined; 
-
-// Team
-let newTeam = undefined;
-
-// Type
-let newType = undefined;
-
-// Iteration
-let newIteration = undefined;
-
-// Description
-let newDescription = undefined;
-
-// Story Points
-let newStoryPoints = undefined;
-
-// Priority Points
-let newPriorityPoints = undefined;
+let updateWorkItem = {
+    title: undefined,
+    assignedUser: undefined,
+    sprint: undefined,
+    storyPoints: undefined,
+    priorityPoints: undefined,
+    status: undefined,
+    teamId: undefined,
+    type: undefined,
+    description: undefined,
+    tags: undefined,
+}
 
 // Save button 
 const SAVE_BTN_CONTAINER = "#saveStatusBtn";
@@ -50,14 +35,14 @@ $(function () {
 
     // Work Item Title
     $(WORK_ITEM["title"]).keyup(function(){
-        newWorkItemTitle = swap(currentTitle, $(this).val() || "");
+        updateWorkItem["title"] = swap(currentTitle, $(this).val() || "");
         activeSaveButton();
 
     });
 
     // assigned user
     $(WORK_ITEM["user"]).change(function(){
-        newAssignedUser = swap(currentAssignedUser, $(this).val() || "");
+        updateWorkItem["assignedUser"] = swap(currentAssignedUser, $(this).val() || "");
         activeSaveButton();
 
     });
@@ -71,70 +56,94 @@ $(function () {
         // using lodash in order to know if the array has changed
         let arrayAreEqual = _.isEqual(_.sortBy(tags_available), _.sortBy(currentTags));
 
-        newTags = tags_available ? !arrayAreEqual : undefined;
+        updateWorkItem["tags"] = !arrayAreEqual ? tags_available : undefined;
 
         activeSaveButton();
     });
     
     // Status - select
     $(WORK_ITEM["state"]).change(function(){
-        newWorkItemStatus = swap(currentStatus, $(this).val() || "");
+        updateWorkItem["status"] = swap(currentStatus, $(this).val() || "");
         activeSaveButton();
 
     });
 
     // Team
     $(WORK_ITEM["team"]).change(function(){
-        newTeam = swap(currentTeam, $(this).val() || "");
+        updateWorkItem["teamId"] = swap(currentTeam, $(this).val() || "");
         activeSaveButton();
 
     });
 
     // Type
     $(WORK_ITEM["type"]).change(function(){        
-        newType = swap(currentType, $(this).val() || "");
+        updateWorkItem["type"] = swap(currentType, $(this).val() || "");
         activeSaveButton();
 
     });
 
-    // Iteration
+    // sprint
     $(WORK_ITEM["sprint"]).change(function(){        
-        newIteration = swap(currentIteration, $(this).val() || "");
+        updateWorkItem["sprint"] = swap(currentIteration, $(this).val() || "");
         activeSaveButton();
     });
 
     // Description
     $(WORK_ITEM["description"]).keyup(function(){        
-        newDescription = swap(currentDescription, $(this).val() || "");
+        updateWorkItem["description"] = swap(currentDescription, $(this).val() || "");
         activeSaveButton();
     });
 
     // Story Points
     $(WORK_ITEM["points"]).keyup(function(){
-        newStoryPoints = swap(currentStoryPoints, $(this).val() || "0");
+        updateWorkItem["storyPoints"] = swap(currentStoryPoints, $(this).val() || "0");
         activeSaveButton();
     });
 
     // Priority Points
     $(WORK_ITEM["priority"]).keyup(function(){
-        newPriorityPoints = swap(currentPriorityPoints, $(this).val() || "0");
+        updateWorkItem["priorityPoints"] = swap(currentPriorityPoints, $(this).val() || "0");
         activeSaveButton();
+    });
+
+    // Save button event
+    $(SAVE_BTN_CONTAINER).on("click", async function(){
+        // only do the post when something has changed
+        if (activeSaveButton()){
+            const projectId = $(PROJECT_ID).val();
+            const workItemId = $(WORK_ITEM_ID).val();
+
+            const api_link_update_work_item = `/dashboard/api/${projectId}/update_work_item/${workItemId}`;
+
+            const response = await make_post_request(api_link_update_work_item, updateWorkItem).catch(err=> {
+                // TODO: change this to another a message to the user
+                console.error("Error updating the work item: ", err);
+            });
+
+            // set all values in object to default value
+            Object.keys(updateWorkItem).forEach(function(key){ updateWorkItem[key] = undefined });
+            
+            // since all values are now default, we can reset the save button
+            activeSaveButton();
+        }
     });
 });
 
 /**
- * Active the sabe button in order to save the current state of the work item if has changed
+ * Active the save button in order to save the current state of the work item if has changed
  */
 function activeSaveButton(){
 
     // get the status of all possibles changes in the work item
-    let somethingHasChanged = (newWorkItemTitle || newAssignedUser || newWorkItemStatus || newTeam
-        || newType || newIteration || newDescription || newStoryPoints || newPriorityPoints || newTags);
-    // -- 
+    let somethingHasChanged = Object.keys(updateWorkItem).some(
+        (key) => updateWorkItem[key] != undefined
+    );
 
     if (somethingHasChanged){
         $(SAVE_BTN_CONTAINER).addClass(ENABLE_SAVE_BTN_CLASS);
     }else{
         $(SAVE_BTN_CONTAINER).removeClass(ENABLE_SAVE_BTN_CLASS);
     }
+
+    return somethingHasChanged;
 }

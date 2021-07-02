@@ -387,6 +387,7 @@ async function addCommentToWorkItem(projectId, workItemId, comment){
  * @param {Array} workItemsId - Array with all work item ids 
  */
 async function removeWorkItems(projectId, workItemsId){
+    // TODO: maybe change this to the https: format? 
     const api_link_remove_work_items =`/dashboard/api/${projectId}/removeWorkItems`;
 
     if (!workItemsId || workItemsId.length == 0){

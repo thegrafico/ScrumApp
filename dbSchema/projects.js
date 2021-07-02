@@ -6,6 +6,7 @@
 const userCollection        = require("./user");
 const projectStatus         = require("./Constanst").projectStatus;
 const workItemCollection    = require("./workItem");
+const _                     = require("lodash");
 const mongoose              = require("mongoose");
 
 const ObjectId = mongoose.Schema.ObjectId;
@@ -93,5 +94,21 @@ let projectSchema = new mongoose.Schema({
     // TODO: verify if workItems has something
     return workItem;
 };
+
+/**
+ * Verify user is in project
+ * @param {String} userId-> workItemId
+ * @returns {Boolean} True if the user is in the project
+ */
+ projectSchema.methods.isUserInProject = function(userId) {
+
+    if (_.isEmpty(userId) || !_.isString(userId)){
+        console.error("Parameter is either empty or is not a String");
+        return false;
+    }
+
+    return this.users.include(userId);
+};
+
 
 module.exports = mongoose.model("Projects", projectSchema);

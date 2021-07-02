@@ -2,7 +2,18 @@
 const express                   = require("express");
 const middleware                = require("../../middleware/auth");
 const workItemCollection        = require("../../dbSchema/workItem");
+const projectCollection         = require("../../dbSchema/projects");
+const _                         = require("lodash");
 let router                      = express.Router();
+
+const {
+    UNASSIGNED,
+    MAX_LENGTH_TITLE,
+    MAX_STORY_POINTS,
+    EMPTY_SPRINT,
+    WORK_ITEM_STATUS,
+    capitalize
+} = require('../../dbSchema/Constanst');
 
 /**
  * METHOD: POST - Adds a comment to the
@@ -72,6 +83,95 @@ router.post("/api/:id/addCommentToWorkItem/:workItemId", middleware.isUserInProj
     }
 
     res.status(200).send("Work items were removed successfully!");
+});
+
+/**
+ * METHOD: POST - Update work item
+ */
+ router.post("/api/:id/update_work_item/:workItemId", middleware.isUserInProject, async function (req, res) {
+    
+    console.log("Getting request to update work item...");
+    
+    // TODO: Verify if project exist and work item
+    const projectId = req.params.id;
+    const workItemId = req.params.workItemId;
+
+    const project = await projectCollection.findById(projectId).catch(err => {
+        console.error("Error getting the project info: ", err);
+    });
+
+    // verify project is good.
+    if (_.isUndefined(project) || _.isEmpty(project)){
+        res.status(400).send("Error getting the project information. Try later");
+        return;
+    }
+    
+    // waiting for this params. Anything that cames undefined was not sent
+    let  { 
+        title,
+        assignedUser,
+        sprint,
+        storyPoints,
+        priorityPoints,
+        status,
+        teamId,
+        type,
+        description,
+        tags,
+    } = req.body;
+
+    console.log(req.body);
+    
+    let updateValues = {};
+
+    // verify title
+    if (_.isString(title) && title.length < MAX_LENGTH_TITLE){
+        updateValues["title"] = title;
+    }
+
+    // verify assigned user
+    if (_.isString(assignedUser)){
+        
+        // verify if the user was selected to unnasigned
+        if (assignedUser == UNASSIGNED.id){
+            updateValues["assignedUser"] = null;
+        }else if(project.isUserInProject(assignedUser)){
+            // verify is the user is in the project
+            updateValues["assignedUser"] = assignedUser
+        }
+    }
+    
+    // TODO: Verify sprint
+
+    // verify story points
+    if (!_.isEmpty(storyPoints) && !isNaN(storyPoints)){
+        storyPoints = parseInt(storyPoints);
+        if (storyPoints <= MAX_STORY_POINTS){
+            updateValues["storyPoints"] = storyPoints;
+        }
+    }
+
+    // verify Priority points
+    if (!_.isEmpty(priorityPoints) && !isNaN(priorityPoints)){
+        priorityPoints = parseInt(priorityPoints);
+        if (storyPoints <= MAX_STORY_POINTS){
+            updateValues["storyPoints"] = storyPoints;
+        }
+    }
+
+    // verify Status
+    if (_.isString(status)){
+        const STATUS = Object.keys(WORK_ITEM_STATUS);
+        status = capitalize(status);
+
+        if (STATUS.includes(status)){
+            updateValues["status"] = status;
+        }else{
+            // TODO: error message to the user? 
+        }
+    }
+
+    res.status(200).send("Work Item was updated successfully!");
 });
 
 module.exports = router;
