@@ -59,3 +59,13 @@ module.exports.MAX_PRIORITY_POINTS = 5;
 
 // Max length of char for work item description
 module.exports.MAX_LENGTH_DESCRIPTION = 1000;
+
+/**
+ * Capitalize a String
+ * @param {String} s 
+ * @returns {String} capizalize string
+ */
+module.exports.capitalize = (s) => {
+    if (typeof s !== 'string') return ''
+    return s.charAt(0).toUpperCase() + s.slice(1)
+}
