@@ -171,6 +171,18 @@ router.post("/api/:id/addCommentToWorkItem/:workItemId", middleware.isUserInProj
         }
     }
 
+    // verify team
+    if (_.isString(teamId)){
+    
+        // verify if the user was selected to unnasigned
+        if (teamId == UNASSIGNED.id){
+            updateValues["teamId"] = null;
+        }else if(project.isUserInProject(assignedUser)){
+            // verify is the user is in the project
+            updateValues["assignedUser"] = assignedUser
+        }
+    }
+
     res.status(200).send("Work Item was updated successfully!");
 });
 

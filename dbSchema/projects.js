@@ -110,5 +110,21 @@ let projectSchema = new mongoose.Schema({
     return this.users.include(userId);
 };
 
+/**
+ * Verify user is in project
+ * @param {String} teamId-> Id of the team
+ * @returns {Boolean} True if the user is in the project
+ */
+ projectSchema.methods.isTeamInProject = function(teamId) {
+
+    // if empty and not string
+    if (_.isEmpty(teamId) || !_.isString(teamId)){
+        console.error("Parameter is either empty or is not a String");
+        return false;
+    }
+
+    return this.users.include(userId);
+};
+
 
 module.exports = mongoose.model("Projects", projectSchema);
