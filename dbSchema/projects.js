@@ -68,7 +68,8 @@ let projectSchema = new mongoose.Schema({
  */
  projectSchema.methods.getWorkItems = async function() {
 
-    const workItems = await workItemCollection.find({"projectId": this._id}).catch(err => console.error("Error getting work items: ", err)) || [];
+    const workItems = await workItemCollection.find({"projectId": this._id})
+        .catch(err => console.error("Error getting work items: ", err)) || [];
     
     // TODO: verify if workItems has something
     return workItems;
@@ -123,7 +124,14 @@ let projectSchema = new mongoose.Schema({
         return false;
     }
 
-    return this.users.include(userId);
+    for (const team of this.teams){
+        
+        if (team._id == teamId){
+            return true;
+        }
+    }
+
+    return false;
 };
 
 

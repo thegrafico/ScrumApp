@@ -54,7 +54,6 @@ router.get("/:id/planing/workitems", middleware.isUserInProject, async function 
 
     // LOADING TABLE WORK ITEMS
     workItems = await workItemCollection.find({projectId}).catch(err => console.error("Error getting work items: ", err)) || [];
-    // console.log(workItems);
 
     // populating params
     let params = {

@@ -140,21 +140,24 @@ function toggleFilter(){
  */
  function make_post_request(link, data){
     return new Promise( (resolve, reject) => {
+        console.log("Making post request...");
         const response = $.post( link, data, 
             function() {
                 console.log("Sent!");
             })
             .done(function() {
                 return resolve(true);
-                
-                
             })
             .fail(function(data, status) {
                 return reject({data, status});
-            }
-        );
+            }).always(function(){
+                console.log("Finished Post request");
+        });
     });
 }
+
+// TODO: Implement timeout on Promise
+// https://italonascimento.github.io/applying-a-timeout-to-your-promises/
 
 /**
  * Return the value of the new value if is different from current

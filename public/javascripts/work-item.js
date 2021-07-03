@@ -37,14 +37,12 @@ $(function () {
     $(WORK_ITEM["title"]).keyup(function(){
         updateWorkItem["title"] = swap(currentTitle, $(this).val() || "");
         activeSaveButton();
-
     });
 
     // assigned user
     $(WORK_ITEM["user"]).change(function(){
         updateWorkItem["assignedUser"] = swap(currentAssignedUser, $(this).val() || "");
         activeSaveButton();
-
     });
 
     // Tags - if the div changes, then we update
@@ -57,6 +55,10 @@ $(function () {
         let arrayAreEqual = _.isEqual(_.sortBy(tags_available), _.sortBy(currentTags));
 
         updateWorkItem["tags"] = !arrayAreEqual ? tags_available : undefined;
+        
+        if (_.isEmpty(updateWorkItem["tags"])){
+            updateWorkItem["tags"] = [null]; // since empty array is not sent, we need to send it with something
+        }
 
         activeSaveButton();
     });
@@ -65,21 +67,18 @@ $(function () {
     $(WORK_ITEM["state"]).change(function(){
         updateWorkItem["status"] = swap(currentStatus, $(this).val() || "");
         activeSaveButton();
-
     });
 
     // Team
     $(WORK_ITEM["team"]).change(function(){
         updateWorkItem["teamId"] = swap(currentTeam, $(this).val() || "");
         activeSaveButton();
-
     });
 
     // Type
     $(WORK_ITEM["type"]).change(function(){        
         updateWorkItem["type"] = swap(currentType, $(this).val() || "");
         activeSaveButton();
-
     });
 
     // sprint
@@ -120,6 +119,7 @@ $(function () {
                 console.error("Error updating the work item: ", err);
             });
 
+            console.log(response);
             // set all values in object to default value
             Object.keys(updateWorkItem).forEach(function(key){ updateWorkItem[key] = undefined });
             

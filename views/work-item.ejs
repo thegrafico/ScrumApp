@@ -11,59 +11,147 @@
             <!-- Large modal -->
 
             <div class="work-item-wrapper">
-                <form method="POST" action="/dashboard/<%=projectId%>/planing/backlog/newWorkItem" id="createWorkItemForm">
-                    
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="modalTitle"> Work Item </h5> &nbsp;
-                        <i class="fas fa-bolt taskIcon"></i>
-                    </div>
+                                    
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalTitle"> Work Item </h5> &nbsp;
+                    <i class="fas fa-bolt taskIcon"></i>
+                </div>
 
-                    <div class="modal-body">
-                        <fieldset>
-                            
-                            <div class="row">
+                <div class="modal-body">
+                    <fieldset>
+                        
+                        <div class="row">
 
-                                <div class="col-12">
-                                    <div class="d-inline-flex titleAndId">
-                                        
-                                        <div class="labelForTitle">
-                                            <label for="title"> <%=workItem["itemId"]%> </label>
-                                        </div>
-                                        
-                                        <div class="inputForTitle">
-                                            <input type="text" autocomplete="off" 
-                                            name="title" 
-                                            id="new-item-title" 
-                                            class="bx-shadow " 
-                                            value="<%=workItem['title']%>" 
-                                            placeholder="Enter title">        
-                                        </div>
+                            <div class="col-12">
+                                <div class="d-inline-flex titleAndId">
+                                    
+                                    <div class="labelForTitle">
+                                        <label for="title"> <%=workItem["itemId"]%> </label>
                                     </div>
-                                </div>
-
-                                <div class="col ml-12">
-                                    <span id="title-span-msg" class="d-none">
-                                        <i class="fas fa-exclamation-circle"></i>
-                                        Title cannot be empty
-                                    </span>
+                                    
+                                    <div class="inputForTitle">
+                                        <input type="text" autocomplete="off" 
+                                        name="title" 
+                                        id="new-item-title" 
+                                        class="bx-shadow " 
+                                        value="<%=workItem['title']%>" 
+                                        placeholder="Enter title">        
+                                    </div>
                                 </div>
                             </div>
 
-                            <div class="row no-m-bt">
-                                
-                                <div class="col-3">
+                            <div class="col ml-12">
+                                <span id="title-span-msg" class="d-none">
+                                    <i class="fas fa-exclamation-circle"></i>
+                                    Title cannot be empty
+                                </span>
+                            </div>
+                        </div>
 
-                                    <div class="form-group d-flex">
-                                        <i class="fas fa-user userLogo"></i>
-                                        <select class="custom-select my-custon-select " name="userAssigned" id="assignedUser">
-                                            <% for (user of assignedUsers){ %>
-                                                <% if (user.selected || (workItem["assignedUser"]["id"] && (user["id"].toString() === workItem["assignedUser"]["id"].toString())) ) {%>
-                                                    <option value="<%=user['id']%>" selected>
-                                                        <%=user["name"]%>
+                        <div class="row no-m-bt">
+                            
+                            <div class="col-3">
+
+                                <div class="form-group d-flex">
+                                    <i class="fas fa-user userLogo"></i>
+                                    <select class="custom-select my-custon-select " name="userAssigned" id="assignedUser">
+                                        <% for (user of assignedUsers){ %>
+                                            <% if (user.selected || (workItem["assignedUser"]["id"] && (user["id"].toString() === workItem["assignedUser"]["id"].toString())) ) {%>
+                                                <option value="<%=user['id']%>" selected>
+                                                    <%=user["name"]%>
+                                                </option>
+                                            <%}else {%>
+                                                <option value="<%=user['id']%>">
+                                                    <%=user["name"]%>
+                                                </option>
+                                            <%}%>
+                                        <%}%>
+                                    </select>
+                                </div>
+
+                            </div>
+
+                            <div class="col-1">
+                                <span>
+                                    <i class="fas fa-comments"></i> <span id="numberOfCommentSpan"> <%=workItem['comments'].length%></span>
+                                </span>
+                            </div>
+
+                            <div class="col-7 tagsContainer" id="tagsContainer">
+                                <button type="button" id="addTagBtn" class="btn btn-primary">
+                                    Add tag
+                                </button>
+
+                                <% for (let tag of workItem["tags"]){ %>
+                                    <span class="badge badge-secondary"> 
+                                        <input type="text" name="tags[]" autocomplete="off" value="<%=tag%>" placeholder="Enter tag " class='tagNme'> 
+                                        <span aria-hidden="true" class="rmTag">&times;</span>  
+                                    </span>
+                                <%}%>
+                            </div>
+
+                            <!-- BUTTON TO SAVE THE WORK ITEM STATUS -->
+                            <div class="col">
+                                <div class="saveStatusBtn" id="saveStatusBtn">
+                                    <i class="far fa-save"></i>
+                                    <span class="tooltiptext">Save</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row create-work-item-bg">
+                            <div class="col-12 mt-4">
+                                <div class="row">
+                                    
+                                    <div class="col-3 d-flex">
+                                        
+                                        <span class="aling-vertically align-self-center"> 
+                                            Status:
+                                        </span>
+
+                                        <ul class="nav nav-pills flex-column" id="customSelectStatus">
+                                            <li class="nav-item dropdown">
+
+                                                <a class="nav-link dropdown-toggle"
+                                                    data-toggle="dropdown" href="#" role="button"
+                                                    aria-haspopup="true" id="currentWorkItemStatus"
+                                                    aria-expanded="false">
+                                                    
+                                                    <% for (const [key, value] of Object.entries(statusWorkItem)) { %>
+                                                        <% if (key.toString() === workItem["status"]){ %>
+                                                            <i class="fa fa-circle <%=value['class']%>" aria-hidden="true"></i>
+                                                            <%=key%>
+                                                        <%}%>
+                                                    <%}%>
+                                                </a>
+
+                                                <div class="dropdown-menu">
+
+                                                    <% for (const [key, value] of Object.entries(statusWorkItem)) { %>
+                                                        <a class="dropdown-item btnWorkItemStatus" href="#">
+                                                            <span> 
+                                                                <i class="fa fa-circle <%=value['class']%>" aria-hidden="true"></i>
+                                                                <%=key%>
+                                                            </span>
+                                                        </a>
+                                                    <%}%>
+                                                </div>
+                                            </li>
+                                        </ul>
+                                        <input type="hidden" class="" name="workItemStatus" id="workItemStatus" value="New">
+                                    </div>
+
+                                    <div class="col-4 d-flex">
+                                        <span class="aling-vertically align-self-center"> Team: </span>
+                                        <select class="custom-select my-custon-select " name="teamAssigned" id="teamAssigned">
+                                            <% for (team of teamWorkItem){ %>
+                                                <% if (team.selected || (workItem["teamId"] && (team["id"].toString() === workItem["teamId"].toString()))) {%>
+                                                    <option value="<%=team['id']%>" selected>
+                                                        <%=team["name"]%>
                                                     </option>
                                                 <%}else {%>
-                                                    <option value="<%=user['id']%>">
-                                                        <%=user["name"]%>
+                                                    <option value="<%=team['id']%>">
+                                                        <%=team["name"]%>
                                                     </option>
                                                 <%}%>
                                             <%}%>
@@ -72,230 +160,140 @@
 
                                 </div>
 
-                                <div class="col-1">
-                                    <span>
-                                        <i class="fas fa-comments"></i> <span id="numberOfCommentSpan"> <%=workItem['comments'].length%></span>
-                                    </span>
-                                </div>
+                                <div class="row">
+                                    <div class="col-3 d-flex">
+                                        <span class="aling-vertically align-self-center"> Type: </span>
 
-                                <div class="col-7 tagsContainer" id="tagsContainer">
-                                    <button type="button" id="addTagBtn" class="btn btn-primary">
-                                        Add tag
-                                    </button>
-
-                                    <% for (let tag of workItem["tags"]){ %>
-                                        <span class="badge badge-secondary"> 
-                                            <input type="text" name="tags[]" autocomplete="off" value="<%=tag%>" placeholder="Enter tag " class='tagNme'> 
-                                            <span aria-hidden="true" class="rmTag">&times;</span>  
-                                        </span>
-                                    <%}%>
-                                </div>
-
-                                <!-- BUTTON TO SAVE THE WORK ITEM STATUS -->
-                                <div class="col">
-                                    <div class="saveStatusBtn" id="saveStatusBtn">
-                                        <i class="far fa-save"></i>
-                                        <span class="tooltiptext">Save</span>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="row create-work-item-bg">
-                                <div class="col-12 mt-4">
-                                    <div class="row">
-                                        
-                                        <div class="col-3 d-flex">
+                                        <ul class="nav nav-pills flex-column" id="customSelect">
                                             
-                                            <span class="aling-vertically align-self-center"> 
-                                                Status:
-                                            </span>
-
-                                            <ul class="nav nav-pills flex-column" id="customSelectStatus">
-                                                <li class="nav-item dropdown">
-
-                                                    <a class="nav-link dropdown-toggle"
-                                                        data-toggle="dropdown" href="#" role="button"
-                                                        aria-haspopup="true" id="currentWorkItemStatus"
-                                                        aria-expanded="false">
-                                                        
-                                                        <% for (const [key, value] of Object.entries(statusWorkItem)) { %>
-                                                            <% if (key.toString() === workItem["status"]){ %>
-                                                                <i class="fa fa-circle <%=value['class']%>" aria-hidden="true"></i>
-                                                                <%=key%>
-                                                            <%}%>
+                                            <li class="nav-item dropdown">
+                                                <a class="nav-link dropdown-toggle"
+                                                    data-toggle="dropdown" href="#" role="button"
+                                                    aria-haspopup="true" id="currentType"
+                                                    aria-expanded="false">
+                                                    <% for(let key in workItemType){ %>
+                                                        <% if (key.toString() === workItem["type"]){ %>
+                                                            <i class="fas <%=workItemType[key].icon%>"></i> &nbsp;
+                                                            <%=key%>
+                                                            <%break;%>
                                                         <%}%>
-                                                    </a>
-
-                                                    <div class="dropdown-menu">
-
-                                                        <% for (const [key, value] of Object.entries(statusWorkItem)) { %>
-                                                            <a class="dropdown-item btnWorkItemStatus" href="#">
-                                                                <span> 
-                                                                    <i class="fa fa-circle <%=value['class']%>" aria-hidden="true"></i>
-                                                                    <%=key%>
-                                                                </span>
-                                                            </a>
-                                                        <%}%>
-                                                    </div>
-                                                </li>
-                                            </ul>
-                                            <input type="hidden" class="" name="workItemStatus" id="workItemStatus" value="New">
-                                        </div>
-
-                                        <div class="col-4 d-flex">
-                                            <span class="aling-vertically align-self-center"> Team: </span>
-                                            <select class="custom-select my-custon-select " name="teamAssigned" id="teamAssigned">
-                                                <% for (team of teamWorkItem){ %>
-                                                    <% if (team.selected || (workItem["teamId"] && (team["id"].toString() === workItem["teamId"].toString()))) {%>
-                                                        <option value="<%=team['id']%>" selected>
-                                                            <%=team["name"]%>
-                                                        </option>
-                                                    <%}else {%>
-                                                        <option value="<%=team['id']%>">
-                                                            <%=team["name"]%>
-                                                        </option>
                                                     <%}%>
-                                                <%}%>
-                                            </select>
-                                        </div>
+                                                </a>
 
+                                                <div class="dropdown-menu">
+                                                    <% for(let key in workItemType){ %>
+                                                        <a class="dropdown-item btnType" href="#">
+                                                            <span> <i class="fas <%=workItemType[key].icon%>"></i> &nbsp; 
+                                                                <%=key%> 
+                                                            </span>
+                                                        </a>
+                                                    <%}%>
+                                                </div>
+                                            </li>
+                                        </ul>
+                                        <input type="hidden" name="workItemType" class="" id="workItemType"value="story">
                                     </div>
 
-                                    <div class="row">
-                                        <div class="col-3 d-flex">
-                                            <span class="aling-vertically align-self-center"> Type: </span>
+                                    <div class="col-4 d-flex">
+                                        <span class="aling-vertically align-self-center"> Iteration:</span>
+                                        <select class="custom-select my-custon-select "
+                                            name="sprint" id="sprints">
+                                            <% for (sprint of sprints){ %>
 
-                                            <ul class="nav nav-pills flex-column" id="customSelect">
-                                                
-                                                <li class="nav-item dropdown">
-                                                    <a class="nav-link dropdown-toggle"
-                                                        data-toggle="dropdown" href="#" role="button"
-                                                        aria-haspopup="true" id="currentType"
-                                                        aria-expanded="false">
-                                                        <% for(let key in workItemType){ %>
-                                                            <% if (key.toString() === workItem["type"]){ %>
-                                                                <i class="fas <%=workItemType[key].icon%>"></i> &nbsp;
-                                                                <%=key%>
-                                                                <%break;%>
-                                                            <%}%>
-                                                        <%}%>
-                                                    </a>
-
-                                                    <div class="dropdown-menu">
-                                                        <% for(let key in workItemType){ %>
-                                                            <a class="dropdown-item btnType" href="#">
-                                                                <span> <i class="fas <%=workItemType[key].icon%>"></i> &nbsp; 
-                                                                    <%=key%> 
-                                                                </span>
-                                                            </a>
-                                                        <%}%>
-                                                    </div>
-                                                </li>
-                                            </ul>
-                                            <input type="hidden" name="workItemType" class="" id="workItemType"value="story">
-                                        </div>
-
-                                        <div class="col-4 d-flex">
-                                            <span class="aling-vertically align-self-center"> Iteration:</span>
-                                            <select class="custom-select my-custon-select "
-                                                name="sprint" id="sprints">
-                                                <% for (sprint of sprints){ %>
-
-                                                    <% if (sprint.selected || (workItem["sprint"] && (sprint["id"].toString() === workItem["sprint"].toString()))) {%>
-                                                        <option value="<%=sprint['id']%>" selected>
-                                                            <%=sprint["name"]%>
-                                                        </option>
-                                                    <%}else {%>
-                                                        <option value="<%=sprint['id']%>">
-                                                            <%=sprint["name"]%>
-                                                        </option>
-                                                    <%}%>
+                                                <% if (sprint.selected || (workItem["sprint"] && (sprint["id"].toString() === workItem["sprint"].toString()))) {%>
+                                                    <option value="<%=sprint['id']%>" selected>
+                                                        <%=sprint["name"]%>
+                                                    </option>
+                                                <%}else {%>
+                                                    <option value="<%=sprint['id']%>">
+                                                        <%=sprint["name"]%>
+                                                    </option>
                                                 <%}%>
-                                            </select>
-                                        </div>
+                                            <%}%>
+                                        </select>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <div id="main-body-container">
+
+                            <div class="row desc-planing-development">
+
+                                <div class="col">
+                                    <h5 class="pd-p">Description</h5>
+                                    <textarea name="workItemDescription" 
+                                        id="description-textarea"
+                                        rows="8" placeholder="Enter Description."
+                                        class="bx-shadow "
+                                        ><%=workItem['description']%></textarea>
+                                </div>
+
+                                <div class="col-3 planing-work-item">
+                                    <h5 class="pd-p">Planing</h5>
+
+                                    <p>Story Points</p>
+                                    <input type="text" 
+                                        name="storyPoints" 
+                                        class="input-style "
+                                        id="workItemPoints" 
+                                        placeholder="Enter points: i.e 5" 
+                                        value="<%=workItem['storyPoints']%>">
+
+                                    <p>Priority</p>
+                                    <input type="text" 
+                                        name="priorityPoints" 
+                                        class="input-style "
+                                        id="workItemPriority" 
+                                        placeholder="Enter Priority: i.e 3"
+                                        value="<%=workItem['priorityPoints']%>">
+
+                                </div>
+
+                                <!-- TODO: Finish this functionality -->
+                                <div class="col-3 addLink">
+                                    <h5 class="pd-p">Related work</h5>
+                                    <p> <i class="fas fa-plus "></i> Add link</p>
+                                </div>
+                                
+
+                            </div>
+
+                            <div class="row desc-planing-development" >
+                                <div class="col-6">
+
+                                    <div>
+                                        <h5 class="pd-p">Discussion</h5>
+                                        <textarea name="comments" 
+                                            id="comment-textarea" rows="4"
+                                            placeholder="Add a comment for this story." 
+                                            class="bx-shadow"></textarea>
                                     </div>
 
+                                    <button id="add-comment"type="button" class="btn btn-success">Add</button>
                                 </div>
                             </div>
 
-                            <div id="main-body-container">
-
-                                <div class="row desc-planing-development">
-
-                                    <div class="col">
-                                        <h5 class="pd-p">Description</h5>
-                                        <textarea name="workItemDescription" 
-                                            id="description-textarea"
-                                            rows="8" placeholder="Enter Description."
-                                            class="bx-shadow "
-                                            ><%=workItem['description']%></textarea>
-                                    </div>
-
-                                    <div class="col-3 planing-work-item">
-                                        <h5 class="pd-p">Planing</h5>
-
-                                        <p>Story Points</p>
-                                        <input type="text" 
-                                            name="storyPoints" 
-                                            class="input-style "
-                                            id="workItemPoints" 
-                                            placeholder="Enter points: i.e 5" 
-                                            value="<%=workItem['storyPoints']%>">
-
-                                        <p>Priority</p>
-                                        <input type="text" 
-                                            name="priorityPoints" 
-                                            class="input-style "
-                                            id="workItemPriority" 
-                                            placeholder="Enter Priority: i.e 3"
-                                            value="<%=workItem['priorityPoints']%>">
-
-                                    </div>
-
-                                    <!-- TODO: Finish this functionality -->
-                                    <div class="col-3 addLink">
-                                        <h5 class="pd-p">Related work</h5>
-                                        <p> <i class="fas fa-plus "></i> Add link</p>
-                                    </div>
-                                    
-
-                                </div>
-
-                                <div class="row desc-planing-development" >
-                                    <div class="col-6">
-
-                                        <div>
-                                            <h5 class="pd-p">Discussion</h5>
-                                            <textarea name="comments" 
+                            <!-- TODO: There is a bug when the comment is added that is being added at the end -->
+                            <div class="col-6 comments-container">
+                                <div class="user-comments-container">
+                                    <% if (workItem['comments'] && workItem['comments'].length > 0){%>
+                                        
+                                        <% for (let comment of workItem['comments'].reverse()) {%>
+                                            <div>
+                                                <textarea name="comments" 
                                                 id="comment-textarea" rows="4"
                                                 placeholder="Add a comment for this story." 
-                                                class="bx-shadow"></textarea>
-                                        </div>
-
-                                        <button id="add-comment"type="button" class="btn btn-success">Add</button>
-                                    </div>
-                                </div>
-
-                                <!-- TODO: There is a bug when the comment is added that is being added at the end -->
-                                <div class="col-6 comments-container">
-                                    <div class="user-comments-container">
-                                        <% if (workItem['comments'] && workItem['comments'].length > 0){%>
-                                            
-                                            <% for (let comment of workItem['comments'].reverse()) {%>
-                                                <div>
-                                                    <textarea name="comments" 
-                                                    id="comment-textarea" rows="4"
-                                                    placeholder="Add a comment for this story." 
-                                                    class="bx-shadow"><%=comment%></textarea>
-                                                </div>
-                                            <%}%>    
-                                        <%}%>
-                                    </div>
+                                                class="bx-shadow"><%=comment%></textarea>
+                                            </div>
+                                        <%}%>    
+                                    <%}%>
                                 </div>
                             </div>
-                        </fieldset>
-                    </div>
-                </form>
+                        </div>
+                    </fieldset>
+                </div>
             </div>
         </div>
     </div>
