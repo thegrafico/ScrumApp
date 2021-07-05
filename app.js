@@ -12,6 +12,7 @@ const LocalStrategy   = require('passport-local');
 const User            = require('./dbSchema/user');
 const middleware      = require('./middleware/auth');
 const dotenv          = require('dotenv');
+const flash           = require('connect-flash');
 const {connectDB}     = require('./config/db');
 
 dotenv.config({
@@ -46,17 +47,16 @@ const sessionStore = new MongoStore({
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 app.use(express.json());
-// app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(require('body-parser').urlencoded({
   extended: true
 }));
-app.use(express.static(path.join(__dirname, 'public')));
 
+app.use(express.static(path.join(__dirname, 'public')));
 // setting up session
 app.use(session({
   secret: 'My_cat_and_dog_are_the_best_in_the_universe',
-  resave: false,
+  resave: true,
   saveUninitialized: false,
   store: sessionStore,
   cookie: {
@@ -64,6 +64,7 @@ app.use(session({
   } // one day
 }));
 
+app.use(flash());
 app.use(passport.initialize());
 app.use(passport.session());
 
@@ -104,27 +105,18 @@ passport.deserializeUser(function (id, done) {
 // create DB data - for testing
 // seedDB();
 
-// ==================== ROUTES =================
-// Loading routes
-app.use('/login', loginRoute);
-
 // middleware to get the username
 app.use(function (req, res, next) {
 
-  // early exit condition
-  if (!req.user) {
-    res.redirect("/login");
-    return;
-  }
-
-  res.locals.username = req.user.fullName;
-  res.locals.currentUserId = req.user._id;
-
+  res.locals.currentUser    = req.user;
+	res.locals.error          = req.flash("error"); //error mesage go red
+	res.locals.success        = req.flash("success"); //success message go green
+  
   next();
 });
 
-
-// FUNCTIONAL ROUTES
+// ==================== ROUTES =================
+app.use('/login', loginRoute);
 app.use('/', middleware.isUserLogin, dashboardRoute); // main page
 app.use('/dashboard/', middleware.isUserLogin, projectDetailRoute); // dashboard to show project
 app.use('/dashboard/', middleware.isUserLogin, planingworkItemRoute); // dashboard to show project
