@@ -21,11 +21,11 @@ $(function (){
         event.preventDefault();
 
         // validating the form 
-        formIsValid = validateForm(formParams);
+        let formIsValid = validateForm(formParams);
         console.log("Form is valid: ", formIsValid);
         
         if (formIsValid){
-            $(formCreateProjectId).on("submit", true);
+            $(formCreateProjectId).submit();
         }
     });
 

@@ -9,7 +9,7 @@
         <ul class="navbar-nav mr-auto">
             <li class="nav-item active">
                 <a class="nav-link" href="/">
-                    <h4><%=username%></h4>
+                    <h4><%=currentUser['fullName']%></h4>
                     <span class="sr-only">(current)</span>
                 </a>
             </li>
@@ -20,3 +20,24 @@
         <i class="far fa-user-circle"></i>
     </div>
 </nav>
+
+<% if (error && error.length > 0){ %>
+
+    <div class="container alerts-container">
+        <div class="alert alert-danger" role="alert">
+           <%= error %>
+        </div>
+    </div>
+
+<% } %>
+
+
+<% if (success && success.length > 0){ %>
+
+    <div class="container alerts-container">
+        <div class="alert alert-success" role="alert">
+           <%= success %>
+        </div>
+    </div>
+
+<% } %>

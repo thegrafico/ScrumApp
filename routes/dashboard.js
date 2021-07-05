@@ -58,9 +58,10 @@ router.get("/", async function (req, res) {
  * // TODO: validate project data
  */
 router.post("/", function (req, res) {
+  
   // get data from the form
-  projectName = req.body.projectName;
-  projectDescription = req.body.projectDescription;
+  let projectName = req.body.projectName;
+  let projectDescription = req.body.projectDescription;
 
   // validate params 
   if (projectParamsAreValid(projectName, projectDescription)) {
@@ -74,8 +75,8 @@ router.post("/", function (req, res) {
   const newProject = {
     "title": projectName,
     "description": projectDescription,
-    "author": userId,
-    "users": [userId],
+    "author": req.user._id,
+    "users": [req.user._id],
   };
 
   // Insert into the database

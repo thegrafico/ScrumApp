@@ -74,9 +74,9 @@ router.post("/:id/addmember", middleware.isUserInProject, async function (req, r
 
     let userId = await getUserIdByEmail(userEmail).catch(err => {
         console.error(err)
-    })
+    });
 
-    if (_.isUndefined(userId) || userId == null) {
+    if (_.isUndefined(userId) || _.isNull(userId)) {
         // TODO: add flash message 
         return res.redirect("back");
     }

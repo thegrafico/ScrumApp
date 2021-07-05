@@ -162,3 +162,13 @@ i {
     cursor:pointer;
     /* border-bottom:1px solid white; */
 }
+
+.alerts-container{
+    left: 20%;
+    margin-top: 1.5%;
+    position:absolute;
+}
+
+.alert{
+    text-align: center;
+}
