@@ -32,6 +32,7 @@ router.post("/", passport.authenticate("local", {
     failureRedirect: "/login", //si no se encuentra pues va aqui
   }),
   function (req, res) {
+    req.flash("success", `Welcome Back ${req.user.fullName}!`);
     res.redirect('/');
   }
 );
