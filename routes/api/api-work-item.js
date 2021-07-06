@@ -305,9 +305,9 @@ router.post("/api/:id/addCommentToWorkItem/:workItemId", middleware.isUserInProj
         description,
         tags,
     } = req.body;
-
-    console.log("Body: ",req.body);
     
+    console.log("Request: ", req.body);
+
     let updateValues = {};
 
     // verify title
@@ -431,8 +431,6 @@ router.post("/api/:id/addCommentToWorkItem/:workItemId", middleware.isUserInProj
     for( key in updateValues){
         workItem[key] = updateValues[key];
     }
-
-    console.log(updateValues);
     
     await workItem.save().catch(err => {
         console.error("Error saving the work item: ", err);

@@ -100,3 +100,18 @@
     overflow-y: scroll;
     height: 70%;
 }
+
+.tags-container{
+    max-width: 33%;
+    overflow-x: hidden;    
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.table-comments-column > span{ 
+    padding-left: 4%;
+}
+
+.tags-td{
+    overflow: hidden;
+}

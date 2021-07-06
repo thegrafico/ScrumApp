@@ -57,14 +57,13 @@ router.get("/:id/planing/workitems", middleware.isUserInProject, async function 
         console.error("Error getting work items: ", err)
     ) || [];
 
-    console.log(workItems);
     // populating params
     let params = {
         "title": projectInfo["title"],
         "project": projectInfo,
         "projectId": projectId,
         "activeTab": "WorkItem,Planing",
-        "tabTitle": "Work Item",
+        "tabTitle": "Work Items",
         "assignedUsers": users,
         "statusWorkItem": WORK_ITEM_STATUS,
         "teamWorkItem": teams,

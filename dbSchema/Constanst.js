@@ -49,7 +49,7 @@ module.exports.WORK_ITEM_STATUS = {
 };
 
 // max number of tags per work item
-module.exports.MAX_NUMBER_OF_TAGS_PER_WORK_ITEM = 3;
+module.exports.MAX_NUMBER_OF_TAGS_PER_WORK_ITEM = 4;
 
 module.exports.MAX_LENGTH_TITLE = 80;
 
