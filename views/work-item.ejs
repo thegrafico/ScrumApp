@@ -138,7 +138,7 @@
                                                 </div>
                                             </li>
                                         </ul>
-                                        <input type="hidden" class="" name="workItemStatus" id="workItemStatus" value="New">
+                                        <input type="hidden" class="" name="workItemStatus" id="workItemStatus" value="<%=workItem['status']%>">
                                     </div>
 
                                     <div class="col-4 d-flex">
@@ -191,7 +191,7 @@
                                                 </div>
                                             </li>
                                         </ul>
-                                        <input type="hidden" name="workItemType" class="" id="workItemType"value="story">
+                                        <input type="hidden" name="workItemType" class="" id="workItemType" value="<%=workItem['type']%>">
                                     </div>
 
                                     <div class="col-4 d-flex">

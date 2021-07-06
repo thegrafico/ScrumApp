@@ -51,18 +51,28 @@ $(function () {
     $(TAG_CONTAINER).change(function(){
         
         // get all the tags available
-        let tags_available = $(WORK_ITEM["tags"]).map((_,element) => element.value).get();
+        let tags_available = $(WORK_ITEM["tags"]).map((_,element) => element.value.trim()).get().filter( element => {
+            return !_.isEmpty(element);
+        });
 
         // using lodash in order to know if the array has changed
         let arrayAreEqual = _.isEqual(_.sortBy(tags_available), _.sortBy(currentTags));
 
-        updateWorkItem["tags"] = !arrayAreEqual ? tags_available : undefined;
-        
-        if (_.isEmpty(updateWorkItem["tags"])){
-            updateWorkItem["tags"] = [null]; // since empty array is not sent, we need to send it with something
+        console.log(tags_available, currentTags);
+
+        if (!arrayAreEqual){
+            updateWorkItem["tags"] = !arrayAreEqual ? tags_available : undefined;
+
+            if (_.isEmpty(updateWorkItem["tags"])){
+                updateWorkItem["tags"] = [null]; // since empty array is not sent, we need to send it with something
+            }
+        }else{
+            // we need this else in case the user add something, never save it, and then delete it. 
+            updateWorkItem["tags"] = undefined;
         }
 
         activeSaveButton();
+        
     });
     
     // Status - select

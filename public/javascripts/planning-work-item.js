@@ -22,7 +22,7 @@ const REPLACE_SYMBOL = "???***";
 
 const addTagBtn = "#addTagBtn";
 const FILTER_BTN = "#filterBtn"
-const TAG_CONTAINER = "#tagsContainer";
+const TAG_CONTAINER = ".tagsContainer";
 const spanTitleMsg = "#title-span-msg";
 const rmTag = ".rmTag";
 
@@ -185,7 +185,7 @@ $(function () {
         let childrens = ($(TAG_CONTAINER).children()).length;
 
         if (childrens <= MAX_NUMBER_OF_TAGS) {
-            $(TAG_CONTAINER).append(TAG_TEMPLATE)
+            $(TAG_CONTAINER).append(TAG_TEMPLATE);
         } else {
             alert(`Each story cannot have more than ${MAX_NUMBER_OF_TAGS} tags`);
         }
