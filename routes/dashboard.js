@@ -65,12 +65,10 @@ router.post("/", function (req, res) {
 
   // validate params 
   if (projectParamsAreValid(projectName, projectDescription)) {
-    console.error("Invalid params");
-    // TODO: let the user know there was an error
+    req.flash("error", "Sorry, There was an error with the name or the description. Please try again.");
     res.redirect("/");
     return;
   }
-  // console.log("Form Paramenter are valid!");
 
   const newProject = {
     "title": projectName,
@@ -82,10 +80,12 @@ router.post("/", function (req, res) {
   // Insert into the database
   projectCollection.create(newProject, function (err, projectCreated) {
     if (err) {
+      // TODO: Log this into a TXT
       console.error("Error creating the project: ", err);
-      return res.redirect("/")
+      req.flash("error", "Sorry, There was an error creating the Project. Try later or contact support.");
+      res.redirect("/");
+      return
     };
-    // console.log("Project created: ", projectCreated);
     res.redirect("/");
   });
 });

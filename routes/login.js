@@ -6,10 +6,7 @@
 
 // ============= CONST AND DEPENDENCIES =============
 const express = require("express");
-const valid = require("validator");
-const _ = require("lodash");
 const passport = require("passport");
-const User = require('../dbSchema/user');
 
 let router = express.Router();
 // ===================================================

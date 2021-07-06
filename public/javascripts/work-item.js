@@ -17,21 +17,23 @@ let updateWorkItem = {
     tags: undefined,
 }
 
+let currentTitle          = undefined;
+let currentAssignedUser   = undefined;
+let currentStatus         = undefined;
+let currentTags           = undefined;
+let currentTeam           = undefined;
+let currentType           = undefined;
+let currentIteration      = undefined;
+let currentDescription    = undefined;
+let currentStoryPoints    = undefined;
+let currentPriorityPoints = undefined;
+
 // Save button 
 const SAVE_BTN_CONTAINER = "#saveStatusBtn";
 const ENABLE_SAVE_BTN_CLASS = "saveBtnContainer";
 $(function () {
 
-    const currentTitle          = $(WORK_ITEM["title"]).val();
-    const currentAssignedUser   = $(WORK_ITEM["user"]).val();
-    const currentStatus         = $(WORK_ITEM["state"]).val().toLowerCase();
-    const currentTags           = $(WORK_ITEM["tags"]).map((_,element) => element.value).get();
-    const currentTeam           = $(WORK_ITEM["team"]).val().toLowerCase();
-    const currentType           = $(WORK_ITEM["type"]).val().toLowerCase();
-    const currentIteration      = $(WORK_ITEM["sprint"]).val().toLowerCase();
-    const currentDescription    = $(WORK_ITEM["description"]).val();
-    const currentStoryPoints    = $(WORK_ITEM["points"]).val();
-    const currentPriorityPoints = $(WORK_ITEM["priority"]).val();
+    setWorkItemState();
 
     // Work Item Title
     $(WORK_ITEM["title"]).keyup(function(){
@@ -119,12 +121,13 @@ $(function () {
                 console.error("Error updating the work item: ", err);
             });
 
-            console.log(response);
             // set all values in object to default value
             Object.keys(updateWorkItem).forEach(function(key){ updateWorkItem[key] = undefined });
             
             // since all values are now default, we can reset the save button
             activeSaveButton();
+
+            setWorkItemState();
         }
     });
 });
@@ -146,4 +149,17 @@ function activeSaveButton(){
     }
 
     return somethingHasChanged;
+}
+
+function setWorkItemState(){
+    currentTitle          = $(WORK_ITEM["title"]).val();
+    currentAssignedUser   = $(WORK_ITEM["user"]).val();
+    currentStatus         = $(WORK_ITEM["state"]).val().toLowerCase();
+    currentTags           = $(WORK_ITEM["tags"]).map((_,element) => element.value).get();
+    currentTeam           = $(WORK_ITEM["team"]).val().toLowerCase();
+    currentType           = $(WORK_ITEM["type"]).val().toLowerCase();
+    currentIteration      = $(WORK_ITEM["sprint"]).val().toLowerCase();
+    currentDescription    = $(WORK_ITEM["description"]).val();
+    currentStoryPoints    = $(WORK_ITEM["points"]).val();
+    currentPriorityPoints = $(WORK_ITEM["priority"]).val();
 }

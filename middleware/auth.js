@@ -1,7 +1,6 @@
 /**
  * Main auth middleware
  */
-const { log } = require("debug");
 const projectCollection = require("../dbSchema/projects");
 
 /**
@@ -11,6 +10,7 @@ module.exports.isUserLogin = (req, res, next) => {
     if (req.isAuthenticated()) {
         next();
     } else {
+        req.flash("error", "You need to be login.");
         res.redirect("/login");
     }
 }
@@ -23,15 +23,13 @@ module.exports.isUserInProject = async (req, res, next) => {
     const userProjects = await projectCollection.find({_id: req.params.id, users: req.user._id}).catch(err => {
         console.error("Error finding the user: ", err);
     });
-    // console.log("=============");
-    // console.log("USER ID: ", req.user._id);
-    // console.log("Project ID: ", req.params.id);    
-    // console.log("Project inf: ", userProjects);
-    // console.log("=============");
 
-    // TODO: send a message to the user when does not belong to the project
-    if (userProjects && userProjects.length > 0)
+    if (userProjects && userProjects.length > 0){
         next();
-    else 
-        res.redirect("back");
+        return;
+    }
+
+    // if this part of the code is reach, then we send a message to the user
+    req.flash("error", "You don't have access to this project.");
+    res.redirect("back");
 }

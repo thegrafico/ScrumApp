@@ -10,7 +10,6 @@ let userSchema = new mongoose.Schema({
     fullName: {type: String, required: true},
     email: {type: String, required: true, index: {unique: true}},
     password:  {type: String, required: true},
-    // username: { type: String, default: null}
 }, {timestamps: true});
 
 userSchema.index({username_1: 1}, {unique: false});

@@ -56,7 +56,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 // setting up session
 app.use(session({
   secret: 'My_cat_and_dog_are_the_best_in_the_universe',
-  resave: true,
+  resave: false,
   saveUninitialized: false,
   store: sessionStore,
   cookie: {
@@ -117,13 +117,15 @@ app.use(function (req, res, next) {
 
 // ==================== ROUTES =================
 app.use('/login', loginRoute);
+
+// API - Route
+app.use('/dashboard/', /*middleware.isUserLogin,*/ apiWorkItemRoute); // dashboard to show project
+
 app.use('/', middleware.isUserLogin, dashboardRoute); // main page
 app.use('/dashboard/', middleware.isUserLogin, projectDetailRoute); // dashboard to show project
 app.use('/dashboard/', middleware.isUserLogin, planingworkItemRoute); // dashboard to show project
 app.use('/dashboard/', middleware.isUserLogin, planingBacklogRoute); // dashboard to show project
 
-// API - Route
-app.use('/dashboard/', middleware.isUserLogin, apiWorkItemRoute); // dashboard to show project
 
 // ==================== ROUTES =================
 // catch 404 and forward to error handler

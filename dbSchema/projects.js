@@ -108,7 +108,7 @@ let projectSchema = new mongoose.Schema({
         return false;
     }
 
-    return this.users.include(userId);
+    return this.users.includes(userId);
 };
 
 /**
@@ -132,6 +132,25 @@ let projectSchema = new mongoose.Schema({
     }
 
     return false;
+};
+
+/**
+ * Get the name of the user
+ * @param {String} userId- > Id of the team
+ * @returns {Object} User Information
+ */
+ projectSchema.methods.getUserName = async function(userId) {
+
+    // if empty and not string
+    if (_.isEmpty(userId) || !_.isString(userId)){
+        console.error("Parameter is either empty or is not a String");
+        return false;
+    }
+    const user = await userCollection.findById(userId).catch(err => {
+        console.error("Error getting the user information: ", err);
+    });
+
+    return user;
 };
 
 

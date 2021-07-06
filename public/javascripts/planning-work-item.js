@@ -146,7 +146,7 @@ $(function () {
         cleanModal();
     });
 
-    // ================== CHEKING TITLE ERRORS =================
+    // ================== CHECKING TITLE ERRORS =================
 
     //  PRIOR check if the title has already something in it
     if ($(WORK_ITEM["title"]).val().length == 0){
@@ -167,7 +167,6 @@ $(function () {
     /**
      * Event to change the type of the work item
      */
-    // TODO: maybe static icons? so when the user change the element it will always be at the same location
     $(BTN_CHANGE_WORK_ITEM_TYPE).on("click", function () {
         updateCustomSelect(this, CURRENT_WORK_ITEM_TYPE, WORK_ITEM["type"]);
     });
@@ -175,10 +174,8 @@ $(function () {
     /**
      * Event to change the status of the work item
      */
-    // TODO: maybe static icons? so when the user change the element it will always be at the same location
     $(BTN_CHANGE_WORK_ITEM_STATUS).on("click", function () {
         updateCustomSelect(this, CURRENT_WORK_ITEM_STATUS, WORK_ITEM["state"]);
-
     });
 
     // Add tag
@@ -206,6 +203,7 @@ $(function () {
 
     $(CREATE_WORK_ITEM_FORM).on("submit", function(event){
         isFormValid = validateFormWorkItem();
+        
         if (!isFormValid){
             event.preventDefault();
         }
