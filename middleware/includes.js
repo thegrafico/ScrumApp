@@ -21,7 +21,8 @@ module.exports = {
             "/javascripts/planning-work-item.js", 
             "/javascripts/dependecies/bootstrap.bundle.min.js",
             "/javascripts/filter-and-search.js",
-            "/javascripts/work-item.js",,
+            "/javascripts/work-item.js",
+            "/javascripts/modals/create-teams.js",
         ]
     }
 }

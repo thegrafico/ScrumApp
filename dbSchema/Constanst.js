@@ -60,6 +60,10 @@ module.exports.MAX_PRIORITY_POINTS = 5;
 // Max length of char for work item description
 module.exports.MAX_LENGTH_DESCRIPTION = 1000;
 
+// TEAM NAME LIMITS
+module.exports.TEAM_NAME_LENGHT_MAX_LIMIT = 20;
+module.exports.TEAM_NAME_LENGHT_MIN_LIMIT = 3;
+
 /**
  * Capitalize a String
  * @param {String} s 

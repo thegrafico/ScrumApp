@@ -4,19 +4,22 @@
  * swap function is inside helpers.js
 */
 
+
+// This object is to update the work item. We only send the request with the variables that are not undefined.  
 let updateWorkItem = {
-    title: undefined,
-    assignedUser: undefined,
-    sprint: undefined,
-    storyPoints: undefined,
+    title:          undefined,
+    assignedUser:   undefined,
+    sprint:         undefined,
+    storyPoints:    undefined,
     priorityPoints: undefined,
-    status: undefined,
-    teamId: undefined,
-    type: undefined,
-    description: undefined,
-    tags: undefined,
+    status:         undefined,
+    teamId:         undefined,
+    type:           undefined,
+    description:    undefined,
+    tags:           undefined,
 }
 
+// Variables to store the entire state of the work item. 
 let currentTitle          = undefined;
 let currentAssignedUser   = undefined;
 let currentStatus         = undefined;
@@ -31,8 +34,10 @@ let currentPriorityPoints = undefined;
 // Save button 
 const SAVE_BTN_CONTAINER = "#saveStatusBtn";
 const ENABLE_SAVE_BTN_CLASS = "saveBtnContainer";
+
 $(function () {
 
+    // Set all variables to the initial state when this file is loaded
     setWorkItemState();
 
     // Work Item Title
@@ -58,8 +63,6 @@ $(function () {
         // using lodash in order to know if the array has changed
         let arrayAreEqual = _.isEqual(_.sortBy(tags_available), _.sortBy(currentTags));
 
-        console.log(tags_available, currentTags);
-
         if (!arrayAreEqual){
             updateWorkItem["tags"] = !arrayAreEqual ? tags_available : undefined;
 
@@ -72,7 +75,6 @@ $(function () {
         }
 
         activeSaveButton();
-        
     });
     
     // Status - select
@@ -161,6 +163,10 @@ function activeSaveButton(){
     return somethingHasChanged;
 }
 
+/**
+ * Set all variables of work item to the current state. This way we can compare data to know
+ * What actually changed.
+ */
 function setWorkItemState(){
     currentTitle          = $(WORK_ITEM["title"]).val();
     currentAssignedUser   = $(WORK_ITEM["user"]).val();

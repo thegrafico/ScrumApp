@@ -43,6 +43,7 @@ function validateForm(formParams){
  * Show a span element with an error message
  * @param {String} spanId - id of the span to show
  * @param {String} message - message the span will have 
+ * @returns {null}
  */
 function showErrSpanMessage(spanId, message){
     $(spanId).text(message);
