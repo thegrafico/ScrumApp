@@ -24,7 +24,7 @@ const {
 /**
  * METHOD: POST - Create new work item
  */
- router.post("/api/:id/newTeam", middleware.isUserInProject, async function (req, res) {
+router.post("/api/:id/newTeam", middleware.isUserInProject, async function (req, res) {
 
     // validate project
     let project = await projectCollection.findById(req.params.id).catch(err => {
@@ -99,6 +99,37 @@ const {
     }
     
     res.status(200).send("Successfully added team to the project");
+});
+
+/**
+ * METHOD: POST - REMOVE WORK ITEMS FROM PROJECT
+ */
+ router.post("/api/:id/removeWorkItems", middleware.isUserInProject, async function (req, res) {
+    
+    console.log("Getting request to remove work items...");
+    
+    const projectId = req.params.id;
+    
+    let  { workItemsId } = req.body; // expected array
+
+    // is a string
+    if (workItemsId && workItemsId.length > 0){
+    
+        // Add the comment to the DB
+        const result = await workItemCollection.deleteMany({projectId: projectId, _id: workItemsId}).catch(
+            err => console.error("Error removing work items: ", err)
+        );
+
+        if (!result){
+            res.status(400).send("Sorry, There was a problem removing work items. Please try later.");
+            return;
+        }
+    }else{
+        res.status(400).send("Sorry, We cannot find any work item to remove. Please try later.");
+        return;
+    }
+    let item_str = workItemsId.length === 1 ? "item" : "items";
+    res.status(200).send(`Successfully removed work ${item_str}`);
 });
 
 module.exports = router;

@@ -254,7 +254,7 @@ function cleanModal() {
 }
 
 /**
- * 
+ * Update custom select options
  * @param {Object} currentElement - this element - current element
  * @param {String} tagCurrentItem - current tag item for the html
  * @param {String} tagInputItem - hidden input tag
@@ -349,7 +349,7 @@ async function addCommentToWorkItem(projectId, workItemId, comment){
     }
 
     // link to make the request
-    const api_link_add_comment = `/dashboard/api/${projectId}/addCommentToWorkItem/${workItemId}`;
+    const API_LINK_ADD_COMMENT = `/dashboard/api/${projectId}/addCommentToWorkItem/${workItemId}`;
     
     // check of comments
     if (comment.trim().length == 0){
@@ -360,8 +360,9 @@ async function addCommentToWorkItem(projectId, workItemId, comment){
     // Data to make the request
     const request_data = {comment: comment.trim()}
 
-    const response = await make_post_request(api_link_add_comment,request_data).catch(err=> {
-        console.error("Error adding the comment: ", err);
+    let response_error = null;
+    const response = await make_post_request(API_LINK_ADD_COMMENT, request_data).catch(err=> {
+        response_error = err;
     });
     
     if (response){
@@ -376,7 +377,7 @@ async function addCommentToWorkItem(projectId, workItemId, comment){
         // clean the textarea for the user
         $(WORK_ITEM["discussion"]).val('');
     }else{
-        // TODO: add error message to the user 
+        $.notify(response_error.data.responseText, "error");
     }
 }
 
@@ -386,7 +387,7 @@ async function addCommentToWorkItem(projectId, workItemId, comment){
  */
 async function removeWorkItems(projectId, workItemsId){
     // TODO: maybe change this to the https: format? 
-    const api_link_remove_work_items =`/dashboard/api/${projectId}/removeWorkItems`;
+    const API_LINK_REMOVE_WORK_ITEMS =`/dashboard/api/${projectId}/removeWorkItems`;
 
     if (!workItemsId || workItemsId.length == 0){
         console.error("Cannot find the work items to remove");
@@ -395,8 +396,9 @@ async function removeWorkItems(projectId, workItemsId){
 
     const request_data = {workItemsId};
 
-    const response = await make_post_request(api_link_remove_work_items, request_data).catch(err=> {
-        console.error("Error adding the comment: ", err);
+    let response_error = null;
+    const response = await make_post_request(API_LINK_REMOVE_WORK_ITEMS, request_data).catch(err=> {
+        response_error = err;
     });
 
     if (response){
@@ -404,9 +406,11 @@ async function removeWorkItems(projectId, workItemsId){
            $(this).remove();
         });
 
+        $.notify(response, "success");
+
         // disable the trash button again
         enableTrashButton(false);
     }else{
-        // TODO: show error message to the user
+        $.notify(response_error.data.responseText, "error");
     }
 }

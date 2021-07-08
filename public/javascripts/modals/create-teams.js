@@ -37,11 +37,9 @@ $(function (){
             return;
         }
 
+        // Request var
         const projectId = $(PROJECT_ID).val();
-        const workItemId = $(WORK_ITEM_ID).val();
-
         const API_LINK_CREATE_TEAM = `/dashboard/api/${projectId}/newTeam`;
-
         const data = {"teamName": teamName};
 
         let response_error = null;
@@ -49,10 +47,12 @@ $(function (){
             response_error = err;
         });
 
-        
         // Success message
         if (response){
-            $.notify("Successfully added team to the project", "success");
+            $.notify(response, "success");
+
+            // close the modal
+            $(CREATE_MODAL_ID).modal('toggle');
         }else{ // error messages
             $.notify(response_error.data.responseText, "error");
         }

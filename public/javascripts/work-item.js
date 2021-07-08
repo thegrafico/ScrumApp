@@ -126,12 +126,20 @@ $(function () {
             const projectId = $(PROJECT_ID).val();
             const workItemId = $(WORK_ITEM_ID).val();
 
-            const api_link_update_work_item = `/dashboard/api/${projectId}/update_work_item/${workItemId}`;
-
-            const response = await make_post_request(api_link_update_work_item, updateWorkItem).catch(err=> {
-                // TODO: change this to another a message to the user
-                console.error("Error updating the work item: ", err);
+            const API_LINK_UPDATE_WORK_ITEM = `/dashboard/api/${projectId}/update_work_item/${workItemId}`;
+            
+            let response_error = null;
+            const response = await make_post_request(API_LINK_UPDATE_WORK_ITEM, updateWorkItem).catch(err=> {
+                response_error = err;
             });
+
+            // Success message
+            if (response){
+                $.notify(response, "success");
+            }else{ // error messages
+                $.notify(response_error.data.responseText, "error");
+            }
+
 
             // set all values in object to default value
             Object.keys(updateWorkItem).forEach(function(key){ updateWorkItem[key] = undefined });

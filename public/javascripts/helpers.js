@@ -146,8 +146,8 @@ function toggleFilter(){
             function() {
                 console.log("Sent!");
             })
-            .done(function() {
-                return resolve(true);
+            .done(function(data, status) {
+                return resolve(data, status);
             })
             .fail(function(data, status) {
                 return reject({data, status});

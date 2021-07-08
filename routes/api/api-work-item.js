@@ -22,7 +22,7 @@ const {
 /**
  * METHOD: POST - Create new work item
  */
- router.post("/api/:id/newWorkItem", middleware.isUserInProject, async function (req, res) {
+router.post("/api/:id/newWorkItem", middleware.isUserInProject, async function (req, res) {
 
     // new work item
     let {
@@ -178,7 +178,7 @@ const {
 });
 
 /**
- * METHOD: POST - Adds a comment to the
+ * METHOD: POST - Add a comment to the work item
  */
 router.post("/api/:id/addCommentToWorkItem/:workItemId", middleware.isUserInProject, async function (req, res) {
     
@@ -208,7 +208,7 @@ router.post("/api/:id/addCommentToWorkItem/:workItemId", middleware.isUserInProj
             return;
         }
     }else{
-        res.status(400).send("Error with the comment sent");
+        res.status(400).send("Comment is either empty or does not exist.");
         return;
     }
 
@@ -216,44 +216,9 @@ router.post("/api/:id/addCommentToWorkItem/:workItemId", middleware.isUserInProj
 });
 
 /**
- * METHOD: POST - REMOVE WORK ITEMS FROM PROJECT
- */
- router.post("/api/:id/removeWorkItems", /*middleware.isUserInProject,*/ async function (req, res) {
-    
-    console.log("Getting request to remove work items...");
-    
-    const projectId = req.params.id;
-    
-    let  { workItemsId } = req.body; // expected array
-
-    // is a string
-    if (workItemsId && workItemsId.length > 0){
-    
-        // Add the comment to the DB
-        const result = await workItemCollection.deleteMany({projectId: projectId, _id: workItemsId}).catch(
-            err => console.error("Error removing work items: ", err)
-        );
-
-        if (!result){
-            console.error("Error Deleting the work items");
-            req.flash("error", "Sorry, There was a problem removing work items. Please try later.");
-            res.redirect(400, "back");
-            return;
-        }
-    }else{
-        console.error("There is not work item to remove");
-        req.flash("error", "Sorry, We cannot find any work item to remove. Please try later.");
-        res.redirect(400, "back");
-        return;
-    }
-
-    res.redirect(200, "back");
-});
-
-/**
  * METHOD: POST - Update work item
  */
- router.post("/api/:id/update_work_item/:workItemId", middleware.isUserInProject, async function (req, res) {
+router.post("/api/:id/update_work_item/:workItemId", middleware.isUserInProject, async function (req, res) {
     
     console.log("Getting request to update work item...");
     
