@@ -64,6 +64,14 @@ module.exports.MAX_LENGTH_DESCRIPTION = 1000;
 module.exports.TEAM_NAME_LENGHT_MAX_LIMIT = 20;
 module.exports.TEAM_NAME_LENGHT_MIN_LIMIT = 3;
 
+module.exports.PRIORITY_POINTS = {
+    "Low": 1,
+    "Median": 2,
+    "High": 3,
+    "Highest": 4,
+    "Critical": 5,
+};
+
 /**
  * Capitalize a String
  * @param {String} s 

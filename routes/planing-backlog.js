@@ -21,6 +21,7 @@ const {
     EMPTY_SPRINT,
     WORK_ITEM_ICONS,
     WORK_ITEM_STATUS,
+    PRIORITY_POINTS,
 } = require('../dbSchema/Constanst');
 
 // ===================================================
@@ -71,6 +72,8 @@ router.get("/:id/planing/backlog", middleware.isUserInProject, async function (r
         "sprints": sprints,
         "workItemType": WORK_ITEM_ICONS,
         "workItems": workItems,
+        "priorityPoints":PRIORITY_POINTS,
+        "filterByTeam": true,
         "stylesPath": backlogPath["styles"],
         "scriptsPath": backlogPath["scripts"]
     };

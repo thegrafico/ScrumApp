@@ -237,18 +237,26 @@
                                     <p>Story Points</p>
                                     <input type="text" 
                                         name="storyPoints" 
-                                        class="input-style "
+                                        class="input-style input-border"
                                         id="workItemPoints" 
                                         placeholder="Enter points: i.e 5" 
                                         value="<%=workItem['storyPoints']%>">
 
                                     <p>Priority</p>
-                                    <input type="text" 
+                                    <select 
+                                        class="custom-select my-custon-select input-border"
                                         name="priorityPoints" 
-                                        class="input-style "
                                         id="workItemPriority" 
-                                        placeholder="Enter Priority: i.e 3"
-                                        value="<%=workItem['priorityPoints']%>">
+                                        aria-label="Default select example">
+                                        <% for( const [key, value] of Object.entries(priorityPoints) ) { %>
+
+                                            <% if (value == workItem['priorityPoints'] ) { %>
+                                                <option value="<%=value%>" selected> <%=key%> - <%=value%> </option>
+                                            <% }else{ %>
+                                                <option value="<%=value%>"> <%=key%> - <%=value%> </option>
+                                            <% } %>
+                                        <% } %>
+                                    </select>
 
                                 </div>
 

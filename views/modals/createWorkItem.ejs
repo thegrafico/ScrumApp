@@ -158,8 +158,16 @@
                                 <input type="text" name="storyPoints" class="input-style" id="workItemPoints" placeholder="Enter points: i.e 5">
 
                                 <p>Priority</p>
-                                <input type="text" name="priorityPoints" class="input-style" id="workItemPriority" placeholder="Enter Priority: i.e 3">
+                                <select
+                                    class="custom-select my-custon-select input-border"
+                                    name="priorityPoints" 
+                                    id="workItemPriority" 
+                                    aria-label="Default select example">
 
+                                    <% for( const [key, value] of Object.entries(priorityPoints) ) { %>
+                                        <option value="<%=value%>"> <%=key%> - <%=value%> </option>
+                                    <% } %>
+                                </select>
                             </div>
 
                             <div class="col-3 addLink">

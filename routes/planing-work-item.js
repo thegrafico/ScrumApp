@@ -7,7 +7,6 @@
 // ============= CONST AND DEPENDENCIES =============
 const express                   = require("express");
 const _                         = require("lodash");
-const validator                 = require("validator");
 const STATUS                    = require('../dbSchema/Constanst').projectStatus;
 const moment                    = require('moment');
 const projectCollection         = require("../dbSchema/projects");
@@ -21,6 +20,7 @@ const {
     EMPTY_SPRINT,
     WORK_ITEM_ICONS,
     WORK_ITEM_STATUS,
+    PRIORITY_POINTS,
 } = require('../dbSchema/Constanst');
 
 /**
@@ -70,6 +70,7 @@ router.get("/:id/planing/workitems", middleware.isUserInProject, async function 
         "sprints": sprints,
         "workItemType": WORK_ITEM_ICONS,
         "workItems": workItems,
+        "priorityPoints": PRIORITY_POINTS,
         "stylesPath": planigWorkItemPath["styles"],
         "scriptsPath": planigWorkItemPath["scripts"]
     };
@@ -130,6 +131,7 @@ router.get("/:id/planing/workitems", middleware.isUserInProject, async function 
         "sprints": sprints,
         "workItemType": WORK_ITEM_ICONS,
         "workItem": workItem,
+        "priorityPoints": PRIORITY_POINTS,
         "stylesPath": planigWorkItemPath["styles"],
         "scriptsPath": planigWorkItemPath["scripts"]
     };

@@ -3,6 +3,7 @@ const express                   = require("express");
 const middleware                = require("../../middleware/auth");
 const workItemCollection        = require("../../dbSchema/workItem");
 const projectCollection         = require("../../dbSchema/projects");
+const userCollection            = require("../../dbSchema/user");
 const _                         = require("lodash");
 let router                      = express.Router();
 
