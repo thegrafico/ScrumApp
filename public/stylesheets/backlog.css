@@ -306,3 +306,8 @@ tbody tr td i {
     height: 100%;
     overflow: hidden;
 }
+
+th.orderColumn{
+    width: 8%;
+    max-height: 8%;
+}

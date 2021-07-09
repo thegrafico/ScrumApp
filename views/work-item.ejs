@@ -141,9 +141,10 @@
                                         <input type="hidden" class="" name="workItemStatus" id="workItemStatus" value="<%=workItem['status']%>">
                                     </div>
 
-                                    <div class="col-4 d-flex">
+                                    <div class="col-4 d-flex assignedTeam-container">
                                         <span class="aling-vertically align-self-center"> Team: </span>
-                                        <select class="custom-select my-custon-select " name="teamAssigned" id="teamAssigned">
+
+                                        <select class="custom-select my-custon-select" name="teamAssigned" id="teamAssigned">
                                             <% for (team of teamWorkItem){ %>
                                                 <% if (team.selected || (workItem["teamId"] && (team["id"].toString() === workItem["teamId"].toString()))) {%>
                                                     <option value="<%=team['id']%>" selected>

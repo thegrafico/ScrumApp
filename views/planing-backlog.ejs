@@ -1,20 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="preconnect" href="https://fonts.gstatic.com"> 
-    <link href="https://fonts.googleapis.com/css2?family=Source+Code+Pro:ital@1&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/stylesheets/index.css">
-    <link rel="stylesheet" href="/stylesheets/bootstrap.min.css">
-    <link rel="stylesheet" href="/stylesheets/fontawesome/css/all.css">
-    <link rel="stylesheet" href="/stylesheets/scrum-main.css">
-    <link rel="stylesheet" href="/stylesheets/backlog.css">
-
-    <title><%=project["title"]%></title>
-</head>
+<%- include('modals/header'); %>
 
 <body>
 
@@ -44,18 +28,21 @@
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="#">Sprint</a>
+                                <a class="nav-link" href="#">Columns options</a>
                             </li>
+
                             <li class="nav-item">
-                                <a class="nav-link" href="#">Teams</a>
+                                <a class="nav-link" href="#">View</a>
                             </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="#">About</a>
+
+                            <li class="nav-item trashIconWrapper">
+                                &nbsp;
+                                <button id="trashBtn" disabled> <i class="far fa-trash-alt grayColor"></i> </button>
                             </li>
 
                         </ul>
                         <div class="form-inline my-2 my-lg-0">
-                            <input class="form-control mr-sm-2" type="text" placeholder="Search">
+                            <input id="searchTable" class="form-control mr-sm-2" type="text" placeholder="Search">
                             
                             <button id="filterBtn" class="btn btn-secondary my-2 my-sm-0 filterBtn">
                                 <i class="fas fa-filter"></i>
@@ -69,33 +56,46 @@
 
             </div>
 
-            <div class="p-4">
+            <div class="p-4" id="table-container">
                 <table class="table table-hover" id="workItemTable">
                     <thead>
                         <tr class="tableHeader">
-                            <th scope="col">Order</th>
-                            <th scope="col">ID</th>
+                            <th class="tableCheckBoxRowHeader"></th>
+                            <th class="orderColumn">Order</th>
+                            <th scope="col" class="tableColumnID">ID</th>
                             <th scope="col">Type</th>
                             <th scope="col">Title</th>
+                            <th scope="col">Assigned</th>
                             <th scope="col">State</th>
-                            <th scope="col">Points</th>
-                            <th scope="col">Priority</th>
+                            <th scope="col">Tags</th>
+                            <th scope="col">Comments</th>
                         </tr>
                     </thead>
                     <tbody>
                         <% for (let i = 0; i < workItems.length; ++i) {%>
                             <tr class="rowValues">
-                                <th scope="row" class="orderColumn"> <%=i+1%> </th>
-                                <td>Column content</td>
+                                <td class="tableCheckBoxRowElement"> 
+                                    <label for="checkboxRowElement" class="invisible labelcheckbox"> 
+                                        <input type="checkbox" name="checkboxWorkItem[]" value="<%=workItems[i]['_id']%>" class="checkboxRowElement" />
+                                    </label> 
+                                </td> 
+                                <td class="orderColumn"><%=i+1%></td>
+                                <td class="tableColumnID"> <%=workItems[i]["itemId"]%></td>
                                 <td> <i class="fas <%=workItemType[workItems[i]['type']].icon%>"></i> <%=workItems[i]["type"]%></td>
-                                <td><%=workItems[i]["title"]%></td>
+                                <!-- TODO: CHANGE TO A BETTER LINK -->
+                                <td class="openStory"> <a href="workitems/<%=workItems[i]['_id']%>">  <%=workItems[i]["title"]%> </a> </td>
+                                <td> <i class="fas fa-user-astronaut"></i> <%=workItems[i]["assignedUser"]["name"]%></td>
                                 <td><i class="fa fa-circle <%=workItems[i]['status']%>Color" aria-hidden="true"></i> <%=workItems[i]["status"]%></td>
-                                <td><%=workItems[i]["storyPoints"]%></td>
-                                <td><%=workItems[i]["priorityPoints"]%></td>
+                                <td class="tags-td"> 
+                                    <% if (workItems[i]["tags"].length > 0)  {%>
+                                        <% workItems[i]["tags"].forEach(each => { %>
+                                            <span class="btn btn-info disabled btn-sm tags-container"><%=each%> </span>
+                                        <% }); %>
+                                    <% } %>
+                                </td>
+                                <td class="table-comments-column"><span>  <i class="fas fa-comments"></i>  <%=workItems[i]["comments"].length%></span> </td>
                             </tr>
                         <%}%>
-
-                        
                     </tbody>
                 </table>
             </div>
@@ -104,20 +104,10 @@
         <input type="hidden" name="currentTab" id="currentTab" value="<%=activeTab%>">
     </div>
     
+    <!-- Modal for creating work item -->
     <%- include('modals/createWorkItem'); %>
-    
-    </div>
 
+    <!-- Modal for create team -->
+    <%- include('modals/create-team'); %>
 
-    <script src="/javascripts/dependecies/jquery3.5.2.js"></script>
-    <script src="/javascripts/dependecies/jquery-ui.min.js"></script>
-    <script src="/javascripts/dependecies/validator.min.js"></script>
-    <script src="/javascripts/helpers.js"></script>
-    <script src="/javascripts/planning-backlog.js"></script>
-    <script src="/javascripts/dependecies/bootstrap.bundle.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
-</body>
-
-</html>
-
-<!-- https://bootswatch.com/darkly/ -->
+<%- include('modals/footer'); %>

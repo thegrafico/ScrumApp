@@ -175,3 +175,108 @@ function toggleFilter(){
 
     return undefined;
 }
+
+
+/**
+ * Clean the work item modal
+ * This function is call anywhere is possible to create a work item
+ */
+function cleanModal() {
+
+    // reset title
+    $(WORK_ITEM["title"]).val("");
+    $(spanTitleMsg).removeClass("d-none");
+
+    // reset assigned user
+    $(WORK_ITEM["user"]).val(0);
+
+    // reset tags
+    $(`${TAG_CONTAINER} span`).remove();
+
+    // reset state
+    // TODO: set the default value to be the firts from an array from CONSTANTS.js
+    $(WORK_ITEM["state"]).val("New");
+
+    // Reset description
+    $(WORK_ITEM["description"]).val("");
+
+    // reset points
+    $(WORK_ITEM["points"]).val("");
+
+    // reset priority
+    $(WORK_ITEM["priority"]).val("");
+
+    // reset discussion
+    $(WORK_ITEM["discussion"]).val("");
+
+
+    // TODO: reset links
+    // TODO: reset type
+    // TODO: reset team depending on the user's team
+    // TODO: reset sprint depending on the current sprint
+}
+
+/**
+ * Update custom select options
+ * @param {Object} currentElement - this element - current element
+ * @param {String} tagCurrentItem - current tag item for the html
+ * @param {String} tagInputItem - hidden input tag
+ */
+function updateCustomSelect(currentElement, tagCurrentItem, tagInputItem){
+    // // get the current element
+    // let currentIcon = $(tagCurrentItem).html();        
+
+    // get the clicked element
+    let clickedIcon = $(currentElement).html();
+    let selecteTextValue = $(currentElement).text().trim().toLowerCase();
+
+    // store the current element in a temporal variable
+    // let temp = currentIcon;
+
+    // clean the current element and change it with the clicked
+    $(tagCurrentItem).empty().html(clickedIcon);
+
+    // add the temporal element into the select options
+    // $(currentElement).empty().html(temp)
+
+    $(tagInputItem).val(selecteTextValue).trigger("change");
+}
+
+
+/**
+ * This funtion validates the form to create a new WorkItem
+ */
+// TODO: change alert for other better ui messages
+function validateFormWorkItem(){
+
+    const title = $(WORK_ITEM["title"]).val().trim();
+    // const state = $(WORK_ITEM["state"]).val();
+    // const teamId = $(WORK_ITEM["team"]).val();
+    // const type = $(WORK_ITEM["type"]).val();
+    // const sprint = $(WORK_ITEM["sprint"]).val();
+    const description = $(WORK_ITEM["description"]).val();
+    const points = $(WORK_ITEM["points"]).val();
+    const priority = $(WORK_ITEM["priority"]).val();
+
+    // console.log(`POINTS: ${points}, Priority: ${priority}`);
+   
+    // Validate title
+    if (title.length < 3){
+        alert("Title cannot be less than 3 chars");
+        return false;
+    }
+
+    // validate points
+    if (!validator.isEmpty(points) && isNaN(points)){
+        alert("Points only accept numbers");
+        return false;
+    }
+
+     // validate priority
+     if (!validator.isEmpty(priority) && isNaN(priority)){
+        alert("Priority only accept numbers");
+        return false;
+    }
+
+    return true;
+}

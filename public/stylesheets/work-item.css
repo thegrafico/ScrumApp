@@ -115,3 +115,24 @@
 .tags-td{
     overflow: hidden;
 }
+
+.teamInputSelect:hover{
+    border: 1px solid gray;
+}
+
+.teamInputSelect:focus{
+    background-color: inherit;
+    color: white;
+    border-radius: 0.25rem;
+}
+
+.teamInputSelect{
+    background-color: inherit;
+    color: white;
+    border: transparent;
+    border-bottom: 1px solid gray;
+}
+
+.overflow {
+    height: 200px;
+}

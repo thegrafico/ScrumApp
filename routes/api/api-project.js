@@ -104,7 +104,7 @@ router.post("/api/:id/newTeam", middleware.isUserInProject, async function (req,
 /**
  * METHOD: POST - REMOVE WORK ITEMS FROM PROJECT
  */
- router.post("/api/:id/removeWorkItems", middleware.isUserInProject, async function (req, res) {
+router.post("/api/:id/removeWorkItems", middleware.isUserInProject, async function (req, res) {
     
     console.log("Getting request to remove work items...");
     

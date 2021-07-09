@@ -13,6 +13,8 @@ const sprintCollection          = require("../dbSchema/sprint");
 const workItemCollection        = require("../dbSchema/workItem");
 const middleware                = require("../middleware/auth");
 let router                      = express.Router();
+const { backlogPath }    = require("../middleware/includes");
+
 
 const {
     UNASSIGNED, 
@@ -37,7 +39,7 @@ router.get("/:id/planing/backlog", middleware.isUserInProject, async function (r
     });
 
     if (_.isUndefined(projectInfo) || _.isEmpty(projectInfo)) {
-        // TODO: show a message to the user
+        req.flash("error", "Cannot find the project you're looking for.");
         return res.redirect('/');
     }
 
@@ -54,10 +56,11 @@ router.get("/:id/planing/backlog", middleware.isUserInProject, async function (r
     users.unshift(UNASSIGNED);
 
     // LOADING TABLE WORK ITEMS
-    workItems = await workItemCollection.find().catch(err => console.error("Error getting work items: ", err)) || [];
+    const workItems = await workItemCollection.find().catch(err => console.error("Error getting work items: ", err)) || [];
 
     // populating params
     let params = {
+        "title": projectInfo["title"],
         "project": projectInfo,
         "projectId": projectId,
         "activeTab": "Backlog,Planing",
@@ -67,7 +70,9 @@ router.get("/:id/planing/backlog", middleware.isUserInProject, async function (r
         "teamWorkItem": teams,
         "sprints": sprints,
         "workItemType": WORK_ITEM_ICONS,
-        "workItems": workItems
+        "workItems": workItems,
+        "stylesPath": backlogPath["styles"],
+        "scriptsPath": backlogPath["scripts"]
     };
 
     res.render("planing-backlog", params);

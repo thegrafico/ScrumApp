@@ -37,8 +37,11 @@ const ENABLE_SAVE_BTN_CLASS = "saveBtnContainer";
 
 $(function () {
 
-    // Set all variables to the initial state when this file is loaded
-    setWorkItemState();
+    // Only run this function  at the begenning when we're working inside a work item.
+    if ($(WORK_ITEM_ID).val()){
+        // Set all variables to the initial state when this file is loaded
+        setWorkItemState();
+    }
 
     // Work Item Title
     $(WORK_ITEM["title"]).keyup(function(){

@@ -36,7 +36,7 @@ router.get("/:id/planing/workitems", middleware.isUserInProject, async function 
     });
 
     if (_.isUndefined(projectInfo) || _.isEmpty(projectInfo)) {
-        // TODO: show a message to the user
+        req.flash("error", "Cannot find the project you're looking for.");
         return res.redirect('/');
     }
 

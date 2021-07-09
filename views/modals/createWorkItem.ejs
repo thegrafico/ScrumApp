@@ -90,10 +90,9 @@
 
                                     </div>
 
-                                    <div class="col-4 d-flex">
+                                    <div class="col-4 d-flex teamAssigned-container">
                                         <span class="aling-vertically align-self-center"> Team: </span>
-                                        <select class="custom-select my-custon-select " name="teamAssigned"
-                                            id="teamAssigned">
+                                        <select class="custom-select my-custon-select "  name="teamAssigned" id="teamAssigned">
                                             <% for (team of teamWorkItem){ %>
                                             <option value="<%=team['id']%>"><%=team['name']%></option>
                                             <%}%>  
