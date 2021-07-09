@@ -28,7 +28,7 @@ module.exports = {
         ]
     },
     backlogPath: {
-        styles: ["/stylesheets/scrum-main.css","/stylesheets/backlog.css", "/stylesheets/work-item.css"], 
+        styles: ["/stylesheets/scrum-main.css", "/stylesheets/work-item.css", "/stylesheets/backlog.css"], 
         scripts: [
             "/javascripts/dependecies/jquery-ui.min.js",
             "/javascripts/work-item-constants.js",

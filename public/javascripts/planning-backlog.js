@@ -4,10 +4,14 @@ $(function () {
     // start dragg event
     startDraggable(WORK_ITEM_TABLE);
 
+    $("#filterByTeam").select2();
     
 });
 
-
+/**
+ * Make the work item table dragable
+ * @param {String} tableId 
+ */
 function startDraggable(tableId){
 
     $(tableId).sortable({
@@ -25,7 +29,8 @@ function startDraggable(tableId){
 }
 
 /**
- * This functions reset the counter column everytime a value is dragged to another possition
+ * This function is used by startDraggable to reset the order column in the table. 
+ * So every time the columns chage the order, this function reset the value
  */
 function resetColumnOrder(){
     let counter = 1;

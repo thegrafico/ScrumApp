@@ -311,3 +311,11 @@ th.orderColumn{
     width: 8%;
     max-height: 8%;
 }
+
+#filterByTeam{
+    width: 15%;
+}
+
+.filterByTeamContainer{
+    width: 15% !important;
+}

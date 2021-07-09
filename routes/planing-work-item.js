@@ -70,7 +70,6 @@ router.get("/:id/planing/workitems", middleware.isUserInProject, async function 
         "sprints": sprints,
         "workItemType": WORK_ITEM_ICONS,
         "workItems": workItems,
-        "priorityPoints": PRIORITY_POINTS,
         "stylesPath": planigWorkItemPath["styles"],
         "scriptsPath": planigWorkItemPath["scripts"]
     };
@@ -90,6 +89,8 @@ router.get("/:id/planing/workitems", middleware.isUserInProject, async function 
     let projectInfo = await projectCollection.findOne({_id: projectId}).catch(err => {
         console.log("Error is: ", err.reason);
     });
+
+    console.log(projectInfo.teams);
 
     if (_.isUndefined(projectInfo) || _.isEmpty(projectInfo)) {
         // TODO: show a message to the user

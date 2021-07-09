@@ -73,7 +73,6 @@ router.get("/:id/planing/backlog", middleware.isUserInProject, async function (r
         "workItemType": WORK_ITEM_ICONS,
         "workItems": workItems,
         "priorityPoints":PRIORITY_POINTS,
-        "filterByTeam": true,
         "stylesPath": backlogPath["styles"],
         "scriptsPath": backlogPath["scripts"]
     };

@@ -120,7 +120,7 @@ let projectSchema = new mongoose.Schema({
 
     // if empty and not string
     if (_.isEmpty(teamId) || !_.isString(teamId)){
-        console.error("Parameter is either empty or is not a String");
+        console.error("teamId is either empty or is not a String");
         return false;
     }
 
@@ -143,7 +143,7 @@ let projectSchema = new mongoose.Schema({
 
     // if empty and not string
     if (_.isEmpty(userId) || !_.isString(userId)){
-        console.error("Parameter is either empty or is not a String");
+        console.error("UserId is either empty or is not a String");
         return false;
     }
     const user = await userCollection.findById(userId).catch(err => {
@@ -153,5 +153,40 @@ let projectSchema = new mongoose.Schema({
     return user;
 };
 
+/**
+ * Add an user to the team if the user is not in the team. 
+ * @param {String} userId - id of the user to add to the team
+ * @param {String} teamId - id of the team to add the user
+ * @returns 
+ */
+ projectSchema.methods.addUserToTeam = async function(userId, teamId) {
+
+    if (!this.isUserInProject(userId) || !this.isTeamInProject(teamId)){
+        return false;
+    }
+
+    // getting team
+    let team = null;
+    for (team of this.teams){
+        
+        if (team._id == teamId){
+            break;
+        }
+    }
+
+    // if the user is in team users
+    if (team.users.includes(userId)){
+        console.error("Cannot find user");
+        return false;
+    }
+
+    team.users.push(userId);
+
+    await this.save().catch(err => {
+        console.error(err);
+    });
+
+    return true;
+};
 
 module.exports = mongoose.model("Projects", projectSchema);

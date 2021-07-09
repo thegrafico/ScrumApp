@@ -223,7 +223,6 @@ router.post("/api/:id/update_work_item/:workItemId", middleware.isUserInProject,
     
     console.log("Getting request to update work item...");
     
-    // TODO: Verify if project exist and work item
     const projectId = req.params.id;
     const workItemId = req.params.workItemId;
 
@@ -257,7 +256,6 @@ router.post("/api/:id/update_work_item/:workItemId", middleware.isUserInProject,
     }
     // ======================================================
 
-    
     // waiting for this params. Anything that cames undefined was not sent
     let  { 
         title,
@@ -272,8 +270,9 @@ router.post("/api/:id/update_work_item/:workItemId", middleware.isUserInProject,
         tags,
     } = req.body;
     
-    console.log("Request: ", req.body);
+    // console.log("Request: ", req.body);
 
+    let addUserToTeam = false;
     let updateValues = {};
 
     // verify title
@@ -292,8 +291,9 @@ router.post("/api/:id/update_work_item/:workItemId", middleware.isUserInProject,
             const user = await project.getUserName(assignedUser).catch(err => 
                 console.error("Error getting the user: ", err)
             );
-            console.log(user);
+
             if (user){
+                addUserToTeam = true;
                 updateValues["assignedUser"] = {name: user["fullName"], id: assignedUser}
             }
             // verify is the user is in the project
@@ -390,6 +390,18 @@ router.post("/api/:id/update_work_item/:workItemId", middleware.isUserInProject,
             }else{
                 // TODO: Error message to the user
             }
+        }
+    }
+
+    // add user to the team assigned if the user is not already in there. 
+    if (updateValues["teamId"] || addUserToTeam){
+        let teamId = updateValues["teamId"] || workItem["teamId"];
+        let user = addUserToTeam ? updateValues["assignedUser"]: workItem["assignedUser"];
+        
+        if (user.id && teamId){
+            await project.addUserToTeam(user.id.toString(), teamId.toString() ).catch(err => {
+               console.error(err);   
+            });
         }
     }
 
