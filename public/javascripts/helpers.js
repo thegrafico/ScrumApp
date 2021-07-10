@@ -333,7 +333,7 @@ function appendToWotkItemTable(workItems){
                 </label> 
             </td>`;
 
-        let td_order = `<td class="orderColumn">${i+1}></td>`;
+        let td_order = `<td class="orderColumn">${i+1}</td>`;
 
         let td_id = `<td class="tableColumnID"> ${workItem['itemId']}</td>`;
 
