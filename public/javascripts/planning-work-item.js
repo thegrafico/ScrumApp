@@ -138,11 +138,13 @@ $(function () {
     });
 
     $(CREATE_WORK_ITEM_FORM).on("submit", function(event){
-        isFormValid = validateFormWorkItem();
         
-        if (!isFormValid){
-            event.preventDefault();
-        }
+        isFormValid = validateFormWorkItem();
+        event.preventDefault();
+        
+        // if (!isFormValid){
+        //     event.preventDefault();
+        // }
     });
 
     // TOGGLE THE FILTER

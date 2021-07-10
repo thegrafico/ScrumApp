@@ -319,3 +319,7 @@ th.orderColumn{
 .filterByTeamContainer{
     width: 15% !important;
 }
+
+.fa-users{
+    font-size: 1em;
+}

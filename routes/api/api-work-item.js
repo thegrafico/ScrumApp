@@ -270,8 +270,6 @@ router.post("/api/:id/update_work_item/:workItemId", middleware.isUserInProject,
         tags,
     } = req.body;
     
-    // console.log("Request: ", req.body);
-
     let addUserToTeam = false;
     let updateValues = {};
 
@@ -296,7 +294,6 @@ router.post("/api/:id/update_work_item/:workItemId", middleware.isUserInProject,
                 addUserToTeam = true;
                 updateValues["assignedUser"] = {name: user["fullName"], id: assignedUser}
             }
-            // verify is the user is in the project
         }
     }
     
@@ -311,7 +308,7 @@ router.post("/api/:id/update_work_item/:workItemId", middleware.isUserInProject,
                 updateValues["storyPoints"] = storyPoints;
             }
         }else{
-            // TODO: error message to the user
+            res.status(400).send("Story points is either empty or out of range.");
         }
     }
 
@@ -324,7 +321,8 @@ router.post("/api/:id/update_work_item/:workItemId", middleware.isUserInProject,
                 updateValues["priorityPoints"] = priorityPoints;
             }
         }else{
-            // TODO: error message to the user
+            res.status(400).send("Priority points is either empty or out of range.");
+            return;
         }        
     }
 
@@ -336,7 +334,8 @@ router.post("/api/:id/update_work_item/:workItemId", middleware.isUserInProject,
         if (STATUS.includes(status)){
             updateValues["status"] = status;
         }else{
-            // TODO: error message to the user? 
+            res.status(400).send("The status for the work item does not match any of the status available");
+            return;
         }
     }
 
@@ -350,7 +349,8 @@ router.post("/api/:id/update_work_item/:workItemId", middleware.isUserInProject,
             // verify is the user is in the project
             updateValues["teamId"] = teamId;
         }else{
-            // TODO: error message to the user
+            res.status(400).send("Cannot find the team.");
+            return;
         }
     }
 
@@ -362,7 +362,8 @@ router.post("/api/:id/update_work_item/:workItemId", middleware.isUserInProject,
         if (TYPES.includes(type)){
             updateValues["type"] = type;
         }else{
-            // TODO: error message to the user? 
+            res.status(400).send("The type for the work item does not match any of the types available");
+            return;
         }
     }
 
@@ -372,7 +373,8 @@ router.post("/api/:id/update_work_item/:workItemId", middleware.isUserInProject,
         if (description.length <= MAX_LENGTH_DESCRIPTION){
             updateValues["description"] = description;
         }else{
-            // TODO: show error message to the user
+            res.status(400).send("Descrition is bigger than expected.");
+            return;
         }
     }
 
@@ -388,7 +390,8 @@ router.post("/api/:id/update_work_item/:workItemId", middleware.isUserInProject,
             if (all_are_string){
                 updateValues["tags"] = tags;
             }else{
-                // TODO: Error message to the user
+                res.status(400).send("Sorry, there was an error adding the tags.");
+                return;
             }
         }
     }

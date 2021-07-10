@@ -13,6 +13,23 @@ const WORK_ITEM = {
     discussion: "#comment-textarea",
     tags: ".tagNme",
 };
+
+const WORK_ITEM_ICONS = {
+    "Story": {
+        icon: "fa-book-open cl-blue",
+        default: true
+    },
+    "Task": {
+        icon: "fa-clipboard-check"
+    },
+    "Bug": {
+        icon: "fa-bug cl-danger"
+    },
+    "Epic": {
+        icon: "fa-bolt taskIcon"
+    },
+}
+
 const createWorkItemModal = ".createNewItemModal";
 
 // Symbol to replaces

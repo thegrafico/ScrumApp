@@ -19,6 +19,7 @@ module.exports.EMPTY_SPRINT = {
 };
 
 // STORY TYPE and ICONS
+// TODO: add this to the database since other files is using it too
 module.exports.WORK_ITEM_ICONS = {
     "Story": {
         icon: "fa-book-open cl-blue",

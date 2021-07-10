@@ -102,6 +102,35 @@ router.post("/api/:id/newTeam", middleware.isUserInProject, async function (req,
 });
 
 /**
+ * METHOD: GET - REMOVE WORK ITEMS FROM PROJECT
+ */
+ router.get("/api/:id/getworkItemsByTeamId/:teamId", middleware.isUserInProject, async function (req, res) {
+    
+    const projectId = req.params.id;
+    const teamId = req.params.teamId;
+
+    // is a string
+    if (_.isString(projectId) && _.isString(teamId)){
+    
+        // Add the comment to the DB
+        const result = await workItemCollection.find({"projectId": projectId, "teamId": teamId}).catch(
+            err => console.error("Error getting work items: ", err)
+        );
+
+        if (!result){
+            res.status(400).send("Sorry, There was a problem getting work items. Please try later.");
+            return;
+        }
+        res.status(200).send(result);
+        return;
+    }else{
+        res.status(400).send("Oops, it looks like this is an invalid team.");
+        return;
+    }
+});
+
+
+/**
  * METHOD: POST - REMOVE WORK ITEMS FROM PROJECT
  */
 router.post("/api/:id/removeWorkItems", middleware.isUserInProject, async function (req, res) {

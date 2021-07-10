@@ -173,6 +173,10 @@
     color: white;
     background-color:inherit !important;
 }
+
+span.select2-selection.select2-selection--single {
+    outline: none;
+}
 /* ============================================ */
 
 #workItemPriority > .select2-container--default .select2-selection--single{
@@ -182,4 +186,6 @@
 .input-border:hover{
     border: 1px solid white !important;
 }
+
+
 

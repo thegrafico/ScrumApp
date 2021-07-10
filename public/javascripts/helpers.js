@@ -1,3 +1,5 @@
+// import { WORK_ITEM_ICONS } from "../../dbSchema/Constanst";
+
 /**
  * expected value of param is {id: .., type: ..., null: ...}
  * @param {String} formId - id of the form
@@ -141,7 +143,6 @@ function toggleFilter(){
  */
  function make_post_request(link, data){
     return new Promise( (resolve, reject) => {
-        console.log("Making post request...");
         const response = $.post( link, data, 
             function() {
                 console.log("Sent!");
@@ -153,6 +154,27 @@ function toggleFilter(){
                 return reject({data, status});
             }).always(function(){
                 console.log("Finished Post request");
+        });
+    });
+}
+
+/**
+ * Send a GET request to the backend
+ * @param {String} link - Link where the request goes
+ * @param {Object} data - Object with the data to be send
+ * @returns {Promise} True if the request was sent successfully
+ */
+function make_get_request(link){
+    return new Promise( (resolve, reject) => {
+        const response = $.get( link,
+            function() {
+            })
+            .done(function(data, status) {
+                return resolve(data, status);
+            })
+            .fail(function(data, status) {
+                return reject({data, status});
+            }).always(function(){
         });
     });
 }
@@ -249,34 +271,119 @@ function updateCustomSelect(currentElement, tagCurrentItem, tagInputItem){
 // TODO: change alert for other better ui messages
 function validateFormWorkItem(){
 
-    const title = $(WORK_ITEM["title"]).val().trim();
-    // const state = $(WORK_ITEM["state"]).val();
-    // const teamId = $(WORK_ITEM["team"]).val();
-    // const type = $(WORK_ITEM["type"]).val();
-    // const sprint = $(WORK_ITEM["sprint"]).val();
-    const description = $(WORK_ITEM["description"]).val();
-    const points = $(WORK_ITEM["points"]).val();
-    const priority = $(WORK_ITEM["priority"]).val();
+    try{
 
-    // console.log(`POINTS: ${points}, Priority: ${priority}`);
-   
-    // Validate title
-    if (title.length < 3){
-        alert("Title cannot be less than 3 chars");
-        return false;
-    }
+        const title = $(WORK_ITEM["title"]).val().trim();
+        // const state = $(WORK_ITEM["state"]).val();
+        // const teamId = $(WORK_ITEM["team"]).val();
+        // const type = $(WORK_ITEM["type"]).val();
+        // const sprint = $(WORK_ITEM["sprint"]).val();
+        const description = $(WORK_ITEM["description"]).val();
+        const points = $(WORK_ITEM["points"]).val();
+        const priority = $(WORK_ITEM["priority"]).val();
 
-    // validate points
-    if (!validator.isEmpty(points) && isNaN(points)){
-        alert("Points only accept numbers");
-        return false;
-    }
+        // console.log(`POINTS: ${points}, Priority: ${priority}`);
+    
+        // Validate title
+        if (title.length < 3){
+            alert("Title cannot be less than 3 chars");
+            return false;
+        }
 
-     // validate priority
-     if (!validator.isEmpty(priority) && isNaN(priority)){
-        alert("Priority only accept numbers");
-        return false;
+        // validate points
+        if (!validator.isEmpty(points) && isNaN(points)){
+            alert("Points only accept numbers");
+            return false;
+        }
+
+        // validate priority
+        if (!validator.isEmpty(priority) && isNaN(priority)){
+            alert("Priority only accept numbers");
+            return false;
+        }
+
+    }catch(err){
+        console.error(err);
+        return false;  
     }
 
     return true;
+}
+
+/**
+ * Add data to work item table
+ * @param {Array} workItems - array of work items
+ */
+function appendToWotkItemTable(workItems){
+
+    if (!_.isArray(workItems) || _.isEmpty(workItems)){
+        // console.log("Work items is empty");
+        return;
+    }
+    
+    $(`#workItemTable > tbody`).empty();
+
+    for(let i = 0; i < workItems.length; i++){
+        const workItem = workItems[i];
+
+        let td_checkbox = `
+            <td class="tableCheckBoxRowElement"> 
+                <label for="checkboxRowElement" class="invisible labelcheckbox"> 
+                <input type="checkbox" name="checkboxWorkItem[]" value="${workItem['_id']}" class="checkboxRowElement" />
+                </label> 
+            </td>`;
+
+        let td_order = `<td class="orderColumn">${i+1}></td>`;
+
+        let td_id = `<td class="tableColumnID"> ${workItem['itemId']}</td>`;
+
+        let td_type = `
+            <td> <i class="fas  ${WORK_ITEM_ICONS[workItems[i]['type']].icon}"></i> ${workItem['type']}</td>
+        `;
+
+        let td_title = `
+            <td class="openStory"> <a href="workitems/${workItem['_id']}"> ${workItem['title']} </a> </td>
+        `;
+
+        let td_user = `
+            <td> <i class="fas fa-user-astronaut"></i> ${workItem["assignedUser"]["name"]}</td>
+        `;
+
+        let td_status = `
+            <td><i class="fa fa-circle ${workItem['status']}Color" aria-hidden="true"></i> ${workItem['status']}</td>
+        `;
+
+        let td_comments = `
+            <td class="table-comments-column"><span>  <i class="fas fa-comments"></i> ${workItem['comments'].length}</span> </td>
+        `;
+        
+        let td_tags = null;
+        if (workItem["tags"].length > 0){
+            let spans = "";
+            workItem["tags"].forEach(tag => {
+                spans += `<span class="btn btn-info disabled btn-sm tags-container">${tag}</span> `;
+            });
+
+            td_tags  = `<td class="tags-td"> ${spans} </td>`
+        }else{
+            td_tags = "<td class='tags-td'>   </td>"
+        }
+
+        let table_row = `
+        <tr class="rowValues">
+            ${td_checkbox}
+            ${td_order}
+            ${td_id}
+            ${td_type}
+            ${td_title}
+            ${td_user}
+            ${td_status}
+            ${td_tags}
+            ${td_comments}
+        </tr>
+        `;
+
+        $(`#workItemTable > tbody:last-child`).append(table_row);
+    }
+
 }

@@ -43,11 +43,20 @@ router.get("/:id/planing/backlog", middleware.isUserInProject, async function (r
         req.flash("error", "Cannot find the project you're looking for.");
         return res.redirect('/');
     }
+    
+    let query_work_item = {};
 
     // TODO: Verify which project is the user in, and set that to be the selected in the frontend
     // get all the teams for this project
     let teams = [...projectInfo.teams];
     teams.unshift(UNASSIGNED);
+
+    // get the team for the user in order to filter by it.
+    let userBestTeam = null;
+    if (teams.length > 1){
+        userBestTeam = teams[1];
+        query_work_item["teamId"] = userBestTeam.id;
+    }
 
     let sprints = await sprintCollection.find({projectId}).catch(err => console.log(err)) || [];
     sprints.unshift(EMPTY_SPRINT);
@@ -57,7 +66,8 @@ router.get("/:id/planing/backlog", middleware.isUserInProject, async function (r
     users.unshift(UNASSIGNED);
 
     // LOADING TABLE WORK ITEMS
-    const workItems = await workItemCollection.find().catch(err => console.error("Error getting work items: ", err)) || [];
+    query_work_item["projectId"] = projectId;
+    const workItems = await workItemCollection.find(query_work_item).catch(err => console.error("Error getting work items: ", err)) || [];
 
     // populating params
     let params = {
@@ -72,6 +82,7 @@ router.get("/:id/planing/backlog", middleware.isUserInProject, async function (r
         "sprints": sprints,
         "workItemType": WORK_ITEM_ICONS,
         "workItems": workItems,
+        "userTeam": userBestTeam,
         "priorityPoints":PRIORITY_POINTS,
         "stylesPath": backlogPath["styles"],
         "scriptsPath": backlogPath["scripts"]
