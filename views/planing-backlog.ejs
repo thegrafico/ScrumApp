@@ -16,29 +16,36 @@
             <div class="container-fluid statistics-boxs">
                 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
 
-                    <% if(userTeam){ %>
-                        <i class="fas fa-users"></i>
-                        <div class="filterByTeamContainer">
+                    <i class="fas fa-users"></i>
+                    <div class="filterByTeamContainer">
+                        <% if(userTeam){ %>
                             <select 
                             class="custom-select my-custon-select input-border"
                             name="filterByTeam" 
                             id="filterByTeam" 
                             aria-label="Default select example">
+                                <% for (let i = 1; i < teamWorkItem.length; i++) { %>
 
-                            <% for (let i = 1; i < teamWorkItem.length; i++) { %>
-
-                                <% if (teamWorkItem[i]['id'] == userTeam.id) { %>
-                                    <option value="<%=teamWorkItem[i]['id']%>" selected><%=teamWorkItem[i]['name']%></option>
-                                <% }else{ %>
-                                    <option value="<%=teamWorkItem[i]['id']%>"><%=teamWorkItem[i]['name']%></option>
+                                    <% if (teamWorkItem[i]['id'] == userTeam.id) { %>
+                                        <option value="<%=teamWorkItem[i]['id']%>" selected><%=teamWorkItem[i]['name']%></option>
+                                    <% }else{ %>
+                                        <option value="<%=teamWorkItem[i]['id']%>"><%=teamWorkItem[i]['name']%></option>
+                                    <% } %>
+                                
                                 <% } %>
-                            
-                            <% } %>
-                        </select>
-                    <% } %>
-
+                            </select>
+                        <% }else{ %>
+                            <select 
+                            class="custom-select my-custon-select input-border"
+                            name="filterByTeam" 
+                            id="filterByTeam" 
+                            aria-label="Default select example"
+                            disabled>
+                            <option value="0" selected>Not team found</option>
+                            </select>
+                        <% } %>
                     </div>
-                    
+                
                     <div class="collapse navbar-collapse" id="navbarColor02">
                         <ul class="navbar-nav mr-auto">
                             <li class="nav-item active">

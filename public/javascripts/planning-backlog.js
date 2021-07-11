@@ -8,7 +8,10 @@ $(function () {
 
 
     // make the request when the user changes the filter to another team
-    $("#filterByTeam").change(async function(){
+    let previous_value = null;
+    $("#filterByTeam").on('focus', function(){
+        previous_value = $(this).val()
+    }).change(async function(){
 
         const projectId = $(PROJECT_ID).val();
 
@@ -25,10 +28,13 @@ $(function () {
         if (response){
             if (response.length > 0){
                 appendToWotkItemTable(response);
+                previous_value = $(this).val();
             }else{
+                $(this).val(previous_value)
                 $.notify("This team does not have any work item yet.", "error");
             }
         }else{ // error messages
+            $(this).val(previous_value)
             $.notify(response_error.data.responseText, "error");
         }
     });
