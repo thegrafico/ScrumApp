@@ -173,3 +173,12 @@ i {
 .alert{
     text-align: center;
 }
+
+#topNavbarOptions{
+    padding-left: 3%;
+}
+
+#topNavbarOptions a:first-child{
+    outline: none;
+    box-shadow: none;
+  }
