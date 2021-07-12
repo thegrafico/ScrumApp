@@ -68,7 +68,7 @@ router.get("/:id/planing/backlog", middleware.isUserInProject, async function (r
     // LOADING TABLE WORK ITEMS
     query_work_item["projectId"] = projectId;
     const workItems = await workItemCollection.find(query_work_item).catch(err => console.error("Error getting work items: ", err)) || [];
-
+    
     // populating params
     let params = {
         "title": projectInfo["title"],

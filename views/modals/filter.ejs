@@ -33,6 +33,7 @@
                     <% for(let user of assignedUsers){ %>
 
                         <li>
+                            <!-- TODO: add width on user if case user name is to big -->
                             <label class="small checkbox-container">
                                 <input type="checkbox" class="userCheckbox" value="<%=user['name']%>"/>&nbsp; <%=user['name']%>
                             </label>

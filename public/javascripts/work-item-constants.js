@@ -81,3 +81,7 @@ const WORK_ITEM_TABLE = "#workItemTable";
 const MAX_NUMBER_OF_TAGS = 4;
 const MAX_LENGTH_TITLE = 80;
 const HIGHLIGST_CLASS = "highligtRow";
+
+// DELETE TEAM CONSTASNT
+const DELETE_TEAM_SUBMIT_BTN = "#delete-team-submit-btn";
+const TEAM_SELECT_INPUT_ID = "#listOfTeams";

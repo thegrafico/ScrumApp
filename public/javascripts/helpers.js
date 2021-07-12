@@ -387,3 +387,11 @@ function appendToWotkItemTable(workItems){
     }
 
 }
+
+/**
+ * Close a modal
+ * @param {Object} element - refering to 'this' element 
+ */
+function closeModal(element){
+    $(element).attr("data-dismiss", "modal");
+}

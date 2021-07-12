@@ -182,4 +182,8 @@ i {
 #topNavbarOptions a:first-child{
     outline: none;
     box-shadow: none;
-  }
+}
+
+.topNavMenuContainer{
+    border-left: 0.5px solid gray;
+}

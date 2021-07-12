@@ -11,6 +11,7 @@ $(function () {
 
     // click on planing just to show to the user in the sidebar
     $(BTN_PLANING).click();
+    
     /**
      * CHECKBOX BOR WORK ITEM TABLE 
      */
@@ -140,11 +141,10 @@ $(function () {
     $(CREATE_WORK_ITEM_FORM).on("submit", function(event){
         
         isFormValid = validateFormWorkItem();
-        event.preventDefault();
         
-        // if (!isFormValid){
-        //     event.preventDefault();
-        // }
+        if (!isFormValid){
+            event.preventDefault();
+        }
     });
 
     // TOGGLE THE FILTER

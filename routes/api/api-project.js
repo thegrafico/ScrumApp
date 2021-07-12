@@ -102,7 +102,7 @@ router.post("/api/:id/newTeam", middleware.isUserInProject, async function (req,
 });
 
 /**
- * METHOD: GET - REMOVE WORK ITEMS FROM PROJECT
+ * METHOD: GET - fetch all work items for a team
  */
  router.get("/api/:id/getworkItemsByTeamId/:teamId", middleware.isUserInProject, async function (req, res) {
     
@@ -122,6 +122,36 @@ router.post("/api/:id/newTeam", middleware.isUserInProject, async function (req,
             return;
         }
         res.status(200).send(result);
+        return;
+    }else{
+        res.status(400).send("Oops, it looks like this is an invalid team.");
+        return;
+    }
+});
+
+/**
+ * METHOD: POST - REMOVE TEAM
+ */
+ router.post("/api/:id/deleteTeam", middleware.isUserInProject, async function (req, res) {
+    
+    const projectId = req.params.id;
+
+    const {teamId} = req.body;
+
+    // is a string
+    if (_.isString(projectId) && _.isString(teamId)){
+    
+        // Add the comment to the DB
+        const result = await projectCollection.findByIdAndUpdate(projectId, {$pull: {"teams": {"_id":teamId}}}).catch(
+            err => console.error("Error getting work items: ", err)
+        );
+
+        if (!result){
+            res.status(400).send("Sorry, There was a problem removing the team. Please try later.");
+            return;
+        }
+
+        res.status(200).send("Team removed successfully!");
         return;
     }else{
         res.status(400).send("Oops, it looks like this is an invalid team.");

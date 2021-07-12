@@ -1,6 +1,6 @@
 // id of the form 
 const FORM_ID_CREATE_TEAM = "#createTeamForm";
-const CREATE_MODAL_ID = ".create-team-modal";
+const CREATE_TEAM_MODAL_ID = ".create-team-modal";
 const CREATE_TEAM_SUBMIT_BTN = "#create-team-submit-btn";
 
 const INPUT_TEAM_NAME = "#teamName";
@@ -9,6 +9,10 @@ const INPUT_TEAM_LIST_OF_USERS = ".teamUserList";
 const SPAN_ID_TEAM_NAME = "#teamNameSpanError";
 const SPAN_ID_USER_LIST = "#teamUsersSpanError";
 const INPUT_SUBMIT_TEAM = "#create-team-submit-btn";
+
+const CLOSE_BTN_CREATE_TEAM = "#closeCreateTeamBtn";
+const CLOSE_BTN_DELETE_TEAM = "#closeRemoveTeamBtn";
+
 const TEAM_NAME_LENGHT_MAX_LIMIT = 20;
 const TEAM_NAME_LENGHT_MIN_LIMIT = 3;
 
@@ -19,12 +23,15 @@ const TEAM_NAME_LENGHT_MIN_LIMIT = 3;
  */
 $(function (){
 
+    // make the select opction for deleting a team a select2 element
+    $(TEAM_SELECT_INPUT_ID).select2();
+
     // BTN when the user submit the form information to create a new project
     $(CREATE_TEAM_SUBMIT_BTN).on("click", async function(event){
         
         // remove the default from the form so we can control when to submit the information. 
         event.preventDefault();
-        
+
         // TODO: verify team name is not already taken in the project
         const teamName = $(INPUT_TEAM_NAME).val().trim();
         const userId = $(INPUT_TEAM_USERS).attr('id').trim();
@@ -50,16 +57,41 @@ $(function (){
         // Success message
         if (response){
             $.notify(response, "success");
-
-            // close the modal
-            $(CREATE_MODAL_ID).modal('toggle');
+            $(CLOSE_BTN_CREATE_TEAM).click();
         }else{ // error messages
+            $.notify(response_error.data.responseText, "error");
+        }
+
+    });
+
+    // ================= DELETE TEAM EVENTS ================
+    $(DELETE_TEAM_SUBMIT_BTN).on("click", async function(){
+    
+        let selectedTeamId = $("#listOfTeams").val();
+
+        if (selectedTeamId == "0" || !_.isString(selectedTeamId)){
+            $.notify("Invalid team.", "error");
+            return;
+        }
+
+        const projectId = $(PROJECT_ID).val();
+
+        const API_LINK_DELETE_TEAM = `/dashboard/api/${projectId}/deleteTeam`;
+
+        let response_error = null;
+        const response = await make_post_request( API_LINK_DELETE_TEAM, {"teamId": selectedTeamId} ).catch(err => {
+            response_error = err;
+        });
+
+        if (response){
+            $.notify("Team deleted!", "success");
+            $(CLOSE_BTN_DELETE_TEAM).click();
+        }else{
             $.notify(response_error.data.responseText, "error");
         }
     });
 
     // Team Name field
-    
     $(INPUT_TEAM_NAME).keyup(function(){
         
         // get user selected name
@@ -94,13 +126,13 @@ $(function (){
         hideErrSpanMessage(SPAN_ID_USER_LIST);
     });
     
-   
-
     // clean the project modal
-    $(CREATE_MODAL_ID).on('show.bs.modal', function (e) {
+    $(CREATE_TEAM_MODAL_ID).on('show.bs.modal', function (e) {
         $(INPUT_TEAM_NAME).val('');
         $(INPUT_TEAM_USERS).val('');     
     });
+
+
 });
 
 /**

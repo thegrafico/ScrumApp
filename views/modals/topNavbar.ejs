@@ -13,30 +13,42 @@
                     <span class="sr-only">(current)</span>
                 </a>
             </li>
-           <li class="nav-item">
+
+           <li class="nav-item topNavMenuContainer">
                 <div class="collapse navbar-collapse" id="topNavbarOptions">
                     <ul class="navbar-nav me-auto">
                     <li class="nav-item">
-                        <a class="nav-link active" href="#">Home
-                        </a>
+                        <a class="nav-link" href="/">Dashboard</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Features</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Pricing</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">About</a>
-                    </li>
+
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Dropdown</a>
+                        <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Users</a>
                         <div class="dropdown-menu">
-                        <a class="dropdown-item" href="#">Action</a>
-                        <a class="dropdown-item" href="#">Another action</a>
-                        <a class="dropdown-item" href="#">Something else here</a>
+                        <a class="dropdown-item" href="#">Add User</a>
+                        <a class="dropdown-item" href="#">Remove User</a>
                         <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" href="#">Separated link</a>
+                            <a class="dropdown-item" href="#">Manage Privilege</a>
+                        </div>
+                    </li>
+
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Sprints</a>
+                        <div class="dropdown-menu">
+                        <a class="dropdown-item" href="#">Create Sprint</a>
+                        <a class="dropdown-item" href="#">Remove Sprint</a>
+                        <div class="dropdown-divider"></div>
+                            <a class="dropdown-item" href="#">Manage Sprint</a>
+                        </div>
+                    </li>
+
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Teams</a>
+                        <div class="dropdown-menu">
+                            <a class="dropdown-item" href="#" data-toggle="modal" data-target=".create-team-modal">Create Team</a>
+                            <a class="dropdown-item" href="#" data-toggle="modal" data-target=".delete-team-modal">Remove Team</a>
+                            
+                        <div class="dropdown-divider"></div>
+                            <a class="dropdown-item" href="#">Manage Team</a>
                         </div>
                     </li>
                     </ul>
