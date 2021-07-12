@@ -208,10 +208,6 @@ html,body {
     font-size: 1em;
 }
 
-.dropdown-toggle::after{
-    content: none;
-}
-
 .cl-blue{
     color: #2384c6;
 }
