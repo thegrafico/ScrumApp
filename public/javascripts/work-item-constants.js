@@ -50,6 +50,7 @@ const BTN_CHANGE_WORK_ITEM_STATUS = ".btnWorkItemStatus";
 const CURRENT_WORK_ITEM_STATUS = "#currentWorkItemStatus";
 
 // CHECKBOX ROW ELEMENT IN TABLE
+const TABLE_ROW_CHECKBOX_ELEMENT_CONTAINER = ".tableCheckBoxRowElement";
 const TABLE_ROW_CHECKBOX_ELEMENT = ".checkboxRowElement";
 
 // SAVE WORK ITEM BTN

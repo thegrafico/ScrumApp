@@ -14,6 +14,8 @@
                 </a>
             </li>
 
+            <% if (projectId != undefined) { %>
+
            <li class="nav-item topNavMenuContainer">
                 <div class="collapse navbar-collapse" id="topNavbarOptions">
                     <ul class="navbar-nav me-auto">
@@ -48,14 +50,14 @@
                             <a class="dropdown-item" href="#" data-toggle="modal" data-target=".delete-team-modal">Remove Team</a>
                             
                         <div class="dropdown-divider"></div>
-                            <a class="dropdown-item" href="#">Manage Team</a>
+                            <a class="dropdown-item" href="/dashboard/<%=projectId%>/manageTeam/">Manage Team</a>
                         </div>
                     </li>
                     </ul>
                 
                 </div>
            </li >
-
+           <% } %>
 
         </ul>
         

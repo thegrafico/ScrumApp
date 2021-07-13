@@ -84,12 +84,7 @@ $(function () {
     });
 
     // ================== CHECKING TITLE ERRORS =================
-
-    //  PRIOR check if the title has already something in it
-    if ($(WORK_ITEM["title"]).val().length == 0){
-        showElement(spanTitleMsg);
-    }
-
+    checkTitleWhenOpen();
     // When title input is changed
     $(WORK_ITEM["title"]).on("input", function () {
         
@@ -250,4 +245,16 @@ async function removeWorkItems(projectId, workItemsId){
     }else{
         $.notify(response_error.data.responseText, "error");
     }
+}
+
+function checkTitleWhenOpen(){
+    try{
+        //  PRIOR check if the title has already something in it
+        if ($(WORK_ITEM["title"]).val().length == 0){
+            showElement(spanTitleMsg);
+        }
+    }catch(err) {
+
+    }
+
 }

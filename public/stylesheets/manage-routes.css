@@ -1,0 +1,17 @@
+
+.column-edit-team{
+    text-align: center;
+}
+
+.edit-user-team-btn{
+    padding-left: 8% !important;
+    padding-right: 8% !important;
+}
+
+.tableHeader{
+    background-color: rgba(128, 128, 128, 0.103);
+}
+
+.tableCheckBoxRowElement:hover{
+    cursor: pointer;
+}

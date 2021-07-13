@@ -189,4 +189,31 @@ let projectSchema = new mongoose.Schema({
     return true;
 };
 
+/**
+ * get all users for the team
+ * @param {String} teamId - id of the team to add the user
+ * @returns 
+ */
+ projectSchema.methods.getUsersForTeam = async function(teamId) {
+
+    if (!this.isTeamInProject(teamId)){
+        return null;
+    }
+
+    // getting team    
+    let team = this.teams.filter( each => {
+        return each._id == teamId;
+    })[0];
+
+    // verify is there is users in the team
+    if (_.isUndefined(team) || team.users.length == 0){ return [];}
+
+    // getting the users in the team
+    const UserInfo = await userCollection.find({"_id": {$in: team.users}}).catch(err => {
+        console.error(err);
+    }) || [];
+
+    return UserInfo;
+};
+
 module.exports = mongoose.model("Projects", projectSchema);

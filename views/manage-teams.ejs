@@ -1,0 +1,122 @@
+<%- include('modals/header'); %>
+
+<body>
+
+    <%- include('modals/topNavbar'); %>
+
+    <div class="wrapper d-flex align-items-stretch">
+
+        <%- include('modals/sideNavbar'); %>
+
+        <!-- Page Content  -->
+        <div id="content" class="p-4 p-md-5">
+
+            <%- include('modals/titleOptionsMenu'); %>
+
+            <div class="container-fluid statistics-boxs">
+                <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+
+                    <i class="fas fa-users"></i>
+                    <div class="filterByTeamContainer">
+                        <% if(userTeam){ %>
+                            <select 
+                            class="custom-select my-custon-select input-border"
+                            name="filterByTeam" 
+                            id="filterByTeam" 
+                            aria-label="Default select example">
+                                <% for (let i = 1; i < teamWorkItem.length; i++) { %>
+
+                                    <% if (teamWorkItem[i]['id'] == userTeam.id) { %>
+                                        <option value="<%=teamWorkItem[i]['id']%>" selected><%=teamWorkItem[i]['name']%></option>
+                                    <% }else{ %>
+                                        <option value="<%=teamWorkItem[i]['id']%>"><%=teamWorkItem[i]['name']%></option>
+                                    <% } %>
+                                
+                                <% } %>
+                            </select>
+                        <% }else{ %>
+                            <select 
+                            class="custom-select my-custon-select input-border"
+                            name="filterByTeam" 
+                            id="filterByTeam" 
+                            aria-label="Default select example"
+                            disabled>
+                            <option value="0" selected>Not team found</option>
+                            </select>
+                        <% } %>
+                    </div>
+                
+                    <div class="collapse navbar-collapse" id="navbarColor02">
+                        <ul class="navbar-nav mr-auto">
+                            <li class="nav-item active">
+                                <a class="nav-link" href="#">
+                                    <span class="sr-only">(current)</span>
+                                </a>
+                            </li>
+
+                            <li class="nav-item trashIconWrapper">
+                                &nbsp;
+                                <button id="trashBtn" disabled> <i class="far fa-trash-alt grayColor"></i> </button>
+                            </li>
+
+                        </ul>
+                        <div class="form-inline my-2 my-lg-0">
+                            <input id="searchTable" class="form-control mr-sm-2" type="text" placeholder="Search">
+                            
+                            <button id="filterBtn" class="btn btn-secondary my-2 my-sm-0 filterBtn">
+                                <i class="fas fa-filter"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <!-- INCLUDE FILTER DIV HERE -->
+                </nav>
+
+
+            </div>
+
+            <div class="p-4" id="table-container">
+                <table class="table table-hover" id="workItemTable">
+                    <thead>
+                        <tr class="tableHeader">
+                            <th class="tableCheckBoxRowHeader"></th>
+                            <th class="column-edit-team" scope="col">Edit</th>
+                            <th scope="col">Name</th>
+                            <th scope="col">Email</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% for (let i = 0; i < teamUsers.length; ++i) {%>
+                            <tr class="rowValues">
+                                
+                                <td class="tableCheckBoxRowElement"> 
+                                    <label for="checkboxRowElement" class="invisible labelcheckbox"> 
+                                        <input type="checkbox" aria-label="table-row-checkbox" name="checkboxWorkItem[]" value="<%=teamUsers[i]['_id']%>" class="checkboxRowElement" />
+                                    </label> 
+                                </td>
+
+                                <td class="column-edit-team">
+                                    <button class="btn btn-warning edit-user-team-btn">
+                                        <i class="fas fa-user-edit"></i>
+                                    </button>
+                                </td>
+                                
+                                <td>
+                                    <%=teamUsers[i]["fullName"]%>
+                                </td>
+
+                                <td>
+                                    <%=teamUsers[i]["email"]%>
+                                </td>
+
+                                
+                            </tr>
+                        <%}%>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <input type="hidden" name="projectId" id="projectId" value="<%=projectId%>">
+        <input type="hidden" name="currentTab" id="currentTab" value="<%=activeTab%>">
+    </div>
+
+<%- include('modals/footer'); %>
