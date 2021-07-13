@@ -64,6 +64,7 @@
                         <tr class="tableHeader">
                             <th class="tableCheckBoxRowHeader"></th>
                             <th scope="col" class="tableColumnID">ID</th>
+                            <th class="d-none" scope="col">Type</th>
                             <th class="col-title" scope="col">Title</th>
                             <th scope="col">Assigned</th>
                             <th scope="col">State</th>
@@ -80,8 +81,9 @@
                                     </label> 
                                 </td> 
                                 <td class="tableColumnID"> <%=workItems[i]["itemId"]%></td>
+                                <td class="d-none" > <i class="fas <%=workItemType[workItems[i]['type']].icon%>"></i> <%=workItems[i]["type"]%></td>
                                 <!-- TODO: CHANGE TO A BETTER LINK -->
-                                <td class="openStory col-title">
+                                <td class="openStory">
                                     <a href="workitems/<%=workItems[i]['_id']%>"> 
                                         <span class="table-icon"> <i class="fas <%=workItemType[workItems[i]['type']].icon%>"></i> </span>  <%=workItems[i]["title"]%> 
                                     </a> 

@@ -91,7 +91,7 @@
                             <th class="tableCheckBoxRowHeader"></th>
                             <th class="orderColumn">Order</th>
                             <th scope="col" class="tableColumnID">ID</th>
-                            <th scope="col">Type</th>
+                            <th class="d-none" scope="col">Type</th>
                             <th scope="col">Title</th>
                             <th scope="col">Assigned</th>
                             <th scope="col">State</th>
@@ -109,9 +109,13 @@
                                 </td> 
                                 <td class="orderColumn"><%=i+1%></td>
                                 <td class="tableColumnID"> <%=workItems[i]["itemId"]%></td>
-                                <td> <i class="fas <%=workItemType[workItems[i]['type']].icon%>"></i> <%=workItems[i]["type"]%></td>
+                                <td class="d-none" > <i class="fas <%=workItemType[workItems[i]['type']].icon%>"></i> <%=workItems[i]["type"]%></td>
                                 <!-- TODO: CHANGE TO A BETTER LINK -->
-                                <td class="openStory"> <a href="workitems/<%=workItems[i]['_id']%>">  <%=workItems[i]["title"]%> </a> </td>
+                                <td class="openStory"> 
+                                    <a href="workitems/<%=workItems[i]['_id']%>">  
+                                        <span class="table-icon"> <i class="fas <%=workItemType[workItems[i]['type']].icon%>"></i> </span>  <%=workItems[i]["title"]%> 
+                                    </a> 
+                                </td>
                                 <td> <i class="fas fa-user-astronaut"></i> <%=workItems[i]["assignedUser"]["name"]%></td>
                                 <td><i class="fa fa-circle <%=workItems[i]['status']%>Color" aria-hidden="true"></i> <%=workItems[i]["status"]%></td>
                                 <td class="tags-td"> 

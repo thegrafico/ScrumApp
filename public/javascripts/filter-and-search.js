@@ -63,16 +63,16 @@ function filterTable() {
     let searchInput = getSearchInput(FILTER_SEARCH_ID);
     let activeTypeCheckbox = getCheckboxInput(TYPE_CHECKBOX_CLASS);
     let activeStateCheckbox = getCheckboxInput(STATE_CHECKBOX_CLASS);
-    let activeUsersChecbox = getCheckboxInput(USER_CHECKBOX_CLASS)
+    let activeUsersChecbox = getCheckboxInput(USER_CHECKBOX_CLASS);
 
     // console.log("Rows: ", tableRow.length);
 
-    let style = ""
+    let style = "";
     // start looting at the element 1 since the 0 is the table header
     for (let i = 1; i < tableRow.length; i++) {
 
         // Assume all rows are available
-        style = ""
+        style = "";
 
         // getting the text of each column we need. COMPLETE TODO
         // td = tr[i].getElementsByTagName("td")[0];
