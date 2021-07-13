@@ -1,4 +1,3 @@
-// import { WORK_ITEM_ICONS } from "../../dbSchema/Constanst";
 
 /**
  * expected value of param is {id: .., type: ..., null: ...}
@@ -272,38 +271,35 @@ function updateCustomSelect(currentElement, tagCurrentItem, tagInputItem){
 function validateFormWorkItem(){
 
     try{
-
         const title = $(WORK_ITEM["title"]).val().trim();
         // const state = $(WORK_ITEM["state"]).val();
         // const teamId = $(WORK_ITEM["team"]).val();
         // const type = $(WORK_ITEM["type"]).val();
         // const sprint = $(WORK_ITEM["sprint"]).val();
         const description = $(WORK_ITEM["description"]).val();
-        const points = $(WORK_ITEM["points"]).val();
-        const priority = $(WORK_ITEM["priority"]).val();
-
-        // console.log(`POINTS: ${points}, Priority: ${priority}`);
+        const points = $(WORK_ITEM["points"]).val() || 0;
+        const priority = $(WORK_ITEM["priority"]).val() || MAX_PRIORITY_POINTS;
     
         // Validate title
-        if (title.length < 3){
-            alert("Title cannot be less than 3 chars");
+        if (!_.isString(title) || title.length < MIN_LENGTH_TITLE){
+            alert(`Title cannot be less than ${MIN_LENGTH_TITLE} chars`);
             return false;
         }
 
         // validate points
-        if (!validator.isEmpty(points) && isNaN(points)){
+        if ( !_.isEmpty(points) && isNaN(points)){
             alert("Points only accept numbers");
             return false;
         }
 
         // validate priority
-        if (!validator.isEmpty(priority) && isNaN(priority)){
+        if (!_.isEmpty(priority) && isNaN(priority)){
             alert("Priority only accept numbers");
             return false;
         }
 
     }catch(err){
-        console.error(err);
+        alert(err);
         return false;  
     }
 
@@ -386,12 +382,4 @@ function appendToWotkItemTable(workItems){
         $(`#workItemTable > tbody:last-child`).append(table_row);
     }
 
-}
-
-/**
- * Close a modal
- * @param {Object} element - refering to 'this' element 
- */
-function closeModal(element){
-    $(element).attr("data-dismiss", "modal");
 }

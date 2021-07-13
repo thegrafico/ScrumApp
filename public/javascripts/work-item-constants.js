@@ -80,6 +80,9 @@ const WORK_ITEM_TABLE = "#workItemTable";
 
 const MAX_NUMBER_OF_TAGS = 4;
 const MAX_LENGTH_TITLE = 80;
+const MIN_LENGTH_TITLE = 3;
+const MAX_PRIORITY_POINTS = 5;
+
 const HIGHLIGST_CLASS = "highligtRow";
 
 // DELETE TEAM CONSTASNT
