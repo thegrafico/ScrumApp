@@ -52,12 +52,18 @@ const CURRENT_WORK_ITEM_STATUS = "#currentWorkItemStatus";
 // CHECKBOX ROW ELEMENT IN TABLE
 const TABLE_ROW_CHECKBOX_ELEMENT_CONTAINER = ".tableCheckBoxRowElement";
 const TABLE_ROW_CHECKBOX_ELEMENT = ".checkboxRowElement";
+const TABLE_ROW_CHECKBOX_ELEMENT_CHECKED = ".checkboxRowElement:checked";
+
+// FILTER TEAMS
+const FILTER_BY_TEAM_INPUT = "#filterByTeam";
 
 // SAVE WORK ITEM BTN
 const SAVE_WORK_ITEM_BTN = "#saveStatusBtn";
 
 // TRASH CAN ICON
-const TRASH_BTN = "#trashBtn"; 
+const TRASH_BTN_WORK_ITEM = "#trashBtnWorkItem";
+const TRASH_BTN_MANAGE = "#trashBtnManage";
+const TRASH_BTN_GENERAL_CLASS = ".trash-btn";
 
 // ADD COMMENT - BUTTON
 const BTN_ADD_COMMENT = "#add-comment";

@@ -12,6 +12,21 @@
     background-color: rgba(128, 128, 128, 0.103);
 }
 
-.tableCheckBoxRowElement:hover{
-    cursor: pointer;
+
+
+.checkboxRowElement{
+    font-size: 2em;;
+}
+
+.rowValues, .tableHeader{
+    text-align: center;
+}
+
+
+.rowValues td:first-child{
+    width: 10%;
+}
+
+.rowValues td:nth-child(2), .rowValues td:nth-child(3), .rowValues td:nth-child(4){
+    width: 33.3%;
 }

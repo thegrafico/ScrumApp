@@ -132,6 +132,31 @@ $(function (){
         $(INPUT_TEAM_USERS).val('');     
     });
 
+    // TRASH BTN EVENT 
+    $(TRASH_BTN_MANAGE).on("click", async function(){
+        let checkedElements = getCheckedElements(TABLE_ROW_CHECKBOX_ELEMENT_CHECKED);
+       
+        // check if not empty
+        if (!_.isArray(checkedElements) || _.isEmpty(checkedElements) ){return;}
+
+        const projectId = $(PROJECT_ID).val();
+        const teamId = $(FILTER_BY_TEAM_INPUT).val();
+
+        const data = {"teamId": teamId, "userIds": checkedElements};
+        const API_LINK_REMOVE_USERS_FROM_TEAM = `/dashboard/api/${projectId}/removeUsersFromTeam/`
+
+        let response_error = undefined;
+        const response = await make_post_request(API_LINK_REMOVE_USERS_FROM_TEAM, data).catch(err => {
+            response_error = err;
+        });
+
+        if (response){
+            $.notify(response, "success");
+        }else{
+            $.notify(response_error.data.responseText, "error");
+        }
+    });
+
 
 });
 

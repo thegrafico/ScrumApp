@@ -5,5 +5,5 @@
 const EDIT_USER_BTN = ".edit-user-team-btn";
 
 $(function() {
-  
+   
 });

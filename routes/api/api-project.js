@@ -191,4 +191,63 @@ router.post("/api/:id/removeWorkItems", middleware.isUserInProject, async functi
     res.status(200).send(`Successfully removed work ${item_str}`);
 });
 
+/**
+ * METHOD: POST - REMOVE USERS FROM TEAM
+ */
+ router.post("/api/:id/removeUsersFromTeam", middleware.isUserInProject, async function (req, res) {
+    
+    console.log("Getting request to remove work items...");
+    
+    const projectId = req.params.id;
+    
+    let  { teamId, userIds } = req.body; // expected array
+
+    if (!_.isString(teamId) || _.isUndefined(userIds) || !_.isArray(userIds) || _.isEmpty(userIds)){
+        res.status(400).send("Sorry, there was an error with the request. Either cannot find the team or users to remove. ");
+        return;
+    }
+
+    // Add the comment to the DB
+    const projectInfo = await projectCollection.findById(projectId).catch(
+        err => console.error("Error removing work items: ", err)
+    );
+
+    if (!projectInfo){
+        res.status(400).send("Sorry, There was a problem finding the project information. Please try later.");
+        return;
+    }
+
+    let team = projectInfo.teams.filter( each => {
+        return each._id == teamId;
+    })[0];
+
+    // get the number of user before the filter
+    const numberOfUsers = team.users.length;
+
+    if (_.isUndefined(team) || _.isEmpty(team)){
+        res.status(400).send("Sorry, cannot find the team information. Please try later");
+        return;
+    }
+
+    // removing user from list
+    team.users = team.users.filter(uId => {return !userIds.includes(uId.toString())});
+
+    // check after filter
+    if (numberOfUsers == team.users.length){
+        res.status(400).send("Oops, There was a problem removing the user from the team.");
+        return;
+    }
+    let response = await projectInfo.save().catch(err => {
+        console.error(err);
+    });
+
+    if (!response){
+        res.status(400).send("Oops, There was a problem saving the request");
+        return;
+    }
+
+    let item_str = userIds.length === 1 ? "user" : "users";
+    res.status(200).send(`Successfully removed ${item_str} from team`);
+});
+
 module.exports = router;

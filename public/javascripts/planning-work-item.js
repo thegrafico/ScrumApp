@@ -60,16 +60,14 @@ $(function () {
 
     // REMOVE THE WORK ITEMS SELECTED IN CHECKBOX
     // TODO: Create a database modal to store deleted element
-    $(TRASH_BTN).on("click", function(){
+    $(TRASH_BTN_WORK_ITEM).on("click", function(){
         
-        let row_checked = []
-        $(".checkboxRowElement:checked").each(function(){
-            row_checked.push($(this).val())
-        });
+        // get checked elements in table
+        const row_checked = getCheckedElements(TABLE_ROW_CHECKBOX_ELEMENT_CHECKED);
 
         const projectId = $(PROJECT_ID).val();
+        
         removeWorkItems(projectId, row_checked);
-
     });
 
     // ==================== CLEANING THE MODAL WHEM OPEN =================
@@ -156,13 +154,13 @@ $(function () {
 function enableTrashButton(enable){
     
     if (enable){
-        $(TRASH_BTN).attr("disabled", false);
-        $(`${TRASH_BTN} i`).removeClass("grayColor");
-        $(`${TRASH_BTN} i`).addClass("redColor");
+        $(TRASH_BTN_GENERAL_CLASS).attr("disabled", false);
+        $(`${TRASH_BTN_GENERAL_CLASS} i`).removeClass("grayColor");
+        $(`${TRASH_BTN_GENERAL_CLASS} i`).addClass("redColor");
     }else{
-        $(TRASH_BTN).attr("disabled", true);
-        $(`${TRASH_BTN} i`).removeClass("redColor");
-        $(`${TRASH_BTN} i`).addClass("grayColor");
+        $(TRASH_BTN_GENERAL_CLASS).attr("disabled", true);
+        $(`${TRASH_BTN_GENERAL_CLASS} i`).removeClass("redColor");
+        $(`${TRASH_BTN_GENERAL_CLASS} i`).addClass("grayColor");
     }
 }
 

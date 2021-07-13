@@ -56,7 +56,7 @@
 
                             <li class="nav-item trashIconWrapper">
                                 &nbsp;
-                                <button id="trashBtn" disabled> <i class="far fa-trash-alt grayColor"></i> </button>
+                                <button id="trashBtnManage" class="trash-btn" disabled> <i class="far fa-trash-alt grayColor"></i> </button>
                             </li>
 
                         </ul>
@@ -75,10 +75,10 @@
             </div>
 
             <div class="p-4" id="table-container">
-                <table class="table table-hover" id="workItemTable">
+                <table class="table table-hover">
                     <thead>
                         <tr class="tableHeader">
-                            <th class="tableCheckBoxRowHeader"></th>
+                            <th class="tableCheckBoxRowHeader">Check</th>
                             <th class="column-edit-team" scope="col">Edit</th>
                             <th scope="col">Name</th>
                             <th scope="col">Email</th>
@@ -89,7 +89,7 @@
                             <tr class="rowValues">
                                 
                                 <td class="tableCheckBoxRowElement"> 
-                                    <label for="checkboxRowElement" class="invisible labelcheckbox"> 
+                                    <label class="invisible labelcheckbox"> 
                                         <input type="checkbox" aria-label="table-row-checkbox" name="checkboxWorkItem[]" value="<%=teamUsers[i]['_id']%>" class="checkboxRowElement" />
                                     </label> 
                                 </td>

@@ -383,3 +383,18 @@ function appendToWotkItemTable(workItems){
     }
 
 }
+
+/**
+ * Get all checked elements
+ * @param {String} elementClassOrId 
+ * @returns {Array} array with checked elements
+ */
+function getCheckedElements(elementClassOrId){
+    let row_checked = []
+    
+    $(elementClassOrId).each(function(){
+        row_checked.push($(this).val())
+    });
+
+    return row_checked;
+}

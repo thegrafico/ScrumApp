@@ -4,11 +4,10 @@ $(function () {
     // start dragg event
     startDraggable(WORK_ITEM_TABLE);
 
-    $("#filterByTeam").select2();
-
+    $(FILTER_BY_TEAM_INPUT).select2();
 
     // make the request when the user changes the filter to another team
-    $("#filterByTeam").change(async function(){
+    $(FILTER_BY_TEAM_INPUT).change(async function(){
 
         const projectId = $(PROJECT_ID).val();
 
@@ -32,7 +31,6 @@ $(function () {
             $.notify(response_error.data.responseText, "error");
         }
     });
-    
 });
 
 /**
