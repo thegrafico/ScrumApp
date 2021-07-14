@@ -225,15 +225,15 @@ $(function (){
 
             // by default, remove all disable elements
             removeAllDisableAttr(SELECT_USERS_PROJECT_INPUT);
+
+            // clean the table
+            $(`${MANAGE_TABLE_ID} > tbody`).empty();
             
             // in case response.users is empty
             if (_.isEmpty(response.users)){
                 $.notify("It looks like this team does not have any user assigned yet", "error");
                 return;
             }
-
-            // clean the table
-            $(`${MANAGE_TABLE_ID} > tbody`).empty();
 
             // add the users to the table
             for (let index = 0; index < response.users.length; index++) {
