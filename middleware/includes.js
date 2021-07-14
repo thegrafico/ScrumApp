@@ -12,8 +12,12 @@ module.exports = {
     },
     // includes for statistics
     statisticsPath: {
-        styles: ["/stylesheets/scrum-main.css", "/stylesheets/statistics.css"], 
-        scripts: ["/javascripts/statistics-member.js", "/javascripts/dependecies/bootstrap.bundle.min.js"]
+        styles: ["/stylesheets/statistics.css", "/stylesheets/scrum-main.css"], 
+        scripts: [
+            "/javascripts/statistics-member.js", 
+            "/javascripts/dependecies/bootstrap.bundle.min.js",
+            "/javascripts/modals/team-controller.js",
+        ]
     },
     planigWorkItemPath: {
         styles: ["/stylesheets/scrum-main.css","/stylesheets/backlog.css", "/stylesheets/work-item.css"], 

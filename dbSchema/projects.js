@@ -25,7 +25,7 @@ let projectSchema = new mongoose.Schema({
         default: "New"
     },
     users: [{type: ObjectId, ref: "User"}],
-    teams: [{name: String, users: [{type: ObjectId, ref: "User"}]}],
+    teams: [{name: {type: String, required:true, unique: true}, users: [{type: ObjectId, ref: "User"}]}],
     sprints: [{type: ObjectId, ref: "Sprint"}],
 }, {
     timestamps: true

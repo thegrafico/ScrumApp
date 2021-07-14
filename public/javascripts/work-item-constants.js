@@ -56,6 +56,7 @@ const TABLE_ROW_CHECKBOX_ELEMENT_CHECKED = ".checkboxRowElement:checked";
 
 // FILTER TEAMS
 const FILTER_BY_TEAM_INPUT = "#filterByTeam";
+const FILTER_BY_TEAM_MANAGE_INPUT = "#manage-filter-by-team";
 
 // SAVE WORK ITEM BTN
 const SAVE_WORK_ITEM_BTN = "#saveStatusBtn";

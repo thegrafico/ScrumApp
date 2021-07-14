@@ -254,6 +254,51 @@ a:hover {
 .highligtRow{
     background-color: rgba(55, 90, 127, 0.5) !important;
 }
+
+/* =========== Style for select =========== */
+.select2-container--default .select2-selection--single{
+    border-radius: unset;
+ }
+ 
+ .select2-container--focus{
+     border:none;
+ }
+ 
+ .select2-container--default .select2-selection--single{
+     border: none;
+     border-bottom: 1px solid white;
+ }
+ 
+ .select2-container--default:hover .select2-selection--single:hover{
+     border: 1px solid white;
+     border-radius:4px;
+ }
+ 
+ .select2-container--default .select2-results__option--selected{
+     color:white;
+     background-color: grey;
+ }
+ 
+ .select2-dropdown{
+     background-color: #222;
+ }
+ 
+ .select2{
+     width: 100% !important;
+ }
+ 
+ #select2-teamAssigned-containe, .select2-selection__rendered{
+     color: white !important;
+ }
+ 
+ .select2-selection{
+     color: white;
+     background-color:inherit !important;
+ }
+ 
+ span.select2-selection.select2-selection--single {
+     outline: none;
+ }
 /* 
     ================================================================
    END STYLE

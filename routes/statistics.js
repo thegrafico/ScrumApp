@@ -15,6 +15,10 @@ const userCollection        = require("../dbSchema/user");
 const middleware            = require("../middleware/auth");
 let router                  = express.Router();
 const { statisticsPath }    = require("../middleware/includes");
+
+const {
+    UNASSIGNED
+} = require('../dbSchema/Constanst');
 // ===================================================
 
 
@@ -36,9 +40,16 @@ router.get("/:id", middleware.isUserInProject, async function (req, res) {
     // console.log("Project information: ", projectInfo);
 
     if (_.isUndefined(projectInfo) || _.isEmpty(projectInfo)) {
-        // TODO: show a message to the user
+        req.flash("error", "Cannot the project information.");
         return res.redirect('/');
     }
+
+    // getting users from project
+    let users = await projectInfo.getUsers().catch(err => console.log(err)) || [];
+
+    // getting the teams
+    let teams = [...projectInfo.teams];
+    teams.unshift(UNASSIGNED);
 
     // populating params
     let params = {
@@ -50,9 +61,12 @@ router.get("/:id", middleware.isUserInProject, async function (req, res) {
         "currentSprint": "Not sprint found",
         "activeTab": "Statistics",
         "tabTitle": "Statistics",
+        "assignedUsers": users,
+        "teamWorkItem": teams,
         "stylesPath": statisticsPath["styles"],
         "scriptsPath": statisticsPath["scripts"],
     };
+
     params["projectOwner"] = await getProjectOwnerNameById(projectInfo["author"]);
     params["numberOfMember"] = await getNumberOfUsers(projectInfo.users);
 

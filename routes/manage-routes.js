@@ -52,8 +52,8 @@ router.get("/:id/manageTeam", middleware.isUserInProject, async function (req, r
     // TODO: refactor code below
     let userBestTeam = undefined;
     let userTeams = [];
-    let userIds = undefined;
-    if (teams.length > 1){
+    let userIds = [];
+    if (teams.length > 0){
         userBestTeam = teams[1];
         userTeams = await projectInfo.getUsersForTeam(userBestTeam.id).catch(err => {
             console.error(err);

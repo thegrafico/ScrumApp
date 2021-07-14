@@ -92,7 +92,7 @@ router.get("/:id/planing/workitems", middleware.isUserInProject, async function 
     });
 
     if (_.isUndefined(projectInfo) || _.isEmpty(projectInfo)) {
-        // TODO: show a message to the user
+        req.flash("error", "Cannot the find the information of the project.");
         return res.redirect('/');
     }
 
@@ -113,8 +113,7 @@ router.get("/:id/planing/workitems", middleware.isUserInProject, async function 
     let workItem = await projectInfo.getWorkItem(workItemId).catch(err => console.error("Error getting work items: ", err)) || [];
     
     if (_.isUndefined(workItem) || _.isEmpty(workItem)){
-        // TODO: show a redirect message to the user
-        console.error("Cannot get workItem requested.");
+        req.flash("error", "Cannot the work item information.");
         return res.redirect("back");
     }
 

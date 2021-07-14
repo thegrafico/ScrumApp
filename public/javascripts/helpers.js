@@ -436,3 +436,7 @@ function removeDisableAttr(selectElement, values){
         $(`${selectElement}`).children(`[value="${val}"]`).attr('disabled', false);
     }
 }
+
+function removeAllDisableAttr(selectElement){
+    $(`${selectElement} *`).attr('disabled', false);
+}

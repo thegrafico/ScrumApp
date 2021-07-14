@@ -20,7 +20,82 @@ const {
     capitalize
 } = require('../../dbSchema/Constanst');
 
+// ================= GET REQUEST ==============
 
+/**
+ * METHOD: GET - fetch all work items for a team
+ */
+ router.get("/api/:id/getworkItemsByTeamId/:teamId", middleware.isUserInProject, async function (req, res) {
+    
+    const projectId = req.params.id;
+    const teamId = req.params.teamId;
+
+    // is a string
+    if (_.isString(projectId) && _.isString(teamId)){
+    
+        // Add the comment to the DB
+        const result = await workItemCollection.find({"projectId": projectId, "teamId": teamId}).catch(
+            err => console.error("Error getting work items: ", err)
+        );
+
+        if (!result){
+            res.status(400).send("Sorry, There was a problem getting work items. Please try later.");
+            return;
+        }
+        res.status(200).send(result);
+        return;
+    }else{
+        res.status(400).send("Oops, it looks like this is an invalid team.");
+        return;
+    }
+});
+
+/**
+ * METHOD: GET - fetch all work items for a team
+ */
+router.get("/api/:id/getTeamUsers/:teamId", middleware.isUserInProject, async function (req, res) {
+    
+    const projectId = req.params.id;
+    const teamId = req.params.teamId;
+
+    // is a string
+    if (_.isString(projectId) && _.isString(teamId)){
+    
+        // Add the comment to the DB
+        const project = await projectCollection.findById(projectId).catch(err => {
+            console.error("Error getting the project: ", err);
+        });
+
+        if (!project){
+            res.status(400).send("Sorry, There was a problem getting Project information. Please try later.");
+            return;
+        }
+
+        let users = await project.getUsersForTeam(teamId).catch(err => {
+            console.error("Error getting the users from project: ", err);
+        });
+
+        if (_.isUndefined(users)){
+            res.status(400).send("Oops, There was a problem getting the users from the project.");
+            return;
+        }
+
+
+        // just sent the needed information to the frontend
+        users = users.map( function (each) {
+            return {"fullName": each["fullName"], "email": each["email"], "id": each["_id"]};
+        });
+
+        res.status(200).send({msg: "Success", users: users});
+        return;
+    }else{
+        res.status(400).send("Oops, it looks like this is an invalid team.");
+        return;
+    }
+});
+
+
+// ================= POST REQUEST ==============
 /**
  * METHOD: POST - Create new work item
  */
@@ -101,33 +176,6 @@ router.post("/api/:id/newTeam", middleware.isUserInProject, async function (req,
     res.status(200).send("Successfully added team to the project");
 });
 
-/**
- * METHOD: GET - fetch all work items for a team
- */
- router.get("/api/:id/getworkItemsByTeamId/:teamId", middleware.isUserInProject, async function (req, res) {
-    
-    const projectId = req.params.id;
-    const teamId = req.params.teamId;
-
-    // is a string
-    if (_.isString(projectId) && _.isString(teamId)){
-    
-        // Add the comment to the DB
-        const result = await workItemCollection.find({"projectId": projectId, "teamId": teamId}).catch(
-            err => console.error("Error getting work items: ", err)
-        );
-
-        if (!result){
-            res.status(400).send("Sorry, There was a problem getting work items. Please try later.");
-            return;
-        }
-        res.status(200).send(result);
-        return;
-    }else{
-        res.status(400).send("Oops, it looks like this is an invalid team.");
-        return;
-    }
-});
 
 /**
  * METHOD: POST - REMOVE TEAM

@@ -22,9 +22,9 @@
                             <select 
                             class="custom-select my-custon-select input-border"
                             name="filterByTeam" 
-                            id="filterByTeam" 
-                            aria-label="Default select example">
-                                <% for (let i = 1; i < teamWorkItem.length; i++) { %>
+                            id="manage-filter-by-team" 
+                            aria-label="select-team-options">
+                                <% for (let i = 0; i < teamWorkItem.length; i++) { %>
 
                                     <% if (teamWorkItem[i]['id'] == userTeam.id) { %>
                                         <option value="<%=teamWorkItem[i]['id']%>" selected><%=teamWorkItem[i]['name']%></option>
@@ -38,8 +38,8 @@
                             <select 
                             class="custom-select my-custon-select input-border"
                             name="filterByTeam" 
-                            id="filterByTeam" 
-                            aria-label="Default select example"
+                            id="manage-filter-by-team" 
+                            aria-label="select-team-options"
                             disabled>
                             <option value="0" selected>Not team found</option>
                             </select>

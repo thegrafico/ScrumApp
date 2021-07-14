@@ -15,7 +15,7 @@ $(function () {
     /**
      * CHECKBOX BOR WORK ITEM TABLE 
      */
-     $(document).on("click", TABLE_ROW_CHECKBOX_ELEMENT, function () {
+    $(document).on("click", TABLE_ROW_CHECKBOX_ELEMENT, function () {
 
         // $(TABLE_ROW_CHECKBOX_ELEMENT).on("click", function(){
         

@@ -20,6 +20,8 @@ const ADD_USER_TO_TEAM_BTN = "#btnAddUserToTeam";
 
 const SELECT_USERS_PROJECT_INPUT = "#project-user-select";
 
+const MANAGE_TABLE_ID = "#manage-table";
+
 
 /**
  * This function is fire as soon as the DOM element is ready to process JS logic code
@@ -30,6 +32,7 @@ $(function (){
     // make the select opction for deleting a team a select2 element
     $(TEAM_SELECT_INPUT_ID).select2();
     $(SELECT_USERS_PROJECT_INPUT).select2();
+    $(FILTER_BY_TEAM_MANAGE_INPUT).select2();
 
     // BTN when the user submit the form information to create a new project
     $(CREATE_TEAM_SUBMIT_BTN).on("click", async function(event){
@@ -146,7 +149,7 @@ $(function (){
         if (!_.isArray(checkedElements) || _.isEmpty(checkedElements) ){return;}
 
         const projectId = $(PROJECT_ID).val();
-        const teamId = $(FILTER_BY_TEAM_INPUT).val();
+        const teamId = $(FILTER_BY_TEAM_MANAGE_INPUT).val();
 
         const data = {"teamId": teamId, "userIds": checkedElements};
         const API_LINK_REMOVE_USERS_FROM_TEAM = `/dashboard/api/${projectId}/removeUsersFromTeam/`
@@ -170,11 +173,10 @@ $(function (){
         }
     });
 
-
     // ADD User to Team
     $(ADD_USER_TO_TEAM_BTN).on("click", async function(){
         const projectId = $(PROJECT_ID).val();
-        const teamId = $(FILTER_BY_TEAM_INPUT).val();
+        const teamId = $(FILTER_BY_TEAM_MANAGE_INPUT).val();
 
         const userId = $(SELECT_USERS_PROJECT_INPUT).val();
 
@@ -201,6 +203,49 @@ $(function (){
         }else{
             $.notify(response_error.data.responseText, "error");
         }
+    });
+
+    $(FILTER_BY_TEAM_MANAGE_INPUT).change(async function(){
+        
+        const teamId = $(this).val();    
+        const projectId = $(PROJECT_ID).val();
+
+        if (!_.isString(teamId) || teamId == '0'){
+            $.notify("Invalid Team", "error");
+        }
+        const API_LINK_GET_TEAM_USERS = `/dashboard/api/${projectId}/getTeamUsers/${teamId}`;
+
+        let response_error = null;
+        const response = await make_get_request(API_LINK_GET_TEAM_USERS).catch(err => {
+            response_error = err;
+        });
+
+        // Success message
+        if (response){
+
+            // by default, remove all disable elements
+            removeAllDisableAttr(SELECT_USERS_PROJECT_INPUT);
+            
+            // in case response.users is empty
+            if (_.isEmpty(response.users)){
+                $.notify("It looks like this team does not have any user assigned yet", "error");
+                return;
+            }
+
+            // clean the table
+            $(`${MANAGE_TABLE_ID} > tbody`).empty();
+
+            // add the users to the table
+            for (let index = 0; index < response.users.length; index++) {
+                const user = response.users[index];
+                addUserToTable(user);
+                // add a disable since this user is already in the team
+                addDisableAttr(SELECT_USERS_PROJECT_INPUT,  user.id);
+            }
+        }else{ // error messages
+            $.notify(response_error.data.responseText, "error");
+        }
+
     });
 
 });
@@ -248,10 +293,8 @@ function addUserToTable(userInfo){
         ${td_email}
     </tr>`;
 
-    $(`#manage-table > tbody:last-child`).append(table_row);
+    $(`${MANAGE_TABLE_ID} > tbody:last-child`).append(table_row);
 }
-
-
 
 /**
  * Validate the name of the team
