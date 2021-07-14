@@ -16,6 +16,10 @@ const CLOSE_BTN_DELETE_TEAM = "#closeRemoveTeamBtn";
 const TEAM_NAME_LENGHT_MAX_LIMIT = 20;
 const TEAM_NAME_LENGHT_MIN_LIMIT = 3;
 
+const ADD_USER_TO_TEAM_BTN = "#btnAddUserToTeam";
+
+const SELECT_USERS_PROJECT_INPUT = "#project-user-select";
+
 
 /**
  * This function is fire as soon as the DOM element is ready to process JS logic code
@@ -25,6 +29,7 @@ $(function (){
 
     // make the select opction for deleting a team a select2 element
     $(TEAM_SELECT_INPUT_ID).select2();
+    $(SELECT_USERS_PROJECT_INPUT).select2();
 
     // BTN when the user submit the form information to create a new project
     $(CREATE_TEAM_SUBMIT_BTN).on("click", async function(event){
@@ -134,6 +139,7 @@ $(function (){
 
     // TRASH BTN EVENT 
     $(TRASH_BTN_MANAGE).on("click", async function(){
+        
         let checkedElements = getCheckedElements(TABLE_ROW_CHECKBOX_ELEMENT_CHECKED);
        
         // check if not empty
@@ -151,14 +157,101 @@ $(function (){
         });
 
         if (response){
+            removeCheckedElement();
+            
             $.notify(response, "success");
+
+            removeDisableAttr(SELECT_USERS_PROJECT_INPUT, checkedElements);
+            
+            // disable the trash button again
+            enableTrashButton(false);
         }else{
             $.notify(response_error.data.responseText, "error");
         }
     });
 
 
+    // ADD User to Team
+    $(ADD_USER_TO_TEAM_BTN).on("click", async function(){
+        const projectId = $(PROJECT_ID).val();
+        const teamId = $(FILTER_BY_TEAM_INPUT).val();
+
+        const userId = $(SELECT_USERS_PROJECT_INPUT).val();
+
+        if (_.isEmpty(userId) || !_.isString(userId)){
+            $.notify("Error getting user information", "error");
+            return;
+        }
+
+        const data = {"userId": userId, "teamId": teamId};
+
+        const API_LINK_ADD_USER_TO_TEAM = `/dashboard/api/${projectId}/addUserToTeam/`
+
+        let response_error = null;
+        const response = await make_post_request(API_LINK_ADD_USER_TO_TEAM, data).catch(err => {
+            response_error = err;
+        });
+
+        if (response){
+            $.notify(response.msg, "success");
+            
+            addDisableAttr(SELECT_USERS_PROJECT_INPUT,  userId);
+           
+            addUserToTable(response.user);
+        }else{
+            $.notify(response_error.data.responseText, "error");
+        }
+    });
+
 });
+
+
+/**
+ * Add user to table
+ * @param {Object} userInfo 
+ */
+function addUserToTable(userInfo){
+
+    if (_.isEmpty(userInfo)){
+        return;
+    }
+
+    let td_checkbox = `
+    <td class="tableCheckBoxRowElement"> 
+        <label class="invisible labelcheckbox"> 
+            <input type="checkbox" aria-label="table-row-checkbox" name="checkboxWorkItem[]" value="${userInfo['id']}" class="checkboxRowElement" />
+        </label> 
+    </td>`;
+
+    let td_edit = `
+    <td class="column-edit-team">
+        <button value="${userInfo['id']}" class="btn btn-warning edit-user-team-btn">
+            <i class="fas fa-user-edit"></i>
+        </button>
+    </td>`;
+
+    let td_name = `
+    <td>
+        ${userInfo["fullName"]}
+    </td>`;
+
+    let td_email = `
+    <td>
+        ${userInfo["email"]}
+    </td>`;
+
+    let table_row = `
+    <tr class="rowValues">
+        ${td_checkbox}
+        ${td_edit}
+        ${td_name}
+        ${td_email}
+    </tr>`;
+
+    $(`#manage-table > tbody:last-child`).append(table_row);
+}
+
+
 
 /**
  * Validate the name of the team

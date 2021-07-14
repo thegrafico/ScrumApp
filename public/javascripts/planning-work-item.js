@@ -15,7 +15,9 @@ $(function () {
     /**
      * CHECKBOX BOR WORK ITEM TABLE 
      */
-    $(TABLE_ROW_CHECKBOX_ELEMENT).on("click", function(){
+     $(document).on("click", TABLE_ROW_CHECKBOX_ELEMENT, function () {
+
+        // $(TABLE_ROW_CHECKBOX_ELEMENT).on("click", function(){
         
         // get the parent element. In this case, it will be the the label element
         let _parent = $( this ).parent();
@@ -232,9 +234,7 @@ async function removeWorkItems(projectId, workItemsId){
     });
 
     if (response){
-        $(".checkboxRowElement:checked").parent().parent().parent().each(function(){
-           $(this).remove();
-        });
+        removeCheckedElement();
 
         $.notify(response, "success");
 

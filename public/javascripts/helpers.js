@@ -230,7 +230,6 @@ function cleanModal() {
     // reset discussion
     $(WORK_ITEM["discussion"]).val("");
 
-
     // TODO: reset links
     // TODO: reset type
     // TODO: reset team depending on the user's team
@@ -317,6 +316,7 @@ function appendToWotkItemTable(workItems){
         return;
     }
     
+    // clean the table
     $(`#workItemTable > tbody`).empty();
 
     for(let i = 0; i < workItems.length; i++){
@@ -397,4 +397,42 @@ function getCheckedElements(elementClassOrId){
     });
 
     return row_checked;
+}
+
+/**
+ * Remove the checkbox element from the table
+ * @param {String} checkboxClass 
+ */
+function removeCheckedElement(checkboxClass=TABLE_ROW_CHECKBOX_ELEMENT_CHECKED){
+    $(checkboxClass).parent().parent().parent().each(function(){
+        $(this).remove();
+    });
+}
+
+/**
+ * Add the disable attr to an select element and set the default to be the current
+ * @param {String} selectElement 
+ * @param {String} value 
+ */
+ function addDisableAttr(selectElement, value){
+    $(`${selectElement}`).children(`[value="${value}"]`).attr('disabled', true);
+    $(selectElement).val("0").change();
+}
+
+/**
+ * Remove the disable attr from select options
+ * @param {String} selectElement 
+ * @param {String} values 
+ */
+function removeDisableAttr(selectElement, values){
+
+    if (_.isEmpty(selectElement) || !_.isArray(values)){
+        console.error("Select element or list of value is empty or undefined");
+        return;
+    }
+
+    for (let i = 0; i < values.length; i++) {
+        const val = values[i];
+        $(`${selectElement}`).children(`[value="${val}"]`).attr('disabled', false);
+    }
 }

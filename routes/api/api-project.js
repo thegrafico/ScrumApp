@@ -250,4 +250,68 @@ router.post("/api/:id/removeWorkItems", middleware.isUserInProject, async functi
     res.status(200).send(`Successfully removed ${item_str} from team`);
 });
 
+
+/**
+ * METHOD: POST - ADD USERS TO TEAM
+ */
+ router.post("/api/:id/addUserToTeam", middleware.isUserInProject, async function (req, res) {
+    
+    console.log("Getting request to add user to team...");
+
+    const projectId = req.params.id;
+    
+    let  { teamId, userId } = req.body; 
+
+    if (!_.isString(teamId) || _.isUndefined(userId) || !_.isString(userId) || _.isEmpty(userId)){
+        res.status(400).send("Sorry, there was an error with the request. Either cannot find the team or users to remove. ");
+        return;
+    }
+
+    const projectInfo = await projectCollection.findById(projectId).catch(err => {
+        console.error(err);
+    });
+
+    if (!projectInfo){
+        res.status(400).send("Oops, There was a problem adding the user to the team. Please try later");
+        return;
+    }
+
+    let team = projectInfo.teams.filter( tm => {return tm._id.toString() == teamId} )[0];
+    
+    if (team.users.includes(userId)){
+        res.status(200).send("User is already in project");
+        return;
+    }
+
+    // add the user
+    team.users.push(userId);
+
+    let projectResponse = await projectInfo.save().catch( err => {
+        console.error(err);
+    });
+
+    if (!projectResponse){
+        res.status(400).send("Sorry, There was a problem adding the user to the team.");
+        return;
+    }
+
+    let addedUser = await projectInfo.getUserName(userId).catch(err => {
+        console.error("Error getting the user: ", err);
+    });
+
+
+    let response = {msg: "Successfully added user to the team"};
+
+    // send the user in ordet to udate the html table
+    if (addedUser){
+        response["user"] = {
+            fullName: addedUser["fullName"], 
+            email: addedUser["email"], 
+            id: addedUser["_id"]
+        }
+    }
+
+    res.status(200).send(response);
+});
+
 module.exports = router;

@@ -35,7 +35,7 @@ router.get("/:id/manageTeam", middleware.isUserInProject, async function (req, r
     let projectId = req.params.id;
 
     // verify is the project exists
-    let projectInfo = await projectCollection.findOne({_id: projectId}).catch(err => {
+    let projectInfo = await projectCollection.findById(projectId).catch(err => {
         console.log("Error is: ", err.reason);
     });
 
@@ -44,17 +44,21 @@ router.get("/:id/manageTeam", middleware.isUserInProject, async function (req, r
         return res.redirect('/');
     }
 
+    // get all users for this project -> expected an array
+    let users = await projectInfo.getUsers().catch(err => console.log(err)) || [];
     let teams = [...projectInfo.teams];
-    teams.unshift(UNASSIGNED);
 
     // get the team for the user in order to filter by it.
+    // TODO: refactor code below
     let userBestTeam = undefined;
     let userTeams = [];
+    let userIds = undefined;
     if (teams.length > 1){
         userBestTeam = teams[1];
         userTeams = await projectInfo.getUsersForTeam(userBestTeam.id).catch(err => {
             console.error(err);
         }) || [];
+        userIds = userTeams.map( each => each._id.toString());
     }
 
     // populating params
@@ -66,6 +70,8 @@ router.get("/:id/manageTeam", middleware.isUserInProject, async function (req, r
         "tabTitle": "Manage Teams",
         "teamWorkItem": teams,
         "teamUsers": userTeams,
+        "projectUsers": users,
+        "userIds": userIds,
         "userTeam": userBestTeam,
         "stylesPath": managePath["styles"],
         "scriptsPath": managePath["scripts"]

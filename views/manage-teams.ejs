@@ -54,6 +54,15 @@
                                 </a>
                             </li>
 
+                            <li class="nav-item">
+                                <a class="nav-link" 
+                                    href="#" id="addUserBtn" 
+                                    role="button" data-toggle="modal"
+                                    data-target="#create-user">
+                                    <i class="fas fa-plus addIcon"></i> Add Users
+                                </a>
+                            </li>
+
                             <li class="nav-item trashIconWrapper">
                                 &nbsp;
                                 <button id="trashBtnManage" class="trash-btn" disabled> <i class="far fa-trash-alt grayColor"></i> </button>
@@ -75,7 +84,7 @@
             </div>
 
             <div class="p-4" id="table-container">
-                <table class="table table-hover">
+                <table class="table table-hover" id="manage-table">
                     <thead>
                         <tr class="tableHeader">
                             <th class="tableCheckBoxRowHeader">Check</th>
@@ -107,8 +116,6 @@
                                 <td>
                                     <%=teamUsers[i]["email"]%>
                                 </td>
-
-                                
                             </tr>
                         <%}%>
                     </tbody>
@@ -118,5 +125,9 @@
         <input type="hidden" name="projectId" id="projectId" value="<%=projectId%>">
         <input type="hidden" name="currentTab" id="currentTab" value="<%=activeTab%>">
     </div>
+
+
+<%- include('modals/team/add-user-team'); %>
+
 
 <%- include('modals/footer'); %>

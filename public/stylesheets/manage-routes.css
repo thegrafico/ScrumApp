@@ -30,3 +30,16 @@
 .rowValues td:nth-child(2), .rowValues td:nth-child(3), .rowValues td:nth-child(4){
     width: 33.3%;
 }
+
+.addIcon{
+    color: green;
+}
+
+.addUserIcon{
+    font-size: 1em;
+    color: green;
+}
+
+.table{
+    border: 1px solid #444;
+}
