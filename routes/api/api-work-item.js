@@ -49,6 +49,7 @@ router.post("/api/:id/newWorkItem", middleware.isUserInProject, async function (
     tags = tags                                 || [];
 
     let errors = undefined;
+    let addUserToTeam = false;
 
     // getting project info
     let projectInfo = await projectCollection.findOne({_id: req.params.id}).catch(err => {
@@ -98,6 +99,7 @@ router.post("/api/:id/newWorkItem", middleware.isUserInProject, async function (
         // -- 
         if (_user){
             newWorkItem["assignedUser"] = {name: _user["fullName"],'id': userAssigned};
+            addUserToTeam = true;
         }else{
             console.error("Cannot find the user for the work item: ", userAssigned);
             req.flash("error", "Cannot find the user assigned for this work item");
@@ -161,6 +163,18 @@ router.post("/api/:id/newWorkItem", middleware.isUserInProject, async function (
     
     // TODO: Create new schema for comments
     // newWorkItem["comments"]
+
+    // add user to the team assigned if the user is not already in there. 
+    if (newWorkItem["teamId"] || addUserToTeam){
+        let teamId = newWorkItem["teamId"];
+        let user = addUserToTeam ? newWorkItem["assignedUser"]: null;
+        
+        if (user.id && teamId){
+            await projectInfo.addUserToTeam(user.id.toString(), teamId.toString() ).catch(err => {
+                console.error(err);   
+            });
+        }
+    }
 
     newWorkItem = await workItemCollection.create(newWorkItem).catch(err =>{
         errors = err.reason;
