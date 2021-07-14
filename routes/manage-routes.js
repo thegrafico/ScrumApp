@@ -71,6 +71,7 @@ router.get("/:id/manageTeam", middleware.isUserInProject, async function (req, r
         "teamWorkItem": teams,
         "teamUsers": userTeams,
         "projectUsers": users,
+        "assignedUsers": users,
         "userIds": userIds,
         "userTeam": userBestTeam,
         "stylesPath": managePath["styles"],
