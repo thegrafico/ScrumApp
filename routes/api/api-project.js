@@ -25,6 +25,34 @@ const {
 // ================= GET REQUEST ==============
 
 /**
+ * METHOD: GET - fetch all users from project
+ */
+router.get("/api/:id/getProjectUsers/", middleware.isUserInProject, async function (req, res) {
+    
+    const projectId = req.params.id;
+
+    // getting project
+    const projectInfo = await projectCollection.findById(projectId).catch(err => {
+        console.error(err);
+    });
+    
+    // verify project
+    if (!projectInfo){
+        res.status(400).send("Sorry, Cannot get the information of the project.");
+        return;
+    }
+
+    const users = projectInfo.getUsers();
+
+    let response = {
+        msg: "success",
+        users: users
+    }
+
+    res.status(200).send(response);
+});
+
+/**
  * METHOD: GET - fetch all work items for a team
  */
 router.get("/api/:id/getworkItemsByTeamId/:teamId", middleware.isUserInProject, async function (req, res) {
@@ -98,7 +126,6 @@ router.get("/api/:id/getTeamUsers/:teamId", middleware.isUserInProject, async fu
 
 
 // ================= POST REQUEST ==============
-
 
 /**
  * METHOD: POST - Create new work item
@@ -243,6 +270,7 @@ router.post("/api/:id/removeWorkItems", middleware.isUserInProject, async functi
     res.status(200).send(`Successfully removed work ${item_str}`);
 });
 
+
 /**
  * METHOD: POST - REMOVE USERS FROM TEAM
  */
@@ -301,6 +329,7 @@ router.post("/api/:id/removeWorkItems", middleware.isUserInProject, async functi
     let item_str = userIds.length === 1 ? "user" : "users";
     res.status(200).send(`Successfully removed ${item_str} from team`);
 });
+
 
 /**
  * METHOD: POST - ADD USERS TO TEAM
@@ -365,10 +394,11 @@ router.post("/api/:id/addUserToTeam", middleware.isUserInProject, async function
     res.status(200).send(response);
 });
 
+
 /**
  * METHOD: POST - ADD USERS TO Project
  */
- router.post("/api/:id/addUserToProject", middleware.isUserInProject, async function (req, res) {
+router.post("/api/:id/addUserToProject", middleware.isUserInProject, async function (req, res) {
     
     console.log("Getting request to add user to team...");
 
@@ -433,6 +463,51 @@ router.post("/api/:id/addUserToTeam", middleware.isUserInProject, async function
     if (_.isUndefined(projectWasSaved) || _.isNull(projectWasSaved)){
         res.status(400).send("Sorry, there was a problem adding the user to the project.");
         return;
+    }
+
+    res.status(200).send(response);
+});
+
+/**
+ * METHOD: POST - REMOVE USERS FROM PROJECT
+ */
+ router.post("/api/:id/deleteUser", middleware.isUserInProject, async function (req, res) {
+    
+    console.log("Getting request to remove user from project...");
+
+    const projectId = req.params.id;
+    
+    let  { userId } = req.body; 
+
+    if (!_.isString(userId) || _.isEmpty(userId)){
+        res.status(400).send("Invalid user was received.");
+        return;
+    }
+
+    // getting project
+    const projectInfo = await projectCollection.findById(projectId).catch(err => {
+        console.error(err);
+    });
+
+    // verify project
+    if (!projectInfo){
+        res.status(400).send("Oops, There was a getting the user information.");
+        return;
+    }
+
+    // prevent owner removing himself.
+    if (userId.toString() == projectInfo["author"].toString()){
+        res.status(400).send("Sorry, The owner of the team cannot be removed from the team.");
+        return;
+    }
+
+    let response_error = null;
+    let response = await projectInfo.removeUser(userId).catch(err => {
+        response_error = err;
+    });
+
+    if (_.isUndefined(response)){
+        res.status(400).send(response_error);
     }
 
     res.status(200).send(response);

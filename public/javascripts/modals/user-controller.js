@@ -1,8 +1,13 @@
-// id of the form 
+// CREATE USER
 const MODAL_ADD_USER_ID = "#add-user-project";
 const MODAL_USER_EMAIl_INPUT = "#modal-user-email-input";
 const MODAL_ADD_USER_BTN_SUBMIT = "#add-user-modal-btn";
 const MODAL_SPAN_EMAIl_ERROR = "#modal-create-user-span-error";
+
+// REMOVE USER
+const MODAL_REMOVE_USER_ID = "#delete-user-modal";
+const MODAL_REMOVE_USER_INPUT = "#modal-remove-user-select-user";
+const MODAL_REMOVE_SUBMIT_BTN = "#modal-delete-user-submit-btn";
 
 /**
  * This function is fire as soon as the DOM element is ready to process JS logic code
@@ -10,11 +15,10 @@ const MODAL_SPAN_EMAIl_ERROR = "#modal-create-user-span-error";
  */
 $(function (){
 
-    // BTN when the user submit the form information to create a new user
+    // BTN ADD USER
     $(MODAL_ADD_USER_BTN_SUBMIT).on("click", async function(event){
         let userEmail = $(MODAL_USER_EMAIl_INPUT).val().trim();
         
-        console.log(userEmail);
         if (!isEmail(userEmail)){
             showErrSpanMessage(MODAL_SPAN_EMAIl_ERROR, "Invalid email");
             return;
@@ -36,9 +40,7 @@ $(function (){
         const response = await make_post_request(API_LINK_ADD_USER_TO_PROJECT, data).catch(err => {
             response_error = err;
         });
-        
-        console.log("here");
-        console.log(response);
+
         // Success message
         if (response){
             $.notify(response.msg, "success");
@@ -48,8 +50,48 @@ $(function (){
         }
     });
 
+    // BTN REMOVE USER
+    $(MODAL_REMOVE_SUBMIT_BTN).on("click", async function(event){
+
+        let userId = $(MODAL_REMOVE_USER_INPUT).val().trim();
+        
+        if (_.isNull(userId) || _.isUndefined(userId) || userId == "0"){
+            $.notify("Invalid user.", "error");
+            return;
+        }
+
+        const projectId = $(PROJECT_ID).val();
+
+        if (!_.isString(projectId)){
+            $.notify("Sorry, Cannot find the project at this moment.", "error");
+            return;
+        }
+
+        const API_LINK_REMOVE_USER_FROM_PROJECT = `/dashboard/api/${projectId}/deleteUser`;
+        const data = {"userId": userId};
+
+        let response_error = null;
+        const response = await make_post_request(API_LINK_REMOVE_USER_FROM_PROJECT, data).catch(err => {
+            response_error = err;
+        });
+        
+        // Success message
+        if (response){
+            $.notify(response.msg, "success");
+        }else{ // error messages
+            $.notify(response_error.data.responseText, "error");
+        }
+    });
+
+
+    // TODO: fix this
     // clean the project modal
-    $(MODAL_ADD_USER_ID).on('show.bs.modal', function (e) {
+    $(MODAL_ADD_USER_ID).on('shown.bs.modal', function (e) {
         $(MODAL_USER_EMAIl_INPUT).val(''); 
+    });
+
+    // clean the project modal
+    $(MODAL_REMOVE_USER_ID).on('shown.bs.modal', function () {
+        $(MODAL_REMOVE_USER_INPUT).val("0").trigger("change"); 
     });
 });

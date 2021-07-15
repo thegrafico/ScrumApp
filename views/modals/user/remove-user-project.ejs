@@ -1,0 +1,41 @@
+<!-- Modal -->
+<div class="modal fade delete-user-modal" id="delete-user-modal" tabindex="-1" role="dialog" aria-labelledby="ModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+
+        <div class="modal-content">
+            
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalTitle">Remove User </h5> &nbsp; &nbsp; <i class="fas fa-users"></i>
+                <button type="button" id="modal-remove-user-close-btn" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span> 
+                </button>
+            </div>
+
+            <div class="modal-body">
+
+                <fieldset>
+
+                    <div class="form-group">
+                        <label for="teamUsers">User:</label><br>
+
+                        <select class="custom-select my-custon-select" name="userToRemove" id="modal-remove-user-select-user">
+                            <option value='0' selected>Please select a user.</option>
+                            <% for(let i = 1; i < assignedUsers.length; i++){%>
+
+                                <% if (project["author"].toString() != assignedUsers[i]['id'].toString()){ %>
+                                    <option value="<%=assignedUsers[i]['id']%>"><%=assignedUsers[i]['name']%></option>
+                                <%}%>
+                            <%}%>
+                        </select>
+                    </div>
+
+                </fieldset>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button id="modal-delete-user-submit-btn" class="btn btn-warning">apply</button>
+            </div>
+        </div>
+    </div>
+</div>

@@ -29,15 +29,10 @@ router.get("/:id", middleware.isUserInProject, async function (req, res) {
 
     let projectId = req.params.id;
 
-    // verify is the project exists
-    // TODO: verify if the user can access to the project
-    let projectInfo = await projectCollection.findOne({
-        _id: projectId
-    }).catch(err => {
+    // getting project
+    let projectInfo = await projectCollection.findById(projectId).catch(err => {
         console.log("Error is: ", err.reason);
     });
-
-    // console.log("Project information: ", projectInfo);
 
     if (_.isUndefined(projectInfo) || _.isEmpty(projectInfo)) {
         req.flash("error", "Cannot the project information.");
@@ -46,7 +41,8 @@ router.get("/:id", middleware.isUserInProject, async function (req, res) {
 
     // getting users from project
     let users = await projectInfo.getUsers().catch(err => console.log(err)) || [];
-
+    users.unshift(UNASSIGNED);
+    
     // getting the teams
     let teams = [...projectInfo.teams];
     teams.unshift(UNASSIGNED);

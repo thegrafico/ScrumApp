@@ -56,7 +56,7 @@ projectSchema.methods.getUsers = async function() {
         if (!userInfo) continue
         
         // add that user to the array
-        usersArr.push({name: userInfo.fullName, id: userId});
+        usersArr.push({name: userInfo.fullName, id: userId, email: userInfo.email});
     }
 
     return usersArr;
@@ -101,7 +101,7 @@ projectSchema.methods.getWorkItem = async function(workItemId) {
  * @param {String} userId-> workItemId
  * @returns {Boolean} True if the user is in the project
  */
- projectSchema.methods.isUserInProject = function(userId) {
+projectSchema.methods.isUserInProject = function(userId) {
 
     if (_.isEmpty(userId) || !_.isString(userId)){
         console.error("Parameter is either empty or is not a String");
@@ -116,7 +116,7 @@ projectSchema.methods.getWorkItem = async function(workItemId) {
  * @param {String} teamId-> Id of the team
  * @returns {Boolean} True if the user is in the project
  */
- projectSchema.methods.isTeamInProject = function(teamId) {
+projectSchema.methods.isTeamInProject = function(teamId) {
 
     // if empty and not string
     if (_.isEmpty(teamId) || !_.isString(teamId)){
@@ -139,7 +139,7 @@ projectSchema.methods.getWorkItem = async function(workItemId) {
  * @param {String} userId- > Id of the team
  * @returns {Object} User Information
  */
- projectSchema.methods.getUserName = async function(userId) {
+projectSchema.methods.getUserName = async function(userId) {
 
     // if empty and not string
     if (_.isEmpty(userId) || !_.isString(userId)){
@@ -159,7 +159,7 @@ projectSchema.methods.getWorkItem = async function(workItemId) {
  * @param {String} teamId - id of the team to add the user
  * @returns 
  */
- projectSchema.methods.addUserToTeam = async function(userId, teamId) {
+projectSchema.methods.addUserToTeam = async function(userId, teamId) {
 
     if (!this.isUserInProject(userId) || !this.isTeamInProject(teamId)){
         return false;
@@ -194,7 +194,7 @@ projectSchema.methods.getWorkItem = async function(workItemId) {
  * @param {String} teamId - id of the team to add the user
  * @returns 
  */
- projectSchema.methods.getUsersForTeam = async function(teamId) {
+projectSchema.methods.getUsersForTeam = async function(teamId) {
 
     if (!this.isTeamInProject(teamId)){
         return null;
@@ -214,6 +214,37 @@ projectSchema.methods.getWorkItem = async function(workItemId) {
     }) || [];
 
     return UserInfo;
+};
+
+
+/**
+ * Remove user from project
+ * @param {String} userId - userId
+ * @returns {Promise}
+*/
+projectSchema.methods.removeUser = async function(userId) {
+    
+    const father = this;
+    return new Promise( async function (resolve, reject){
+
+        if (!father.isUserInProject(userId)){
+            return reject({msg: "User is not in project", userId: null});
+        }
+
+        // remove the user
+        father.users.pull(userId);
+
+        let wasSaved = await father.save().catch( err =>{
+            console.error(err);
+        })
+
+        if (_.isUndefined(wasSaved)){
+            return reject( {msg: "There was an error removing the user from the project", userId:null});
+        }
+
+        return resolve({msg: "User was removed successfully!", userId: userId});
+    });
+
 };
 
 module.exports = mongoose.model("Projects", projectSchema);
