@@ -24,8 +24,6 @@ $(function () {
 
     const projectId = $("#projectId").val();
 
-    // console.log($(statusSelectId).find(":selected").text())
-
     // ============================================ STATUS CARD ==========================================
     $(projectStatus).on("change", function () {
         CHANGES["status"] = this.value;

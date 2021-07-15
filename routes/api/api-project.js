@@ -3,6 +3,8 @@ const express                   = require("express");
 const middleware                = require("../../middleware/auth");
 const workItemCollection        = require("../../dbSchema/workItem");
 const projectCollection         = require("../../dbSchema/projects");
+const userCollection            = require("../../dbSchema/user");
+
 const _                         = require("lodash");
 let router                      = express.Router();
 
@@ -25,7 +27,7 @@ const {
 /**
  * METHOD: GET - fetch all work items for a team
  */
- router.get("/api/:id/getworkItemsByTeamId/:teamId", middleware.isUserInProject, async function (req, res) {
+router.get("/api/:id/getworkItemsByTeamId/:teamId", middleware.isUserInProject, async function (req, res) {
     
     const projectId = req.params.id;
     const teamId = req.params.teamId;
@@ -96,6 +98,8 @@ router.get("/api/:id/getTeamUsers/:teamId", middleware.isUserInProject, async fu
 
 
 // ================= POST REQUEST ==============
+
+
 /**
  * METHOD: POST - Create new work item
  */
@@ -180,7 +184,7 @@ router.post("/api/:id/newTeam", middleware.isUserInProject, async function (req,
 /**
  * METHOD: POST - REMOVE TEAM
  */
- router.post("/api/:id/deleteTeam", middleware.isUserInProject, async function (req, res) {
+router.post("/api/:id/deleteTeam", middleware.isUserInProject, async function (req, res) {
     
     const projectId = req.params.id;
 
@@ -298,11 +302,10 @@ router.post("/api/:id/removeWorkItems", middleware.isUserInProject, async functi
     res.status(200).send(`Successfully removed ${item_str} from team`);
 });
 
-
 /**
  * METHOD: POST - ADD USERS TO TEAM
  */
- router.post("/api/:id/addUserToTeam", middleware.isUserInProject, async function (req, res) {
+router.post("/api/:id/addUserToTeam", middleware.isUserInProject, async function (req, res) {
     
     console.log("Getting request to add user to team...");
 
@@ -357,6 +360,79 @@ router.post("/api/:id/removeWorkItems", middleware.isUserInProject, async functi
             email: addedUser["email"], 
             id: addedUser["_id"]
         }
+    }
+
+    res.status(200).send(response);
+});
+
+/**
+ * METHOD: POST - ADD USERS TO Project
+ */
+ router.post("/api/:id/addUserToProject", middleware.isUserInProject, async function (req, res) {
+    
+    console.log("Getting request to add user to team...");
+
+    const projectId = req.params.id;
+    
+    let  { userEmail } = req.body; 
+
+    if (!_.isString(userEmail) || _.isEmpty(userEmail)){
+        res.status(400).send("Invalid user was received.");
+        return;
+    }
+
+    // const userWasAdded = await projectCollection.findByIdAndUpdate(projectId, {$push: {users: userId}})
+
+    // getting project
+    const projectInfo = await projectCollection.findById(projectId).catch(err => {
+        console.error(err);
+    });
+
+    // verify project
+    if (!projectInfo){
+        res.status(400).send("Oops, There was a getting the user information.");
+        return;
+    }
+
+    // getting user information
+    const userInfo = await userCollection.getUserByEmail(userEmail).catch(err => {
+        console.error(err);
+    });
+
+    // verify if data is good
+    if (_.isUndefined(userInfo) || _.isNull(userInfo)){
+        res.status(400).send("Sorry, There was a problem getting user information");
+        return;
+    }
+
+    // verify if the user is already in the project
+    let isUserInProject = projectInfo.isUserInProject(userInfo._id.toString());
+
+    let response = {
+        msg: "Successfully added user to the project", 
+        user: {
+            fullName: userInfo["fullName"],
+            email: userInfo["email"],
+            id: userInfo["_id"]
+        }
+    };
+
+    if  (isUserInProject){
+        response["msg"] = "User is already in project!";
+        res.status(200).send(response);
+        return;
+    }
+
+    // adding the user to the project
+    projectInfo.users.push(userInfo._id);
+
+    let projectWasSaved = await projectInfo.save().catch( err => {
+        console.error(err);
+    });
+
+    if (_.isUndefined(projectWasSaved) || _.isNull(projectWasSaved)){
+        res.status(400).send("Sorry, there was a problem adding the user to the project.");
+        return;
     }
 
     res.status(200).send(response);

@@ -29,6 +29,9 @@ router.get("/", async function (req, res) {
   let params = {
     title: "Dashboard",
     projectId: undefined,
+    assignedUsers: undefined,
+    teamWorkItem: undefined,
+    addUserModal: undefined,
     createProjectFormRedirect: "/",
     project_rediret: BASE_ROUTE,
     stylesPath: dashboardPath["styles"],

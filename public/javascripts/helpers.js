@@ -78,6 +78,15 @@ function hideErrSpanMessage(spanId){
 }
 
 /**
+ * Validate if email
+ * @param {String} email 
+ * @returns {Boolean} - True if the email is valid
+ */
+function isEmail(email){
+    return validator.isEmail(email);
+}
+
+/**
  * Validate the email of the user, if the email is invalid show a message to the user using a span element
  * @param {String} emailId - input email id 
  * @param {String} formId - form id 
@@ -90,7 +99,7 @@ function validateEmail(emailId, formId, spanId, event) {
     event.preventDefault();
 
     // validating the form 
-    isEmailValid = validator.isEmail($(emailId).val());
+    isEmailValid = isEmail($(emailId).val());
 
     if (!isEmailValid) {
         showErrSpanMessage(spanId, "Invalid email, please try again.");
@@ -99,6 +108,7 @@ function validateEmail(emailId, formId, spanId, event) {
 
     $(formId).trigger("submit");
 }
+
 
 /**
  * Show the current tab at the side bar
@@ -439,4 +449,12 @@ function removeDisableAttr(selectElement, values){
 
 function removeAllDisableAttr(selectElement){
     $(`${selectElement} *`).attr('disabled', false);
+}
+
+/**
+ * Clean the input id
+ * @param {String} inputId 
+ */
+function cleanInput(inputId){
+    $(inputId).text(null);
 }

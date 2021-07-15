@@ -1,0 +1,42 @@
+<!-- MODAL TO CREATE USER -->
+<div class="modal fade add-user-project-modal" id="add-user-project" tabindex="-1" role="dialog" aria-labelledby="create-user-title"
+aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="createUserTitle" style="width: 60%;">
+                    Invite User 
+                    <i class="fas fa-user-plus addUserIcon"></i> 
+                </h5>
+                <button type="button" class="close close-modal-btn" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+            <div class="modal-body">
+
+                <fieldset>
+                    <div class="form-group">
+                        <label for="userEmail">User</label>
+                        <input 
+                            type="text" 
+                            class="form-control" 
+                            id="modal-user-email-input" 
+                            name="userEmail"
+                            placeholder="User email">
+                    </div>
+                    <span class="text-danger invisible" id="modal-create-user-span-error"></span>
+                </fieldset>
+
+            </div>
+
+            <div class="modal-footer">
+                <button type="btnCancelUser" class="btn btn-secondary"data-dismiss="modal">Cancel</button>
+                <button id="add-user-modal-btn" type="submit" class="btn btn-success">Send Invitation</button>
+            </div>
+
+        </div>
+
+    </div>
+</div>

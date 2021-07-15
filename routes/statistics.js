@@ -63,6 +63,7 @@ router.get("/:id", middleware.isUserInProject, async function (req, res) {
         "tabTitle": "Statistics",
         "assignedUsers": users,
         "teamWorkItem": teams,
+        "addUserModal": true,
         "stylesPath": statisticsPath["styles"],
         "scriptsPath": statisticsPath["scripts"],
     };

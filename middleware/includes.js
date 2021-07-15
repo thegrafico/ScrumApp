@@ -16,6 +16,7 @@ module.exports = {
         scripts: [
             "/javascripts/statistics-member.js", 
             "/javascripts/dependecies/bootstrap.bundle.min.js",
+            "/javascripts/modals/user-controller.js",
             "/javascripts/modals/team-controller.js",
         ]
     },

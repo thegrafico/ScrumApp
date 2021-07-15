@@ -187,3 +187,12 @@ i {
 .topNavMenuContainer{
     border-left: 0.5px solid gray;
 }
+
+.addIcon{
+    color: green;
+}
+
+.addUserIcon{
+    font-size: 1em;
+    color: green;
+}

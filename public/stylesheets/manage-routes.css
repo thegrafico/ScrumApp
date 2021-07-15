@@ -12,8 +12,6 @@
     background-color: rgba(128, 128, 128, 0.103);
 }
 
-
-
 .checkboxRowElement{
     font-size: 2em;;
 }
@@ -29,15 +27,6 @@
 
 .rowValues td:nth-child(2), .rowValues td:nth-child(3), .rowValues td:nth-child(4){
     width: 33.3%;
-}
-
-.addIcon{
-    color: green;
-}
-
-.addUserIcon{
-    font-size: 1em;
-    color: green;
 }
 
 .table{

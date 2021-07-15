@@ -80,6 +80,7 @@ router.get("/:id/planing/backlog", middleware.isUserInProject, async function (r
         "statusWorkItem": WORK_ITEM_STATUS,
         "teamWorkItem": teams,
         "sprints": sprints,
+        "addUserModal": true,
         "workItemType": WORK_ITEM_ICONS,
         "workItems": workItems,
         "userTeam": userBestTeam,

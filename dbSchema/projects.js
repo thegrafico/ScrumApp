@@ -35,7 +35,7 @@ let projectSchema = new mongoose.Schema({
  * Get all users from a project with the user information
  * @returns {Array} - array of object  -> [{name, id}]
  */
- projectSchema.methods.getUsers = async function() {
+projectSchema.methods.getUsers = async function() {
 
     // modal to get the user info ==> [{name, id}]
     let usersArr = [];
@@ -66,7 +66,7 @@ let projectSchema = new mongoose.Schema({
  * Get all work items from the project 
  * @returns {Array} - array of object  -> []
  */
- projectSchema.methods.getWorkItems = async function() {
+projectSchema.methods.getWorkItems = async function() {
 
     const workItems = await workItemCollection.find({"projectId": this._id})
         .catch(err => console.error("Error getting work items: ", err)) || [];
@@ -80,7 +80,7 @@ let projectSchema = new mongoose.Schema({
  * @param {String} -> workItemId
  * @returns {Array} - array of object  -> []
  */
- projectSchema.methods.getWorkItem = async function(workItemId) {
+projectSchema.methods.getWorkItem = async function(workItemId) {
 
     // Verify if the param is a string and not empty
     if (workItemId == undefined || typeof(workItemId) != typeof("")){

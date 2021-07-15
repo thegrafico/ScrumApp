@@ -1,3 +1,20 @@
+<!-- ========= MODALS =========  -->
+
+<!-- User Modals -->
+<% if (addUserModal) { %>
+    <%- include('user/add-user-project'); %>
+<% } %>
+
+<!-- team Modals -->
+<% if (assignedUsers) { %>
+    <%- include('team/create-team'); %>
+<% } %>
+
+<% if (teamWorkItem) { %>
+    <%- include('team/delete-team'); %>
+<% } %>
+
+<!-- ==========================  -->
 
 <!-- Dependecies -->
 <script src="/javascripts/dependecies/jquery3.5.2.js"></script>
