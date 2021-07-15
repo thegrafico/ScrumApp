@@ -96,3 +96,5 @@ const HIGHLIGST_CLASS = "highligtRow";
 // DELETE TEAM CONSTASNT
 const DELETE_TEAM_SUBMIT_BTN = "#delete-team-submit-btn";
 const TEAM_SELECT_INPUT_ID = "#listOfTeams";
+
+const MANAGE_TABLE_ID = "#manage-table";

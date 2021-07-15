@@ -4,6 +4,9 @@ const USER_CHECKBOX_CLASS = ".userCheckbox"
 const FILTER_SEARCH_ID = "searchTable";
 const FILTER_GENERAL_CLASS = ".filterOptions";
 
+const FILTER_MANAGE_TEAM_ID = "#filter-manage-team";
+const MANAGE_TEAM_COLUMNS_TO_FILTER = ["name", "email"];
+
 // Header of the table
 const filterElements = {"title": "title", "type": "type", "assigned": "assigned", "state": "state"};
 
@@ -30,6 +33,12 @@ $(function () {
         filterTable();
     });
 
+    $(FILTER_MANAGE_TEAM_ID).keyup(function (){
+        let userInput = $(this).val().toLowerCase();
+        
+        filterManageTable(MANAGE_TABLE_ID, userInput, MANAGE_TEAM_COLUMNS_TO_FILTER);
+    })
+
 
     // TODO: maybe there is a better way of not closing the filter type when clicking inside?
     $(document).on('click', FILTER_GENERAL_CLASS, function (e) {
@@ -37,6 +46,30 @@ $(function () {
     });
 
 });
+
+
+/**
+ * Filter a table by the value searched in the columns to search
+ * @param {String} tableId 
+ * @param {String} searchValue 
+ * @param {Array} columnsToSearch 
+ */
+function filterManageTable(tableId, searchValue, columnsToSearch){
+    // get all rows from table
+
+    $(`${tableId} > tbody > tr`).each(function(){
+        let table_row_text = $(this).text().toLowerCase().trim();
+
+        let currentRow = $(this);
+
+        // if the row includes the the text
+        if (table_row_text.includes(searchValue)){
+            currentRow.css("display", "");
+        }else{
+            currentRow.css("display", "none");
+        }
+    });
+}
 
 
 // TODO: create a better way of filtering -> more dynamic
@@ -105,6 +138,7 @@ function filterTable() {
         tableRow[i].style.display = style;
     }
 }
+
 /**
  * Verify if the text is a substring of another text
  * @param {String} columnText 

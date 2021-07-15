@@ -20,9 +20,6 @@ const ADD_USER_TO_TEAM_BTN = "#btnAddUserToTeam";
 
 const SELECT_USERS_PROJECT_INPUT = "#project-user-select";
 
-const MANAGE_TABLE_ID = "#manage-table";
-
-
 /**
  * This function is fire as soon as the DOM element is ready to process JS logic code
  * Same as $(document).ready()...
@@ -34,7 +31,7 @@ $(function (){
     $(SELECT_USERS_PROJECT_INPUT).select2();
     $(FILTER_BY_TEAM_MANAGE_INPUT).select2();
 
-    // BTN when the user submit the form information to create a new project
+    // BTN when the user submit the form information to create a new user
     $(CREATE_TEAM_SUBMIT_BTN).on("click", async function(event){
         
         // remove the default from the form so we can control when to submit the information. 
@@ -205,6 +202,7 @@ $(function (){
         }
     });
 
+    // TEAM Selection
     $(FILTER_BY_TEAM_MANAGE_INPUT).change(async function(){
         
         const teamId = $(this).val();    
