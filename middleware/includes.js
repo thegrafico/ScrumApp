@@ -28,6 +28,7 @@ module.exports = {
             "/javascripts/filter-and-search.js",
             "/javascripts/dependecies/jquery-ui.min.js",
             "/javascripts/work-item.js",
+            "/javascripts/modals/user-controller.js",
             "/javascripts/modals/team-controller.js",
         ]
     },
@@ -40,6 +41,7 @@ module.exports = {
             "/javascripts/dependecies/bootstrap.bundle.min.js",
             "/javascripts/filter-and-search.js",
             "/javascripts/work-item.js",
+            "/javascripts/modals/user-controller.js",
             "/javascripts/modals/team-controller.js",
         ]
     },
@@ -53,6 +55,7 @@ module.exports = {
             "/javascripts/dependecies/bootstrap.bundle.min.js",
             "/javascripts/filter-and-search.js",
             "/javascripts/work-item.js",
+            "/javascripts/modals/user-controller.js",
             "/javascripts/modals/team-controller.js",
         ]
     }

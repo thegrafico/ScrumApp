@@ -19,6 +19,18 @@ const USERS = [
     password: "123",
     fullName: "Alexander Avalo",
   },
+
+  {
+    _id: "601782de1fb2050e11bfbf1a",
+    email: "raul3@gmail.com",
+    password: "123",
+    fullName: "Andrea Faviola",
+  },
+  {
+    email: "raul4@gmail.com",
+    password: "123",
+    fullName: "Lana Nicole",
+  },
 ];
 
 // Projects
@@ -56,20 +68,6 @@ const INDIVIDUAL_PROJECT = [
       "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Non ad deserunt tempora suscipit hic necessitatibus, vero incidunt. Doloremque, facere voluptatum qui autem ratione unde et, pariatur. Necessitatibus, veniam, eos.",
     teams: [{name: "Team Awesome"}, {name: "Team Batman"}],
   }
-];
-
-const PROJECT_TEAM = [
-  {
-    _id: "6065472735af4606af3adbc9",
-    name: "Team Batman",
-    projectId: "6027fc80a40b46138321a5e0",
-    users: [],
-  },
-  {
-    name: "Team Superman",
-    projectId: "6027fc80a40b46138321a5e0",
-    users: [],
-  },
 ];
 
 const PROJECT_SPRINTS = [
@@ -121,15 +119,6 @@ async function createProjectSprint(){
   }
 }
 
-/**
- * Create the project team
- */
-// TODO: add team member here
-async function createProjectTeam(){
-  // for (let index = 0; index < PROJECT_TEAM.length; index++) {
-  //   await projectTeamCollection.create(PROJECT_TEAM[index]).catch(err => { console.log("Error Creating the team for the project: ", err); throw err});
-  // }
-}
 
 /**
  * Add user to the database
@@ -160,7 +149,7 @@ async function createProjectForUser(user_id, defaultProjects = PROJECTS){
     
     // add the author of the project
     newProject["author"] = user_id;
-    newProject["users"] = [user_id]; 
+    newProject["users"] = [user_id, "601782de1fb2050e11bfbf1a"]; 
     const projectInfo = await projectCollection.create(newProject).catch(err => { console.error("Error adding the Project: ", err); throw err});
     
     projectIds.push(projectInfo._id);
@@ -216,10 +205,6 @@ async function seedDB() {
     const id = usersId[i];
     await createProjectForUser(id);
   }
-
-  // TODO: continue here
-  // // create team project
-  // await createProjectTeam();
 
   // await createProjectSprint();
 

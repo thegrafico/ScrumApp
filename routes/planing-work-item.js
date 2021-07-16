@@ -21,6 +21,7 @@ const {
     WORK_ITEM_ICONS,
     WORK_ITEM_STATUS,
     PRIORITY_POINTS,
+    PAGES,
 } = require('../dbSchema/Constanst');
 
 /**
@@ -64,6 +65,7 @@ router.get("/:id/planing/workitems", middleware.isUserInProject, async function 
         "projectId": projectId,
         "activeTab": "WorkItem,Planing",
         "tabTitle": "Work Items",
+        "currentPage": PAGES.WORK_ITEMS,
         "assignedUsers": users,
         "statusWorkItem": WORK_ITEM_STATUS,
         "teamWorkItem": teams,
@@ -125,6 +127,7 @@ router.get("/:id/planing/workitems", middleware.isUserInProject, async function 
         "projectId": projectId,
         "activeTab": "WorkItem,Planing",
         "tabTitle": "Work Item",
+        "currentPage": PAGES.UNIQUE_WORK_ITEM,
         "assignedUsers": users,
         "statusWorkItem": WORK_ITEM_STATUS,
         "teamWorkItem": teams,

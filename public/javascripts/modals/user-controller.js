@@ -26,7 +26,7 @@ $(function (){
 
         hideErrSpanMessage(MODAL_SPAN_EMAIl_ERROR);
 
-        const projectId = $(PROJECT_ID).val();
+        let projectId = $(PROJECT_ID).val();
 
         if (!_.isString(projectId)){
             $.notify("Sorry, Cannot find the project at this moment.", "error");
@@ -34,17 +34,23 @@ $(function (){
         }
 
         const API_LINK_ADD_USER_TO_PROJECT = `/dashboard/api/${projectId}/addUserToProject`;
-        const data = {"userEmail": userEmail};
+        let data = {"userEmail": userEmail};
 
         let response_error = null;
-        const response = await make_post_request(API_LINK_ADD_USER_TO_PROJECT, data).catch(err => {
+        let response = await make_post_request(API_LINK_ADD_USER_TO_PROJECT, data).catch(err => {
             response_error = err;
         });
 
         // Success message
         if (response){
             $.notify(response.msg, "success");
-            // cleanInput(MODAL_USER_EMAIl_INPUT);
+            cleanInput(MODAL_USER_EMAIl_INPUT);
+            update_html( 
+                $(CURRENT_PAGE_ID).val(),
+                UPDATE_TYPE.ADD, 
+                {"value": response.user.id, "text": response.user.fullName}, 
+                UPDATE_INPUTS.USER
+            );
         }else{ // error messages
             $.notify(response_error.data.responseText, "error");
         }
@@ -78,6 +84,13 @@ $(function (){
         // Success message
         if (response){
             $.notify(response.msg, "success");
+            cleanSelect(MODAL_REMOVE_USER_INPUT);
+            update_html( 
+                $(CURRENT_PAGE_ID).val(), 
+                UPDATE_TYPE.DELETE, 
+                response.userId, 
+                UPDATE_INPUTS.USER
+            );
         }else{ // error messages
             $.notify(response_error.data.responseText, "error");
         }

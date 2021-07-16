@@ -98,3 +98,18 @@ const DELETE_TEAM_SUBMIT_BTN = "#delete-team-submit-btn";
 const TEAM_SELECT_INPUT_ID = "#listOfTeams";
 
 const MANAGE_TABLE_ID = "#manage-table";
+const CURRENT_PAGE_ID = "#current-page";
+
+const UPDATE_TYPE = {ADD: "ADD", DELETE: "DELETE"};
+const UPDATE_INPUTS = {USER: "USER", TEAM: "TEAM", SPRINT: "SPRINT"};
+
+// find a way to create this in only one place. // also in db constants
+const PAGES = {
+    STATISTICS: "statistics",
+    WORK_ITEMS: "workItems",
+    UNIQUE_WORK_ITEM: "workItem",
+    BACKLOG: "backlog",
+    MANAGE_TEAM: "manageTeam",
+    MANAGE_USER: "manageUser",
+    MANAGE_SPRINT: "manageSprint", 
+}

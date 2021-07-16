@@ -32,6 +32,7 @@ router.get("/", async function (req, res) {
     assignedUsers: undefined,
     teamWorkItem: undefined,
     addUserModal: undefined,
+    currentPage: undefined,
     createProjectFormRedirect: "/",
     project_rediret: BASE_ROUTE,
     stylesPath: dashboardPath["styles"],

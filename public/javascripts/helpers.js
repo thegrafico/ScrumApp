@@ -456,5 +456,65 @@ function removeAllDisableAttr(selectElement){
  * @param {String} inputId 
  */
 function cleanInput(inputId){
-    $(inputId).text(null);
+    $(inputId).val('');
+}
+
+/**
+ * clean select opction
+ * @param {String} selectId 
+ */
+function cleanSelect(selectId){
+    $(selectId).prop('selectedIndex',0);
+}
+
+/**
+ * Update a select opction
+ * @param {String} selectId - id of the select option
+ * @param updateType.ADD  add the new value to the select
+ * @param updateType.DELETE remove the value from the select
+ * @param valueToUpdate.value - value to add or remove
+ * @param valueToUpdate.text - text value for select
+ */
+function updateSelectOption(selectId, updateType, valueToUpdate){
+    
+    if (updateType == UPDATE_TYPE.ADD){
+        $(selectId).append(new Option(valueToUpdate.text, valueToUpdate.value));
+    }else{
+        $(`${selectId} option[value=${valueToUpdate}]`).remove();
+    }
+}
+
+
+/**
+ * Update HMTL after a POST request was successful
+ * @param {String} currentPage 
+ * @param {String} updateType 
+ * @param {Any} valueToUpdate 
+ * @param {Object} inputType 
+ */
+function update_html(currentPage, updateType, valueToUpdate, inputType){
+    switch (currentPage){
+        case "statistics":
+            updateStatisticsHtml(updateType, valueToUpdate);
+            break;
+        case "workItems":
+
+            if (inputType === UPDATE_INPUTS.USER){
+                updateSelectOption(WORK_ITEM["user"], updateType, valueToUpdate);
+                updateSelectOption(MODAL_REMOVE_USER_INPUT, updateType, valueToUpdate);
+            }
+
+            if (inputType === UPDATE_INPUTS.TEAM){
+                updateSelectOption(WORK_ITEM["team"], updateType, valueToUpdate);
+                updateSelectOption(INPUT_TEAM_USERS, updateType, valueToUpdate);
+            } 
+            
+            if (inputType === UPDATE_INPUTS.SPRINT){
+                updateSelectOption(WORK_ITEM["sprint"], updateType, valueToUpdate);
+            }
+
+            break;
+        default:
+            break;
+    }
 }

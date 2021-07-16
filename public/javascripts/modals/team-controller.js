@@ -58,11 +58,16 @@ $(function (){
         const response = await make_post_request(API_LINK_CREATE_TEAM, data).catch(err => {
             response_error = err;
         });
-
         // Success message
         if (response){
-            $.notify(response, "success");
+            $.notify(response.msg, "success");
             $(CLOSE_BTN_CREATE_TEAM).click();
+            update_html( 
+                $(CURRENT_PAGE_ID).val(), 
+                UPDATE_TYPE.ADD, 
+                {"value": response.team.id, "text": response.team.name},
+                UPDATE_INPUTS.TEAM
+            );
         }else{ // error messages
             $.notify(response_error.data.responseText, "error");
         }
@@ -91,6 +96,12 @@ $(function (){
         if (response){
             $.notify("Team deleted!", "success");
             $(CLOSE_BTN_DELETE_TEAM).click();
+            update_html( 
+                $(CURRENT_PAGE_ID).val(), 
+                UPDATE_TYPE.DELETE, 
+                response.teamId,
+                UPDATE_INPUTS.TEAM
+            );
         }else{
             $.notify(response_error.data.responseText, "error");
         }

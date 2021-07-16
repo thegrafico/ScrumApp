@@ -128,7 +128,7 @@ router.get("/api/:id/getTeamUsers/:teamId", middleware.isUserInProject, async fu
 // ================= POST REQUEST ==============
 
 /**
- * METHOD: POST - Create new work item
+ * METHOD: POST - Create team
  */
 router.post("/api/:id/newTeam", middleware.isUserInProject, async function (req, res) {
 
@@ -193,7 +193,9 @@ router.post("/api/:id/newTeam", middleware.isUserInProject, async function (req,
     
     // TODO: update users when functionality is completed. For now is just empty string
     project.teams.push({"name": teamName, users: []}); 
-
+    
+    let team = project.teams.filter( each => { return each["name"] === teamName})[0];
+   
     await project.save().catch(err => {
         error_message = err;
         console.log("Error adding the team to the project: ", err);
@@ -204,7 +206,7 @@ router.post("/api/:id/newTeam", middleware.isUserInProject, async function (req,
         return;
     }
     
-    res.status(200).send("Successfully added team to the project");
+    res.status(200).send({msg: "Successfully added team to the project", team: { name: teamName, id: team["_id"]}});
 });
 
 
@@ -230,7 +232,7 @@ router.post("/api/:id/deleteTeam", middleware.isUserInProject, async function (r
             return;
         }
 
-        res.status(200).send("Team removed successfully!");
+        res.status(200).send({msg: "Team removed successfully!", teamId: teamId});
         return;
     }else{
         res.status(400).send("Oops, it looks like this is an invalid team.");
@@ -274,7 +276,7 @@ router.post("/api/:id/removeWorkItems", middleware.isUserInProject, async functi
 /**
  * METHOD: POST - REMOVE USERS FROM TEAM
  */
- router.post("/api/:id/removeUsersFromTeam", middleware.isUserInProject, async function (req, res) {
+router.post("/api/:id/removeUsersFromTeam", middleware.isUserInProject, async function (req, res) {
     
     console.log("Getting request to remove work items...");
     
@@ -471,7 +473,7 @@ router.post("/api/:id/addUserToProject", middleware.isUserInProject, async funct
 /**
  * METHOD: POST - REMOVE USERS FROM PROJECT
  */
- router.post("/api/:id/deleteUser", middleware.isUserInProject, async function (req, res) {
+router.post("/api/:id/deleteUser", middleware.isUserInProject, async function (req, res) {
     
     console.log("Getting request to remove user from project...");
 

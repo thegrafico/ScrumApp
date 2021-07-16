@@ -22,6 +22,7 @@ const {
     WORK_ITEM_ICONS,
     WORK_ITEM_STATUS,
     PRIORITY_POINTS,
+    PAGES,
 } = require('../dbSchema/Constanst');
 
 // ===================================================
@@ -83,6 +84,7 @@ router.get("/:id/planing/backlog", middleware.isUserInProject, async function (r
         "addUserModal": true,
         "workItemType": WORK_ITEM_ICONS,
         "workItems": workItems,
+        "currentPage": PAGES.BACKLOG,
         "userTeam": userBestTeam,
         "priorityPoints":PRIORITY_POINTS,
         "stylesPath": backlogPath["styles"],

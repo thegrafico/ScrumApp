@@ -73,6 +73,16 @@ module.exports.PRIORITY_POINTS = {
     "Critical": 5,
 };
 
+module.exports.PAGES = {
+    STATISTICS: "statistics",
+    WORK_ITEMS: "workItems",
+    UNIQUE_WORK_ITEM: "workItem",
+    BACKLOG: "backlog",
+    MANAGE_TEAM: "manageTeam",
+    MANAGE_USER: "manageUser",
+    MANAGE_SPRINT: "manageSprint", 
+}
+
 /**
  * Capitalize a String
  * @param {String} s 

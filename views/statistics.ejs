@@ -72,8 +72,9 @@
 
 
                         <div class="mt-2">
-                            <p id="NumberOfMembers"> <%=numberOfMember%></p>
-
+                            <p id="number-of-members-text"> <%=numberOfMemberText%></p>
+                            <input type="hidden" name="numberOfUsers" id="number-of-members-value" value="<%=numberOfMember%>">
+                            
                             <ul class="member-list list-unstyled">
                                 <li> <span id="memberOfMonth"> Member of the month: </span> <span
                                         id="memberOfMonthName">Raul Pichardo</span> </li>
@@ -84,23 +85,26 @@
                                             <span>
                                                 <a href="#" id="addUserBtn" role="button" data-toggle="modal"
                                                     data-target="#create-user">
-                                                    Invite <i class="fas fa-user-plus memberCardIcon"></i> </a>
+                                                    Invite <i class="fas fa-user-plus memberCardIcon"></i> 
+                                                </a>
                                             </span>
                                         </div>
 
                                         <div class="col">
                                             <span>
                                                 <a href="" id="removeUserBtn" role="button" data-toggle="modal"
-                                                    data-target="#remove-user"> Remove <i
-                                                        class="fas fa-trash memberCardIcon"></i> </a>
+                                                    data-target="#remove-user"> 
+                                                    Remove <i class="fas fa-trash memberCardIcon"></i> 
+                                                </a>
                                             </span>
 
                                         </div>
 
                                         <div class="col">
                                             <span>
-                                                <a href="#" id="viewPerformancesBtn"> Performances <i
-                                                        class="fas fa-chart-pie memberCardIcon"></i> </a>
+                                                <a href="#" id="viewPerformancesBtn"> 
+                                                    Performances <i class="fas fa-chart-pie memberCardIcon"></i> 
+                                                </a>
                                             </span>
                                         </div>
                                     </div>

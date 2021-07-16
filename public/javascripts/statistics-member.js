@@ -11,6 +11,9 @@ const removeMemberModalId = "#remove-user";
 
 const BTN_SAVE = "#saveStatusBtn";
 
+const NUMBERS_OF_MEMBERS_TEXT = "#number-of-members-text";
+const NUMBER_OF_MEMBERS_VALUE = "#number-of-members-value";
+
 const statusSelectId = "#projectStatus";
 CHANGES = {
     "status": null,
@@ -65,5 +68,41 @@ $(function () {
         $(emailToRemove).val('');
     });
     // ===================================================================================================
-
 });
+
+/**
+ * 
+ * @param updateType.ADD - action to add the members
+ * @param updateType.DELETE - action to remove a member
+ * @param {String} userId - if action delete, then userId should be populated 
+ * @returns 
+ */
+function updateStatisticsHtml(updateType, valueToUpdate){
+    let currentNumberOfMembers = $(NUMBER_OF_MEMBERS_VALUE).val();
+
+    if (_.isEmpty(currentNumberOfMembers) || isNaN(currentNumberOfMembers)){
+        return "Invalid number of users in project";
+    }
+
+    currentNumberOfMembers = parseInt(currentNumberOfMembers);
+
+    if (updateType === UPDATE_TYPE.ADD){
+        currentNumberOfMembers++;
+        $(NUMBERS_OF_MEMBERS_TEXT).text(`${currentNumberOfMembers} members`);
+        $(NUMBER_OF_MEMBERS_VALUE).val(currentNumberOfMembers);
+        updateSelectOption(MODAL_REMOVE_USER_INPUT, UPDATE_TYPE.ADD, valueToUpdate);
+
+    }else if(updateType === UPDATE_TYPE.DELETE){
+
+        // updating text
+        if (currentNumberOfMembers - 1 <= 1){
+            $(NUMBERS_OF_MEMBERS_TEXT).text(`One man army`);
+            $(NUMBER_OF_MEMBERS_VALUE).val(1);
+        }else{
+            $(NUMBERS_OF_MEMBERS_TEXT).text(`${--currentNumberOfMembers} members`);
+            $(NUMBER_OF_MEMBERS_VALUE).val(currentNumberOfMembers);
+        }
+
+        updateSelectOption(MODAL_REMOVE_USER_INPUT, UPDATE_TYPE.DELETE, valueToUpdate);
+    }
+}

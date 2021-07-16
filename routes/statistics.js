@@ -17,7 +17,8 @@ let router                  = express.Router();
 const { statisticsPath }    = require("../middleware/includes");
 
 const {
-    UNASSIGNED
+    UNASSIGNED,
+    PAGES,
 } = require('../dbSchema/Constanst');
 // ===================================================
 
@@ -57,6 +58,7 @@ router.get("/:id", middleware.isUserInProject, async function (req, res) {
         "currentSprint": "Not sprint found",
         "activeTab": "Statistics",
         "tabTitle": "Statistics",
+        "currentPage": PAGES.STATISTICS,
         "assignedUsers": users,
         "teamWorkItem": teams,
         "addUserModal": true,
@@ -65,7 +67,9 @@ router.get("/:id", middleware.isUserInProject, async function (req, res) {
     };
 
     params["projectOwner"] = await getProjectOwnerNameById(projectInfo["author"]);
-    params["numberOfMember"] = await getNumberOfUsers(projectInfo.users);
+    params["numberOfMemberText"] = await getNumberOfUsers(projectInfo.users);
+    params["numberOfMember"] = projectInfo.users.length;
+
 
     res.render("statistics", params);
 });
