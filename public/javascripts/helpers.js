@@ -498,7 +498,7 @@ function update_html(currentPage, updateType, valueToUpdate, inputType){
             updateStatisticsHtml(updateType, valueToUpdate);
             break;
         case "workItems":
-
+            // TODO: Remove user form table? or just leave it to update the page?
             if (inputType === UPDATE_INPUTS.USER){
                 updateSelectOption(WORK_ITEM["user"], updateType, valueToUpdate);
                 updateSelectOption(MODAL_REMOVE_USER_INPUT, updateType, valueToUpdate);

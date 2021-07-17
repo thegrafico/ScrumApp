@@ -10,6 +10,9 @@ const _                     = require("lodash");
 const mongoose              = require("mongoose");
 
 const ObjectId = mongoose.Schema.ObjectId;
+const OBJECT_ID = mongoose.Types.ObjectId;
+
+const {UNASSIGNED} = require('./Constanst');
 
 let projectSchema = new mongoose.Schema({
     author: {
@@ -235,20 +238,34 @@ projectSchema.methods.removeUser = async function(userId) {
             return reject({msg: "User is not in project", userId: null});
         }
 
+        let response = {userId: null};
+
+        // getting work items since user information is stored here
+        let err_msg = null;
+        const wasUpdatedWorkItems = await workItemCollection.updateMany( { projectId: father._id, "assignedUser.id": OBJECT_ID(userId) },
+            {$set: {"assignedUser.name": UNASSIGNED.name, "assignedUser.id": null}})
+            .catch(err =>{
+                err_msg = err;
+            }
+        );
+
+        // delete first work items
+        if (err_msg || _.isUndefined(wasUpdatedWorkItems)){
+            response['msg'] = "Sorry, there was a problem deleting all user information from the work items.";
+            return reject(response);
+        }
+        
         // remove the user
         father.users.pull(userId);
 
-        let wasSaved = await father.save().catch( err =>{
-            console.error(err);
-        })
+        father.save().then( (doc) => {
+            return resolve({msg: "User was removed successfully!", userId: userId});
+        }).catch( err =>{
+            response["msg"] = "Sorry, There was an error removing the user from project. Please try later"
+            return reject( response );
+        });
 
-        if (_.isUndefined(wasSaved)){
-            return reject( {msg: "There was an error removing the user from the project", userId:null});
-        }
-
-        return resolve({msg: "User was removed successfully!", userId: userId});
     });
-
 };
 
 module.exports = mongoose.model("Projects", projectSchema);

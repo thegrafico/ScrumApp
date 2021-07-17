@@ -17,6 +17,7 @@ const { managePath }           = require("../middleware/includes");
 
 
 const {
+    PAGES,
     UNASSIGNED, 
     EMPTY_SPRINT,
     WORK_ITEM_ICONS,
@@ -73,6 +74,7 @@ router.get("/:id/manageTeam", middleware.isUserInProject, async function (req, r
         "projectUsers": users,
         "assignedUsers": users,
         "addUserModal": true,
+        "currentPage": PAGES.MANAGE_TEAM,
         "userIds": userIds,
         "userTeam": userBestTeam,
         "stylesPath": managePath["styles"],

@@ -95,9 +95,7 @@ $(function (){
             $.notify(response_error.data.responseText, "error");
         }
     });
-
-
-    // TODO: fix this
+    
     // clean the project modal
     $(MODAL_ADD_USER_ID).on('shown.bs.modal', function (e) {
         $(MODAL_USER_EMAIl_INPUT).val(''); 

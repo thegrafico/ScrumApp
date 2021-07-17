@@ -31,6 +31,13 @@ $(function () {
             $.notify(response_error.data.responseText, "error");
         }
     });
+
+    // WHEN the user opens the modal, select the current team to be the team to create the work item
+    $(createWorkItemModal).on('shown.bs.modal', function () {
+        let currentSelectedTeam = $(FILTER_BY_TEAM_INPUT).val();
+        
+        $(WORK_ITEM["team"]).val(currentSelectedTeam).change();
+    });
 });
 
 /**
