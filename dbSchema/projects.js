@@ -270,6 +270,7 @@ projectSchema.methods.removeUser = async function(userId) {
     });
 };
 
+
 /**
  * Remove user from project
  * @param {String} userId - userId
@@ -314,28 +315,5 @@ projectSchema.methods.removeTeam = async function(teamId) {
 
     });
 };
-
-// /**
-//  * Remove user from project
-//  * @param {String} userId - userId
-//  * @returns {Promise}
-// */
-// projectSchema.methods.testTransation = async function(userId) {
-    
-//     const father = this;
-
-//     const session = await mongoose.startSession();
-    
-//     await session.withTransaction(async () => {
-      
-//         const workItems = await workItemCollection
-//         .findOne({ projectId: father._id, "assignedUser.id": OBJECT_ID(userId) })
-//         .session(session);
-
-//         console.log(workItems);
-//     });
-      
-//     session.endSession();
-// };
 
 module.exports = mongoose.model("Projects", projectSchema);

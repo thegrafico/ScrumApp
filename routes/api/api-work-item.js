@@ -169,7 +169,7 @@ router.post("/api/:id/newWorkItem", middleware.isUserInProject, async function (
         let teamId = newWorkItem["teamId"];
         let user = addUserToTeam ? newWorkItem["assignedUser"]: null;
         
-        if (user.id && teamId){
+        if (user && user.id && teamId){
             await projectInfo.addUserToTeam(user.id.toString(), teamId.toString() ).catch(err => {
                 console.error(err);   
             });

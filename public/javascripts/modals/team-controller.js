@@ -59,8 +59,6 @@ $(function (){
             response_error = err;
         });
 
-        console.log(response);
-        console.log(response_error);
         // Success message
         if (response){
             $.notify(response.msg, "success");

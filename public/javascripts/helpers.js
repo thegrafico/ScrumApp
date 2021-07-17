@@ -478,7 +478,7 @@ function cleanSelect(selectId){
 function updateSelectOption(selectId, updateType, valueToUpdate){
     
     if (updateType == UPDATE_TYPE.ADD){
-        $(selectId).append(new Option(valueToUpdate.text, valueToUpdate.value));
+        $(selectId).append(new Option(valueToUpdate.text, valueToUpdate.value, false, false)).trigger("change");
     }else{
         $(`${selectId} option[value=${valueToUpdate}]`).remove();
     }
@@ -506,7 +506,7 @@ function update_html(currentPage, updateType, valueToUpdate, inputType){
 
             if (inputType === UPDATE_INPUTS.TEAM){
                 updateSelectOption(WORK_ITEM["team"], updateType, valueToUpdate);
-                updateSelectOption(INPUT_TEAM_USERS, updateType, valueToUpdate);
+                updateSelectOption(TEAM_SELECT_INPUT_ID, updateType, valueToUpdate);
             } 
             
             if (inputType === UPDATE_INPUTS.SPRINT){
