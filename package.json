@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "start": "cross-env NODE_ENV=production node ./bin/www",
-    "dev": "cross-env NODE_ENV=development nodemon ./bin/www"
+    "dev": "cross-env NODE_ENV=development nodemon ./bin/www",
+    "run-rs": "run-rs npm ./bin/www"
   },
   "dependencies": {
     "body-parser": "^1.18.3",

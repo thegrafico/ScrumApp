@@ -148,11 +148,13 @@ router.post("/api/:id/newTeam", middleware.isUserInProject, async function (req,
         teamUsers,
     } = req.body;
 
+    let response = {team: null};
     let error_message = null;
 
     // first verify that team Name is string || not undefined or null
     if (!_.isString(teamName)) {
-        res.status(400).send("The name of the team is undefined.");
+        response["msg"] = "The name of the team is undefined.";
+        res.status(400).send(response);
         return;
     }
     
@@ -171,7 +173,8 @@ router.post("/api/:id/newTeam", middleware.isUserInProject, async function (req,
     }
 
     if (error_message){
-        res.status(400).send(error_message);
+        response["msg"] = error_message;
+        res.status(400).send(response);
         return;
     }
 
@@ -187,7 +190,8 @@ router.post("/api/:id/newTeam", middleware.isUserInProject, async function (req,
     }
 
     if (nameIsInProject){
-        res.status(400).send("A team with the same name already exist. (Case sensitive is ignored).");
+        response["msg"] = "A team with the same name already exist. (Case sensitive is ignored).";
+        res.status(400).send(response);
         return;
     }
     
@@ -202,11 +206,15 @@ router.post("/api/:id/newTeam", middleware.isUserInProject, async function (req,
     });
 
     if (error_message){
-        res.status(500).send(`Error adding the team to the project: ${error_message}`);
+        response["msg"] = `Error adding the team to the project: ${error_message}`;
+        res.status(500).send(response);
         return;
     }
-    
-    res.status(200).send({msg: "Successfully added team to the project", team: { name: teamName, id: team["_id"]}});
+
+    response["msg"] = "Successfully added team to the project.";
+    response["team"] = { name: teamName, id: team["_id"]};
+
+    res.status(200).send(response);
 });
 
 
@@ -219,23 +227,38 @@ router.post("/api/:id/deleteTeam", middleware.isUserInProject, async function (r
 
     const {teamId} = req.body;
 
+    let response = {"teamId": null};
+
     // is a string
-    if (_.isString(projectId) && _.isString(teamId)){
-    
+    if (_.isString(projectId) && _.isString(teamId) && !_.isEmpty(teamId)){
         // Add the comment to the DB
-        const result = await projectCollection.findByIdAndUpdate(projectId, {$pull: {"teams": {"_id":teamId}}}).catch(
-            err => console.error("Error getting work items: ", err)
+        const projectInfo = await projectCollection.findById(projectId).catch(
+            err => console.error("Error getting project information: ", err)
         );
 
-        if (!result){
-            res.status(400).send("Sorry, There was a problem removing the team. Please try later.");
+        // validate project
+        if (_.isUndefined(projectInfo) || _.isNull(projectInfo)){
+            response["msg"] = "Sorry, There was a problem getting the project information. Please try leter.";
+            res.status(400).send(response);
             return;
         }
 
-        res.status(200).send({msg: "Team removed successfully!", teamId: teamId});
+        let err_response = null;
+        let teamWasRemovedResponse = await projectInfo.removeTeam(teamId).catch(err =>{
+            err_response = err;
+        });
+
+        // validate response
+        if (!_.isNull(err_response) || _.isUndefined(teamWasRemovedResponse)){
+            res.status(400).send(err_response);
+            return;
+        }
+
+        res.status(200).send(teamWasRemovedResponse);
         return;
     }else{
-        res.status(400).send("Oops, it looks like this is an invalid team.");
+        response["msg"] = "Oops, it looks like this is an invalid team.";
+        res.status(400).send(response);
         return;
     }
 });
@@ -407,13 +430,13 @@ router.post("/api/:id/addUserToProject", middleware.isUserInProject, async funct
     const projectId = req.params.id;
     
     let  { userEmail } = req.body; 
-
+    let response = { user: null};
+    
     if (!_.isString(userEmail) || _.isEmpty(userEmail)){
-        res.status(400).send("Invalid user was received.");
+        response["msg"] = "Invalid user was received.";
+        res.status(400).send(response);
         return;
     }
-
-    // const userWasAdded = await projectCollection.findByIdAndUpdate(projectId, {$push: {users: userId}})
 
     // getting project
     const projectInfo = await projectCollection.findById(projectId).catch(err => {
@@ -422,7 +445,8 @@ router.post("/api/:id/addUserToProject", middleware.isUserInProject, async funct
 
     // verify project
     if (!projectInfo){
-        res.status(400).send("Oops, There was a getting the user information.");
+        response["msg"] = "Oops, There was a getting the user information.";
+        res.status(400).send(response);
         return;
     }
 
@@ -433,21 +457,13 @@ router.post("/api/:id/addUserToProject", middleware.isUserInProject, async funct
 
     // verify if data is good
     if (_.isUndefined(userInfo) || _.isNull(userInfo)){
-        res.status(400).send("Sorry, There was a problem getting user information");
+        response["msg"] = "Sorry, We cannot find that user in our records.";
+        res.status(400).send(response);
         return;
     }
 
     // verify if the user is already in the project
     let isUserInProject = projectInfo.isUserInProject(userInfo._id.toString());
-
-    let response = {
-        msg: "Successfully added user to the project", 
-        user: {
-            fullName: userInfo["fullName"],
-            email: userInfo["email"],
-            id: userInfo["_id"]
-        }
-    };
 
     if  (isUserInProject){
         response["msg"] = "User is already in project!";
@@ -463,9 +479,20 @@ router.post("/api/:id/addUserToProject", middleware.isUserInProject, async funct
     });
 
     if (_.isUndefined(projectWasSaved) || _.isNull(projectWasSaved)){
-        res.status(400).send("Sorry, there was a problem adding the user to the project.");
+        response["msg"] = "Sorry, there was a problem adding the user to the project.";
+        res.status(400).send(response);
         return;
     }
+
+    // adding user to response
+    response = {
+        msg: "User was added to the project!",
+        user: {
+            fullName: userInfo["fullName"],
+            email: userInfo["email"],
+            id: userInfo["_id"]
+        }
+    };
 
     res.status(200).send(response);
 });
@@ -473,16 +500,19 @@ router.post("/api/:id/addUserToProject", middleware.isUserInProject, async funct
 /**
  * METHOD: POST - REMOVE USERS FROM PROJECT
  */
-router.post("/api/:id/deleteUser", middleware.isUserInProject, async function (req, res) {
+router.post("/api/:id/deleteUserFromProject", middleware.isUserInProject, async function (req, res) {
     
     console.log("Getting request to remove user from project...");
 
     const projectId = req.params.id;
     
     let  { userId } = req.body; 
+    
+    let response = {userId: userId}
 
     if (!_.isString(userId) || _.isEmpty(userId)){
-        res.status(400).send("Invalid user was received.");
+        response["msg"] = "Invalid user was received.";
+        res.status(400).send(response);
         return;
     }
 
@@ -493,18 +523,20 @@ router.post("/api/:id/deleteUser", middleware.isUserInProject, async function (r
 
     // verify project
     if (!projectInfo){
-        res.status(400).send("Oops, There was a getting the user information.");
+        response["msg"] = "Oops, There was a getting the user information.";
+        res.status(400).send(response);
         return;
     }
 
     // prevent owner removing himself.
     if (userId.toString() == projectInfo["author"].toString()){
-        res.status(400).send("Sorry, The owner of the team cannot be removed from the team.");
+        response["msg"] = "Sorry, The owner of the team cannot be removed from the team."
+        res.status(400).send(response);
         return;
     }
 
     let response_error = null;
-    let response = await projectInfo.removeUser(userId).catch(err => {
+    response = await projectInfo.removeUser(userId).catch(err => {
         response_error = err;
     });
 

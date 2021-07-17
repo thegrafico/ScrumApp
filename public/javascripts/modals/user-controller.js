@@ -45,14 +45,17 @@ $(function (){
         if (response){
             $.notify(response.msg, "success");
             cleanInput(MODAL_USER_EMAIl_INPUT);
-            update_html( 
-                $(CURRENT_PAGE_ID).val(),
-                UPDATE_TYPE.ADD, 
-                {"value": response.user.id, "text": response.user.fullName}, 
-                UPDATE_INPUTS.USER
-            );
+
+            if (response.user){
+                update_html( 
+                    $(CURRENT_PAGE_ID).val(),
+                    UPDATE_TYPE.ADD, 
+                    {"value": response.user.id, "text": response.user.fullName}, 
+                    UPDATE_INPUTS.USER
+                );
+            }
         }else{ // error messages
-            $.notify(response_error.data.responseText, "error");
+            $.notify(response_error.data.responseJSON.msg, "error");
         }
     });
 
@@ -73,7 +76,7 @@ $(function (){
             return;
         }
 
-        const API_LINK_REMOVE_USER_FROM_PROJECT = `/dashboard/api/${projectId}/deleteUser`;
+        const API_LINK_REMOVE_USER_FROM_PROJECT = `/dashboard/api/${projectId}/deleteUserFromProject`;
         const data = {"userId": userId};
 
         let response_error = null;
@@ -92,10 +95,10 @@ $(function (){
                 UPDATE_INPUTS.USER
             );
         }else{ // error messages
-            $.notify(response_error.data.responseText, "error");
+            $.notify(response_error.data.responseJSON.msg, "error");
         }
     });
-    
+
     // clean the project modal
     $(MODAL_ADD_USER_ID).on('shown.bs.modal', function (e) {
         $(MODAL_USER_EMAIl_INPUT).val(''); 

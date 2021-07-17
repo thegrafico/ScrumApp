@@ -58,6 +58,9 @@ $(function (){
         const response = await make_post_request(API_LINK_CREATE_TEAM, data).catch(err => {
             response_error = err;
         });
+
+        console.log(response);
+        console.log(response_error);
         // Success message
         if (response){
             $.notify(response.msg, "success");
@@ -69,7 +72,7 @@ $(function (){
                 UPDATE_INPUTS.TEAM
             );
         }else{ // error messages
-            $.notify(response_error.data.responseText, "error");
+            $.notify(response_error.data.responseJSON.msg, "error");
         }
 
     });
@@ -79,7 +82,9 @@ $(function (){
     
         let selectedTeamId = $("#listOfTeams").val();
 
-        if (selectedTeamId == "0" || !_.isString(selectedTeamId)){
+        console.log(selectedTeamId);
+
+        if (selectedTeamId == "0" || !_.isString(selectedTeamId) || _.isEmpty(selectedTeamId)){
             $.notify("Invalid team.", "error");
             return;
         }
@@ -94,7 +99,7 @@ $(function (){
         });
 
         if (response){
-            $.notify("Team deleted!", "success");
+            $.notify(response.msg, "success");
             $(CLOSE_BTN_DELETE_TEAM).click();
             update_html( 
                 $(CURRENT_PAGE_ID).val(), 
@@ -103,7 +108,7 @@ $(function (){
                 UPDATE_INPUTS.TEAM
             );
         }else{
-            $.notify(response_error.data.responseText, "error");
+            $.notify(response_error.data.responseJSON.msg, "error");
         }
     });
 

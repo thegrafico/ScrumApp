@@ -196,6 +196,7 @@ projectSchema.methods.addUserToTeam = async function(userId, teamId) {
     return true;
 };
 
+
 /**
  * get all users for the team
  * @param {String} teamId - id of the team to add the user
@@ -242,7 +243,8 @@ projectSchema.methods.removeUser = async function(userId) {
 
         // getting work items since user information is stored here
         let err_msg = null;
-        const wasUpdatedWorkItems = await workItemCollection.updateMany( { projectId: father._id, "assignedUser.id": OBJECT_ID(userId) },
+        const wasUpdatedWorkItems = await workItemCollection.updateMany( 
+            { projectId: father._id, "assignedUser.id": OBJECT_ID(userId) },
             {$set: {"assignedUser.name": UNASSIGNED.name, "assignedUser.id": null}})
             .catch(err =>{
                 err_msg = err;
@@ -267,5 +269,73 @@ projectSchema.methods.removeUser = async function(userId) {
 
     });
 };
+
+/**
+ * Remove user from project
+ * @param {String} userId - userId
+ * @returns {Promise}
+*/
+projectSchema.methods.removeTeam = async function(teamId) {
+    
+    const father = this;
+    return new Promise( async function (resolve, reject){
+
+        if (!father.isTeamInProject(teamId)){
+            return reject({msg: "Team is not in project", teamId: null});
+        }
+
+        let response = {teamId: null};
+
+        // removing team from work items
+        let err_msg = null;
+        const wasUpdatedWorkItems = await workItemCollection
+        .updateMany( 
+            { projectId: father._id, teamId: OBJECT_ID(teamId) },
+            {$set: {teamId: null}}
+        ).catch(err => {
+            err_msg = err;
+        });
+
+        // delete first work items
+        if (err_msg || _.isUndefined(wasUpdatedWorkItems)){
+            response['msg'] = "Sorry, there was a problem removing the team from the work items.";
+            return reject(response);
+        }
+
+        // removing the team from the project
+        father.teams.pull({ _id: teamId});
+
+        father.save().then( (doc) => {
+            return resolve({msg: "Team was removed successfully!", teamId: teamId});
+        }).catch( err =>{
+            response["msg"] = "Sorry, There was an error removing the team from project. Please try later."
+            return reject( response );
+        });
+
+    });
+};
+
+// /**
+//  * Remove user from project
+//  * @param {String} userId - userId
+//  * @returns {Promise}
+// */
+// projectSchema.methods.testTransation = async function(userId) {
+    
+//     const father = this;
+
+//     const session = await mongoose.startSession();
+    
+//     await session.withTransaction(async () => {
+      
+//         const workItems = await workItemCollection
+//         .findOne({ projectId: father._id, "assignedUser.id": OBJECT_ID(userId) })
+//         .session(session);
+
+//         console.log(workItems);
+//     });
+      
+//     session.endSession();
+// };
 
 module.exports = mongoose.model("Projects", projectSchema);
