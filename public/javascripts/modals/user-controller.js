@@ -9,6 +9,8 @@ const MODAL_REMOVE_USER_ID = "#delete-user-modal";
 const MODAL_REMOVE_USER_INPUT = "#modal-remove-user-select-user";
 const MODAL_REMOVE_SUBMIT_BTN = "#modal-delete-user-submit-btn";
 
+const TRASH_BTN_REMOVE_USER_PROJECT = "#trashBtnManageUser";
+
 /**
  * This function is fire as soon as the DOM element is ready to process JS logic code
  * Same as $(document).ready()...
@@ -95,6 +97,41 @@ $(function (){
                 UPDATE_INPUTS.USER
             );
         }else{ // error messages
+            $.notify(response_error.data.responseJSON.msg, "error");
+        }
+    });
+
+    // TRASH BTN EVENT 
+    $(TRASH_BTN_REMOVE_USER_PROJECT).on("click", async function(){
+    
+        let checkedElements = getCheckedElements(TABLE_ROW_CHECKBOX_ELEMENT_CHECKED);
+        
+        // check if not empty
+        if (!_.isArray(checkedElements) || _.isEmpty(checkedElements) ){
+            $.notify("Invalid users were selected", "error");
+            return;
+        }
+
+        const projectId = $(PROJECT_ID).val();
+
+        const data = {"userIds": checkedElements};
+        const API_LINK_REMOVE_USERS_FROM_PROJECT = `/dashboard/api/${projectId}/deleteUsersFromProject/`
+
+        let response_error = undefined;
+        const response = await make_post_request(API_LINK_REMOVE_USERS_FROM_PROJECT, data).catch(err => {
+            response_error = err;
+        });
+
+        if (response){
+            removeCheckedElement();
+            
+            $.notify(response.msg, "success");
+
+            removeDisableAttr(SELECT_USERS_PROJECT_INPUT, checkedElements);
+            
+            // disable the trash button again
+            enableTrashButton(false);
+        }else{
             $.notify(response_error.data.responseJSON.msg, "error");
         }
     });

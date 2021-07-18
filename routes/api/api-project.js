@@ -498,7 +498,7 @@ router.post("/api/:id/addUserToProject", middleware.isUserInProject, async funct
 });
 
 /**
- * METHOD: POST - REMOVE USERS FROM PROJECT
+ * METHOD: POST - REMOVE A USER FROM PROJECT
  */
 router.post("/api/:id/deleteUserFromProject", middleware.isUserInProject, async function (req, res) {
     
@@ -523,7 +523,7 @@ router.post("/api/:id/deleteUserFromProject", middleware.isUserInProject, async 
 
     // verify project
     if (!projectInfo){
-        response["msg"] = "Oops, There was a getting the user information.";
+        response["msg"] = "Oops, There was a problem getting the user information.";
         res.status(400).send(response);
         return;
     }
@@ -537,6 +537,57 @@ router.post("/api/:id/deleteUserFromProject", middleware.isUserInProject, async 
 
     let response_error = null;
     response = await projectInfo.removeUser(userId).catch(err => {
+        response_error = err;
+    });
+
+    if (_.isUndefined(response)){
+        res.status(400).send(response_error);
+    }
+
+    res.status(200).send(response);
+});
+
+/**
+ * METHOD: POST - REMOVE USERS FROM PROJECT
+ */
+router.post("/api/:id/deleteUsersFromProject", middleware.isUserInProject, async function (req, res) {
+    
+    console.log("Getting request to remove user from project...");
+
+    const projectId = req.params.id;
+    
+    let  { userIds } = req.body; 
+    
+    let response = {userIds: userIds}
+
+    // empty, or not array, or not all elements in array are string
+    if (_.isEmpty(userIds) || !_.isArray(userIds) || !userIds.every( each => _.isString(each))){
+        response["msg"] = "Sorry, Invalid users were received.";
+        res.status(400).send(response);
+        return;
+    }
+
+    // getting project
+    const projectInfo = await projectCollection.findById(projectId).catch(err => {
+        console.error(err);
+    });
+
+    // verify project
+    if (!projectInfo){
+        response["msg"] = "Oops, There was problem a getting the user information.";
+        res.status(400).send(response);
+        return;
+    }
+
+    // prevent owner removing himself.
+    if (userIds.any(each => each.toString() == projectInfo["author"].toString()) ){
+        response["msg"] = "Sorry, The owner of the team cannot be removed from the project."
+        res.status(400).send(response);
+        return;
+    }
+
+    let response_error = null;
+    response = await projectInfo.removeUsers(userIds).catch(err => {
         response_error = err;
     });
 

@@ -228,6 +228,14 @@ a:hover {
     width: 8%;
 }
 
+.addIcon{
+    color: green;
+}
+
+.addUserIcon{
+    font-size: 1em;
+    color: green;
+}
 
 /* 
     ================================================================

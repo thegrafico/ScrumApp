@@ -226,8 +226,8 @@ projectSchema.methods.getUsersForTeam = async function(teamId) {
 
 
 /**
- * Remove user from project
- * @param {String} userId - userId
+ * Remove a user from project
+ * @param {String} userId - id of the user
  * @returns {Promise}
 */
 projectSchema.methods.removeUser = async function(userId) {
@@ -269,6 +269,59 @@ projectSchema.methods.removeUser = async function(userId) {
 
     });
 };
+
+/**
+ * Remove users from project
+ * @param {Array} userIds - id of all users
+ * @returns {Promise}
+*/
+projectSchema.methods.removeUsers = async function(userIds) {
+    
+    const father = this;
+    return new Promise( async function (resolve, reject){
+
+        let response = {userIds: userIds};
+
+        if (_.isEmpty(userIds) || !_.isArray(userIds)){
+            response['msg']  = "Invalid users were received";
+            return reject(response);
+        }
+
+        // all Ids must be in the project
+        if ( userIds.any( each => !father.isUserInProject(each)) ){
+            response["msg"] = "Some of the users received are not part of the project.";
+            return reject(response);
+        }
+
+        // getting work items since user information is stored here
+        let err_msg = null;
+        const wasUpdatedWorkItems = await workItemCollection.updateMany( 
+            { projectId: father._id, "assignedUser.id":  { $in: userIds } },
+            {$set: {"assignedUser.name": UNASSIGNED.name, "assignedUser.id": null}})
+            .catch(err =>{
+                err_msg = err;
+            }
+        );
+
+        // delete first work items
+        if (err_msg || _.isUndefined(wasUpdatedWorkItems)){
+            response['msg'] = "Sorry, there was a problem deleting all user information from the work items.";
+            return reject(response);
+        }
+        
+        // remove the user
+        father.users.pull(userId);
+
+        father.save().then( (doc) => {
+            return resolve({msg: "User was removed successfully!", userId: userId});
+        }).catch( err =>{
+            response["msg"] = "Sorry, There was an error removing the user from project. Please try later"
+            return reject( response );
+        });
+
+    });
+};
+
 
 
 /**
