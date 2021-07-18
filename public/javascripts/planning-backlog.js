@@ -26,6 +26,7 @@ $(function () {
                 appendToWotkItemTable(response);
             }else{
                 $.notify("This team does not have any work item yet.", "error");
+                cleanTable(WORK_ITEM_TABLE);
             }
         }else{ // error messages
             $.notify(response_error.data.responseText, "error");

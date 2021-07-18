@@ -315,6 +315,11 @@ function validateFormWorkItem(){
     return true;
 }
 
+function cleanTable(tableId){
+    $(`${tableId} > tbody`).empty();
+    
+}
+
 /**
  * Add data to work item table
  * @param {Array} workItems - array of work items
@@ -327,8 +332,8 @@ function appendToWotkItemTable(workItems){
     }
     
     // clean the table
-    $(`#workItemTable > tbody`).empty();
-
+    cleanTable(WORK_ITEM_TABLE);
+    
     for(let i = 0; i < workItems.length; i++){
         const workItem = workItems[i];
 
@@ -343,12 +348,12 @@ function appendToWotkItemTable(workItems){
 
         let td_id = `<td class="tableColumnID"> ${workItem['itemId']}</td>`;
 
-        let td_type = `
-            <td> <i class="fas  ${WORK_ITEM_ICONS[workItems[i]['type']].icon}"></i> ${workItem['type']}</td>
-        `;
+        // let td_type = `
+        //     <td> <i class="fas  ${WORK_ITEM_ICONS[workItems[i]['type']].icon}"></i> ${workItem['type']}</td>
+        // `;
 
         let td_title = `
-            <td class="openStory"> <a href="workitems/${workItem['_id']}"> ${workItem['title']} </a> </td>
+            <td class="openStory"> <a href="workitems/${workItem['_id']}"> <i class="fas  ${WORK_ITEM_ICONS[workItems[i]['type']].icon}"></i> ${workItem['title']} </a> </td>
         `;
 
         let td_user = `
@@ -380,7 +385,6 @@ function appendToWotkItemTable(workItems){
             ${td_checkbox}
             ${td_order}
             ${td_id}
-            ${td_type}
             ${td_title}
             ${td_user}
             ${td_status}
@@ -389,7 +393,7 @@ function appendToWotkItemTable(workItems){
         </tr>
         `;
 
-        $(`#workItemTable > tbody:last-child`).append(table_row);
+        $(`${WORK_ITEM_TABLE} > tbody:last-child`).append(table_row);
     }
 
 }
