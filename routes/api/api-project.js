@@ -306,9 +306,10 @@ router.post("/api/:id/removeUsersFromTeam", middleware.isUserInProject, async fu
     const projectId = req.params.id;
     
     let  { teamId, userIds } = req.body; // expected array
-
+    let response = {teamId: teamId, userIds: userIds};
     if (!_.isString(teamId) || _.isUndefined(userIds) || !_.isArray(userIds) || _.isEmpty(userIds)){
-        res.status(400).send("Sorry, there was an error with the request. Either cannot find the team or users to remove. ");
+        response["msg"] = "Sorry, there was an error with the request. Either cannot find the team or users to remove.";
+        res.status(400).send(response);
         return;
     }
 
@@ -318,7 +319,8 @@ router.post("/api/:id/removeUsersFromTeam", middleware.isUserInProject, async fu
     );
 
     if (!projectInfo){
-        res.status(400).send("Sorry, There was a problem finding the project information. Please try later.");
+        response["msg"] = "Sorry, There was a problem finding the project information. Please try later.";
+        res.status(400).send(response);
         return;
     }
 
@@ -330,7 +332,8 @@ router.post("/api/:id/removeUsersFromTeam", middleware.isUserInProject, async fu
     const numberOfUsers = team.users.length;
 
     if (_.isUndefined(team) || _.isEmpty(team)){
-        res.status(400).send("Sorry, cannot find the team information. Please try later");
+        response["msg"] = "Sorry, cannot find the team information. Please try later"
+        res.status(400).send(response);
         return;
     }
 
@@ -339,20 +342,24 @@ router.post("/api/:id/removeUsersFromTeam", middleware.isUserInProject, async fu
 
     // check after filter
     if (numberOfUsers == team.users.length){
-        res.status(400).send("Oops, There was a problem removing the user from the team.");
+        response["msg"] = "Oops, There was a problem removing the user from the team.";
+        res.status(400).send(response);
         return;
     }
-    let response = await projectInfo.save().catch(err => {
+
+    let projectWasSaved = await projectInfo.save().catch(err => {
         console.error(err);
     });
 
-    if (!response){
-        res.status(400).send("Oops, There was a problem saving the request");
+    if (!projectWasSaved){
+        response["msg"] = "Oops, There was a problem saving the request";
+        res.status(400).send(response);
         return;
     }
 
     let item_str = userIds.length === 1 ? "user" : "users";
-    res.status(200).send(`Successfully removed ${item_str} from team`);
+    response["msg"] = `Successfully removed ${item_str} from team`;
+    res.status(200).send(response);
 });
 
 
@@ -560,6 +567,7 @@ router.post("/api/:id/deleteUsersFromProject", middleware.isUserInProject, async
     
     let response = {userIds: userIds}
 
+    console.log("Request from user: ", userIds);
     // empty, or not array, or not all elements in array are string
     if (_.isEmpty(userIds) || !_.isArray(userIds) || !userIds.every( each => _.isString(each))){
         response["msg"] = "Sorry, Invalid users were received.";
@@ -580,7 +588,7 @@ router.post("/api/:id/deleteUsersFromProject", middleware.isUserInProject, async
     }
 
     // prevent owner removing himself.
-    if (userIds.any(each => each.toString() == projectInfo["author"].toString()) ){
+    if (userIds.some(each => each.toString() == projectInfo["author"].toString()) ){
         response["msg"] = "Sorry, The owner of the team cannot be removed from the project."
         res.status(400).send(response);
         return;
@@ -589,6 +597,7 @@ router.post("/api/:id/deleteUsersFromProject", middleware.isUserInProject, async
     let response_error = null;
     response = await projectInfo.removeUsers(userIds).catch(err => {
         response_error = err;
+        console.error(err);
     });
 
     if (_.isUndefined(response)){

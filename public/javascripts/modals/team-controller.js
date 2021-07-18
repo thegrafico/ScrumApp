@@ -173,7 +173,7 @@ $(function (){
         if (response){
             removeCheckedElement();
             // TODO: response.msg? 
-            $.notify(response, "success");
+            $.notify(response.msg, "success");
 
             removeDisableAttr(SELECT_USERS_PROJECT_INPUT, checkedElements);
             
@@ -181,7 +181,7 @@ $(function (){
             enableTrashButton(false);
         }else{
             // TODO: response_error.data.responseJSON.msg?
-            $.notify(response_error.data.responseText, "error");
+            $.notify(response_error.data.responseJSON.msg, "error");
         }
     });
 

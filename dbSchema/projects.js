@@ -288,7 +288,7 @@ projectSchema.methods.removeUsers = async function(userIds) {
         }
 
         // all Ids must be in the project
-        if ( userIds.any( each => !father.isUserInProject(each)) ){
+        if ( userIds.some( each => !father.isUserInProject(each)) ){
             response["msg"] = "Some of the users received are not part of the project.";
             return reject(response);
         }
@@ -299,6 +299,7 @@ projectSchema.methods.removeUsers = async function(userIds) {
             { projectId: father._id, "assignedUser.id":  { $in: userIds } },
             {$set: {"assignedUser.name": UNASSIGNED.name, "assignedUser.id": null}})
             .catch(err =>{
+                console.error(err);
                 err_msg = err;
             }
         );
@@ -310,12 +311,15 @@ projectSchema.methods.removeUsers = async function(userIds) {
         }
         
         // remove the user
-        father.users.pull(userId);
+        for (let i = 0; i < userIds.length; i++) {
+            father.users.pull(userIds[i]);
+        }
 
         father.save().then( (doc) => {
-            return resolve({msg: "User was removed successfully!", userId: userId});
+            return resolve({msg: "Users were removed successfully!", userIds: userIds});
         }).catch( err =>{
-            response["msg"] = "Sorry, There was an error removing the user from project. Please try later"
+            console.error(err);
+            response["msg"] = "Sorry, There was an error removing the users from project. Please try later"
             return reject( response );
         });
 

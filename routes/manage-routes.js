@@ -50,10 +50,6 @@ const {
     let users = await projectInfo.getUsers().catch(err => console.log(err)) || [];
     let teams = [...projectInfo.teams];
 
-    // get the team for the user in order to filter by it.
-    // TODO: refactor code below
-
-    console.log(users);
     // populating params
     let params = {
         "title": projectInfo["title"],
