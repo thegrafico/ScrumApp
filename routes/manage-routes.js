@@ -61,7 +61,7 @@ const {
         "projectUsers": users,
         "assignedUsers": users,
         "addUserModal": true,
-        "currentPage": PAGES.MANAGE_TEAM,
+        "currentPage": PAGES.MANAGE_USER,
         "stylesPath": managePath["styles"],
         "scriptsPath": managePath["scripts"]
     };

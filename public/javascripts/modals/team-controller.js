@@ -172,7 +172,7 @@ $(function (){
 
         if (response){
             removeCheckedElement();
-            // TODO: response.msg? 
+
             $.notify(response.msg, "success");
 
             removeDisableAttr(SELECT_USERS_PROJECT_INPUT, checkedElements);
@@ -263,51 +263,6 @@ $(function (){
 
 });
 
-
-/**
- * Add user to table
- * @param {Object} userInfo 
- */
-function addUserToTable(userInfo){
-
-    if (_.isEmpty(userInfo)){
-        return;
-    }
-
-    let td_checkbox = `
-    <td class="tableCheckBoxRowElement"> 
-        <label class="invisible labelcheckbox"> 
-            <input type="checkbox" aria-label="table-row-checkbox" name="checkboxWorkItem[]" value="${userInfo['id']}" class="checkboxRowElement" />
-        </label> 
-    </td>`;
-
-    let td_edit = `
-    <td class="column-edit-team">
-        <button value="${userInfo['id']}" class="btn btn-warning edit-user-team-btn">
-            <i class="fas fa-user-edit"></i>
-        </button>
-    </td>`;
-
-    let td_name = `
-    <td>
-        ${userInfo["fullName"]}
-    </td>`;
-
-    let td_email = `
-    <td>
-        ${userInfo["email"]}
-    </td>`;
-
-    let table_row = `
-    <tr class="rowValues">
-        ${td_checkbox}
-        ${td_edit}
-        ${td_name}
-        ${td_email}
-    </tr>`;
-
-    $(`${MANAGE_TABLE_ID} > tbody:last-child`).append(table_row);
-}
 
 /**
  * Validate the name of the team

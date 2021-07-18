@@ -55,6 +55,8 @@ $(function (){
                     {"value": response.user.id, "text": response.user.fullName}, 
                     UPDATE_INPUTS.USER
                 );
+
+                addUserToTable(response.user)
             }
         }else{ // error messages
             $.notify(response_error.data.responseJSON.msg, "error");
@@ -131,6 +133,16 @@ $(function (){
             
             // disable the trash button again
             enableTrashButton(false);
+
+            for (let i = 0; i < response.userIds.length; i++) {
+                let userId = response["userIds"][i];
+                update_html( 
+                    $(CURRENT_PAGE_ID).val(), 
+                    UPDATE_TYPE.DELETE, 
+                    userId,
+                    UPDATE_INPUTS.USER
+                );
+            }
         }else{
             $.notify(response_error.data.responseJSON.msg, "error");
         }

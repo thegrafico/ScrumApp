@@ -512,9 +512,67 @@ function update_html(currentPage, updateType, valueToUpdate, inputType){
             if (inputType === UPDATE_INPUTS.SPRINT){
                 updateSelectOption(WORK_ITEM["sprint"], updateType, valueToUpdate);
             }
+            break;
+        case "manageUser":
+            // TODO: Remove user form table? or just leave it to update the page?
+            if (inputType === UPDATE_INPUTS.USER){
+                updateSelectOption(MODAL_REMOVE_USER_INPUT, updateType, valueToUpdate);
+            }
 
+            if (inputType === UPDATE_INPUTS.TEAM){
+                updateSelectOption(TEAM_SELECT_INPUT_ID, updateType, valueToUpdate);
+            } 
+            
+            if (inputType === UPDATE_INPUTS.SPRINT){
+                updateSelectOption(WORK_ITEM["sprint"], updateType, valueToUpdate);
+            }
             break;
         default:
             break;
     }
+}
+
+/**
+ * Add user to table for manage table
+ * @param {Object} userInfo 
+ */
+function addUserToTable(userInfo){
+
+    if (_.isEmpty(userInfo)){
+        return;
+    }
+
+    let td_checkbox = `
+    <td class="tableCheckBoxRowElement"> 
+        <label class="invisible labelcheckbox"> 
+            <input type="checkbox" aria-label="table-row-checkbox" name="checkboxWorkItem[]" value="${userInfo['id']}" class="checkboxRowElement" />
+        </label> 
+    </td>`;
+
+    let td_edit = `
+    <td class="column-edit-team">
+        <button value="${userInfo['id']}" class="btn btn-warning edit-user-team-btn">
+            <i class="fas fa-user-edit"></i>
+        </button>
+    </td>`;
+
+    let td_name = `
+    <td>
+        ${userInfo["fullName"]}
+    </td>`;
+
+    let td_email = `
+    <td>
+        ${userInfo["email"]}
+    </td>`;
+
+    let table_row = `
+    <tr class="rowValues">
+        ${td_checkbox}
+        ${td_edit}
+        ${td_name}
+        ${td_email}
+    </tr>`;
+
+    $(`${MANAGE_TABLE_ID} > tbody:last-child`).append(table_row);
 }
