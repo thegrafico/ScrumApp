@@ -237,6 +237,11 @@ a:hover {
     color: green;
 }
 
+.filterBySprintContainer{
+    margin-right: 2%;
+    width: 20%;
+}
+
 /* 
     ================================================================
     CHECKBOX Style for each row of the table

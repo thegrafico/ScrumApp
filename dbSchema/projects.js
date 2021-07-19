@@ -12,7 +12,7 @@ const mongoose              = require("mongoose");
 const ObjectId = mongoose.Schema.ObjectId;
 const OBJECT_ID = mongoose.Types.ObjectId;
 
-const {UNASSIGNED} = require('./Constanst');
+const { UNASSIGNED } = require('./Constanst');
 
 let projectSchema = new mongoose.Schema({
     author: {

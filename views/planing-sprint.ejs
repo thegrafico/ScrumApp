@@ -1,0 +1,172 @@
+<%- include('modals/header'); %>
+
+<body>
+
+    <%- include('modals/topNavbar'); %>
+
+    <div class="wrapper d-flex align-items-stretch">
+
+        <%- include('modals/sideNavbar'); %>
+
+        <!-- Page Content  -->
+        <div id="content" class="p-4 p-md-5">
+
+            <%- include('modals/titleOptionsMenu'); %>
+
+            <div class="container-fluid statistics-boxs">
+                <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+
+                    <i class="fas fa-users"></i>
+                    <div class="filterByTeamContainer">
+                        <% if(userTeam){ %>
+                            <select 
+                            class="custom-select my-custon-select input-border"
+                            name="filterByTeam" 
+                            id="filterByTeam" 
+                            aria-label="Default select example">
+                                <% for (let i = 1; i < teamWorkItem.length; i++) { %>
+
+                                    <% if (teamWorkItem[i]['id'] == userTeam.id) { %>
+                                        <option value="<%=teamWorkItem[i]['id']%>" selected><%=teamWorkItem[i]['name']%></option>
+                                    <% }else{ %>
+                                        <option value="<%=teamWorkItem[i]['id']%>"><%=teamWorkItem[i]['name']%></option>
+                                    <% } %>
+                                
+                                <% } %>
+                            </select>
+                        <% }else{ %>
+                            <select 
+                            class="custom-select my-custon-select input-border"
+                            name="filterByTeam" 
+                            id="filterByTeam" 
+                            aria-label="Default select example"
+                            disabled>
+                            <option value="0" selected>Not team found</option>
+                            </select>
+                        <% } %>
+                    </div>
+                
+                    <div class="collapse navbar-collapse" id="navbarColor02">
+                        <ul class="navbar-nav mr-auto">
+                            <li class="nav-item active">
+                                <a class="nav-link" href="#">
+                                    <span class="sr-only">(current)</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <button class="navbar-brand" id="createWorkItem" data-toggle="modal" data-target=".createNewItemModal">
+                                    <i class="fas fa-plus"></i> Work Item
+                                </button>
+                            </li>
+
+                            <li class="nav-item">
+                                <a class="nav-link" href="#">View</a>
+                            </li>
+
+                            <li class="nav-item trashIconWrapper">
+                                &nbsp;
+                                <button id="trashBtnWorkItem" class="trash-btn" disabled> <i class="far fa-trash-alt grayColor"></i> </button>
+                            </li>
+
+                        </ul>
+
+                        <div class="filterBySprintContainer">
+                            <% if(filterSprint){ %>
+                                <select 
+                                class="custom-select my-custon-select input-border"
+                                name="sprintFilter" 
+                                id="filterBySprint" 
+                                aria-label="filter by sprint">
+                                    <% for (let i = 1; i < teamWorkItem.length; i++) { %>
+    
+                                        <% if (teamWorkItem[i]['id'] == userTeam.id) { %>
+                                            <option value="<%=teamWorkItem[i]['id']%>" selected><%=teamWorkItem[i]['name']%></option>
+                                        <% }else{ %>
+                                            <option value="<%=teamWorkItem[i]['id']%>"><%=teamWorkItem[i]['name']%></option>
+                                        <% } %>
+                                    
+                                    <% } %>
+                                </select>
+                            <% }else{ %>
+                                <select 
+                                class="custom-select my-custon-select input-border"
+                                name="sprintFilter" 
+                                id="filterBySprint" 
+                                aria-label="filter by sprint"
+                                disabled>
+                                <option value="0" selected>Not Sprint found</option>
+                                </select>
+                            <% } %>
+                        </div>
+
+                        <div class="form-inline my-2 my-lg-0">
+                            <input id="searchTable" class="form-control mr-sm-2" type="text" placeholder="Search">
+                            
+                            <button id="filterBtn" class="btn btn-secondary my-2 my-sm-0 filterBtn">
+                                <i class="fas fa-filter"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <!-- INCLUDE FILTER DIV HERE -->
+                </nav>
+
+            <%- include('modals/filter'); %>
+
+            </div>
+
+            <div class="p-4" id="table-container">
+                <table class="table table-hover" id="workItemTable">
+                    <thead>
+                        <tr class="tableHeader">
+                            <th class="tableCheckBoxRowHeader"></th>
+                            <th class="orderColumn">Order</th>
+                            <th scope="col" class="tableColumnID">ID</th>
+                            <th class="d-none" scope="col">Type</th>
+                            <th scope="col">Title</th>
+                            <th scope="col">Assigned</th>
+                            <th scope="col">State</th>
+                            <th scope="col">Tags</th>
+                            <th scope="col">Comments</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% for (let i = 0; i < workItems.length; ++i) {%>
+                            <tr class="rowValues">
+                                <td class="tableCheckBoxRowElement"> 
+                                    <label for="checkboxRowElement" class="invisible labelcheckbox"> 
+                                        <input type="checkbox" name="checkboxWorkItem[]" value="<%=workItems[i]['_id']%>" class="checkboxRowElement" />
+                                    </label> 
+                                </td> 
+                                <td class="orderColumn"><%=i+1%></td>
+                                <td class="tableColumnID"> <%=workItems[i]["itemId"]%></td>
+                                <td class="d-none" > <i class="fas <%=workItemType[workItems[i]['type']].icon%>"></i> <%=workItems[i]["type"]%></td>
+                                <!-- TODO: CHANGE TO A BETTER LINK -->
+                                <td class="openStory"> 
+                                    <a href="workitems/<%=workItems[i]['_id']%>">  
+                                        <span class="table-icon"> <i class="fas <%=workItemType[workItems[i]['type']].icon%>"></i> </span>  <%=workItems[i]["title"]%> 
+                                    </a> 
+                                </td>
+                                <td> <i class="fas fa-user-astronaut"></i> <%=workItems[i]["assignedUser"]["name"]%></td>
+                                <td><i class="fa fa-circle <%=workItems[i]['status']%>Color" aria-hidden="true"></i> <%=workItems[i]["status"]%></td>
+                                <td class="tags-td"> 
+                                    <% if (workItems[i]["tags"].length > 0)  {%>
+                                        <% workItems[i]["tags"].forEach(each => { %>
+                                            <span class="btn btn-info disabled btn-sm tags-container"><%=each%></span>
+                                        <% }); %>
+                                    <% } %>
+                                </td>
+                                <td class="table-comments-column"><span>  <i class="fas fa-comments"></i>  <%=workItems[i]["comments"].length%></span> </td>
+                            </tr>
+                        <%}%>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <input type="hidden" name="projectId" id="projectId" value="<%=projectId%>">
+        <input type="hidden" name="currentTab" id="currentTab" value="<%=activeTab%>">
+    </div>
+    
+    <!-- Modal for creating work item -->
+    <%- include('modals/createWorkItem'); %>
+
+<%- include('modals/footer'); %>
