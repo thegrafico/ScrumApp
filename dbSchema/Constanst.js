@@ -78,6 +78,7 @@ module.exports.PAGES = {
     WORK_ITEMS: "workItems",
     UNIQUE_WORK_ITEM: "workItem",
     BACKLOG: "backlog",
+    SPRINT: "sprint",
     MANAGE_TEAM: "manageTeam",
     MANAGE_USER: "manageUser",
     MANAGE_SPRINT: "manageSprint", 

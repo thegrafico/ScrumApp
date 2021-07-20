@@ -24,12 +24,12 @@
                             name="filterByTeam" 
                             id="manage-filter-by-team" 
                             aria-label="select-team-options">
-                                <% for (let i = 0; i < teamWorkItem.length; i++) { %>
+                                <% for (let i = 0; i < projectTeams.length; i++) { %>
 
-                                    <% if (teamWorkItem[i]['id'] == userTeam.id) { %>
-                                        <option value="<%=teamWorkItem[i]['id']%>" selected><%=teamWorkItem[i]['name']%></option>
+                                    <% if (projectTeams[i]['id'] == userTeam.id) { %>
+                                        <option value="<%=projectTeams[i]['id']%>" selected><%=projectTeams[i]['name']%></option>
                                     <% }else{ %>
-                                        <option value="<%=teamWorkItem[i]['id']%>"><%=teamWorkItem[i]['name']%></option>
+                                        <option value="<%=projectTeams[i]['id']%>"><%=projectTeams[i]['name']%></option>
                                     <% } %>
                                 
                                 <% } %>

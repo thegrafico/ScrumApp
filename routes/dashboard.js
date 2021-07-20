@@ -46,6 +46,8 @@ router.get("/", async function (req, res) {
     projects = [];
   }
 
+  console.log(projects)
+
   /**
    * Add the project to the frond-end
    * Divide the project in chunk, so is easy to mantain in the user-site

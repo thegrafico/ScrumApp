@@ -54,14 +54,14 @@ router.get("/:id/planing/sprint", middleware.isUserInProject, async function (re
 
     // get the team for the user in order to filter by it.
     let userBestTeam = null;
+    let sprints = [];
     if (teams.length > 1){
         userBestTeam = teams[1];
         query_work_item["teamId"] = userBestTeam.id;
+        sprints = await sprintCollection.find({projectId, teamId: userBestTeam}).catch(err => console.log(err)) || [];
     }
-
-    let sprints = await sprintCollection.find({projectId}).catch(err => console.log(err)) || [];
     sprints.unshift(EMPTY_SPRINT);
-
+    
     // get all users for this project -> expected an array
     let users = await projectInfo.getUsers().catch(err => console.log(err)) || [];
     users.unshift(UNASSIGNED);
@@ -76,17 +76,16 @@ router.get("/:id/planing/sprint", middleware.isUserInProject, async function (re
         "project": projectInfo,
         "projectId": projectId,
         "activeTab": "SprintPlaning,Planing",
-        "tabTitle": "Sprint",
+        "tabTitle": "Sprint Planning",
         "assignedUsers": users,
         "statusWorkItem": WORK_ITEM_STATUS,
-        "teamWorkItem": teams,
+        "projectTeams": teams,
         "sprints": sprints,
         "addUserModal": true,
         "workItemType": WORK_ITEM_ICONS,
         "workItems": workItems,
-        "currentPage": PAGES.BACKLOG,
+        "currentPage": PAGES.SPRINT,
         "userTeam": userBestTeam,
-        "filterSprint": true,
         "priorityPoints":PRIORITY_POINTS,
         "stylesPath": sprintPath["styles"],
         "scriptsPath": sprintPath["scripts"]

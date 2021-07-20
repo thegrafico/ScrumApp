@@ -237,6 +237,11 @@ a:hover {
     color: green;
 }
 
+.sprintIcon{
+    color: #00a077;
+    font-size: 1.5em;
+}
+
 .filterBySprintContainer{
     margin-right: 2%;
     width: 20%;

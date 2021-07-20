@@ -60,7 +60,7 @@ router.get("/:id", middleware.isUserInProject, async function (req, res) {
         "tabTitle": "Statistics",
         "currentPage": PAGES.STATISTICS,
         "assignedUsers": users,
-        "teamWorkItem": teams,
+        "projectTeams": teams,
         "addUserModal": true,
         "stylesPath": statisticsPath["styles"],
         "scriptsPath": statisticsPath["scripts"],

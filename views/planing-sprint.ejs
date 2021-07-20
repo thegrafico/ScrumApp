@@ -18,18 +18,18 @@
 
                     <i class="fas fa-users"></i>
                     <div class="filterByTeamContainer">
-                        <% if(userTeam){ %>
+                        <% if(projectTeams.length > 1){ %>
                             <select 
                             class="custom-select my-custon-select input-border"
                             name="filterByTeam" 
                             id="filterByTeam" 
                             aria-label="Default select example">
-                                <% for (let i = 1; i < teamWorkItem.length; i++) { %>
+                                <% for (let i = 1; i < projectTeams.length; i++) { %>
 
-                                    <% if (teamWorkItem[i]['id'] == userTeam.id) { %>
-                                        <option value="<%=teamWorkItem[i]['id']%>" selected><%=teamWorkItem[i]['name']%></option>
+                                    <% if (projectTeams[i]['id'] == userTeam.id) { %>
+                                        <option value="<%=projectTeams[i]['id']%>" selected><%=projectTeams[i]['name']%></option>
                                     <% }else{ %>
-                                        <option value="<%=teamWorkItem[i]['id']%>"><%=teamWorkItem[i]['name']%></option>
+                                        <option value="<%=projectTeams[i]['id']%>"><%=projectTeams[i]['name']%></option>
                                     <% } %>
                                 
                                 <% } %>
@@ -59,9 +59,9 @@
                                 </button>
                             </li>
 
-                            <li class="nav-item">
+                            <!-- <li class="nav-item">
                                 <a class="nav-link" href="#">View</a>
-                            </li>
+                            </li> -->
 
                             <li class="nav-item trashIconWrapper">
                                 &nbsp;
@@ -69,9 +69,11 @@
                             </li>
 
                         </ul>
+                        <!-- <i class="fas fa-sync sprintIcon"></i> -->
+                        <i class="fas fa-running sprintIcon"></i>
 
                         <div class="filterBySprintContainer">
-                            <% if(filterSprint){ %>
+                            <% if(sprints.length > 1){ %>
                                 <select 
                                 class="custom-select my-custon-select input-border"
                                 name="sprintFilter" 
@@ -127,6 +129,8 @@
                             <th scope="col">State</th>
                             <th scope="col">Tags</th>
                             <th scope="col">Comments</th>
+                            <th scope="col">Points</th>
+
                         </tr>
                     </thead>
                     <tbody>
@@ -156,6 +160,7 @@
                                     <% } %>
                                 </td>
                                 <td class="table-comments-column"><span>  <i class="fas fa-comments"></i>  <%=workItems[i]["comments"].length%></span> </td>
+                                <td class="storyPointsRow"><%=workItems[i]["storyPoints"]%></td>
                             </tr>
                         <%}%>
                     </tbody>

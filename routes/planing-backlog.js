@@ -79,7 +79,7 @@ router.get("/:id/planing/backlog", middleware.isUserInProject, async function (r
         "tabTitle": "Backlog",
         "assignedUsers": users,
         "statusWorkItem": WORK_ITEM_STATUS,
-        "teamWorkItem": teams,
+        "projectTeams": teams,
         "sprints": sprints,
         "addUserModal": true,
         "workItemType": WORK_ITEM_ICONS,
