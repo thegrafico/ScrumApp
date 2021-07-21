@@ -30,9 +30,9 @@ const {
 
 
 /**
- * METHOD: GET - show the main page for projects
+ * METHOD: GET - SHOW USERS manages
  */
- router.get("/:id/manageUsers", middleware.isUserInProject, async function (req, res) {
+router.get("/:id/manageUsers", middleware.isUserInProject, async function (req, res) {
 
     let projectId = req.params.id;
 
@@ -70,7 +70,7 @@ const {
 });
 
 /**
- * METHOD: GET - show the main page for projects
+ * METHOD: GET - Show Teams Manages
  */
 router.get("/:id/manageTeam", middleware.isUserInProject, async function (req, res) {
 

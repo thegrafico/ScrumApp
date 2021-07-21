@@ -321,3 +321,20 @@ a:hover {
     ================================================================
    END STYLE
 */
+
+
+
+.calendar-table th,td.available {
+    color:black;
+}
+
+td.off{
+    background-color: #fff;
+    border-color: transparent;
+    color: #999;
+}
+
+#sprint-duration-input{
+    background-color: white !important;
+    color: #444 !important;
+}

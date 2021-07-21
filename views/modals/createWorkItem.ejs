@@ -133,8 +133,13 @@
                                     <div class="col-4 d-flex">
                                         <span class="aling-vertically align-self-center"> Iteration: </span>
                                         <select class="custom-select my-custon-select " name="sprint" id="sprints">
-                                            <% for (sprint of sprints){ %>
-                                            <option value="<%=sprint['id']%>"><%=sprint['name']%></option>
+                                            <% if(sprints.length > 1){ %>
+                                            
+                                                <% for (sprint of sprints){ %>
+                                                    <% if (sprint && sprint.id){ %>
+                                                        <option value="<%=sprint['id']%>"><%=sprint['name']%></option>
+                                                    <%}%>
+                                                <%}%>
                                             <%}%>  
                                         </select>
                                     </div>

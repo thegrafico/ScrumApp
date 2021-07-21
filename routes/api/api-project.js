@@ -4,13 +4,17 @@ const middleware                = require("../../middleware/auth");
 const workItemCollection        = require("../../dbSchema/workItem");
 const projectCollection         = require("../../dbSchema/projects");
 const userCollection            = require("../../dbSchema/user");
-
+const SprintCollection          = require("../../dbSchema/sprint");
+const moment                    = require("moment");
 const _                         = require("lodash");
 let router                      = express.Router();
 
 const {
     TEAM_NAME_LENGHT_MAX_LIMIT,
     TEAM_NAME_LENGHT_MIN_LIMIT,
+    SPRINT_FORMAT_DATE,
+    ADD_SPRINT_TO_ALL_TEAM_ID,
+    SPRINT_STATUS,
     UNASSIGNED,
     MAX_LENGTH_TITLE,
     MAX_LENGTH_DESCRIPTION,
@@ -218,6 +222,129 @@ router.post("/api/:id/newTeam", middleware.isUserInProject, async function (req,
 
     res.status(200).send(response);
 });
+
+/**
+ * METHOD: POST - Create SPRINT
+ */
+router.post("/api/:id/createSprint", middleware.isUserInProject, async function (req, res) {
+
+    let projectId = req.params.id;
+
+    // validate project
+    let project = await projectCollection.findById(projectId).catch(err => {
+        console.error("Error getting the project: ", err);
+    });
+
+    if (_.isUndefined(project) || _.isEmpty(project)){
+        res.status(500).send("Error getting the project information. Please refresh the page and try again.");
+        return;
+    }
+
+    // Getting data from user
+    let {
+        name,
+        startDate,
+        endDate,
+        teamId,
+    } = req.body;
+
+    // premade response for user
+    let response = {"teamId": teamId, "startDate":startDate, "endDate": endDate};
+    let error_message = null;
+
+    // validate name
+    if (!_.isString(name) || _.isEmpty(name.trim())){
+        response["msg"] = "Invalid name for sprint was received.";
+        res.status(400).send(response);
+        return;
+    }
+
+    // cleaning the name
+    name = name.trim();
+
+    // validating start and end date of the sprint
+    let momentStartDate = moment(startDate, SPRINT_FORMAT_DATE )
+    let momentEndDate = moment(endDate, SPRINT_FORMAT_DATE )
+
+    // first verify that team Name is string || not undefined or null
+    if (!_.isString(startDate) || !_.isString(endDate)  || !momentStartDate.isValid() || !momentEndDate.isValid()) {
+        response["msg"] = "Invalid dates for sprint were received.";
+        res.status(400).send(response);
+        return;
+    }
+
+    // validate is team was received
+    if (_.isUndefined(teamId) || _.isEmpty(teamId)){
+        response["msg"] = "Invalid Team was received for the sprint";
+        res.status(400).send(response);
+        return;
+    }
+
+    // if verify if the team is part of the project
+    let addSprintToAllTeams = (teamId == ADD_SPRINT_TO_ALL_TEAM_ID);
+    if (!addSprintToAllTeams && !project.isTeamInProject(teamId)){
+        response["msg"] = "The team received does not belong to this project.";
+        res.status(400).send(response);
+        return;
+    }
+
+    const today = moment(new Date());
+    let sprintStatus = ""; // default?
+    if (today.isAfter(momentEndDate)){
+        sprintStatus = SPRINT_STATUS["Past"];
+    }else if(today.isBefore(momentStartDate)){
+        sprintStatus = SPRINT_STATUS["Coming"];
+    }else if(today.isBetween(momentStartDate, momentEndDate)){
+        sprintStatus = SPRINT_STATUS["Active"];
+    }
+
+    // sprint data - team Id is added below
+    let sprintData = {
+        "name": name,
+        "projectId": projectId,
+        "startDate": startDate,
+        "teamId": teamId,
+        "endDate": endDate,
+        "status":  sprintStatus
+    };
+
+    if (addSprintToAllTeams){
+        for (let i = 0; i < project.teams.length; i++) {
+            const projectTeamId = project.teams[i]._id;
+            
+            // adding sprint to the team
+            sprintData["teamId"] = projectTeamId;
+            
+            let sprintWasCreatedForProject = await SprintCollection.create(sprintData).catch(err => {
+                error_message = err;
+                console.error(err);
+            });
+
+            if (_.isUndefined(sprintWasCreatedForProject) || error_message){
+                response["msg"] = "Sorry, There was a problem creating the Sprints for the teams";
+                res.status(400).send(response);
+                return;
+            }
+        }
+    }else{
+
+        let sprintWasCreatedForProject = await SprintCollection.create(sprintData).catch(err => {
+            error_message = err;
+            console.error(err);
+        });
+
+        if (_.isUndefined(sprintWasCreatedForProject) || error_message){
+            response["msg"] = "Sorry, There was a problem creating the Sprints for the teams";
+            res.status(400).send(response);
+            return;
+        }
+    }
+
+    response["msg"] = "Sprint was created!";
+
+    res.status(200).send(response);
+});
+
 
 
 /**

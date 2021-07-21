@@ -61,6 +61,7 @@ router.get("/:id", middleware.isUserInProject, async function (req, res) {
         "currentPage": PAGES.STATISTICS,
         "assignedUsers": users,
         "projectTeams": teams,
+        "sprints": [],
         "addUserModal": true,
         "stylesPath": statisticsPath["styles"],
         "scriptsPath": statisticsPath["scripts"],

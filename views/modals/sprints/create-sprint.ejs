@@ -1,13 +1,13 @@
 <!-- MODAL TO CREATE USER -->
-<div class="modal fade" id="create-user" tabindex="-1" role="dialog" aria-labelledby="create-user-title"
+<div class="modal fade create-sprint-modal" id="create-sprint" tabindex="-1" role="dialog" aria-labelledby="create-user-title"
     aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
 
         <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="createUserTitle" style="width: 60%;">
-                        Add New Member <i class="fas fa-user-plus addUserIcon"></i> </h5> &nbsp; &nbsp;
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        Create New Sprint <i class="fas fa-sync sprintIcon"></i> </h5> &nbsp; &nbsp;
+                    <button type="button" id="close-sprint-modal" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
@@ -15,35 +15,76 @@
                 <div class="modal-body">
 
                     <fieldset>
+                        
                         <div class="form-group">
-                            <label for="userEmail">User:</label>
+                            <label for="sprintName">  <span style="color:red;">*</span> Name: </label>
+                            <input type="text" class="form-control" name="sprintName"  id="sprint-name-input" aria-describedby="nameHelp" placeholder="Sprint name">
+                            <small id="sprint-name-span-error" class="text-danger invisible">Invalid Name.</small>
+                        </div>
+
+
+                        <div class="form-group">
+                            <label for="sprintStartDate">  <span style="color:red;">*</span> Sprint Dates: </label>
+                            <input type="text" class="form-control" name="sprintStartDate"  id="sprint-start-date-input" aria-describedby="nameHelp" placeholder="Select Range">
+                            <small id="sprint-date-span-error" class="text-danger invisible">Invalid Date.</small>
+                        </div>
+                        
+
+                        <div class="form-group">
+                            <label for="sprintDuration"> Duration: </label>
                             <select 
                                 class="custom-select my-custon-select input-border"
-                                name="projectUsers" 
-                                id="project-user-select" 
-                                aria-label="project-user">
-                                <option value="0" selected disabled>Select an user</option>
-                                
-                                <% for (let i = 0; i < projectUsers.length; i++) { %>
+                                name="sprintDuration" 
+                                id="sprint-duration-input" 
+                                aria-label="Standard durations">
+                                    <% for (const duration in SPRINT_TIME_PERIOD) { %>         
+                                            
+                                        <% if (SPRINT_TIME_PERIOD[duration] === sprintDefaultTimePeriod) { %>                            
+                                            <option value="<%=SPRINT_TIME_PERIOD[duration]%>" selected><%=duration%></option>
+                                        <% }else { %>
+                                            <option value="<%=SPRINT_TIME_PERIOD[duration]%>"><%=duration%></option> 
+                                        <% } %>
 
-                                    <% if (userIds.includes(projectUsers[i].id.toString())){ %>
-                                        <option value="<%=projectUsers[i]['id']%>" disabled><%=projectUsers[i]['name']%></option>
-
-                                    <% }else{ %>    
-                                        <option value="<%=projectUsers[i]['id']%>"><%=projectUsers[i]['name']%></option>
                                     <% } %>
-
-                                <% } %>
+                                    <option value="0">Custon</option> 
                             </select>
+                            <small id="sprint-duration-span-error" class="text-danger invisible">Invalid Duration.</small>
                         </div>
-                        <span class="text-danger" id="createUserErrorMessage"></span>
+
+                        <div class="form-group">
+                            <label for="userEmail">Team:</label>
+
+                            <% if(projectTeams.length > 1){ %>
+                                <select 
+                                    class="custom-select my-custon-select input-border"
+                                    name="sprintTeam" 
+                                    id="sprint-team-input" 
+                                    aria-label="select team for sprint">
+                                    <option value="ALL" selected>All Teams</option>
+                                    <% for (let i = 1; i < projectTeams.length; i++) { %>                        
+                                        <option value="<%=projectTeams[i]['id']%>"><%=projectTeams[i]['name']%></option>
+                                    <% } %>
+                                </select>
+                            <% }else{ %>
+                                <select 
+                                    class="custom-select my-custon-select input-border"
+                                    name="filterByTeam" 
+                                    id="filterByTeam" 
+                                    aria-label="Default select example"
+                                    disabled>
+                                    <option value="0" selected>Not team found</option>
+                                </select>
+                            <% } %>
+                            <span class="text-danger" id="createSprintErrorMessage"></span>
+                        </div>
+                        
                     </fieldset>
 
                 </div>
 
                 <div class="modal-footer">
-                    <button type="btnCancelUser" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                    <button id="btnAddUserToTeam" class="btn btn-success">Add User</button>
+                    <button type="cancel-create-sprint-btn" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    <button id="create-sprint-btn-submit" class="btn btn-success">Create</button>
                 </div>
         </div>
 

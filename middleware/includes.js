@@ -18,6 +18,7 @@ module.exports = {
             "/javascripts/dependecies/bootstrap.bundle.min.js",
             "/javascripts/modals/user-controller.js",
             "/javascripts/modals/team-controller.js",
+            "/javascripts/modals/sprint-controller.js",
         ]
     },
     planigWorkItemPath: {
@@ -30,6 +31,8 @@ module.exports = {
             "/javascripts/work-item.js",
             "/javascripts/modals/user-controller.js",
             "/javascripts/modals/team-controller.js",
+            "/javascripts/modals/sprint-controller.js",
+
         ]
     },
     backlogPath: {
@@ -43,6 +46,8 @@ module.exports = {
             "/javascripts/work-item.js",
             "/javascripts/modals/user-controller.js",
             "/javascripts/modals/team-controller.js",
+            "/javascripts/modals/sprint-controller.js",
+
         ]
     },
     sprintPath: {
@@ -52,12 +57,12 @@ module.exports = {
             "/javascripts/planning-work-item.js",
             "/javascripts/planning-backlog.js",
             "/javascripts/planning-sprint.js",
-
             "/javascripts/dependecies/bootstrap.bundle.min.js",
             "/javascripts/filter-and-search.js",
             "/javascripts/work-item.js",
             "/javascripts/modals/user-controller.js",
             "/javascripts/modals/team-controller.js",
+            "/javascripts/modals/sprint-controller.js",
         ]
     },
 
@@ -72,6 +77,7 @@ module.exports = {
             "/javascripts/work-item.js",
             "/javascripts/modals/user-controller.js",
             "/javascripts/modals/team-controller.js",
+            "/javascripts/modals/sprint-controller.js",
         ]
     }
 }

@@ -79,12 +79,12 @@
                                 name="sprintFilter" 
                                 id="filterBySprint" 
                                 aria-label="filter by sprint">
-                                    <% for (let i = 1; i < teamWorkItem.length; i++) { %>
+                                    <% for (let i = 1; i < sprints.length; i++) { %>
     
-                                        <% if (teamWorkItem[i]['id'] == userTeam.id) { %>
-                                            <option value="<%=teamWorkItem[i]['id']%>" selected><%=teamWorkItem[i]['name']%></option>
+                                        <% if (sprints[i].status == "Active") { %>
+                                            <option value="<%=sprints[i]['_id']%>" selected><%=sprints[i]['name']%></option>
                                         <% }else{ %>
-                                            <option value="<%=teamWorkItem[i]['id']%>"><%=teamWorkItem[i]['name']%></option>
+                                            <option value="<%=sprints[i]['_id']%>"><%=sprints[i]['name']%></option>
                                         <% } %>
                                     
                                     <% } %>

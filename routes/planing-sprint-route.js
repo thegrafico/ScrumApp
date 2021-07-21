@@ -13,12 +13,13 @@ const sprintCollection          = require("../dbSchema/sprint");
 const workItemCollection        = require("../dbSchema/workItem");
 const middleware                = require("../middleware/auth");
 let router                      = express.Router();
-const { sprintPath }    = require("../middleware/includes");
+const { sprintPath }            = require("../middleware/includes");
 
 
 const {
+    SPRINT_DEFAULT_PERIOD_TIME,
     UNASSIGNED, 
-    EMPTY_SPRINT,
+    UNASSIGNED_SPRINT,
     WORK_ITEM_ICONS,
     WORK_ITEM_STATUS,
     PRIORITY_POINTS,
@@ -60,7 +61,7 @@ router.get("/:id/planing/sprint", middleware.isUserInProject, async function (re
         query_work_item["teamId"] = userBestTeam.id;
         sprints = await sprintCollection.find({projectId, teamId: userBestTeam}).catch(err => console.log(err)) || [];
     }
-    sprints.unshift(EMPTY_SPRINT);
+    sprints.unshift(UNASSIGNED_SPRINT);
     
     // get all users for this project -> expected an array
     let users = await projectInfo.getUsers().catch(err => console.log(err)) || [];
@@ -86,6 +87,7 @@ router.get("/:id/planing/sprint", middleware.isUserInProject, async function (re
         "workItems": workItems,
         "currentPage": PAGES.SPRINT,
         "userTeam": userBestTeam,
+        "sprintDefaultTimePeriod": SPRINT_DEFAULT_PERIOD_TIME, // Here the user can selet the time, but defualt is two weeks
         "priorityPoints":PRIORITY_POINTS,
         "stylesPath": sprintPath["styles"],
         "scriptsPath": sprintPath["scripts"]
@@ -95,3 +97,24 @@ router.get("/:id/planing/sprint", middleware.isUserInProject, async function (re
 });
 
 module.exports = router;
+
+
+
+
+/**
+ * 
+ * testing-req-config
+ * 
+ * Spec folder
+ * 
+ * Client: 
+ *  src/test/java
+ *      Test Application
+ *  src/test/resource
+ * 
+ * In static folder will be my code service in test/resource
+ * then to run that test I need to add it in the testing req-config
+ * create a new file in the services folder
+ * To running the test -> Test Application
+ * if you had run client verify, then is not available
+ */

@@ -4,6 +4,11 @@
 
 // import DB
 const mongoose = require("mongoose");
+const moment = require("moment");
+const {
+    SPRINT_FORMAT_DATE,
+    SPRINT_STATUS,
+} = require("./Constanst");
 
 const ObjectId = mongoose.Schema.ObjectId;
 
@@ -34,14 +39,30 @@ let sprintSchema = new mongoose.Schema({
         required: true
     },
     startDate: {
-        type: Date, 
+        type: String, 
         required: true,
+        validate: {
+            validator: function (_startDate) {
+                return moment(_startDate, SPRINT_FORMAT_DATE).isValid();
+            },
+            message: `Invalid date format. Format should be: ${SPRINT_FORMAT_DATE}`
+        }
     },
     endDate: {
-        type: Date, 
-        required: true
+        type: String, 
+        required: true,
+        validate: {
+            validator: function (_endDate) {
+                return moment(_endDate, SPRINT_FORMAT_DATE).isValid();
+            },
+            message: `Invalid date format. Format should be: ${SPRINT_FORMAT_DATE}`
+        }
     },
-    isActive: {type: Boolean, default: false},
+    status: {
+        type: String,
+        enum: Object.values(SPRINT_STATUS),
+        required: true, 
+    },
 }, {timestamps: true});
 
 module.exports = mongoose.model("Sprint", sprintSchema);

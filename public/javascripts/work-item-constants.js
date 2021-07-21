@@ -113,3 +113,13 @@ const PAGES = {
     MANAGE_USER: "manageUser",
     MANAGE_SPRINT: "manageSprint", 
 }
+
+const SPRINT_TIME_PERIDO_INPUT_ID = "#sprint-time-period";
+const ONE_WEEK = 7;
+const SPRINT_TIME_PERIOD = {
+    "One Week": ONE_WEEK,
+    "Two Weeks": ONE_WEEK * 2, 
+    "Three Weeks": ONE_WEEK * 3,
+    "One Month": ONE_WEEK * 4,
+    "Two Months": ONE_WEEK * 8,
+};

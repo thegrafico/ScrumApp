@@ -15,6 +15,8 @@ const dotenv          = require('dotenv');
 const flash           = require('connect-flash');
 const {connectDB}     = require('./config/db');
 
+const {SPRINT_TIME_PERIOD} = require('./dbSchema/Constanst');
+
 dotenv.config({
   path: './config/config.env'
 });
@@ -114,7 +116,9 @@ app.use(function (req, res, next) {
   res.locals.currentUser    = req.user;
 	res.locals.error          = req.flash("error"); //error mesage go red
 	res.locals.success        = req.flash("success"); //success message go green
-  
+  res.locals.SPRINT_TIME_PERIOD = SPRINT_TIME_PERIOD;
+  res.locals.sprintDefaultTimePeriod = SPRINT_TIME_PERIOD["Two Weeks"];
+
   next();
 });
 

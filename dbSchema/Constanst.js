@@ -1,22 +1,39 @@
 module.exports.projectStatus = ["New", "Active", "Completed", "Deleted", "Block", "Abandoned"];
 
-// TODO: change to a better name
 module.exports.UNASSIGNED = {
     name: "unassigned",
     id: "0",
     selected: true
 };
 
+module.exports.UNASSIGNED_SPRINT = {
+    name: "unassigned",
+    _id: "0",
+};
+
 module.exports.userStatus = ["Active", "Inactive"];
 
 // SPRINTS CONSTANTS
-module.exports.sprintTimePeriod = ["1w", "2w", "3w", "1m"];
-module.exports.sprintTimePeriodDefault = "1w";
-module.exports.EMPTY_SPRINT = {
-    name: "None",
-    "id": 0,
-    isActive: true
+const ONE_WEEK = 7;
+module.exports.SPRINT_DEFAULT_PERIOD_TIME = ONE_WEEK * 2; // TWO weeks sprint time
+module.exports.SPRINT_TIME_PERIOD = {
+    "One Week": ONE_WEEK, // Today - 6 days
+    "Two Weeks": ONE_WEEK * 2, 
+    "Three Weeks": ONE_WEEK * 3,
+    "One Month": ONE_WEEK * 4,
+    "Two Months": ONE_WEEK * 8,
 };
+
+module.exports.SPRINT_STATUS = {
+    "Past": "Past", // Today - 6 days
+    "Coming": "Coming", 
+    "Active": "Active",
+    "Due": "Due",
+};
+
+module.exports.SPRINT_FORMAT_DATE = "MM/DD/YYYY";
+module.exports.ADD_SPRINT_TO_ALL_TEAM_ID = "ALL";
+
 
 // STORY TYPE and ICONS
 // TODO: add this to the database since other files is using it too
