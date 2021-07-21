@@ -60,6 +60,7 @@ router.get("/:id/planing/sprint", middleware.isUserInProject, async function (re
         userBestTeam = teams[1];
         query_work_item["teamId"] = userBestTeam.id;
         sprints = await sprintCollection.find({projectId, teamId: userBestTeam}).catch(err => console.log(err)) || [];
+        console.log(sprints);
     }
     sprints.unshift(UNASSIGNED_SPRINT);
     

@@ -65,6 +65,7 @@ $(function () {
         hideErrSpanMessage(SPRINT_NAME_SPAN_ERROR);
 
         // ============ DATE ==============
+        console.log($(DATE_RANGE_INPUT_ID).val() );
         let {startDate, endDate} = formatDates( $(DATE_RANGE_INPUT_ID).val() )
         
         if (_.isNull(startDate) || _.isNull(endDate)){
@@ -130,9 +131,9 @@ function manageDates(start, end){
     let isPremadeDuration = Object.values(SPRINT_TIME_PERIOD).includes(diff);
 
     if (isPremadeDuration){
-        $(SPRINT_DURATION_SELECT_INPUT_ID).val(diff).change();
+        $(SPRINT_DURATION_SELECT_INPUT_ID).val(diff);
     }else{
-        $(SPRINT_DURATION_SELECT_INPUT_ID).val("0").change();
+        $(SPRINT_DURATION_SELECT_INPUT_ID).val("0");
     }
 }
 

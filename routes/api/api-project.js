@@ -309,11 +309,34 @@ router.post("/api/:id/createSprint", middleware.isUserInProject, async function 
     };
 
     if (addSprintToAllTeams){
+        let teamWasSkyped = false;
         for (let i = 0; i < project.teams.length; i++) {
             const projectTeamId = project.teams[i]._id;
             
             // adding sprint to the team
             sprintData["teamId"] = projectTeamId;
+
+            // get all sprint by the team
+            let errorMsg = null;
+            let teamSprints = await SprintCollection.getSprintsForTeam(projectTeamId).catch(err => {
+                console.error(err);
+                errorMsg = err;
+            });
+
+            // check sprint
+            if (_.isUndefined(teamSprints) || errorMsg){
+                response["msg"] = "Sorry, There was a problem getting the sprints for this team.";
+                res.status(400).send(response);
+                return;
+            }
+    
+            if (!_.isEmpty(teamSprints) && !SprintCollection.isValidSprintDate(teamSprints, startDate, endDate)){
+                teamWasSkyped = true;
+                // response["msg"] = "Sorry, A team cannot have more than one sprint at the same time.";
+                // res.status(400).send(response);
+                // return;
+                continue;
+            }
             
             let sprintWasCreatedForProject = await SprintCollection.create(sprintData).catch(err => {
                 error_message = err;
@@ -326,7 +349,33 @@ router.post("/api/:id/createSprint", middleware.isUserInProject, async function 
                 return;
             }
         }
+
+        if (teamWasSkyped){
+            response["msg"] = "Some of the sprints were not created because some of the teams already have a sprint with the dates selected.";
+        }else{
+            response["msg"] = "Sprints were created succesfully!";
+        }
+
     }else{
+
+        let errorMsg = null;
+        let teamSprints = await SprintCollection.getSprintsForTeam(teamId).catch(err => {
+            console.error(err);
+            errorMsg = err;
+        });
+
+        if (_.isUndefined(teamSprints) || errorMsg){
+            response["msg"] = "Sorry, There was a problem getting the sprints for this team.";
+            res.status(400).send(response);
+            return;
+        }
+
+
+        if (!_.isEmpty(teamSprints) && !SprintCollection.isValidSprintDate(teamSprints, startDate, endDate)){
+            response["msg"] = "Sorry, A team cannot have more than one sprint at the same time.";
+            res.status(400).send(response);
+            return;
+        }
 
         let sprintWasCreatedForProject = await SprintCollection.create(sprintData).catch(err => {
             error_message = err;
@@ -338,9 +387,8 @@ router.post("/api/:id/createSprint", middleware.isUserInProject, async function 
             res.status(400).send(response);
             return;
         }
+        response["msg"] = "Sprint was created!";
     }
-
-    response["msg"] = "Sprint was created!";
 
     res.status(200).send(response);
 });
