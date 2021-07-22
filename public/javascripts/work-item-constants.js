@@ -114,6 +114,18 @@ const PAGES = {
     MANAGE_SPRINT: "manageSprint", 
 }
 
+//  ======= SPRINT
+
+// CREATE MODAL
+const SPRINT_CREATE_MODAL_TEAM_INPUT = "#sprint-team-input";
+
+// DELETE MODAL
+const SPRINT_DELETE_MODAL_SELECT_TEAM = "#modal-remove-sprint-select-team";
+const SPRINT_DELETE_MODAL_SELECT_SPRINT = "#modal-remove-sprint-select-sprint";
+
+const SPRINT_FILTER_BY_SPRINT_SELECT = "#filterBySprint";
+
+// GENERAL
 const SPRINT_TIME_PERIDO_INPUT_ID = "#sprint-time-period";
 const ONE_WEEK = 7;
 const SPRINT_TIME_PERIOD = {
@@ -123,3 +135,5 @@ const SPRINT_TIME_PERIOD = {
     "One Month": ONE_WEEK * 4,
     "Two Months": ONE_WEEK * 8,
 };
+
+// =========== END

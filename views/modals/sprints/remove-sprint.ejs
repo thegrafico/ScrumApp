@@ -1,0 +1,53 @@
+<!-- Modal -->
+<div class="modal fade remove-sprint-modal" id="remove-sprint-modal" tabindex="-1" role="dialog" aria-labelledby="ModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+
+        <div class="modal-content">
+            
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalTitle">Remove Sprint  <i class="fas fa-sync sprintIcon"></i> </h5> 
+                <button type="button" id="modal-remove-sprint-close-btn" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span> 
+                </button>
+            </div>
+
+            <div class="modal-body">
+
+                <fieldset>
+
+                    <div class="form-group">
+                        <label for="teamUsers">Team:</label><br>
+
+                        <select class="custom-select my-custon-select" name="sprintToRemove" id="modal-remove-sprint-select-team">
+                            <option value='0' selected>Select a team to get sprints.</option>
+                            <% for(let i = 1; i < projectTeams.length; i++){%>
+                                <option value="<%=projectTeams[i]['_id']%>"><%=projectTeams[i]['name']%></option>
+                            <%}%>
+                        </select>
+                        <small id="remove-sprint-team-span-error" class="text-danger invisible"></small>
+
+                    </div>
+
+                    <div class="form-group">
+                        <label for="teamUsers">Sprint:</label><br>
+
+                        <select class="custom-select my-custon-select" name="sprintToRemove" id="modal-remove-sprint-select-sprint" disabled>
+                            <option value='0' selected>Select a sprint to remove.</option>
+                            <% for(let i = 1; i < sprints.length; i++){%>
+                                <option value="<%=sprints[i]['_id']%>"><%=sprints[i]['name']%></option>
+                            <%}%>
+                        </select>
+                        <small id="remove-sprint-sprint-span-error" class="text-danger invisible"></small>
+
+                    </div>
+
+                </fieldset>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                <button id="modal-delete-sprint-submit-btn" class="btn btn-warning">Remove</button>
+            </div>
+        </div>
+    </div>
+</div>

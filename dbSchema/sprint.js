@@ -130,9 +130,6 @@ sprintSchema.statics.isValidSprintDate = function(sprints, newSprintStartDate, n
             let isStartDateBetween = momentStartDateNewSprint.isBetween(sprintStartDate, sprintEndDate, undefined, "[)");
             let isEndDateBetween = momentEndDateNewSprint.isBetween(sprintStartDate, sprintEndDate, undefined, "(]");
 
-            console.log("Is between start: ", isStartDateBetween);
-            console.log("Is between end: ", isEndDateBetween);
-
             // check if any of the new sprint date conflig with another sprint
             if (isStartDateBetween || isEndDateBetween){
                 return false

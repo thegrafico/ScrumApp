@@ -197,7 +197,7 @@ function make_get_request(link){
  * @param {Object} newVal 
  * @returns new value if current and new are different, otherwise retun undefined 
  */
- function swap(currentVal, newVal){
+function swap(currentVal, newVal){
 
     // console.log(`Current: ${currentVal}, New: ${newVal}. Result ${currentVal != newVal}`);
     if (currentVal != newVal){
@@ -206,6 +206,7 @@ function make_get_request(link){
 
     return undefined;
 }
+
 
 
 /**
@@ -423,15 +424,17 @@ function removeCheckedElement(checkboxClass=TABLE_ROW_CHECKBOX_ELEMENT_CHECKED){
     });
 }
 
+
 /**
  * Add the disable attr to an select element and set the default to be the current
  * @param {String} selectElement 
  * @param {String} value 
  */
- function addDisableAttr(selectElement, value){
+function addDisableAttr(selectElement, value){
     $(`${selectElement}`).children(`[value="${value}"]`).attr('disabled', true);
     $(selectElement).val("0").change();
 }
+
 
 /**
  * Remove the disable attr from select options
@@ -450,6 +453,7 @@ function removeDisableAttr(selectElement, values){
         $(`${selectElement}`).children(`[value="${val}"]`).attr('disabled', false);
     }
 }
+
 
 function removeAllDisableAttr(selectElement){
     $(`${selectElement} *`).attr('disabled', false);
@@ -471,6 +475,7 @@ function cleanSelect(selectId){
     $(selectId).prop('selectedIndex',0);
 }
 
+
 /**
  * Update a select opction
  * @param {String} selectId - id of the select option
@@ -486,6 +491,22 @@ function updateSelectOption(selectId, updateType, valueToUpdate){
     }else{
         $(`${selectId} option[value=${valueToUpdate}]`).remove();
     }
+}
+
+
+/**
+ * Remove all options from select and add a default value
+ * @param {String} selectId - if of the select option
+ * @param defaultValue.text - text value of default
+ * @param defaultValue.value  - value of the default
+ */
+function removeAllOptionsFromSelect(selectId, defaultValue){
+    $(selectId)
+    .find('option')
+    .remove()
+    .end()
+    .append(new Option(defaultValue.text, defaultValue.value, false, false))
+    .trigger("change");
 }
 
 
@@ -509,12 +530,22 @@ function update_html(currentPage, updateType, valueToUpdate, inputType){
             }
 
             if (inputType === UPDATE_INPUTS.TEAM){
+                // work item
                 updateSelectOption(WORK_ITEM["team"], updateType, valueToUpdate);
                 updateSelectOption(TEAM_SELECT_INPUT_ID, updateType, valueToUpdate);
-            } 
+
+                // sprint modal
+                updateSelectOption(SPRINT_CREATE_MODAL_TEAM_INPUT, updateType, valueToUpdate);
+                updateSelectOption(SPRINT_DELETE_MODAL_SELECT_TEAM, updateType, valueToUpdate);   
+            }
             
+            // TODO: verify userBestTeam
             if (inputType === UPDATE_INPUTS.SPRINT){
                 updateSelectOption(WORK_ITEM["sprint"], updateType, valueToUpdate);
+
+                // sprint modal
+                updateSelectOption(SPRINT_CREATE_MODAL_TEAM_INPUT, updateType, valueToUpdate);
+                updateSelectOption(SPRINT_DELETE_MODAL_SELECT_TEAM, updateType, valueToUpdate);
             }
             break;
         case "manageUser":
@@ -531,6 +562,21 @@ function update_html(currentPage, updateType, valueToUpdate, inputType){
                 updateSelectOption(WORK_ITEM["sprint"], updateType, valueToUpdate);
             }
             break;
+        case "sprintPlanning":
+            // sprint modal
+            updateSelectOption(SPRINT_CREATE_MODAL_TEAM_INPUT, updateType, valueToUpdate);
+            updateSelectOption(SPRINT_DELETE_MODAL_SELECT_TEAM, updateType, valueToUpdate);   
+            
+            // TODO: verify userBestTeam
+            updateSelectOption(WORK_ITEM["sprint"], updateType, valueToUpdate);
+
+            // sprint modal
+            updateSelectOption(SPRINT_CREATE_MODAL_TEAM_INPUT, updateType, valueToUpdate);
+            updateSelectOption(SPRINT_DELETE_MODAL_SELECT_TEAM, updateType, valueToUpdate);
+
+            // SPRINT FILTERING
+            updateSelectOption(SPRINT_FILTER_BY_SPRINT_SELECT, updateType, valueToUpdate);
+
         default:
             break;
     }

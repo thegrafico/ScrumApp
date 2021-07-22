@@ -130,6 +130,56 @@ router.get("/api/:id/getTeamUsers/:teamId", middleware.isUserInProject, async fu
     }
 });
 
+/**
+ * METHOD: GET - fetch all sprints for a team
+ */
+ router.get("/api/:id/getTeamSprints/:teamId", middleware.isUserInProject, async function (req, res) {
+    
+    const projectId = req.params.id;
+    const teamId = req.params.teamId;
+
+    let response = {projectId, teamId};
+    // is a string
+    if (_.isString(projectId) && _.isString(teamId)){
+
+        let project = await projectCollection.findById(projectId).catch(err => {
+            console.error(err);
+        });
+
+        if (_.isUndefined(project)){
+            response["msg"] = "Oops, There was a problem getting the project information.";
+            res.status(400).send(response);
+            return;
+        }
+
+        // check if the team is part of the project
+        if (!project.isTeamInProject(teamId)){
+            response["msg"] = "Sorry, It looks like this team does not belong to the project.";
+            res.status(400).send(response);
+            return;
+        }
+
+        let sprints = await SprintCollection.getSprintsForTeam(teamId).catch(err => {
+            console.error(err);
+        });
+
+        // check sprint
+        if (_.isUndefined(sprints)){
+            response["msg"] = "Sorry, There was a problem getting the sprints";
+            res.status(400).send(response);
+            return;
+        }
+        // send response to user
+        response["msg"] = "Success";
+        response["sprints"] = sprints;
+        res.status(200).send(response);
+        return;
+    }else{
+        res.status(400).send("Oops, it looks like this is an invalid team.");
+        return;
+    }
+});
+
 
 // ================= POST REQUEST ==============
 
@@ -223,6 +273,7 @@ router.post("/api/:id/newTeam", middleware.isUserInProject, async function (req,
     res.status(200).send(response);
 });
 
+
 /**
  * METHOD: POST - Create SPRINT
  */
@@ -310,6 +361,7 @@ router.post("/api/:id/createSprint", middleware.isUserInProject, async function 
 
     if (addSprintToAllTeams){
         let teamWasSkyped = false;
+        let sprints = [];
         for (let i = 0; i < project.teams.length; i++) {
             const projectTeamId = project.teams[i]._id;
             
@@ -338,16 +390,18 @@ router.post("/api/:id/createSprint", middleware.isUserInProject, async function 
                 continue;
             }
             
-            let sprintWasCreatedForProject = await SprintCollection.create(sprintData).catch(err => {
+            let newSprint = await SprintCollection.create(sprintData).catch(err => {
                 error_message = err;
                 console.error(err);
             });
 
-            if (_.isUndefined(sprintWasCreatedForProject) || error_message){
+            if (_.isUndefined(newSprint) || error_message){
                 response["msg"] = "Sorry, There was a problem creating the Sprints for the teams";
                 res.status(400).send(response);
                 return;
             }
+
+            sprints.push(newSprint);
         }
 
         if (teamWasSkyped){
@@ -355,6 +409,9 @@ router.post("/api/:id/createSprint", middleware.isUserInProject, async function 
         }else{
             response["msg"] = "Sprints were created succesfully!";
         }
+
+        response["sprint"] = sprints;
+        response["multiple"] = true; // added more than one sprint
 
     }else{
 
@@ -377,22 +434,79 @@ router.post("/api/:id/createSprint", middleware.isUserInProject, async function 
             return;
         }
 
-        let sprintWasCreatedForProject = await SprintCollection.create(sprintData).catch(err => {
+        let newSprint = await SprintCollection.create(sprintData).catch(err => {
             error_message = err;
             console.error(err);
         });
 
-        if (_.isUndefined(sprintWasCreatedForProject) || error_message){
+        // validate new Sprint
+        if (_.isUndefined(newSprint) || error_message){
             response["msg"] = "Sorry, There was a problem creating the Sprints for the teams";
             res.status(400).send(response);
             return;
         }
+        response["sprint"] = newSprint;
+        response["multiple"] = false; // just one sprint was added
         response["msg"] = "Sprint was created!";
     }
 
     res.status(200).send(response);
 });
 
+
+/**
+ * METHOD: POST - REMOVE SPRINT FROM A TEAM
+ */
+ router.post("/api/:id/removeSprintForTeam/:teamId", middleware.isUserInProject, async function (req, res) {
+    
+    console.log("Getting request to remove sprint from team...");
+    
+    const projectId = req.params.id;
+    const teamId = req.params.teamId;
+    
+    let  { sprintId } = req.body; // request data
+    let response = {"sprintId": sprintId};
+
+    // check sprint ID
+    if (_.isUndefined(sprintId)){
+        response["msg"] = "Invalid Sprint was received";
+        res.status(400).send(response);
+        return;
+    }
+
+    const project = await projectCollection.findById(projectId).catch(err => {
+        console.error(err);
+    });
+
+    // validate project
+    if (_.isUndefined(project)){
+        response["msg"] = "Sorry, There was a problem getting the project information.";
+        res.status(400).send(response);
+        return;
+    }
+
+    // valdiate the team is valid
+    if (!project.isTeamInProject(teamId)){
+        response["msg"] = "Oops, The team received is not part of the project.";
+        res.status(400).send(response);
+        return;   
+    }
+
+    let err_response = null;
+    let sprintRemoved = await SprintCollection.findByIdAndDelete(sprintId).catch(err => {
+        console.error(err);
+        err_response = err;
+    })
+
+    if (err_response || _.isUndefined(sprintRemoved)){
+        response["msg"] = "Sorry, There was a problem removing the sprint from the team";
+        res.status(400).send(response);
+        return;
+    }
+
+    response["msg"] = "Sprint was removed successfully.";
+    res.status(200).send(response);
+});
 
 
 /**
