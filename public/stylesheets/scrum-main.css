@@ -344,3 +344,20 @@ td.off{
     background-color: white !important;
     color: #444 !important;
 }
+
+.thworkItemSubMenu{
+    width: 5%;
+}
+
+.tdWorkItemSubMenu{
+    text-align: center;
+}
+
+.tdWorkItemSubMenu span i{
+    font-size: 10%;
+}
+
+.backlog-table-body tr > *{
+    height: 5vh;
+    vertical-align: middle;
+}

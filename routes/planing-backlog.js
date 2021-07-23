@@ -18,7 +18,7 @@ const { backlogPath }    = require("../middleware/includes");
 
 const {
     UNASSIGNED, 
-    EMPTY_SPRINT,
+    UNASSIGNED_SPRINT,
     WORK_ITEM_ICONS,
     WORK_ITEM_STATUS,
     PRIORITY_POINTS,
@@ -50,26 +50,40 @@ router.get("/:id/planing/backlog", middleware.isUserInProject, async function (r
     // TODO: Verify which project is the user in, and set that to be the selected in the frontend
     // get all the teams for this project
     let teams = [...projectInfo.teams];
-    teams.unshift(UNASSIGNED);
 
     // get the team for the user in order to filter by it.
     let userBestTeam = null;
-    if (teams.length > 1){
-        userBestTeam = teams[1];
+    if (teams.length > 0){
+        userBestTeam = teams[0];
         query_work_item["teamId"] = userBestTeam.id;
     }
 
     let sprints = await sprintCollection.find({projectId}).catch(err => console.log(err)) || [];
-    sprints.unshift(EMPTY_SPRINT);
 
     // get all users for this project -> expected an array
     let users = await projectInfo.getUsers().catch(err => console.log(err)) || [];
-    users.unshift(UNASSIGNED);
 
     // LOADING TABLE WORK ITEMS
     query_work_item["projectId"] = projectId;
-    const workItems = await workItemCollection.find(query_work_item).catch(err => console.error("Error getting work items: ", err)) || [];
+    let workItems = await workItemCollection.find(query_work_item).catch(err => console.error("Error getting work items: ", err)) || [];
     
+    for (let i = 0; i < workItems.length; i++) {
+        // workItems[i]["sprint"] = UNASSIGNED_SPRINT;
+        workItems[i]["show"] = true;
+        for (let sprint of sprints){
+            if (sprint && sprint.tasks && sprint.tasks.includes(workItems[i]._id)){
+                // workItems[i]["sprint"] = {_id: sprint._id, name: sprint.name};
+                workItems[i]["show"] = false;
+                break;
+            }
+        }
+    }
+
+     // adding defaults
+    teams.unshift(UNASSIGNED);
+    users.unshift(UNASSIGNED);
+    sprints.unshift(UNASSIGNED_SPRINT);
+
     // populating params
     let params = {
         "title": projectInfo["title"],

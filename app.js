@@ -118,6 +118,7 @@ app.use(function (req, res, next) {
 	res.locals.success        = req.flash("success"); //success message go green
   res.locals.SPRINT_TIME_PERIOD = SPRINT_TIME_PERIOD;
   res.locals.sprintDefaultTimePeriod = SPRINT_TIME_PERIOD["Two Weeks"];
+  res.locals.userTeam = null;
 
   next();
 });

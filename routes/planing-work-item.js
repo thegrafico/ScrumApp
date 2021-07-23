@@ -17,7 +17,7 @@ let router                      = express.Router();
 const { planigWorkItemPath }    = require("../middleware/includes");
 const {
     UNASSIGNED, 
-    EMPTY_SPRINT,
+    UNASSIGNED_SPRINT,
     WORK_ITEM_ICONS,
     WORK_ITEM_STATUS,
     PRIORITY_POINTS,
@@ -47,7 +47,7 @@ router.get("/:id/planing/workitems", middleware.isUserInProject, async function 
     teams.unshift(UNASSIGNED);
 
     let sprints = await sprintCollection.find({projectId}).catch(err => console.log(err)) || [];
-    sprints.unshift(EMPTY_SPRINT);
+    sprints.unshift(UNASSIGNED_SPRINT);
 
     // get all users for this project -> expected an array
     let users = await projectInfo.getUsers().catch(err => console.log(err)) || [];
@@ -84,7 +84,7 @@ router.get("/:id/planing/workitems", middleware.isUserInProject, async function 
 /**
  * METHOD: GET - show the main page for projects
  */
- router.get("/:id/planing/workitems/:workItemId", middleware.isUserInProject, async function (req, res) {
+router.get("/:id/planing/workitems/:workItemId", middleware.isUserInProject, async function (req, res) {
 
     const projectId = req.params.id;
     const workItemId = req.params.workItemId;
@@ -105,7 +105,7 @@ router.get("/:id/planing/workitems", middleware.isUserInProject, async function 
     teams.unshift(UNASSIGNED);
 
     let sprints = await sprintCollection.find({projectId}).catch(err => console.log(err)) || [];
-    sprints.unshift(EMPTY_SPRINT);
+    sprints.unshift(UNASSIGNED_SPRINT);
 
     // get all users for this project -> expected an array
     let users = await projectInfo.getUsers().catch(err => console.log(err)) || [];

@@ -87,7 +87,7 @@ router.get("/api/:id/getworkItemsByTeamId/:teamId", middleware.isUserInProject, 
 
 
 /**
- * METHOD: GET - fetch all work items for a team
+ * METHOD: GET - fetch all users for a team
  */
 router.get("/api/:id/getTeamUsers/:teamId", middleware.isUserInProject, async function (req, res) {
     
@@ -457,7 +457,7 @@ router.post("/api/:id/createSprint", middleware.isUserInProject, async function 
 /**
  * METHOD: POST - REMOVE SPRINT FROM A TEAM
  */
- router.post("/api/:id/removeSprintForTeam/:teamId", middleware.isUserInProject, async function (req, res) {
+router.post("/api/:id/removeSprintForTeam/:teamId", middleware.isUserInProject, async function (req, res) {
     
     console.log("Getting request to remove sprint from team...");
     
@@ -586,7 +586,7 @@ router.post("/api/:id/removeWorkItems", middleware.isUserInProject, async functi
     res.status(200).send(`Successfully removed work ${item_str}`);
 });
 
-
+// ================================ USER API ======================================
 /**
  * METHOD: POST - REMOVE USERS FROM TEAM
  */
@@ -899,5 +899,6 @@ router.post("/api/:id/deleteUsersFromProject", middleware.isUserInProject, async
 
     res.status(200).send(response);
 });
+// ================================ END ======================================
 
 module.exports = router;

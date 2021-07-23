@@ -145,7 +145,7 @@
                                         <span class="aling-vertically align-self-center"> Team: </span>
 
                                         <select class="custom-select my-custon-select" name="teamAssigned" id="teamAssigned">
-                                            <% for (team of teamWorkItem){ %>
+                                            <% for (team of projectTeams){ %>
                                                 <% if (team.selected || (workItem["teamId"] && (team["id"].toString() === workItem["teamId"].toString()))) {%>
                                                     <option value="<%=team['id']%>" selected>
                                                         <%=team["name"]%>
@@ -201,12 +201,12 @@
                                             name="sprint" id="sprints">
                                             <% for (sprint of sprints){ %>
 
-                                                <% if (sprint.selected || (workItem["sprint"] && (sprint["id"].toString() === workItem["sprint"].toString()))) {%>
-                                                    <option value="<%=sprint['id']%>" selected>
+                                                <% if ( (workItem["sprint"] && (sprint["_id"].toString() === workItem["sprint"].toString()))) {%>
+                                                    <option value="<%=sprint['_id']%>" selected>
                                                         <%=sprint["name"]%>
                                                     </option>
                                                 <%}else {%>
-                                                    <option value="<%=sprint['id']%>">
+                                                    <option value="<%=sprint['_id']%>">
                                                         <%=sprint["name"]%>
                                                     </option>
                                                 <%}%>

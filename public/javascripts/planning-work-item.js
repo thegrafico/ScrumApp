@@ -11,6 +11,7 @@ $(function () {
 
     // click on planing just to show to the user in the sidebar
     $(BTN_PLANING).click();
+
     
     /**
      * CHECKBOX BOR WORK ITEM TABLE 

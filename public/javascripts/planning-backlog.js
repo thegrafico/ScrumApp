@@ -51,9 +51,11 @@ function startDraggable(tableId){
         items: 'tr.rowValues',
         cursor: 'row-resize',
         axis: 'y',
+        // handle: ".handle" // TODO: Add icon to sort
         dropOnEmpty: false,
+        delay: 400,
         start: function (e, ui) {
-            ui.item.addClass("selected");
+            // ui.item.addClass("selected");
         },
         stop: function (e, ui) {
             resetColumnOrder();

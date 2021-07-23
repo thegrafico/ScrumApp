@@ -4,6 +4,8 @@ const middleware                = require("../../middleware/auth");
 const workItemCollection        = require("../../dbSchema/workItem");
 const projectCollection         = require("../../dbSchema/projects");
 const userCollection            = require("../../dbSchema/user");
+const SprintCollection          = require("../../dbSchema/sprint");
+
 const _                         = require("lodash");
 let router                      = express.Router();
 
@@ -13,7 +15,7 @@ const {
     MAX_LENGTH_DESCRIPTION,
     MAX_PRIORITY_POINTS,
     MAX_STORY_POINTS,
-    EMPTY_SPRINT,
+    UNASSIGNED_SPRINT,
     WORK_ITEM_STATUS,
     WORK_ITEM_ICONS,
     capitalize
@@ -66,7 +68,6 @@ router.post("/api/:id/newWorkItem", middleware.isUserInProject, async function (
 
     const users = projectInfo["users"];
     const teams = projectInfo["teams"].map(element => element._id);
-    const sprints = projectInfo["sprints"];
 
     // to create a new work item
     let newWorkItem = {};
@@ -135,11 +136,6 @@ router.post("/api/:id/newWorkItem", middleware.isUserInProject, async function (
         newWorkItem["type"] = workItemType;
     }
 
-    // =============== SPRINT ==============
-    if (sprints.includes(sprint)){
-        newWorkItem["sprint"] = sprint;
-    }
-
     // ================ POINTS ===============
     if ( _.isNumber(storyPoints) && !isNaN(storyPoints) && (storyPoints >= 0  && storyPoints <= MAX_STORY_POINTS)){
         newWorkItem["storyPoints"] = storyPoints;
@@ -187,7 +183,21 @@ router.post("/api/:id/newWorkItem", middleware.isUserInProject, async function (
         res.redirect(400, "back");
         return;
     }
-    
+
+    if (!_.isUndefined(sprint) && !_.isEmpty(sprint) && sprint != UNASSIGNED_SPRINT._id){
+        let sprint_error_msg = null;
+        await SprintCollection.findByIdAndUpdate(sprint, {$push: {tasks: newWorkItem._id} }).catch( err => {
+            console.error(err);
+            sprint_error_msg = err;
+        });
+
+        if (sprint_error_msg){
+            console.log("Error adding work item to sprint");
+        }else{
+            console.log("sprint was added to work item");
+        }
+    }
+
     console.log("Was work item created: ", newWorkItem != undefined);
     res.redirect("back");
 });

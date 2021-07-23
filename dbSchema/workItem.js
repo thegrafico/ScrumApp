@@ -41,11 +41,6 @@ let workItemSchema = new mongoose.Schema({
         name: {type: String, default: "unassigned"},
         id: {type: ObjectId, ref: "User", default: null}
     },
-    sprint: {
-        type: ObjectId,
-        ref: "sprint",
-        default: null,
-    },
     storyPoints: {
         type: Number,
         min: 0,

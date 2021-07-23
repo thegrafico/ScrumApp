@@ -136,8 +136,8 @@
                                             <% if(sprints.length > 1){ %>
                                             
                                                 <% for (sprint of sprints){ %>
-                                                    <% if (sprint && sprint.id){ %>
-                                                        <option value="<%=sprint['id']%>"><%=sprint['name']%></option>
+                                                    <% if (sprint && sprint._id){ %>
+                                                        <option value="<%=sprint['_id']%>"><%=sprint['name']%></option>
                                                     <%}%>
                                                 <%}%>
                                             <%}%>  
