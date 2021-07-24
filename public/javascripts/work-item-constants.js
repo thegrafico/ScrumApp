@@ -139,4 +139,9 @@ const SPRINT_TIME_PERIOD = {
     "Two Months": ONE_WEEK * 8,
 };
 
+const MOVE_TO_BACKLOG_BTN = ".moveToBacklog";
+const MOVE_TO_CURRENT_SPRINT_BTN = ".moveToCurrentSprintBtn";
+const MOVE_TO_NEXT_SPRINT_BTN = ".moveToNextSprintBtn";
+
+
 // =========== END

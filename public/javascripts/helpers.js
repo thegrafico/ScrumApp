@@ -493,7 +493,8 @@ function appendToWotkItemTable(workItems){
 function getCheckedElements(elementClassOrId){
     let row_checked = []
     
-    $(elementClassOrId).each(function(){
+    $(`${elementClassOrId}:visible`).each(function(){
+
         row_checked.push($(this).val())
     });
 

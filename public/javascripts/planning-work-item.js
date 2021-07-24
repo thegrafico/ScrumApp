@@ -148,7 +148,7 @@ $(function () {
     });
 
     // BACKLOG
-    $(document).on("click", ".moveToBacklog", function(){
+    $(document).on("click", MOVE_TO_BACKLOG_BTN, function(){
         let workItemId = $(this).attr("rel");
 
         // get checked elements in table
@@ -162,7 +162,7 @@ $(function () {
     });
 
     // CURRENT
-    $(document).on("click", ".moveToCurrentSprintBtn", function(){
+    $(document).on("click", MOVE_TO_CURRENT_SPRINT_BTN, function(){
         let workItemId = $(this).attr("rel");
 
         // get checked elements in table
@@ -177,7 +177,7 @@ $(function () {
     });
 
     // NEXT
-    $(document).on("click", ".moveToNextSprintBtn", function(){
+    $(document).on("click", MOVE_TO_NEXT_SPRINT_BTN, function(){
         let workItemId = $(this).attr("rel");
 
         // get checked elements in table
@@ -197,7 +197,7 @@ $(function () {
 
         enableTrashButton(isChecked);
 
-        $(TABLE_ROW_CHECKBOX_ELEMENT).each(function(){
+        $(`${TABLE_ROW_CHECKBOX_ELEMENT}:visible`).each(function(){
             this.click();
         });
     });
