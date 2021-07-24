@@ -160,3 +160,31 @@ app.use(function (err, req, res, next) {
 module.exports = app;
 
 // <!-- https://bootswatch.com/darkly/ -->
+
+
+/**
+ * services folder
+ * Launch controller is invoking the method
+ * launch module
+ * launch controller at the beggining we importing
+ * ampd-testbase
+ */
+
+
+/**
+ * 
+ * testing-req-config
+ * 
+ * Spec folder
+ * 
+ * Client: 
+ *  src/test/java
+ *      Test Application
+ *  src/test/resource
+ * 
+ * In static folder will be my code service in test/resource
+ * then to run that test I need to add it in the testing req-config
+ * create a new file in the services folder
+ * To running the test -> Test Application
+ * if you had run client verify, then is not available
+ */

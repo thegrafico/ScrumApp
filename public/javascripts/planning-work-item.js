@@ -9,6 +9,8 @@ $(function () {
     // show the active tab in the sidebar
     showActiveTab();
 
+    checkTitleWhenOpen();
+
     // click on planing just to show to the user in the sidebar
     $(BTN_PLANING).click();
 
@@ -85,7 +87,6 @@ $(function () {
     });
 
     // ================== CHECKING TITLE ERRORS =================
-    checkTitleWhenOpen();
     // When title input is changed
     $(WORK_ITEM["title"]).on("input", function () {
         
@@ -148,7 +149,99 @@ $(function () {
         toggleFilter()
     });
 
+    // BACKLOG
+    $(document).on("click", ".moveToBacklog", function(){
+        let workItemId = $(this).attr("rel");
+
+        // get checked elements in table
+        const workItems = getCheckedElements(TABLE_ROW_CHECKBOX_ELEMENT_CHECKED);
+
+        if (_.isArray(workItems) && !_.isEmpty(workItems)){   
+            moveWorkItemToSprint(workItems, 'backlog');
+        }else{
+            moveWorkItemToSprint([workItemId], 'backlog');
+        }
+    });
+
+    // CURRENT
+    $(document).on("click", ".moveToCurrentSprintBtn", function(){
+        let workItemId = $(this).attr("rel");
+
+        // get checked elements in table
+        const workItems = getCheckedElements(TABLE_ROW_CHECKBOX_ELEMENT_CHECKED);
+
+        if (_.isArray(workItems) && !_.isEmpty(workItems)){   
+            moveWorkItemToSprint(workItems, 'current');
+        }else{
+            moveWorkItemToSprint([workItemId], 'current');
+        }
+
+    });
+
+    // NEXT
+    $(document).on("click", ".moveToNextSprintBtn", function(){
+        let workItemId = $(this).attr("rel");
+
+        // get checked elements in table
+        const workItems = getCheckedElements(TABLE_ROW_CHECKBOX_ELEMENT_CHECKED);
+
+        if (_.isArray(workItems) && !_.isEmpty(workItems)){   
+            moveWorkItemToSprint(workItems, 'next');
+        }else{
+            moveWorkItemToSprint([workItemId], 'next');
+        }
+    });
+
 });
+
+/**
+ * Move a work item to the next sprint
+ * @param {Array} workItemId - Array with the Ids of the work items
+ * @param {String} where ('current' | 'next' | 'backlog')
+ */
+async function moveWorkItemToSprint(workItemId, where){
+
+    // check work item
+    if (_.isUndefined(workItemId) || _.isEmpty(workItemId) || !_.isArray(workItemId)){
+        $.notify("Invalid work item was selected.", "error");
+        return;
+    }
+
+    if (_.isEmpty(where) || !_.isString(where) || !["current", 'next', 'backlog'].includes(where)){
+        $.notify("Sorry, Bad information received", "error");
+        return;
+    }
+
+    // check project id information
+    const projectId = $(PROJECT_ID).val();
+    if (_.isUndefined(projectId) || _.isEmpty(projectId)){
+        $.notify("Sorry, we cannot find the project information. Try later", "error");
+        return;
+    }
+
+    const teamId = $(FILTER_BY_TEAM_INPUT).val();
+    if (_.isUndefined(teamId) || _.isEmpty(teamId)){
+        $.notify("Please select a team to move to work item.", "error");
+        return;
+    }
+
+    const data = {"where": where, workItemIds: workItemId};
+
+    // link to make the request
+    const API_LINK_MOVE_WORK_ITEM_TO_SPRINT = `/dashboard/api/${projectId}/moveWorkItemsToSprint/${teamId}`;
+    
+    let response_error = null;
+    const response = await make_post_request(API_LINK_MOVE_WORK_ITEM_TO_SPRINT, data).catch(err=> {
+        response_error = err;
+    });
+    
+    if (response){
+        $.notify(response.msg, "success");
+        removeWorkItemsFromTable(workItemId);
+    }else{
+        $.notify(response_error.data.responseJSON.msg, "error");
+    }
+}
 
 /**
  * Enable the functionality for the trash button

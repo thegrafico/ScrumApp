@@ -18,7 +18,8 @@ const {
     UNASSIGNED_SPRINT,
     WORK_ITEM_STATUS,
     WORK_ITEM_ICONS,
-    capitalize
+    capitalize,
+    SPRINT_STATUS
 } = require('../../dbSchema/Constanst');
 
 
@@ -442,6 +443,124 @@ router.post("/api/:id/update_work_item/:workItemId", middleware.isUserInProject,
     });
 
     res.status(200).send("Work Item was updated successfully!");
+});
+
+/**
+ * METHOD: POST - Move work item to a sprint
+ */
+ router.post("/api/:id/moveWorkItemsToSprint/:teamId", middleware.isUserInProject, async function (req, res) {
+    
+    console.log("Getting request to move work item to iteration...");
+    
+    const projectId = req.params.id;
+    const teamId = req.params.teamId;
+    let response = {projectId, teamId};
+
+    const {where, workItemIds} = req.body;
+
+    if (_.isUndefined(where) || !_.isArray(workItemIds)){
+        response["msg"] = "Invalid data was received.";
+        res.status(400).send(response);
+        return;
+    }
+
+    // =========== Validate project exist =================
+    
+    const project = await projectCollection.findById(projectId).catch(err => {
+        console.error("Error getting the project info: ", err);
+    });
+
+    // verify project is good.
+    if (_.isUndefined(project) || _.isEmpty(project)){
+        response["msg"] = "Error getting the project information. Try later"
+        res.status(400).send(response);
+        return;
+    }
+
+    // check team
+    if (!project.isTeamInProject(teamId)){
+        response["msg"] = "Sorry, The team received does not belong to the current project.";
+        res.status(400).send(response);
+        return;
+    }
+
+    // check work item
+    for (const workItem of workItemIds){
+
+        if (!project.isWorkItemInProject(workItem)){
+            response["msg"] = "Sorry, A work item received does not belong to the current project.";
+            res.status(400).send(response);
+            return;
+        }
+    }
+    
+    // =========== UPDATE SPRINT =================
+
+    if (where == "backlog"){
+        let backlog_error = null;
+        await SprintCollection.updateMany(
+            {projectId, teamId},
+            {$pull: {tasks: {$in: workItemIds }}}
+        ).catch(err => {
+            backlog_error = err;
+            console.error(err);
+        });
+
+        if (backlog_error){
+            response["msg"] = "Sorry, There was a problem moving the work item/s to the backlog";
+            res.status(400).send(response);
+            return;
+        }
+
+        response["msg"] = "Work items were moved to the backlog.";
+        res.status(200).send(response);
+        return;
+    }
+
+    let sprints = await SprintCollection.find({projectId, teamId}).catch(err => {
+        console.error(err);
+    });
+
+    if (_.isUndefined(sprints)){
+        response["msg"] = "Sorry, There was a problem getting the sprints information.";
+        res.status(400).send(response);
+        return;
+    }
+
+    // check if there is any sprint
+    if (_.isEmpty(sprints)){
+        response["msg"] = "Sorry, There is not sprint to move to the work item.";
+        res.status(400).send(response);
+        return;
+    }
+
+    let activeSprints = sprints.filter( each => {
+        return each.status == SPRINT_STATUS["Active"];
+    });
+
+    // TODO: check if there is more than one sprint active, if so, update and just select one 
+    // base on the current date
+    if (_.isEmpty(activeSprints)){
+        response["msg"] = "Sorry, There is not ACTIVE sprint to move to the work item.";
+        res.status(400).send(response);
+        return;
+    }
+
+    let activeSprint = activeSprints[0];
+    for (const itemId of workItemIds) {
+        activeSprint.tasks.push(itemId);
+    }
+
+    await activeSprint.save().then(doc => {
+        console.log("Work item was moved!");
+        response["msg"] = "Work Item was moved to the sprint.";
+        res.status(200).send(response);
+    }).catch(err => {
+        console.error(err);
+        response["msg"] = "Sorry, There was a problem moving the work item to the sprint. Try later.";
+        res.status(200).send(response);
+    });
+    
 });
 
 module.exports = router;

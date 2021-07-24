@@ -105,7 +105,7 @@ projectSchema.methods.getWorkItem = async function(workItemId) {
 
 /**
  * Verify user is in project
- * @param {String} userId-> workItemId
+ * @param {String} userId-> id of the user
  * @returns {Boolean} True if the user is in the project
  */
 projectSchema.methods.isUserInProject = function(userId) {
@@ -119,9 +119,9 @@ projectSchema.methods.isUserInProject = function(userId) {
 };
 
 /**
- * Verify user is in project
+ * Verify team is in project
  * @param {String} teamId-> Id of the team
- * @returns {Boolean} True if the user is in the project
+ * @returns {Boolean} True if the team is in the project
  */
 projectSchema.methods.isTeamInProject = function(teamId) {
 
@@ -140,6 +140,29 @@ projectSchema.methods.isTeamInProject = function(teamId) {
 
     return false;
 };
+
+/**
+ * Verify if work item is in project
+ * @param {String} workItemId -> Id of the work item
+ * @returns {Boolean} True if the work item is in the project
+ */
+projectSchema.methods.isWorkItemInProject = async function(workItemId) {
+
+    // if empty and not string
+    if (_.isEmpty(workItemId) || !_.isString(workItemId)){
+        console.error("Work item is either empty or is not a String");
+        return false;
+    }
+
+    let workItem = await workItemCollection.findOne({projectId: this._id, _id: workItemId}).catch(err => {
+        console.error(err);
+    });
+
+    // return if work item was found
+    return (_.isUndefined(workItem) || _.isNull(workItem)) ? false: true;
+
+};
+
 
 /**
  * Get the name of the user

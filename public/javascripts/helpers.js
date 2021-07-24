@@ -454,6 +454,17 @@ function removeDisableAttr(selectElement, values){
     }
 }
 
+/**
+ * Remove the work items from the table. assuming the ID of the table row is the work item id
+ * @param {Array} workItems - array with the work item ids
+ */
+function removeWorkItemsFromTable(workItems){
+    for (let itemId of workItems){
+        $(`tr#${itemId}`).remove();
+    }        
+    enableTrashButton(false);
+}
+
 
 function removeAllDisableAttr(selectElement){
     $(`${selectElement} *`).attr('disabled', false);

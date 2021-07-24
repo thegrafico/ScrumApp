@@ -125,6 +125,7 @@
                             <th scope="col" class="tableColumnID">ID</th>
                             <th class="d-none" scope="col">Type</th>
                             <th scope="col">Title</th>
+                            <th scope="col" class="thworkItemSubMenu"></th>
                             <th scope="col">Assigned</th>
                             <th scope="col">State</th>
                             <th scope="col">Tags</th>
@@ -135,7 +136,8 @@
                     </thead>
                     <tbody>
                         <% for (let i = 0; i < workItems.length; ++i) {%>
-                            <tr class="rowValues">
+                            <tr class="rowValues" id="<%=workItems[i]['_id']%>">
+
                                 <td class="tableCheckBoxRowElement"> 
                                     <label for="checkboxRowElement" class="invisible labelcheckbox"> 
                                         <input type="checkbox" name="checkboxWorkItem[]" value="<%=workItems[i]['_id']%>" class="checkboxRowElement" />
@@ -150,6 +152,26 @@
                                         <span class="table-icon"> <i class="fas <%=workItemType[workItems[i]['type']].icon%>"></i> </span>  <%=workItems[i]["title"]%> 
                                     </a> 
                                 </td>
+
+                                <!-- Sub MENU -->
+                                <td class="tdWorkItemSubMenu">
+                                    <span class="btn btn-outline-info" data-bs-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                                        <i class="fas fa-ellipsis-v workItemSubMenuIcon"></i>
+                                    </span>
+                                    <!-- <a class="nav-link dropdown-toggle show" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="true">Dropdown</a> -->
+                                    <div id="workItemSubMenu" class="dropdown-menu " data-bs-popper="none">
+                                        
+                                        <a class="dropdown-item moveToBacklog" href="#" role="button" rel="<%=workItems[i]['_id']%>">
+                                            Move to Backlog
+                                        </a>                                        
+                                        
+                                        <a class="dropdown-item moveToNextSprintBtn" href="#" rel="<%=workItems[i]['_id']%>">
+                                            Move to next Sprint
+                                        </a>
+
+                                    </div>
+                                </td>
+
                                 <td> <i class="fas fa-user-astronaut"></i> <%=workItems[i]["assignedUser"]["name"]%></td>
                                 <td><i class="fa fa-circle <%=workItems[i]['status']%>Color" aria-hidden="true"></i> <%=workItems[i]["status"]%></td>
                                 <td class="tags-td"> 
