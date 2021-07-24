@@ -20,9 +20,9 @@
                     <div class="filterByTeamContainer">
                         <% if(projectTeams.length > 1){ %>
                             <select 
-                            class="custom-select my-custon-select input-border"
-                            name="filterByTeam" 
-                            id="filterByTeam" 
+                            class="custom-select my-custon-select input-border seletedTeamToFilter"
+                            name="filterByTeamSprint" 
+                            id="filter-by-team-sprint" 
                             aria-label="Default select example">
                                 <% for (let i = 1; i < projectTeams.length; i++) { %>
 
@@ -120,12 +120,15 @@
                 <table class="table table-hover" id="workItemTable">
                     <thead>
                         <tr class="tableHeader">
-                            <th class="tableCheckBoxRowHeader"></th>
+                            <th class="tableCheckBoxRowHeader"> 
+                                <input type="checkbox" name="checkAll" id="checkAllTableRow"/>
+                                <span class="d-none">checkbox</span>
+                            </th>
                             <th class="orderColumn">Order</th>
                             <th scope="col" class="tableColumnID">ID</th>
                             <th class="d-none" scope="col">Type</th>
                             <th scope="col">Title</th>
-                            <th scope="col" class="thworkItemSubMenu"></th>
+                            <th scope="col" class="thworkItemSubMenu"> <span class="d-none">submenu</span> </th>
                             <th scope="col">Assigned</th>
                             <th scope="col">State</th>
                             <th scope="col">Tags</th>
@@ -138,14 +141,22 @@
                         <% for (let i = 0; i < workItems.length; ++i) {%>
                             <tr class="rowValues" id="<%=workItems[i]['_id']%>">
 
+                                <!-- CHECKBOX -->
                                 <td class="tableCheckBoxRowElement"> 
                                     <label for="checkboxRowElement" class="invisible labelcheckbox"> 
                                         <input type="checkbox" name="checkboxWorkItem[]" value="<%=workItems[i]['_id']%>" class="checkboxRowElement" />
                                     </label> 
                                 </td> 
+                                
+                                <!-- ORDER -->
                                 <td class="orderColumn"><%=i+1%></td>
+                                
+                                <!-- id -->
                                 <td class="tableColumnID"> <%=workItems[i]["itemId"]%></td>
+                                
+                                <!-- TYPE  - HIDEN -->
                                 <td class="d-none" > <i class="fas <%=workItemType[workItems[i]['type']].icon%>"></i> <%=workItems[i]["type"]%></td>
+                                
                                 <!-- TODO: CHANGE TO A BETTER LINK -->
                                 <td class="openStory"> 
                                     <a href="workitems/<%=workItems[i]['_id']%>">  
@@ -172,8 +183,13 @@
                                     </div>
                                 </td>
 
+                                <!-- USER -->
                                 <td> <i class="fas fa-user-astronaut"></i> <%=workItems[i]["assignedUser"]["name"]%></td>
+                                
+                                <!-- STATUS -->
                                 <td><i class="fa fa-circle <%=workItems[i]['status']%>Color" aria-hidden="true"></i> <%=workItems[i]["status"]%></td>
+                                
+                                <!-- TAGS -->
                                 <td class="tags-td"> 
                                     <% if (workItems[i]["tags"].length > 0)  {%>
                                         <% workItems[i]["tags"].forEach(each => { %>
@@ -181,7 +197,11 @@
                                         <% }); %>
                                     <% } %>
                                 </td>
+                                
+                                <!-- COMMENTS -->
                                 <td class="table-comments-column"><span>  <i class="fas fa-comments"></i>  <%=workItems[i]["comments"].length%></span> </td>
+
+                                <!-- POINTS -->
                                 <td class="storyPointsRow"><%=workItems[i]["storyPoints"]%></td>
                             </tr>
                         <%}%>

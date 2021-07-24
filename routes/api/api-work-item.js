@@ -448,7 +448,7 @@ router.post("/api/:id/update_work_item/:workItemId", middleware.isUserInProject,
 /**
  * METHOD: POST - Move work item to a sprint
  */
- router.post("/api/:id/moveWorkItemsToSprint/:teamId", middleware.isUserInProject, async function (req, res) {
+router.post("/api/:id/moveWorkItemsToSprint/:teamId", middleware.isUserInProject, async function (req, res) {
     
     console.log("Getting request to move work item to iteration...");
     

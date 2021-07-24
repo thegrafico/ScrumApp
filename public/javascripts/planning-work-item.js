@@ -19,8 +19,6 @@ $(function () {
      * CHECKBOX BOR WORK ITEM TABLE 
      */
     $(document).on("click", TABLE_ROW_CHECKBOX_ELEMENT, function () {
-
-        // $(TABLE_ROW_CHECKBOX_ELEMENT).on("click", function(){
         
         // get the parent element. In this case, it will be the the label element
         let _parent = $( this ).parent();
@@ -192,73 +190,19 @@ $(function () {
         }
     });
 
-});
+    // CHECK ALL ROWS ELEMENT
+    $(CHECK_ALL_CHECKBOX_TABLE_ROWS).on("click", function(){
+        
+        let isChecked = this.checked;
 
-/**
- * Move a work item to the next sprint
- * @param {Array} workItemId - Array with the Ids of the work items
- * @param {String} where ('current' | 'next' | 'backlog')
- */
-async function moveWorkItemToSprint(workItemId, where){
+        enableTrashButton(isChecked);
 
-    // check work item
-    if (_.isUndefined(workItemId) || _.isEmpty(workItemId) || !_.isArray(workItemId)){
-        $.notify("Invalid work item was selected.", "error");
-        return;
-    }
-
-    if (_.isEmpty(where) || !_.isString(where) || !["current", 'next', 'backlog'].includes(where)){
-        $.notify("Sorry, Bad information received", "error");
-        return;
-    }
-
-    // check project id information
-    const projectId = $(PROJECT_ID).val();
-    if (_.isUndefined(projectId) || _.isEmpty(projectId)){
-        $.notify("Sorry, we cannot find the project information. Try later", "error");
-        return;
-    }
-
-    const teamId = $(FILTER_BY_TEAM_INPUT).val();
-    if (_.isUndefined(teamId) || _.isEmpty(teamId)){
-        $.notify("Please select a team to move to work item.", "error");
-        return;
-    }
-
-    const data = {"where": where, workItemIds: workItemId};
-
-    // link to make the request
-    const API_LINK_MOVE_WORK_ITEM_TO_SPRINT = `/dashboard/api/${projectId}/moveWorkItemsToSprint/${teamId}`;
-    
-    let response_error = null;
-    const response = await make_post_request(API_LINK_MOVE_WORK_ITEM_TO_SPRINT, data).catch(err=> {
-        response_error = err;
+        $(TABLE_ROW_CHECKBOX_ELEMENT).each(function(){
+            this.click();
+        });
     });
-    
-    if (response){
-        $.notify(response.msg, "success");
-        removeWorkItemsFromTable(workItemId);
-    }else{
-        $.notify(response_error.data.responseJSON.msg, "error");
-    }
-}
 
-/**
- * Enable the functionality for the trash button
- * @param {Boolean} enable - True if wants to enable the trash button, false if wants to disable
- */
-function enableTrashButton(enable){
-    
-    if (enable){
-        $(TRASH_BTN_GENERAL_CLASS).attr("disabled", false);
-        $(`${TRASH_BTN_GENERAL_CLASS} i`).removeClass("grayColor");
-        $(`${TRASH_BTN_GENERAL_CLASS} i`).addClass("redColor");
-    }else{
-        $(TRASH_BTN_GENERAL_CLASS).attr("disabled", true);
-        $(`${TRASH_BTN_GENERAL_CLASS} i`).removeClass("redColor");
-        $(`${TRASH_BTN_GENERAL_CLASS} i`).addClass("grayColor");
-    }
-}
+});
 
 /**
  * Add a comment to a work item for a project

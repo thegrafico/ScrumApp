@@ -54,8 +54,11 @@ const TABLE_ROW_CHECKBOX_ELEMENT_CONTAINER = ".tableCheckBoxRowElement";
 const TABLE_ROW_CHECKBOX_ELEMENT = ".checkboxRowElement";
 const TABLE_ROW_CHECKBOX_ELEMENT_CHECKED = ".checkboxRowElement:checked";
 
+const CHECK_ALL_CHECKBOX_TABLE_ROWS = "#checkAllTableRow";
+
 // FILTER TEAMS
 const FILTER_BY_TEAM_INPUT = "#filterByTeam";
+const FILTER_BY_TEAM_GENERAL_CLASS = ".seletedTeamToFilter";
 const FILTER_BY_TEAM_MANAGE_INPUT = "#manage-filter-by-team";
 
 // SAVE WORK ITEM BTN

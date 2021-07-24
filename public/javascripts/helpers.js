@@ -322,6 +322,26 @@ function cleanTable(tableId){
 }
 
 /**
+ * get the header of the nable
+ * @param {String} tableId 
+ * @return {Array} header of the table in order 
+*/
+function getTableHeadersArray(tableId){
+
+    let header = [];
+    // Get each th Which is a table header
+    $(`${tableId} thead tr.tableHeader th`).each(function (){
+        header_text = $(this).text().trim().toLowerCase();
+        // header[header_text] = header_text;
+        header.push(header_text)
+    });
+
+    console.log(header);
+    return header;
+}
+
+
+/**
  * Add data to work item table
  * @param {Array} workItems - array of work items
  */
@@ -334,65 +354,131 @@ function appendToWotkItemTable(workItems){
     
     // clean the table
     cleanTable(WORK_ITEM_TABLE);
-    
+
+    let headers_array = getTableHeadersArray(WORK_ITEM_TABLE);
+    let headers_object = {};
+
     for(let i = 0; i < workItems.length; i++){
         const workItem = workItems[i];
 
-        let td_checkbox = `
+        // CHECKBOX
+        let checkbox = `
             <td class="tableCheckBoxRowElement"> 
                 <label for="checkboxRowElement" class="invisible labelcheckbox"> 
                 <input type="checkbox" name="checkboxWorkItem[]" value="${workItem['_id']}" class="checkboxRowElement" />
                 </label> 
-            </td>`;
+            </td>
+        `;
+        headers_object["checkbox"] = checkbox;
 
-        let td_order = `<td class="orderColumn">${i+1}</td>`;
+        
+        // ORDER
+        let order = `<td class="orderColumn">${i+1}</td>`;
+        headers_object["order"] = order;
 
-        let td_id = `<td class="tableColumnID"> ${workItem['itemId']}</td>`;
 
-        // let td_type = `
-        //     <td> <i class="fas  ${WORK_ITEM_ICONS[workItems[i]['type']].icon}"></i> ${workItem['type']}</td>
-        // `;
+        // ID
+        let id = `<td class="tableColumnID"> ${workItem['itemId']}</td>`;
+        headers_object["id"] = id;
 
-        let td_title = `
+
+        // TYPE
+        let type = `
+            <td class="d-none"> <i class="fas  ${WORK_ITEM_ICONS[workItems[i]['type']].icon}"></i> ${workItem['type']}</td>
+        `;
+        headers_object["type"] = type;
+
+        // TITLE
+        let title = `
             <td class="openStory"> <a href="workitems/${workItem['_id']}"> <i class="fas  ${WORK_ITEM_ICONS[workItems[i]['type']].icon}"></i> ${workItem['title']} </a> </td>
         `;
+        headers_object["title"] = title;
 
-        let td_user = `
+        // SUB MENU
+        let submenu = `
+            <td class="tdWorkItemSubMenu">
+                <span class="btn btn-outline-info" data-bs-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                    <i class="fas fa-ellipsis-v workItemSubMenuIcon"></i>
+                </span>
+
+                <div id="workItemSubMenu" class="dropdown-menu " data-bs-popper="none">
+                    
+                    <a class="dropdown-item moveToBacklog" href="#" role="button" rel="${workItem['_id']}">
+                        Move to Backlog
+                    </a>                                        
+                    
+                    <a class="dropdown-item moveToNextSprintBtn" href="#" rel="${workItem['_id']}">
+                        Move to next Sprint
+                    </a>
+
+                </div>
+            </td>
+        `;
+        headers_object["submenu"] = submenu;
+
+
+        // USER
+        let assigned = `
             <td> <i class="fas fa-user-astronaut"></i> ${workItem["assignedUser"]["name"]}</td>
         `;
+        headers_object["assigned"] = assigned;
 
-        let td_status = `
+
+        // STATUS
+        let state = `
             <td><i class="fa fa-circle ${workItem['status']}Color" aria-hidden="true"></i> ${workItem['status']}</td>
         `;
+        headers_object["state"] = state;
 
-        let td_comments = `
-            <td class="table-comments-column"><span>  <i class="fas fa-comments"></i> ${workItem['comments'].length}</span> </td>
-        `;
-        
-        let td_tags = null;
+
+        // TAGS
+        let tags = null;
         if (workItem["tags"].length > 0){
             let spans = "";
             workItem["tags"].forEach(tag => {
                 spans += `<span class="btn btn-info disabled btn-sm tags-container">${tag}</span> `;
             });
 
-            td_tags  = `<td class="tags-td"> ${spans} </td>`
+            tags  = `<td class="tags-td"> ${spans} </td>`
         }else{
-            td_tags = "<td class='tags-td'>   </td>"
+            tags = "<td class='tags-td'>   </td>"
         }
+        headers_object["tags"] = tags;
 
-        let table_row = `
-        <tr class="rowValues">
-            ${td_checkbox}
-            ${td_order}
-            ${td_id}
-            ${td_title}
-            ${td_user}
-            ${td_status}
-            ${td_tags}
-            ${td_comments}
-        </tr>
+
+        // COMMENTS
+        let comments = `
+            <td class="table-comments-column"><span>  <i class="fas fa-comments"></i> ${workItem['comments'].length}</span> </td>
         `;
+        headers_object["comments"] = comments;
+
+
+        // POINTS
+        let points = `
+            <td class="storyPointsRow">${workItem['storyPoints']}</td>
+        `;
+        headers_object["points"] = points;
+
+
+        let table_row = "<tr class='rowValues'>"
+        
+        // since the headers_array is in order, we just need to append it to the table row
+        for (const headerKey of headers_array) {
+            console.log("Adding: ", headerKey);
+            table_row += headers_object[headerKey];
+        }
+        table_row += "</tr>";
+        //     ${td_checkbox}
+        //     ${td_order}
+        //     ${td_id}
+        //     ${td_type}
+        //     ${td_title}
+        //     ${td_user}
+        //     ${td_status}
+        //     ${td_tags}
+        //     ${td_comments}
+        // </tr>
+        // `;
 
         $(`${WORK_ITEM_TABLE} > tbody:last-child`).append(table_row);
     }
@@ -520,6 +606,57 @@ function removeAllOptionsFromSelect(selectId, defaultValue){
     .trigger("change");
 }
 
+/**
+ * Move a work item to the next sprint
+ * @param {Array} workItemId - Array with the Ids of the work items
+ * @param {String} where ('current' | 'next' | 'backlog')
+ */
+ async function moveWorkItemToSprint(workItemId, where){
+
+    // check work item
+    if (_.isUndefined(workItemId) || _.isEmpty(workItemId) || !_.isArray(workItemId)){
+        $.notify("Invalid work item was selected.", "error");
+        return;
+    }
+
+    if (_.isEmpty(where) || !_.isString(where) || !["current", 'next', 'backlog'].includes(where)){
+        $.notify("Sorry, Bad information received", "error");
+        return;
+    }
+
+    // check project id information
+    const projectId = $(PROJECT_ID).val();
+    if (_.isUndefined(projectId) || _.isEmpty(projectId)){
+        $.notify("Sorry, we cannot find the project information. Try later", "error");
+        return;
+    }
+
+
+    const teamId = $(FILTER_BY_TEAM_GENERAL_CLASS).val();
+    console.log(teamId);
+    if (_.isUndefined(teamId) || _.isEmpty(teamId)){
+        $.notify("Please select a team to move to work item.", "error");
+        return;
+    }
+
+    const data = {"where": where, workItemIds: workItemId};
+
+    // link to make the request
+    const API_LINK_MOVE_WORK_ITEM_TO_SPRINT = `/dashboard/api/${projectId}/moveWorkItemsToSprint/${teamId}`;
+    
+    let response_error = null;
+    const response = await make_post_request(API_LINK_MOVE_WORK_ITEM_TO_SPRINT, data).catch(err=> {
+        response_error = err;
+    });
+    
+    if (response){
+        $.notify(response.msg, "success");
+        removeWorkItemsFromTable(workItemId);
+    }else{
+        $.notify(response_error.data.responseJSON.msg, "error");
+    }
+}
+
 
 /**
  * Update HMTL after a POST request was successful
@@ -590,6 +727,23 @@ function update_html(currentPage, updateType, valueToUpdate, inputType){
 
         default:
             break;
+    }
+}
+
+/**
+ * Enable the functionality for the trash button
+ * @param {Boolean} enable - True if wants to enable the trash button, false if wants to disable
+ */
+function enableTrashButton(enable){
+    
+    if (enable){
+        $(TRASH_BTN_GENERAL_CLASS).attr("disabled", false);
+        $(`${TRASH_BTN_GENERAL_CLASS} i`).removeClass("grayColor");
+        $(`${TRASH_BTN_GENERAL_CLASS} i`).addClass("redColor");
+    }else{
+        $(TRASH_BTN_GENERAL_CLASS).attr("disabled", true);
+        $(`${TRASH_BTN_GENERAL_CLASS} i`).removeClass("redColor");
+        $(`${TRASH_BTN_GENERAL_CLASS} i`).addClass("grayColor");
     }
 }
 

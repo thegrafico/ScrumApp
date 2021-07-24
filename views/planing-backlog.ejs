@@ -20,7 +20,7 @@
                     <div class="filterByTeamContainer">
                         <% if(userTeam){ %>
                             <select 
-                            class="custom-select my-custon-select input-border"
+                            class="custom-select my-custon-select input-border seletedTeamToFilter"
                             name="filterByTeam" 
                             id="filterByTeam" 
                             aria-label="Default select example">
@@ -88,12 +88,15 @@
                 <table class="table table-hover" id="workItemTable">
                     <thead>
                         <tr class="tableHeader">
-                            <th class="tableCheckBoxRowHeader"></th>
+                            <th class="tableCheckBoxRowHeader"> 
+                                <input type="checkbox" name="checkAll" id="checkAllTableRow"/>
+                                <span class="d-none">checkbox</span>
+                            </th>
                             <th class="orderColumn">Order</th>
                             <th scope="col" class="tableColumnID">ID</th>
                             <th class="d-none" scope="col">Type</th>
                             <th scope="col">Title</th>
-                            <th scope="col" class="thworkItemSubMenu"></th>
+                            <th scope="col" class="thworkItemSubMenu"> <span class="d-none">submenu</span> </th>
                             <th scope="col">Assigned</th>
                             <th scope="col">State</th>
                             <th scope="col">Tags</th>
