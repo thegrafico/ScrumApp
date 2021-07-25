@@ -96,7 +96,7 @@ router.get("/:id/manageTeam", middleware.isUserInProject, async function (req, r
     let userTeams = [];
     let userIds = [];
     if (teams.length > 0){
-        userBestTeam = teams[1];
+        userBestTeam = teams[0];
         userTeams = await projectInfo.getUsersForTeam(userBestTeam.id).catch(err => {
             console.error(err);
         }) || [];
@@ -115,6 +115,7 @@ router.get("/:id/manageTeam", middleware.isUserInProject, async function (req, r
         "projectUsers": users,
         "assignedUsers": users,
         "addUserModal": true,
+        "sprints": [],
         "currentPage": PAGES.MANAGE_TEAM,
         "userIds": userIds,
         "userTeam": userBestTeam,

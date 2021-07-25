@@ -607,6 +607,19 @@ function updateSelectOption(selectId, updateType, valueToUpdate, selected=false)
     }
 }
 
+/**
+ * Show a popup message at the top of the element
+ * @param {String} selector id or class of the element
+ * @param {*} message - message to show
+ * @param {*} style - style class ("success" | "error" | "warning")
+ */
+function showPopupMessage(selector, message, style="error"){
+    $(selector).notify(
+        message, 
+        { position:"top", autoHide: false, clickToHide: true, className: style}
+    );
+}
+
 
 /**
  * Remove all options from select and add a default value

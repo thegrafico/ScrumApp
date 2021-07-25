@@ -31,7 +31,6 @@ const SPRINT_STATUS = {
     "Past": "Past", // Today - 6 days
     "Coming": "Coming", 
     "Active": "Active",
-    "Due": "Due",
 };
 
 module.exports.SPRINT_STATUS = SPRINT_STATUS;

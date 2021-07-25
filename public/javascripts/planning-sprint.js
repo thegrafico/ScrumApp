@@ -53,6 +53,11 @@ $(function () {
                         {"value": sprint["_id"], "text":optionText},
                         isSelected
                     );
+
+                    if (isSelected && sprint["status"] == SPRINT_STATUS["Past"]){
+                        let message = "The active sprint is due.";
+                        showPopupMessage(FILTER_BY_SPRINT_INPUT, message)
+                    }
                 }
             }else{ 
                removeAllOptionsFromSelect(
