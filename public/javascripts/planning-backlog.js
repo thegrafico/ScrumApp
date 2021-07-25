@@ -35,7 +35,8 @@ $(function () {
 
     // WHEN the user opens the modal, select the current team to be the team to create the work item
     $(createWorkItemModal).on('shown.bs.modal', function () {
-        let currentSelectedTeam = $(FILTER_BY_TEAM_INPUT).val();
+
+        let currentSelectedTeam = $(FILTER_BY_TEAM_GENERAL_CLASS).val();
         
         $(WORK_ITEM["team"]).val(currentSelectedTeam).change();
     });

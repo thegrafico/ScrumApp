@@ -90,7 +90,7 @@ router.get("/api/:id/getworkItemsByTeamId/:teamId", middleware.isUserInProject, 
 /**
  * METHOD: GET - fetch all work items for a team with sprint
  */
- router.get("/api/:id/getSprintWorkItems/:teamId", middleware.isUserInProject, async function (req, res) {
+router.get("/api/:id/getAllSprintWorkItems/:teamId", middleware.isUserInProject, async function (req, res) {
     
     const projectId = req.params.id;
     const teamId = req.params.teamId;
@@ -158,6 +158,70 @@ router.get("/api/:id/getworkItemsByTeamId/:teamId", middleware.isUserInProject, 
     return;
 
 });
+
+/**
+ * METHOD: GET - fetch all work items for a team with sprint
+ */
+router.get("/api/:id/getSprintWorkItems/:teamId/:sprintId", middleware.isUserInProject, async function (req, res) {
+    
+    const projectId = req.params.id;
+    const teamId = req.params.teamId;
+    const sprintId = req.params.sprintId;
+
+    let response = {};
+
+    // ========= GETTING PROJECT INFO ==========
+    let project = await projectCollection.findById(projectId).catch(err => {
+        console.error(err);
+    });
+
+    if (_.isUndefined(project)){
+        response["msg"] = "Sorry, there was a problem getting the project information";
+        res.status(400).send(response);
+        return;
+    }
+
+    if (!project.isTeamInProject(teamId)){
+        response["msg"] = "Sorry, it seams the team received does not belong to the project.";
+        res.status(400).send(response);
+        return;    
+    }
+
+    // ======== GETTING SPRINTS ============
+    let sprint = await SprintCollection.findOne({projectId, _id: sprintId}).catch(err => {
+        console.error(err);
+    });
+
+    // TODO: add null check on all find queries
+    if (_.isUndefined(sprint) || _.isNull(sprint)){
+        response["msg"] = "Sorry, There was a problem getting the sprints for the team selected.";
+        res.status(400).send(response);
+        return; 
+    }
+
+    // ======== GETTING WORK ITEMS FOR SPRINT ============
+
+    // get sprint work items
+    let workItems = await workItemCollection.find({projectId, _id: {$in: sprint["tasks"]}}).catch(err => {
+        console.error(err);
+    });
+
+    if (_.isUndefined(workItems)){
+        response["msg"] = "Sorry, There was a problem getting the work items for the sprint.";
+        response["sprints"] = [];
+        res.status(200).send(response);
+        return;
+    }
+
+    response["msg"] = "success";
+    response["workItems"] = workItems;
+
+    res.status(200).send(response);
+    return;
+
+});
+
+
 
 
 /**

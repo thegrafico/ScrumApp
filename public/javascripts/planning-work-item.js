@@ -23,7 +23,7 @@ $(function () {
     });
 
        // CHECK ALL ROWS ELEMENT
-       $(CHECK_ALL_CHECKBOX_TABLE_ROWS).on("click", function(){
+    $(CHECK_ALL_CHECKBOX_TABLE_ROWS).on("click", function(){
         
         let isChecked = this.checked;
 

@@ -601,7 +601,7 @@ function cleanSelect(selectId){
 function updateSelectOption(selectId, updateType, valueToUpdate, selected=false){
     
     if (updateType == UPDATE_TYPE.ADD){
-        $(selectId).append(new Option(valueToUpdate.text, valueToUpdate.value, false, selected)).trigger("change");
+        $(selectId).append(new Option(valueToUpdate.text, valueToUpdate.value, false, selected));
     }else{
         $(`${selectId} option[value=${valueToUpdate}]`).remove();
     }
@@ -621,14 +621,14 @@ function removeAllOptionsFromSelect(selectId, defaultValue){
         .find('option')
         .remove()
         .end()
-        .trigger("change");
+        // .trigger("change", ["Parant", "Parant2"]);
     }else{
         $(selectId)
         .find('option')
         .remove()
         .end()
         .append(new Option(defaultValue.text, defaultValue.value, false, false))
-        .trigger("change");
+        // .trigger("change", ["Parant", "Parant2"]);
     }
 
 }
@@ -749,6 +749,13 @@ function update_html(currentPage, updateType, valueToUpdate, inputType){
             }
             break;
         case "sprintPlanning":
+
+            updateSelectOption(WORK_ITEM["user"], updateType, valueToUpdate);
+            updateSelectOption(MODAL_REMOVE_USER_INPUT, updateType, valueToUpdate);
+
+            updateSelectOption(WORK_ITEM["team"], updateType, valueToUpdate);
+            updateSelectOption(TEAM_SELECT_INPUT_ID, updateType, valueToUpdate);
+
             // sprint modal
             updateSelectOption(SPRINT_CREATE_MODAL_TEAM_INPUT, updateType, valueToUpdate);
             updateSelectOption(SPRINT_DELETE_MODAL_SELECT_TEAM, updateType, valueToUpdate);   
@@ -762,7 +769,9 @@ function update_html(currentPage, updateType, valueToUpdate, inputType){
 
             // SPRINT FILTERING
             updateSelectOption(SPRINT_FILTER_BY_SPRINT_SELECT, updateType, valueToUpdate);
+            updateSelectOption(FILTER_BY_TEAM_SPRINT, updateType, valueToUpdate);
 
+            
         default:
             break;
     }
