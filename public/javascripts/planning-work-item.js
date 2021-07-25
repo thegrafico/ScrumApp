@@ -16,27 +16,25 @@ $(function () {
 
     
     /**
-     * CHECKBOX BOR WORK ITEM TABLE 
+     * CHECKBOX FOR WORK ITEM TABLE 
      */
     $(document).on("click", TABLE_ROW_CHECKBOX_ELEMENT, function () {
-        
-        // get the parent element. In this case, it will be the the label element
-        let _parent = $( this ).parent();
+        highliteWorkItemRow(this, this.checked);   
+    });
 
-        // since we are changing the whole row, we need the element that has everything inside
-        let granFather = $(_parent).parent().parent();
-
-        let atLeastOneCheckBoxIsChecked = ($(`${TABLE_ROW_CHECKBOX_ELEMENT}:checked`).length > 0);
-    
-        enableTrashButton(atLeastOneCheckBoxIsChecked);
+       // CHECK ALL ROWS ELEMENT
+       $(CHECK_ALL_CHECKBOX_TABLE_ROWS).on("click", function(){
         
-        if (_parent.hasClass("invisible")){
-            _parent.removeClass("invisible");
-            granFather.addClass(HIGHLIGST_CLASS);
-        }else{
-            _parent.addClass("invisible");
-            granFather.removeClass(HIGHLIGST_CLASS);
-        }
+        let isChecked = this.checked;
+
+        enableTrashButton(isChecked);
+        $(`${TABLE_ROW_CHECKBOX_ELEMENT}:visible`).each(function(){
+            
+            $(this).prop('checked', isChecked);
+            
+            highliteWorkItemRow(this, isChecked);
+        });
+        
     });
 
     // ADD COMMENT 
@@ -71,6 +69,8 @@ $(function () {
         const projectId = $(PROJECT_ID).val();
         
         removeWorkItems(projectId, row_checked);
+
+        unCheckAll();
     });
 
     // ==================== CLEANING THE MODAL WHEM OPEN =================
@@ -159,6 +159,7 @@ $(function () {
         }else{
             moveWorkItemToSprint([workItemId], 'backlog');
         }
+        
     });
 
     // CURRENT
@@ -188,18 +189,6 @@ $(function () {
         }else{
             moveWorkItemToSprint([workItemId], 'next');
         }
-    });
-
-    // CHECK ALL ROWS ELEMENT
-    $(CHECK_ALL_CHECKBOX_TABLE_ROWS).on("click", function(){
-        
-        let isChecked = this.checked;
-
-        enableTrashButton(isChecked);
-
-        $(`${TABLE_ROW_CHECKBOX_ELEMENT}:visible`).each(function(){
-            this.click();
-        });
     });
 
 });

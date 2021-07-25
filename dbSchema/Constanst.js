@@ -1,3 +1,6 @@
+const moment = require("moment");
+
+
 module.exports.projectStatus = ["New", "Active", "Completed", "Deleted", "Block", "Abandoned"];
 
 module.exports.UNASSIGNED = {
@@ -24,14 +27,17 @@ module.exports.SPRINT_TIME_PERIOD = {
     "Two Months": ONE_WEEK * 8,
 };
 
-module.exports.SPRINT_STATUS = {
+const SPRINT_STATUS = {
     "Past": "Past", // Today - 6 days
     "Coming": "Coming", 
     "Active": "Active",
     "Due": "Due",
 };
 
-module.exports.SPRINT_FORMAT_DATE = "MM/DD/YYYY";
+module.exports.SPRINT_STATUS = SPRINT_STATUS;
+
+const SPRINT_FORMAT_DATE = "MM/DD/YYYY";
+module.exports.SPRINT_FORMAT_DATE = SPRINT_FORMAT_DATE;
 module.exports.ADD_SPRINT_TO_ALL_TEAM_ID = "ALL";
 
 
@@ -109,4 +115,29 @@ module.exports.PAGES = {
 module.exports.capitalize = (s) => {
     if (typeof s !== 'string') return ''
     return s.charAt(0).toUpperCase() + s.slice(1)
+}
+
+/**
+ * 
+ * @param {String} startDate - Start date
+ * @param {String} endDate - end date
+ * @param {Moment} currentDate - Moment current day, default is new Date()
+ * @param {String} format -format of the startDate and endDate
+ * @return {String} Status of the sprint
+*/
+module.exports.getSprintDateStatus = function(startDate, endDate, currentDate = moment(new Date()), format = SPRINT_FORMAT_DATE){
+
+    _startDate = moment(startDate, format);
+    _endDate = moment(endDate, format);
+
+    let sprintStatus = ""; // default?
+    if (currentDate.isAfter(_endDate)){
+        sprintStatus = SPRINT_STATUS["Past"];
+    }else if(currentDate.isBefore(_startDate)){
+        sprintStatus = SPRINT_STATUS["Coming"];
+    }else if(currentDate.isBetween(_startDate, _endDate)){
+        sprintStatus = SPRINT_STATUS["Active"];
+    }
+
+    return sprintStatus;
 }

@@ -130,6 +130,7 @@ $(function () {
 
     });
 
+    // =========== DELETE ============
     // SUBMIT REMOVE SPRINT
     $(MODAL_DELETE_SPRINT_SUBMIT_BTN).on("click", async function(){
         

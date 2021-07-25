@@ -317,8 +317,7 @@ function validateFormWorkItem(){
 }
 
 function cleanTable(tableId){
-    $(`${tableId} > tbody`).empty();
-    
+    $(`${tableId} > tbody`).empty(); 
 }
 
 /**
@@ -336,7 +335,6 @@ function getTableHeadersArray(tableId){
         header.push(header_text)
     });
 
-    console.log(header);
     return header;
 }
 
@@ -464,7 +462,6 @@ function appendToWotkItemTable(workItems){
         
         // since the headers_array is in order, we just need to append it to the table row
         for (const headerKey of headers_array) {
-            console.log("Adding: ", headerKey);
             table_row += headers_object[headerKey];
         }
         table_row += "</tr>";
@@ -484,6 +481,27 @@ function appendToWotkItemTable(workItems){
     }
 
 }
+
+function highliteWorkItemRow(checkedElement, checkElement){
+    // get the parent element. In this case, it will be the the label element
+    let _parent = $( checkedElement ).parent();
+
+    // since we are changing the whole row, we need the element that has everything inside
+    let granFather = $(_parent).parent().parent();
+
+    let atLeastOneCheckBoxIsChecked = ($(`${TABLE_ROW_CHECKBOX_ELEMENT}:checked`).length > 0);
+
+    enableTrashButton(atLeastOneCheckBoxIsChecked);
+    
+    if (checkElement){
+        _parent.removeClass("invisible");
+        granFather.addClass(HIGHLIGST_CLASS);
+    }else{
+        _parent.addClass("invisible");
+        granFather.removeClass(HIGHLIGST_CLASS);
+    }
+}
+
 
 /**
  * Get all checked elements
@@ -511,7 +529,6 @@ function removeCheckedElement(checkboxClass=TABLE_ROW_CHECKBOX_ELEMENT_CHECKED){
     });
 }
 
-
 /**
  * Add the disable attr to an select element and set the default to be the current
  * @param {String} selectElement 
@@ -521,7 +538,6 @@ function addDisableAttr(selectElement, value){
     $(`${selectElement}`).children(`[value="${value}"]`).attr('disabled', true);
     $(selectElement).val("0").change();
 }
-
 
 /**
  * Remove the disable attr from select options
@@ -582,10 +598,10 @@ function cleanSelect(selectId){
  * @param valueToUpdate.value - value to add or remove
  * @param valueToUpdate.text - text value for select
  */
-function updateSelectOption(selectId, updateType, valueToUpdate){
+function updateSelectOption(selectId, updateType, valueToUpdate, selected=false){
     
     if (updateType == UPDATE_TYPE.ADD){
-        $(selectId).append(new Option(valueToUpdate.text, valueToUpdate.value, false, false)).trigger("change");
+        $(selectId).append(new Option(valueToUpdate.text, valueToUpdate.value, false, selected)).trigger("change");
     }else{
         $(`${selectId} option[value=${valueToUpdate}]`).remove();
     }
@@ -599,12 +615,31 @@ function updateSelectOption(selectId, updateType, valueToUpdate){
  * @param defaultValue.value  - value of the default
  */
 function removeAllOptionsFromSelect(selectId, defaultValue){
-    $(selectId)
-    .find('option')
-    .remove()
-    .end()
-    .append(new Option(defaultValue.text, defaultValue.value, false, false))
-    .trigger("change");
+    
+    if (_.isUndefined(defaultValue) || _.isNull(defaultValue)){    
+        $(selectId)
+        .find('option')
+        .remove()
+        .end()
+        .trigger("change");
+    }else{
+        $(selectId)
+        .find('option')
+        .remove()
+        .end()
+        .append(new Option(defaultValue.text, defaultValue.value, false, false))
+        .trigger("change");
+    }
+
+}
+
+function unCheckAll(){
+    
+    let is_checked = $(CHECK_ALL_CHECKBOX_TABLE_ROWS).prop("checked");
+    
+    if (is_checked){
+        $(CHECK_ALL_CHECKBOX_TABLE_ROWS).click();
+    }
 }
 
 /**
@@ -612,7 +647,7 @@ function removeAllOptionsFromSelect(selectId, defaultValue){
  * @param {Array} workItemId - Array with the Ids of the work items
  * @param {String} where ('current' | 'next' | 'backlog')
  */
- async function moveWorkItemToSprint(workItemId, where){
+async function moveWorkItemToSprint(workItemId, where){
 
     // check work item
     if (_.isUndefined(workItemId) || _.isEmpty(workItemId) || !_.isArray(workItemId)){
@@ -656,6 +691,8 @@ function removeAllOptionsFromSelect(selectId, defaultValue){
     }else{
         $.notify(response_error.data.responseJSON.msg, "error");
     }
+
+    unCheckAll();
 }
 
 

@@ -23,7 +23,8 @@ const {
     EMPTY_SPRINT,
     WORK_ITEM_STATUS,
     WORK_ITEM_ICONS,
-    capitalize
+    capitalize,
+    getSprintDateStatus,
 } = require('../../dbSchema/Constanst');
 
 // ================= GET REQUEST ==============
@@ -87,6 +88,79 @@ router.get("/api/:id/getworkItemsByTeamId/:teamId", middleware.isUserInProject, 
 
 
 /**
+ * METHOD: GET - fetch all work items for a team with sprint
+ */
+ router.get("/api/:id/getSprintWorkItems/:teamId", middleware.isUserInProject, async function (req, res) {
+    
+    const projectId = req.params.id;
+    const teamId = req.params.teamId;
+
+    let response = {};
+
+    // ========= GETTING PROJECT INFO ==========
+    let project = await projectCollection.findById(projectId).catch(err => {
+        console.error(err);
+    });
+
+    if (_.isUndefined(project)){
+        response["msg"] = "Sorry, there was a problem getting the project information";
+        res.status(400).send(response);
+        return;
+    }
+
+    if (!project.isTeamInProject(teamId)){
+        response["msg"] = "Sorry, it seams the team received does not belong to the project.";
+        res.status(400).send(response);
+        return;    
+    }
+
+    // ======== GETTING SPRINTS ============
+    let getJsObject = true; // false is default
+    let teamSprints = await SprintCollection.getSprintsForTeam(projectId, teamId, getJsObject).catch(err => {
+        console.error(err);
+    });
+
+    if (_.isUndefined(teamSprints)){
+        response["msg"] = "Sorry, There was a problem getting the sprints for the team selected.";
+        res.status(400).send(response);
+        return; 
+    }
+
+    if (_.isEmpty(teamSprints)){
+        response["msg"] = "There is not sprint for the team selected.";
+        response["sprints"] = [];
+        res.status(200).send(response);
+        return;
+    }
+
+    // ============== GETTING ACTIVE SPRINT ==============
+
+    let activeSprint = SprintCollection.getActiveSprint(teamSprints);
+
+    // get sprint work items
+    let workItems = await workItemCollection.find({projectId, _id: {$in: activeSprint["tasks"]}}).catch(err => {
+        console.error(err);
+    })
+
+    if (_.isUndefined(workItems)){
+        response["msg"] = "Sorry, There was a problem getting the work items for the team.";
+        response["sprints"] = [];
+        res.status(200).send(response);
+        return;
+    }
+
+    response["msg"] = "success";
+    response["activeSprint"] = activeSprint._id;
+    response["sprints"] = teamSprints;
+    response["workItems"] = workItems;
+
+    res.status(200).send(response);
+    return;
+
+});
+
+
+/**
  * METHOD: GET - fetch all users for a team
  */
 router.get("/api/:id/getTeamUsers/:teamId", middleware.isUserInProject, async function (req, res) {
@@ -130,6 +204,7 @@ router.get("/api/:id/getTeamUsers/:teamId", middleware.isUserInProject, async fu
     }
 });
 
+
 /**
  * METHOD: GET - fetch all sprints for a team
  */
@@ -159,7 +234,7 @@ router.get("/api/:id/getTeamUsers/:teamId", middleware.isUserInProject, async fu
             return;
         }
 
-        let sprints = await SprintCollection.getSprintsForTeam(teamId).catch(err => {
+        let sprints = await SprintCollection.getSprintsForTeam(projectId, teamId).catch(err => {
             console.error(err);
         });
 
@@ -182,6 +257,8 @@ router.get("/api/:id/getTeamUsers/:teamId", middleware.isUserInProject, async fu
 
 
 // ================= POST REQUEST ==============
+
+// =========================== TEAM REQUEST =====================
 
 /**
  * METHOD: POST - Create team
@@ -274,6 +351,53 @@ router.post("/api/:id/newTeam", middleware.isUserInProject, async function (req,
 });
 
 
+/**
+ * METHOD: POST - REMOVE TEAM
+ */
+ router.post("/api/:id/deleteTeam", middleware.isUserInProject, async function (req, res) {
+    
+    const projectId = req.params.id;
+
+    const {teamId} = req.body;
+
+    let response = {"teamId": null};
+
+    // is a string
+    if (_.isString(projectId) && _.isString(teamId) && !_.isEmpty(teamId)){
+        // Add the comment to the DB
+        const projectInfo = await projectCollection.findById(projectId).catch(
+            err => console.error("Error getting project information: ", err)
+        );
+
+        // validate project
+        if (_.isUndefined(projectInfo) || _.isNull(projectInfo)){
+            response["msg"] = "Sorry, There was a problem getting the project information. Please try leter.";
+            res.status(400).send(response);
+            return;
+        }
+
+        let err_response = null;
+        let teamWasRemovedResponse = await projectInfo.removeTeam(teamId).catch(err =>{
+            err_response = err;
+        });
+
+        // validate response
+        if (!_.isNull(err_response) || _.isUndefined(teamWasRemovedResponse)){
+            res.status(400).send(err_response);
+            return;
+        }
+
+        res.status(200).send(teamWasRemovedResponse);
+        return;
+    }else{
+        response["msg"] = "Oops, it looks like this is an invalid team.";
+        res.status(400).send(response);
+        return;
+    }
+});
+
+
+// =========================== SPRINTS REQUEST =====================
 /**
  * METHOD: POST - Create SPRINT
  */
@@ -370,7 +494,7 @@ router.post("/api/:id/createSprint", middleware.isUserInProject, async function 
 
             // get all sprint by the team
             let errorMsg = null;
-            let teamSprints = await SprintCollection.getSprintsForTeam(projectTeamId).catch(err => {
+            let teamSprints = await SprintCollection.getSprintsForTeam(projectId, projectTeamId).catch(err => {
                 console.error(err);
                 errorMsg = err;
             });
@@ -416,7 +540,7 @@ router.post("/api/:id/createSprint", middleware.isUserInProject, async function 
     }else{
 
         let errorMsg = null;
-        let teamSprints = await SprintCollection.getSprintsForTeam(teamId).catch(err => {
+        let teamSprints = await SprintCollection.getSprintsForTeam(projectId, teamId).catch(err => {
             console.error(err);
             errorMsg = err;
         });
@@ -506,52 +630,6 @@ router.post("/api/:id/removeSprintForTeam/:teamId", middleware.isUserInProject, 
 
     response["msg"] = "Sprint was removed successfully.";
     res.status(200).send(response);
-});
-
-
-/**
- * METHOD: POST - REMOVE TEAM
- */
-router.post("/api/:id/deleteTeam", middleware.isUserInProject, async function (req, res) {
-    
-    const projectId = req.params.id;
-
-    const {teamId} = req.body;
-
-    let response = {"teamId": null};
-
-    // is a string
-    if (_.isString(projectId) && _.isString(teamId) && !_.isEmpty(teamId)){
-        // Add the comment to the DB
-        const projectInfo = await projectCollection.findById(projectId).catch(
-            err => console.error("Error getting project information: ", err)
-        );
-
-        // validate project
-        if (_.isUndefined(projectInfo) || _.isNull(projectInfo)){
-            response["msg"] = "Sorry, There was a problem getting the project information. Please try leter.";
-            res.status(400).send(response);
-            return;
-        }
-
-        let err_response = null;
-        let teamWasRemovedResponse = await projectInfo.removeTeam(teamId).catch(err =>{
-            err_response = err;
-        });
-
-        // validate response
-        if (!_.isNull(err_response) || _.isUndefined(teamWasRemovedResponse)){
-            res.status(400).send(err_response);
-            return;
-        }
-
-        res.status(200).send(teamWasRemovedResponse);
-        return;
-    }else{
-        response["msg"] = "Oops, it looks like this is an invalid team.";
-        res.status(400).send(response);
-        return;
-    }
 });
 
 

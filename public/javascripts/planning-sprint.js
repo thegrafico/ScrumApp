@@ -20,15 +20,45 @@ $(function () {
         });
 
         // Success message
+        cleanTable(WORK_ITEM_TABLE);
+        removeAllOptionsFromSelect(FILTER_BY_SPRINT_INPUT, null);
+
         if (response){
-            if (response.length > 0){
-                appendToWotkItemTable(response);
+            
+            // Check work items
+            if (response.workItems.length > 0){
+                appendToWotkItemTable(response.workItems);
             }else{
                 $.notify("This team does not have any work item yet.", "error");
-                cleanTable(WORK_ITEM_TABLE);
             }
+
+            // Check sprint
+            if (response.sprints.length > 0){
+                
+                // clean the select option
+                removeAllOptionsFromSelect(FILTER_BY_SPRINT_INPUT, null);
+                
+                // update the select option
+                for (const sprint of response.sprints) {    
+                    console.log(sprint["startDateFormated"]);
+                    let isSelected = sprint["_id"].toString() == response["activeSprint"].toString();
+                    let optionText = `${sprint["name"]} : ${sprint["startDateFormated"]} - ${sprint["endDateFormated"]}`;
+                    updateSelectOption(
+                        FILTER_BY_SPRINT_INPUT, 
+                        UPDATE_TYPE.ADD,
+                        {"value": sprint["_id"], "text":optionText},
+                        isSelected
+                    );
+                }
+            }else{ 
+                removeAllOptionsFromSelect(
+                    SPRINT_DELETE_MODAL_SELECT_SPRINT, 
+                    {"text": "Not sprint found", "value": "0"}
+                );
+            }
+
         }else{ // error messages
-            $.notify(response_error.data.responseText, "error");
+            $.notify(response_error.data.responseJSON.msg, "error");
         } 
     });
 });

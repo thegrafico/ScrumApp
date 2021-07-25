@@ -10,6 +10,7 @@ const _         = require("lodash");
 const {
     SPRINT_FORMAT_DATE,
     SPRINT_STATUS,
+    getSprintDateStatus,
 } = require("./Constanst");
 
 const ObjectId = mongoose.Schema.ObjectId;
@@ -70,9 +71,12 @@ let sprintSchema = new mongoose.Schema({
 /**
  * Get all sprints for a team
  * @param {String} teamId - id of the team.
+ * @param {String} projectId - id of the project.
+ * @param {Boolean} getJsObject if true, return a js object instead a mongoose object
+ * 
  * @returns {Promise} - array of sprints
 */
-sprintSchema.statics.getSprintsForTeam = async function(teamId) {
+sprintSchema.statics.getSprintsForTeam = async function(projectId, teamId, getJsObject=false) {
     
     let father = this;
     return new Promise( async function (resolve, reject){
@@ -81,18 +85,124 @@ sprintSchema.statics.getSprintsForTeam = async function(teamId) {
 
         // removing team from work items
         let err_msg = null;
-        const sprints = await father.find( { teamId: teamId} ).catch(err => {
-            err_msg = err;
-        });
+        let sprints = undefined;
 
+        if (getJsObject){
+            sprints = await father.find( {projectId: projectId, teamId: teamId} ).lean().catch(err => {
+                err_msg = err;
+            }); 
+        }else{
+            sprints = await father.find( {projectId: projectId, teamId: teamId} ).catch(err => {
+                err_msg = err;
+            });    
+        }
+        
         // delete first work items
         if (err_msg || _.isUndefined(sprints)){
             response['msg'] = "Sorry, Cannot find the sprint for this team";
             return reject(response);
         }
 
+            // format sprint date.
+        for (let sprint of sprints) {
+            sprint["startDateFormated"] = moment(sprint["startDate"], SPRINT_FORMAT_DATE).format("MMM Do");
+            sprint["endDateFormated"] = moment(sprint["endDate"], SPRINT_FORMAT_DATE).format("MMM Do"); 
+        }
+
         resolve(sprints);
     });
+};
+
+/**
+ * Update the sprints statuses
+ * @param {Array} sprints - Array with sprints objects from mongoose
+ * @param {Moment} currentDate - Moment date with the current date
+ * @returns {Boolean} - True if any of the sprints was updated
+*/
+sprintSchema.statics.updateSprintsStatus = async function(sprints, currentDate) {
+    
+    sprintStatusWasUpdated = false;
+    
+    // updating sprint status
+    for (let i = 0; i < sprints.length; i++) {
+        let sprint = sprints[i];
+            
+        // jump to the next iteration
+        if (sprint && sprint.status == SPRINT_STATUS["Past"]){
+            continue;
+        }
+
+        let startDate = sprint["startDate"];
+        let endDate = sprint["endDate"];
+
+        let newStatus = getSprintDateStatus(startDate, endDate, currentDate);
+
+        // update only if status are different
+        if (sprint.status != newStatus){
+
+            sprint.status = newStatus;
+
+            // saving the sprint status
+            await sprint.save().catch(err => {
+                console.error(err);
+            });
+
+            sprintStatusWasUpdated = true;
+        }
+    }
+
+    return sprintStatusWasUpdated
+};
+
+/**
+ * Get the active sprint for the current Date.
+ * @param {String} teamId - id of the team.
+ * @returns {Object} - array of sprints
+*/
+sprintSchema.statics.getActiveSprint = function(sprints) {
+    
+    let activeSprint = null;
+
+    // check if there is any active sprint
+    let thereIsActiveSprint = sprints.some( each => {
+        return each["status"] == SPRINT_STATUS["Active"];
+    });
+    
+    // if there is any active sprint, take it
+    if (thereIsActiveSprint){
+
+        // asing the active sprint
+        activeSprint = sprints.filter( each => {
+            return each["status"] == SPRINT_STATUS["Active"];
+        })[0];
+    
+    // if there is not active sprint
+    }else{
+
+        // check if there is past sprints
+        let thereIsPastSprint = sprints.some( each => {
+            return each["status"] == SPRINT_STATUS["Past"];
+        });
+
+        // if there is past sprint, take it
+        if (thereIsPastSprint){
+
+            // assing the past sprint
+            activeSprint = sprints.filter( each => {
+                return each["status"] == SPRINT_STATUS["Past"];
+            })[0];
+
+        // if there is not active, and past sprint
+        }else{
+            
+            // get the commit sprint
+            activeSprint = sprints.filter( each => {
+                return each["status"] == SPRINT_STATUS["Coming"];
+            })[0];
+        }
+    }
+
+    return activeSprint;
 };
 
 /**

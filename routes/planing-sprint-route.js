@@ -9,7 +9,7 @@ const express                   = require("express");
 const _                         = require("lodash");
 const moment                    = require('moment');
 const projectCollection         = require("../dbSchema/projects");
-const sprintCollection          = require("../dbSchema/sprint");
+const SprintCollection          = require("../dbSchema/sprint");
 const workItemCollection        = require("../dbSchema/workItem");
 const middleware                = require("../middleware/auth");
 let router                      = express.Router();
@@ -25,6 +25,7 @@ const {
     WORK_ITEM_STATUS,
     PRIORITY_POINTS,
     PAGES,
+    SPRINT_FORMAT_DATE,
 } = require('../dbSchema/Constanst');
 
 // ===================================================
@@ -67,28 +68,25 @@ router.get("/:id/planing/sprint", middleware.isUserInProject, async function (re
         // get the active sprint for this project
         // TODO: check error msg for sprint
         let err_msg_sprint = null;
-        sprints = await sprintCollection.find({projectId, teamId: userBestTeam._id}).catch(err => {
+        sprints = await SprintCollection.getSprintsForTeam(projectId, userBestTeam._id).catch(err => {
             console.log(err);
             err_msg_sprint = err;
         }) || [];
 
         // check sprint
         if (!_.isEmpty(sprints)){
+            
+            let currentDate = moment(new Date()); // now
 
-            let activeSprint = sprints.filter( each => {
-                return each.status == SPRINT_STATUS["Active"];
-            });
+            // TODO: look a better place for this
+            SprintCollection.updateSprintsStatus(sprints, currentDate);
+            
+            let activeSprint = SprintCollection.getActiveSprint(sprints);
 
-            // getting an active sprint
-            if (!_.isEmpty(activeSprint)){
-                
-                activeSprint = activeSprint[0];
-
-                // get the work items by the sprint
-                workItems = await workItemCollection.find({projectId: projectId, _id: {$in: activeSprint.tasks}}).catch(err => {
-                    console.error("Error getting work items: ", err)
-                }) || [];
-            }
+            // get the work items by the sprint
+            workItems = await workItemCollection.find({projectId: projectId, _id: {$in: activeSprint.tasks}}).catch(err => {
+                console.error("Error getting work items: ", err)
+            }) || [];
         }
     }
     
