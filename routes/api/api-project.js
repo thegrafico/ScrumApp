@@ -15,6 +15,7 @@ const {
     SPRINT_FORMAT_DATE,
     ADD_SPRINT_TO_ALL_TEAM_ID,
     SPRINT_STATUS,
+    UNASSIGNED_SPRINT,
     UNASSIGNED,
     MAX_LENGTH_TITLE,
     MAX_LENGTH_DESCRIPTION,
@@ -25,6 +26,7 @@ const {
     WORK_ITEM_ICONS,
     capitalize,
     getSprintDateStatus,
+    joinData,
 } = require('../../dbSchema/Constanst');
 
 // ================= GET REQUEST ==============
@@ -86,6 +88,59 @@ router.get("/api/:id/getworkItemsByTeamId/:teamId", middleware.isUserInProject, 
     }
 });
 
+/**
+ * METHOD: GET - fetch all work items for a team
+ */
+ router.get("/api/:id/getworkItemsAndSprintsByTeam/:teamId", middleware.isUserInProject, async function (req, res) {
+    
+    const projectId = req.params.id;
+    const teamId = req.params.teamId;
+    let response = {teamId};
+
+    // is a string
+    if (_.isString(projectId) && _.isString(teamId)){
+    
+        // Add the comment to the DB
+        // THIS IS NOT A MONGOOSE OBJECT - lean()
+        const workItems = await workItemCollection.find({"projectId": projectId, "teamId": teamId}).lean().catch(
+            err => console.error("Error getting work items: ", err)
+        );
+
+        if (_.isUndefined(workItems) || _.isNull(workItems)){
+            response["msg"] = "Sorry, There was a problem getting work items. Please try later.";
+            res.status(400).send(response);
+            return;
+        }
+
+        // getting sprints
+        const sprints = await SprintCollection.getSprintsForTeam(projectId, teamId).catch(err => {
+            console.error(err);
+        });
+
+        if (_.isUndefined(sprints) || _.isNull(sprints)){
+            response["msg"] = "Sorry, There was a problem getting sprints for the team. Please try later.";
+            res.status(400).send(response);
+            return;
+        }
+
+        joinData(workItems, sprints, "_id", "is in", "tasks", "sprint", UNASSIGNED_SPRINT);
+
+        let activeSprint = SprintCollection.getActiveSprint(sprints);
+
+        response["msg"] = "Success.";
+        response["workItems"] = workItems;
+        response["sprints"] = sprints;
+        response["activeSprint"] = activeSprint["_id"] || "";
+
+        res.status(200).send(response);
+        return;
+    }else{
+        response["msg"] = "Invalid team was received.";
+        res.status(400).send(response);
+        return;
+    }
+});
+
 
 /**
  * METHOD: GET - fetch all work items for a team with sprint
@@ -140,9 +195,9 @@ router.get("/api/:id/getAllSprintWorkItems/:teamId", middleware.isUserInProject,
     // get sprint work items
     let workItems = await workItemCollection.find({projectId, _id: {$in: activeSprint["tasks"]}}).catch(err => {
         console.error(err);
-    })
+    });
 
-    if (_.isUndefined(workItems)){
+    if (_.isUndefined(workItems) || _.isNull(workItems)){
         response["msg"] = "Sorry, There was a problem getting the work items for the team.";
         response["sprints"] = [];
         res.status(200).send(response);

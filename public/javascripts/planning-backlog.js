@@ -13,13 +13,13 @@ $(function () {
 
         const teamId = $(this).val();
 
-        const API_LINK_GET_WORK_ITEMS_BY_TEAM_AND_SPRINT = `/dashboard/api/${projectId}/getAllSprintWorkItems/${teamId}`;
+        const API_LINK_GET_WORK_ITEMS_AND_SPRINTS_BY_TEAM = `/dashboard/api/${projectId}/getworkItemsAndSprintsByTeam/${teamId}`;
 
         let response_error = null;
-        let response = await make_get_request(API_LINK_GET_WORK_ITEMS_BY_TEAM_AND_SPRINT).catch(err=> {
+        let response = await make_get_request(API_LINK_GET_WORK_ITEMS_AND_SPRINTS_BY_TEAM).catch(err=> {
             response_error = err;
         });
-        
+
         // Success message
         cleanTable(WORK_ITEM_TABLE);
 
@@ -43,7 +43,7 @@ $(function () {
             removeAllOptionsFromSelect(WORK_ITEM["sprint"], null);
 
             // Check sprint
-            if (response.sprints.length > 0){
+            if (response.sprints && response.sprints.length > 0){
                 
                 console.log(response.sprints)
                 // update the select option
@@ -69,14 +69,7 @@ $(function () {
             $.notify(response_error.data.responseJSON.msg, "error");
         } 
     });
-
-    // // WHEN the user opens the modal, select the current team to be the team to create the work item
-    // $(createWorkItemModal).on('shown.bs.modal', function () {
-
-    //     let currentSelectedTeam = $(FILTER_BY_TEAM_GENERAL_CLASS).val();
-        
-    //     $(WORK_ITEM["team"]).val(currentSelectedTeam).change();
-    // });
+    
 });
 
 /**

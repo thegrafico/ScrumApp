@@ -169,7 +169,7 @@ sprintSchema.statics.updateSprintsStatus = async function(sprints, currentDate) 
 sprintSchema.statics.getActiveSprint = function(sprints) {
 
     if (!_.isArray(sprints) || _.isEmpty(sprints)){
-        return null;
+        return {};
     }
     
     let activeSprint = null;
@@ -211,6 +211,10 @@ sprintSchema.statics.getActiveSprint = function(sprints) {
                 return each["status"] == SPRINT_STATUS["Coming"];
             })[0];
         }
+    }
+
+    if (!_.isObject(activeSprint)){
+        return {};
     }
 
     return activeSprint;

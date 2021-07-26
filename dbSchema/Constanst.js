@@ -150,7 +150,9 @@ module.exports.getSprintDateStatus = function(startDate, endDate, currentDate = 
 module.exports.joinData = (dataA, dataB, keyA, action, keyB, newKey, defaultValue) => {
 
     // early exit condition
-    if (!_.isArray(dataA) || !_.isArray(dataB) || _.isEmpty(dataA) || _.isEmpty(dataB)){
+    // SINCE WE'RE JOINING DATA B INTO A, WE DON"T NEED TO CHECK IF DATA B IS EMPTY 
+    // COUSE DATA A WILL HAVE THE DEFAULT VALUE
+    if (!_.isArray(dataA) || !_.isArray(dataB) || _.isEmpty(dataA)){
         return;
     }
 

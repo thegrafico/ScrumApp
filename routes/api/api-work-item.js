@@ -184,6 +184,8 @@ router.post("/api/:id/newWorkItem", middleware.isUserInProject, async function (
         console.error("Error creating the work item: ", err)
     });
 
+    // console.log("New work item: ", newWorkItem);
+
     // verify work item was created
     if (_.isEmpty(newWorkItem) || _.isNull(newWorkItem)){
         req.flash("error", `There was an error creating the work item: ${errors}`);
