@@ -56,30 +56,26 @@ router.get("/:id/planing/sprint", middleware.isUserInProject, async function (re
     let teams = [...projectInfo.teams];
 
     // get the team for the user in order to filter by it.
-    let userBestTeam = null;
+    let userPreferedTeam = projectInfo.getUserPreferedTeam();
     
     let sprints = [];
     let workItems = [];
 
     // if there is a least one team.
-    if (teams.length > 0){
-        userBestTeam = teams[0];
+    if (!_.isNull(userPreferedTeam)){
 
         // get the active sprint for this project
-        // TODO: check error msg for sprint
-        let err_msg_sprint = null;
-        sprints = await SprintCollection.getSprintsForTeam(projectId, userBestTeam._id).catch(err => {
+        sprints = await SprintCollection.getSprintsForTeam(projectId, userPreferedTeam._id).catch(err => {
             console.log(err);
-            err_msg_sprint = err;
         }) || [];
 
         // check sprint
-        if (!_.isEmpty(sprints)){
+        if (!_.isEmpty(sprints) || !_.isUndefined(sprints) || !_.isNull(sprints)){
             
             let currentDate = moment(new Date()); // now
 
             // TODO: look a better place for this
-            SprintCollection.updateSprintsStatus(sprints, currentDate);
+            SprintCollection.updateSprintsStatus(projectId, currentDate);
             
             let activeSprint = SprintCollection.getActiveSprint(sprints);
 
@@ -111,7 +107,7 @@ router.get("/:id/planing/sprint", middleware.isUserInProject, async function (re
         "workItemType": WORK_ITEM_ICONS,
         "workItems": workItems,
         "currentPage": PAGES.SPRINT,
-        "userTeam": userBestTeam,
+        "userTeam": userPreferedTeam,
         "sprintDefaultTimePeriod": SPRINT_DEFAULT_PERIOD_TIME, // Here the user can selet the time, but defualt is two weeks
         "priorityPoints":PRIORITY_POINTS,
         "stylesPath": sprintPath["styles"],

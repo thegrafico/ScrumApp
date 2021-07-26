@@ -122,43 +122,58 @@ sprintSchema.statics.getSprintsForTeam = async function(projectId, teamId, getJs
 
 /**
  * Update the sprints statuses
- * @param {Array} sprints - Array with sprints objects from mongoose
+ * @param {String} projectId - id of the project
  * @param {Moment} currentDate - Moment date with the current date
  * @returns {Boolean} - True if any of the sprints was updated
 */
-sprintSchema.statics.updateSprintsStatus = async function(sprints, currentDate) {
+sprintSchema.statics.updateSprintsStatus = async function(projectId, currentDate) {
     
+    let father = this;
     sprintStatusWasUpdated = false;
-    
-    // updating sprint status
-    for (let i = 0; i < sprints.length; i++) {
-        let sprint = sprints[i];
-            
-        // jump to the next iteration
-        if (sprint && sprint.status == SPRINT_STATUS["Past"]){
-            continue;
+    return new Promise(async function(resolve, reject){
+
+        if ( _.isUndefined(currentDate)  || _.isEmpty(currentDate)){
+            return reject("Invalid parameter was passed");
         }
 
-        let startDate = sprint["startDate"];
-        let endDate = sprint["endDate"];
+        let sprints = await father.find({projectId}).catch(err => {
+            console.error(err);
+        });
 
-        let newStatus = getSprintDateStatus(startDate, endDate, currentDate);
-
-        // update only if status are different
-        if (sprint.status != newStatus){
-
-            sprint.status = newStatus;
-
-            // saving the sprint status
-            await sprint.save().catch(err => {
-                console.error(err);
-            });
-
-            sprintStatusWasUpdated = true;
+        if (_.isUndefined(sprints) || _.isNull(sprints)){
+            return reject("Sorry, cannot find any sprint for the project");
         }
-    }
+        
+        // updating sprint status
+        for (let i = 0; i < sprints.length; i++) {
+            let sprint = sprints[i];
+                
+            // jump to the next iteration
+            if (sprint && sprint.status == SPRINT_STATUS["Past"]){
+                continue;
+            }
 
-    return sprintStatusWasUpdated
+            let startDate = sprint["startDate"];
+            let endDate = sprint["endDate"];
+
+            let newStatus = getSprintDateStatus(startDate, endDate, currentDate);
+
+            // update only if status are different
+            if (sprint.status != newStatus){
+
+                sprint.status = newStatus;
+
+                // saving the sprint status
+                await sprint.save().catch(err => {
+                    console.error(err);
+                });
+
+                sprintStatusWasUpdated = true;
+            }
+        }
+        return resolve(sprintStatusWasUpdated);
+    });
+
 };
 
 /**
