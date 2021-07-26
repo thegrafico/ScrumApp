@@ -131,22 +131,46 @@ router.get("/:id/planing/workitems/:workItemId", middleware.isUserInProject, asy
         return res.redirect('/');
     }
 
-    // TODO: Verify which project is the user in, and set that to be the selected in the frontend
-    // get all the teams for this project
-    let teams = [...projectInfo.teams];
+    // ============== CHECK WORK ITEM INFO ==============
+    // Load work item specify data
+    let workItem = await projectInfo.getWorkItem(workItemId).catch(err => {
+        console.error("Error getting work items: ", err);
+    }) || [];
 
-    let sprints = await sprintCollection.find({projectId}).catch(err => console.log(err)) || [];
+
+    if (_.isUndefined(workItem) || _.isEmpty(workItem)){
+        req.flash("error", "Cannot the work item information.");
+        return res.redirect("back");
+    }
+    // ===================================================
 
     // get all users for this project -> expected an array
     let users = await projectInfo.getUsers().catch(err => console.log(err)) || [];
 
-    // Load work item specify data
-    // TODO: this should be done first in order to know if the work item exist 
-    let workItem = await projectInfo.getWorkItem(workItemId).catch(err => console.error("Error getting work items: ", err)) || [];
+    // get all the teams for this project
+    let teams = [...projectInfo.teams];
     
-    if (_.isUndefined(workItem) || _.isEmpty(workItem)){
-        req.flash("error", "Cannot the work item information.");
-        return res.redirect("back");
+    // ============ GETTING SPRINTS AND ACTIVE SPRINTS
+    // get the team for the user in order to filter by it.
+    let userPreferedTeam = projectInfo.getUserPreferedTeam();
+    let sprints = null;
+    let workItemSprintId = UNASSIGNED["id"];
+
+    // if the user have a team
+    if (!_.isNull(userPreferedTeam)){
+
+        // getting all sprints for team
+        sprints = await sprintCollection.getSprintsForTeam(projectId, userPreferedTeam["id"]).catch(err => {
+            console.log(err)
+        }) || [];  
+        
+        let workItemSprint = await sprintCollection.getSprintForWorkItem(projectId, workItemId).catch(err => {
+            console.error(err);
+        });
+        console.log(workItemSprint);
+        if (!_.isUndefined(workItemSprint) && !_.isNull(workItemSprint)){
+            workItemSprintId = workItemSprint["_id"];
+        }
     }
 
     // adding defaults
@@ -165,6 +189,7 @@ router.get("/:id/planing/workitems/:workItemId", middleware.isUserInProject, asy
         "assignedUsers": users,
         "statusWorkItem": WORK_ITEM_STATUS,
         "projectTeams": teams,
+        "activeSprintId": workItemSprintId,
         "sprints": sprints,
         "addUserModal": true,
         "workItemType": WORK_ITEM_ICONS,

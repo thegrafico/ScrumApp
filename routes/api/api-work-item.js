@@ -300,7 +300,7 @@ router.post("/api/:id/update_work_item/:workItemId", middleware.isUserInProject,
         description,
         tags,
     } = req.body;
-    
+
     let addUserToTeam = false;
     let updateValues = {};
 
@@ -327,8 +327,21 @@ router.post("/api/:id/update_work_item/:workItemId", middleware.isUserInProject,
             }
         }
     }
-    
-    // TODO: Verify sprint
+
+    // sprint was received
+    if (!_.isUndefined(sprint)){
+
+        // is unselected? 
+        if (sprint == UNASSIGNED.id){
+            await SprintCollection.removeWorkItemFromSprints(projectId, workItemId).catch(err =>{});
+        }else{
+            // remove work item in case it belongs to other sprint
+            await SprintCollection.removeWorkItemFromSprints(projectId, workItemId).catch(err =>{});;
+            
+            // add the work item to the sprint selected by the user
+            await SprintCollection.addWorkItemToSprint(projectId, workItemId, sprint).catch(err =>{});;
+        }
+    }
 
     // verify story points
     if (!_.isEmpty(storyPoints)){

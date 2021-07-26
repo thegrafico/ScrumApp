@@ -201,7 +201,7 @@
                                             name="sprint" id="sprints">
                                             <% for (sprint of sprints){ %>
 
-                                                <% if ( (workItem["sprint"] && (sprint["_id"].toString() === workItem["sprint"].toString()))) {%>
+                                                <% if ( sprint["_id"].toString() == activeSprintId) {%>
                                                     <option value="<%=sprint['_id']%>" selected>
                                                         <%=sprint["name"]%>
                                                     </option>

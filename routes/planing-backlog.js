@@ -47,15 +47,13 @@ router.get("/:id/planing/backlog", middleware.isUserInProject, async function (r
     
     let query_work_item = {};
 
-    // TODO: Verify which project is the user in, and set that to be the selected in the frontend
     // get all the teams for this project
     let teams = [...projectInfo.teams];
-
 
     // get the team for the user in order to filter by it.
     let userPreferedTeam = projectInfo.getUserPreferedTeam();
 
-    let sprints = undefined;
+    let sprints = null;
     let activeSprintId = null;
 
     // if the user have a team
@@ -72,7 +70,6 @@ router.get("/:id/planing/backlog", middleware.isUserInProject, async function (r
         if (!_.isNull(activeSprint) || !_.isUndefined(activeSprint)){
             activeSprintId = activeSprint["_id"];
         }
-
     }
 
     // get all users for this project -> expected an array
