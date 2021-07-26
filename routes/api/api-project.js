@@ -222,8 +222,6 @@ router.get("/api/:id/getSprintWorkItems/:teamId/:sprintId", middleware.isUserInP
 });
 
 
-
-
 /**
  * METHOD: GET - fetch all users for a team
  */
@@ -272,7 +270,7 @@ router.get("/api/:id/getTeamUsers/:teamId", middleware.isUserInProject, async fu
 /**
  * METHOD: GET - fetch all sprints for a team
  */
- router.get("/api/:id/getTeamSprints/:teamId", middleware.isUserInProject, async function (req, res) {
+router.get("/api/:id/getTeamSprints/:teamId", middleware.isUserInProject, async function (req, res) {
     
     const projectId = req.params.id;
     const teamId = req.params.teamId;

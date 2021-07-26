@@ -602,8 +602,11 @@ function updateSelectOption(selectId, updateType, valueToUpdate, selected=false)
     
     if (updateType == UPDATE_TYPE.ADD){
         $(selectId).append(new Option(valueToUpdate.text, valueToUpdate.value, false, selected));
-    }else{
+    }else if(updateType == UPDATE_TYPE.DELETE){
         $(`${selectId} option[value=${valueToUpdate}]`).remove();
+    }else if(updateType == UPDATE_TYPE.CHANGE){
+        IS_UPDATE_SELECT_OPTION = true;
+        $(selectId).val(valueToUpdate).change();
     }
 }
 
@@ -634,7 +637,7 @@ function removeAllOptionsFromSelect(selectId, defaultValue){
         .find('option')
         .remove()
         .end()
-        // .trigger("change", ["Parant", "Parant2"]);
+        // .trigger("change");
     }else{
         $(selectId)
         .find('option')

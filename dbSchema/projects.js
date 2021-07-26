@@ -249,6 +249,22 @@ projectSchema.methods.getUsersForTeam = async function(teamId) {
 
 
 /**
+ * get user prefered team
+ * @param {String} teamId - id of the team to add the user
+ * @returns {Object} 
+ */
+ projectSchema.methods.getUserPreferedTeam = function() {
+
+    if (_.isEmpty(this.teams)){
+        return {};
+    }
+
+    // TODO: How do we know this is the prefered team for user
+    return this.teams[0];
+};
+
+
+/**
  * Remove a user from project
  * @param {String} userId - id of the user
  * @returns {Promise}

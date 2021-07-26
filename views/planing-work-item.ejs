@@ -71,6 +71,8 @@
                             <th class="col-title" scope="col">Title</th>
                             <th scope="col">Assigned</th>
                             <th scope="col">State</th>
+                            <th scope="col">Team</th>
+                            <th scope="col">Iteration</th>
                             <th scope="col">Tags</th>
                             <th scope="col">Comments</th>
                         </tr>
@@ -78,21 +80,41 @@
                     <tbody>
                         <% for (let i = 0; i < workItems.length; ++i) {%>
                             <tr class="rowValues">
+                                
+                                <!-- CHECKBOX -->
                                 <td class="tableCheckBoxRowElement"> 
                                     <label for="checkboxRowElement" class="invisible labelcheckbox"> 
                                         <input type="checkbox" name="checkboxWorkItem[]" value="<%=workItems[i]['_id']%>" class="checkboxRowElement" />
                                     </label> 
                                 </td> 
+                                
+                                <!-- ID -->
                                 <td class="tableColumnID"> <%=workItems[i]["itemId"]%></td>
+                                
+                                <!-- TYPE: HIIDEN -->
                                 <td class="d-none" > <i class="fas <%=workItemType[workItems[i]['type']].icon%>"></i> <%=workItems[i]["type"]%></td>
+                                
+                                <!-- TITLE -->
                                 <!-- TODO: CHANGE TO A BETTER LINK -->
                                 <td class="openStory">
                                     <a href="workitems/<%=workItems[i]['_id']%>"> 
                                         <span class="table-icon"> <i class="fas <%=workItemType[workItems[i]['type']].icon%>"></i> </span>  <%=workItems[i]["title"]%> 
                                     </a> 
                                 </td>
+
+                                <!-- ASSIGNED -->
                                 <td> <i class="fas fa-user-astronaut"></i> <%=workItems[i]["assignedUser"]["name"]%></td>
+
+                                <!-- STATUS -->
                                 <td><i class="fa fa-circle <%=workItems[i]['status']%>Color" aria-hidden="true"></i> <%=workItems[i]["status"]%></td>
+                             
+                                <!-- TEAM -->
+                                <td> <%=workItems[i]["team"]["name"]%></td>
+
+                                <!-- SPRINT -->
+                                <td> <%=workItems[i]["sprint"]["name"]%></td>
+
+                                <!-- TAGS -->
                                 <td class="tags-td"> 
                                     <% if (workItems[i]["tags"].length > 0)  {%>
                                         <% workItems[i]["tags"].forEach(each => { %>
@@ -100,6 +122,8 @@
                                         <% }); %>
                                     <% } %>
                                 </td>
+
+                                <!-- COMMENTS -->
                                 <td class="table-comments-column"><span>  <i class="fas fa-comments"></i>  <%=workItems[i]["comments"].length%></span> </td>
                             </tr>
                         <%}%>

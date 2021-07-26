@@ -106,6 +106,7 @@ router.get("/:id/planing/sprint", middleware.isUserInProject, async function (re
         "statusWorkItem": WORK_ITEM_STATUS,
         "projectTeams": teams,
         "sprints": sprints,
+        "activeSprintId": undefined,
         "addUserModal": true,
         "workItemType": WORK_ITEM_ICONS,
         "workItems": workItems,

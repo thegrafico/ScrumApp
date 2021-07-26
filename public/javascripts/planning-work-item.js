@@ -96,6 +96,57 @@ $(function () {
         }
     });
 
+    //  TEAM ON CHANGE
+    $(WORK_ITEM["team"]).on("change", async function () {
+        
+        // check from where the change trigger is coming
+        if (IS_UPDATE_SELECT_OPTION){
+            console.log("Canceled on change");
+            IS_UPDATE_SELECT_OPTION = false;
+            return;
+        }
+
+        // clean select opction
+        removeAllOptionsFromSelect(
+            WORK_ITEM["sprint"], 
+            null,
+        );
+        const teamId = $(this).val();
+        const projectId = $(PROJECT_ID).val();
+
+        if (!_.isString(teamId) || !_.isString(projectId) || teamId == "0"){
+            $.notify("Invalid team was selected.", "error");
+            return;
+        }
+
+        const API_LINK_GET_SPRINTS_FOR_TEAM = `/dashboard/api/${projectId}/getTeamSprints/${teamId}`;
+
+        let response_error = null;
+        const response = await make_get_request(API_LINK_GET_SPRINTS_FOR_TEAM).catch(err => {
+            response_error = err;
+        });
+        
+        // Success message
+        if (response){
+
+            if (response.sprints && response.sprints.length > 0){
+                for (const sprint of response.sprints) {
+                    updateSelectOption(
+                        WORK_ITEM["sprint"], 
+                        UPDATE_TYPE.ADD,
+                        {"value": sprint["_id"], "text":sprint["name"]}
+                    );
+                }
+            }else{
+                $.notify("Sorry, it seems this team does not have sprints yet.", "error");
+            }
+        }else{ // error messages
+            $.notify(response_error.data.responseJSON.msg, "error");
+        }
+
+
+    });
+
     /**
      * Event to change the type of the work item
      */

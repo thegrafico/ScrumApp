@@ -13,33 +13,70 @@ $(function () {
 
         const teamId = $(this).val();
 
-        const API_LINK_GET_WORK_ITEMS_BY_TEAM = `/dashboard/api/${projectId}/getworkItemsByTeamId/${teamId}`;
+        const API_LINK_GET_WORK_ITEMS_BY_TEAM_AND_SPRINT = `/dashboard/api/${projectId}/getAllSprintWorkItems/${teamId}`;
 
         let response_error = null;
-        let response = await make_get_request(API_LINK_GET_WORK_ITEMS_BY_TEAM).catch(err=> {
+        let response = await make_get_request(API_LINK_GET_WORK_ITEMS_BY_TEAM_AND_SPRINT).catch(err=> {
             response_error = err;
         });
-
+        
         // Success message
+        cleanTable(WORK_ITEM_TABLE);
+
+        // change the select on the work item
+        updateSelectOption(
+            WORK_ITEM["team"], 
+            UPDATE_TYPE.CHANGE,
+            teamId
+        );
+        
         if (response){
-            if (response.length > 0){
-                appendToWotkItemTable(response);
+            
+            // Check work items
+            if (_.isArray(response.workItems) && response.workItems.length > 0){
+                appendToWotkItemTable(response.workItems);
             }else{
                 $.notify("This team does not have any work item yet.", "error");
-                cleanTable(WORK_ITEM_TABLE);
             }
+
+            // clean the select option
+            removeAllOptionsFromSelect(WORK_ITEM["sprint"], null);
+
+            // Check sprint
+            if (response.sprints.length > 0){
+                
+                console.log(response.sprints)
+                // update the select option
+                for (const sprint of response.sprints) {    
+                    let isSelected = sprint["_id"].toString() == response["activeSprint"].toString();
+                    // let optionText = `${sprint["name"]} : ${sprint["startDateFormated"]} - ${sprint["endDateFormated"]}`;
+                    updateSelectOption(
+                        WORK_ITEM["sprint"], 
+                        UPDATE_TYPE.ADD,
+                        {"value": sprint["_id"], "text":sprint["name"]},
+                        isSelected
+                    );
+                }
+            }else{ 
+               removeAllOptionsFromSelect(
+                    WORK_ITEM["sprint"], 
+                    {"text": "Not sprint found", "value": "0"},
+                    true
+                );
+            }
+
         }else{ // error messages
-            $.notify(response_error.data.responseText, "error");
-        }
+            $.notify(response_error.data.responseJSON.msg, "error");
+        } 
     });
 
-    // WHEN the user opens the modal, select the current team to be the team to create the work item
-    $(createWorkItemModal).on('shown.bs.modal', function () {
+    // // WHEN the user opens the modal, select the current team to be the team to create the work item
+    // $(createWorkItemModal).on('shown.bs.modal', function () {
 
-        let currentSelectedTeam = $(FILTER_BY_TEAM_GENERAL_CLASS).val();
+    //     let currentSelectedTeam = $(FILTER_BY_TEAM_GENERAL_CLASS).val();
         
-        $(WORK_ITEM["team"]).val(currentSelectedTeam).change();
-    });
+    //     $(WORK_ITEM["team"]).val(currentSelectedTeam).change();
+    // });
 });
 
 /**

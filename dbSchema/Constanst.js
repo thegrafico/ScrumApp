@@ -1,4 +1,5 @@
 const moment = require("moment");
+const _ = require("lodash");
 
 
 module.exports.projectStatus = ["New", "Active", "Completed", "Deleted", "Block", "Abandoned"];
@@ -117,7 +118,7 @@ module.exports.capitalize = (s) => {
 }
 
 /**
- * 
+ * Get the status of the sprints
  * @param {String} startDate - Start date
  * @param {String} endDate - end date
  * @param {Moment} currentDate - Moment current day, default is new Date()
@@ -139,4 +140,41 @@ module.exports.getSprintDateStatus = function(startDate, endDate, currentDate = 
     }
 
     return sprintStatus;
+}
+
+/**
+ * Create a new key joining the data
+ * @param {String} s 
+ * @returns {String} capizalize string
+ */
+module.exports.joinData = (dataA, dataB, keyA, action, keyB, newKey, defaultValue) => {
+
+    // early exit condition
+    if (!_.isArray(dataA) || !_.isArray(dataB) || _.isEmpty(dataA) || _.isEmpty(dataB)){
+        return;
+    }
+
+    // adding the sprint to the work item
+    for (let i = 0; i < dataA.length; i++) {
+        dataA[i][newKey] = defaultValue;
+        for (let b of dataB){
+
+            if (action == "is in"){
+
+                if (b && b[keyB] && b[keyB].includes(dataA[i][keyA])){
+                    dataA[i][newKey] = {_id: b["_id"], name: b["name"]};
+                    break;
+                }
+
+            }else if(action == "equal"){
+
+                if (b && b[keyB].toString() == dataA[i][keyA]){
+                    dataA[i][newKey] = {_id: b["_id"], name: b["name"]};
+                    break;
+                }
+
+            }
+            
+        }
+    }
 }

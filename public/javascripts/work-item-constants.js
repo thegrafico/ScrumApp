@@ -103,7 +103,7 @@ const TEAM_SELECT_INPUT_ID = "#listOfTeams";
 const MANAGE_TABLE_ID = "#manage-table";
 const CURRENT_PAGE_ID = "#current-page";
 
-const UPDATE_TYPE = {ADD: "ADD", DELETE: "DELETE"};
+const UPDATE_TYPE = {ADD: "ADD", DELETE: "DELETE", CHANGE: "CHANGE"};
 const UPDATE_INPUTS = {USER: "USER", TEAM: "TEAM", SPRINT: "SPRINT"};
 
 // find a way to create this in only one place. // also in db constants
@@ -149,5 +149,6 @@ const MOVE_TO_BACKLOG_BTN = ".moveToBacklog";
 const MOVE_TO_CURRENT_SPRINT_BTN = ".moveToCurrentSprintBtn";
 const MOVE_TO_NEXT_SPRINT_BTN = ".moveToNextSprintBtn";
 
-
+// if the function "updateSelectOption" changes, then this variable becomes true
+let IS_UPDATE_SELECT_OPTION = false;
 // =========== END

@@ -78,10 +78,17 @@ let sprintSchema = new mongoose.Schema({
 */
 sprintSchema.statics.getSprintsForTeam = async function(projectId, teamId, getJsObject=false) {
     
+
     let father = this;
     return new Promise( async function (resolve, reject){
 
         let response = {teamId: teamId};
+
+        if (_.isUndefined(projectId) || _.isUndefined(teamId)){
+            console.error("Invalid parameters");
+            response['msg'] = "Sorry, There was a problem with the information received";
+            return reject(response);
+        }    
 
         // removing team from work items
         let err_msg = null;
@@ -160,6 +167,10 @@ sprintSchema.statics.updateSprintsStatus = async function(sprints, currentDate) 
  * @returns {Object} - array of sprints
 */
 sprintSchema.statics.getActiveSprint = function(sprints) {
+
+    if (!_.isArray(sprints) || _.isEmpty(sprints)){
+        return null;
+    }
     
     let activeSprint = null;
 

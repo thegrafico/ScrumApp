@@ -98,7 +98,12 @@
                                         <span class="aling-vertically align-self-center"> Team: </span>
                                         <select class="custom-select my-custon-select "  name="teamAssigned" id="teamAssigned">
                                             <% for (team of projectTeams){ %>
-                                            <option value="<%=team['id']%>"><%=team['name']%></option>
+
+                                                <% if (userTeam == team['id']) { %>
+                                                    <option value="<%=team['id']%>" selected><%=team['name']%></option>
+                                                <%}else {%>
+                                                    <option value="<%=team['id']%>"><%=team['name']%></option>
+                                                <%}%>  
                                             <%}%>  
                                         </select>
                                     </div>
@@ -140,9 +145,12 @@
                                             <% if(sprints.length > 1){ %>
                                             
                                                 <% for (sprint of sprints){ %>
-                                                    <% if (sprint && sprint._id){ %>
+                                                    <% if (sprint["_id"] == activeSprintId){ %>
+                                                        <option value="<%=sprint['_id']%>" selected><%=sprint['name']%></option>
+                                                    <%}else {%>
                                                         <option value="<%=sprint['_id']%>"><%=sprint['name']%></option>
                                                     <%}%>
+
                                                 <%}%>
                                             <%}%>  
                                         </select>

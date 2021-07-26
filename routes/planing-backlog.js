@@ -51,14 +51,29 @@ router.get("/:id/planing/backlog", middleware.isUserInProject, async function (r
     // get all the teams for this project
     let teams = [...projectInfo.teams];
 
-    // get the team for the user in order to filter by it.
-    let userBestTeam = null;
-    if (teams.length > 0){
-        userBestTeam = teams[0];
-        query_work_item["teamId"] = userBestTeam.id;
-    }
 
-    let sprints = await sprintCollection.find({projectId}).catch(err => console.log(err)) || [];
+    // get the team for the user in order to filter by it.
+    let userPreferedTeam = projectInfo.getUserPreferedTeam();
+
+    let sprints = undefined;
+    let activeSprintId = null;
+
+    // if the user have a team
+    if (!_.isNull(userPreferedTeam)){
+        query_work_item["teamId"] = userPreferedTeam["_id"];
+
+        // getting all sprints for team
+        sprints = await sprintCollection.getSprintsForTeam(projectId,userPreferedTeam["id"]).catch(err => {
+            console.log(err)
+        }) || [];
+
+        let activeSprint = sprintCollection.getActiveSprint(sprints);
+        
+        if (!_.isNull(activeSprint) || !_.isUndefined(activeSprint)){
+            activeSprintId = activeSprint["_id"];
+        }
+
+    }
 
     // get all users for this project -> expected an array
     let users = await projectInfo.getUsers().catch(err => console.log(err)) || [];
@@ -79,10 +94,12 @@ router.get("/:id/planing/backlog", middleware.isUserInProject, async function (r
         }
     }
 
-     // adding defaults
+    // adding defaults
     teams.unshift(UNASSIGNED);
     users.unshift(UNASSIGNED);
     sprints.unshift(UNASSIGNED_SPRINT);
+
+    console.log()
 
     // populating params
     let params = {
@@ -95,11 +112,12 @@ router.get("/:id/planing/backlog", middleware.isUserInProject, async function (r
         "statusWorkItem": WORK_ITEM_STATUS,
         "projectTeams": teams,
         "sprints": sprints,
+        "activeSprintId": activeSprintId,
         "addUserModal": true,
         "workItemType": WORK_ITEM_ICONS,
         "workItems": workItems,
         "currentPage": PAGES.BACKLOG,
-        "userTeam": userBestTeam,
+        "userTeam": userPreferedTeam["_id"],
         "priorityPoints":PRIORITY_POINTS,
         "stylesPath": backlogPath["styles"],
         "scriptsPath": backlogPath["scripts"]
