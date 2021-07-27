@@ -761,9 +761,19 @@ router.post("/api/:id/removeWorkItems", middleware.isUserInProject, async functi
     
     let  { workItemsId } = req.body; // expected array
 
-    // is a string
-    if (workItemsId && workItemsId.length > 0){
-    
+    // is array and not empty
+    if (_.isArray(workItemsId) && !_.isEmpty(workItemsId)){
+        
+        // removing work item from sprints
+        const removedFromSprint = await SprintCollection
+        .updateMany({projectId, tasks: {$in:  workItemsId} },
+            {$pull: {tasks: {$in : workItemsId}}}
+        ).catch(err => {
+            console.error(err);
+        });
+
+        console.log("sprint was removed: ", removedFromSprint);
+        
         // Add the comment to the DB
         const result = await workItemCollection.deleteMany({projectId: projectId, _id: workItemsId}).catch(
             err => console.error("Error removing work items: ", err)

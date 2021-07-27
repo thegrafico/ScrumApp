@@ -196,3 +196,11 @@ i {
     font-size: 1em;
     color: green;
 }
+
+.newWorkItemContainer{
+    vertical-align: middle;
+}
+
+#createWorkItem{
+    white-space: nowrap;
+}
