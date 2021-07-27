@@ -81,11 +81,10 @@ router.get("/:id/planing/workitems", middleware.isUserInProject, async function 
 
     } 
     // === END
-    console.log(teams)
 
     // adding defaults
     teams.unshift(UNASSIGNED);
-    sprints.unshift(UNASSIGNED_SPRINT);
+    sprintForPreferedTeam.unshift(UNASSIGNED_SPRINT);
     users.unshift(UNASSIGNED);
     
     // populating params

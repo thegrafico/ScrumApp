@@ -12,13 +12,15 @@ module.exports = {
     },
     // includes for statistics
     statisticsPath: {
-        styles: ["/stylesheets/statistics.css", "/stylesheets/scrum-main.css"], 
+        styles: ["/stylesheets/statistics.css", "/stylesheets/scrum-main.css", "/stylesheets/backlog.css", "/stylesheets/work-item.css"], 
         scripts: [
             "/javascripts/statistics-member.js", 
             "/javascripts/dependecies/bootstrap.bundle.min.js",
             "/javascripts/modals/user-controller.js",
             "/javascripts/modals/team-controller.js",
             "/javascripts/modals/sprint-controller.js",
+            "/javascripts/work-item-modal.js",
+
         ]
     },
     planigWorkItemPath: {
@@ -28,11 +30,11 @@ module.exports = {
             "/javascripts/dependecies/bootstrap.bundle.min.js",
             "/javascripts/filter-and-search.js",
             "/javascripts/dependecies/jquery-ui.min.js",
-            "/javascripts/work-item.js",
+            "/javascripts/work-item-modal.js",
+            "/javascripts/update-work-item.js",
             "/javascripts/modals/user-controller.js",
             "/javascripts/modals/team-controller.js",
             "/javascripts/modals/sprint-controller.js",
-
         ]
     },
     backlogPath: {
@@ -43,11 +45,11 @@ module.exports = {
             "/javascripts/planning-backlog.js",
             "/javascripts/dependecies/bootstrap.bundle.min.js",
             "/javascripts/filter-and-search.js",
-            "/javascripts/work-item.js",
+            "/javascripts/work-item-modal.js",
+            "/javascripts/update-work-item.js",
             "/javascripts/modals/user-controller.js",
             "/javascripts/modals/team-controller.js",
             "/javascripts/modals/sprint-controller.js",
-
         ]
     },
     sprintPath: {
@@ -59,7 +61,8 @@ module.exports = {
             "/javascripts/planning-sprint.js",
             "/javascripts/dependecies/bootstrap.bundle.min.js",
             "/javascripts/filter-and-search.js",
-            "/javascripts/work-item.js",
+            "/javascripts/work-item-modal.js",
+            "/javascripts/update-work-item.js",
             "/javascripts/modals/user-controller.js",
             "/javascripts/modals/team-controller.js",
             "/javascripts/modals/sprint-controller.js",
@@ -74,7 +77,8 @@ module.exports = {
             "/javascripts/planning-backlog.js",
             "/javascripts/dependecies/bootstrap.bundle.min.js",
             "/javascripts/filter-and-search.js",
-            "/javascripts/work-item.js",
+            "/javascripts/work-item-modal.js",
+            "/javascripts/update-work-item.js",
             "/javascripts/modals/user-controller.js",
             "/javascripts/modals/team-controller.js",
             "/javascripts/modals/sprint-controller.js",

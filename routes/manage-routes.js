@@ -9,7 +9,7 @@ const express                   = require("express");
 const _                         = require("lodash");
 const moment                    = require('moment');
 const projectCollection         = require("../dbSchema/projects");
-const sprintCollection          = require("../dbSchema/sprint");
+const SprintCollection          = require("../dbSchema/sprint");
 const workItemCollection        = require("../dbSchema/workItem");
 const middleware                = require("../middleware/auth");
 let router                      = express.Router();
@@ -19,15 +19,13 @@ const { managePath }           = require("../middleware/includes");
 const {
     PAGES,
     UNASSIGNED, 
-    EMPTY_SPRINT,
     WORK_ITEM_ICONS,
     WORK_ITEM_STATUS,
     PRIORITY_POINTS,
+    UNASSIGNED_SPRINT,
 } = require('../dbSchema/Constanst');
 
 // ===================================================
-
-
 
 /**
  * METHOD: GET - SHOW USERS manages
@@ -50,6 +48,32 @@ router.get("/:id/manageUsers", middleware.isUserInProject, async function (req, 
     let users = await projectInfo.getUsers().catch(err => console.log(err)) || [];
     let teams = [...projectInfo.teams];
 
+    //  ===== Data for create work item ====
+    // get the team for the user in order to filter by it.
+    let userPreferedTeam = projectInfo.getUserPreferedTeam();
+    let sprintForPreferedTeam = [];
+    let activeSprintId = null;
+
+     // if the user have a team
+     if (!_.isNull(userPreferedTeam)){
+        // getting all sprints for team
+        sprintForPreferedTeam = await SprintCollection.getSprintsForTeam(projectId, userPreferedTeam["_id"]).catch(err => {
+            console.log(err);
+        }) || [];
+
+        let activeSprint = SprintCollection.getActiveSprint(sprintForPreferedTeam);
+        
+        // check we have an active sprint
+        if (!_.isNull(activeSprint) || !_.isUndefined(activeSprint)){
+            activeSprintId = activeSprint["_id"];
+        }
+
+    } 
+
+    users.unshift(UNASSIGNED);
+    teams.unshift(UNASSIGNED);
+    sprintForPreferedTeam.unshift(UNASSIGNED_SPRINT);
+
     // populating params
     let params = {
         "title": projectInfo["title"],
@@ -63,7 +87,12 @@ router.get("/:id/manageUsers", middleware.isUserInProject, async function (req, 
         "addUserModal": true,
         "currentPage": PAGES.MANAGE_USER,
         "stylesPath": managePath["styles"],
-        "scriptsPath": managePath["scripts"]
+        "scriptsPath": managePath["scripts"],
+        "sprints": sprintForPreferedTeam,
+        "activeSprintId": activeSprintId,
+        "statusWorkItem": WORK_ITEM_STATUS,
+        "priorityPoints":PRIORITY_POINTS,
+        "workItemType": WORK_ITEM_ICONS,
     };
 
     res.render("manage-users", params);
@@ -90,18 +119,35 @@ router.get("/:id/manageTeam", middleware.isUserInProject, async function (req, r
     let users = await projectInfo.getUsers().catch(err => console.log(err)) || [];
     let teams = [...projectInfo.teams];
 
+    //  ===== Data for create work item ====
     // get the team for the user in order to filter by it.
-    // TODO: refactor code below
-    let userBestTeam = undefined;
+    let userPreferedTeam = projectInfo.getUserPreferedTeam();
+    let sprintForPreferedTeam = [];
+    let activeSprintId = null;
     let userTeams = [];
     let userIds = [];
-    if (teams.length > 0){
-        userBestTeam = teams[0];
-        userTeams = await projectInfo.getUsersForTeam(userBestTeam.id).catch(err => {
+
+     // if the user have a team
+     if (!_.isNull(userPreferedTeam)){
+        // getting all sprints for team
+        sprintForPreferedTeam = await SprintCollection.getSprintsForTeam(projectId, userPreferedTeam["_id"]).catch(err => {
+            console.log(err);
+        }) || [];
+
+        userTeams = await projectInfo.getUsersForTeam(userPreferedTeam["_id"].toString()).catch(err => {
             console.error(err);
         }) || [];
+
+
         userIds = userTeams.map( each => each._id.toString());
-    }
+
+        let activeSprint = SprintCollection.getActiveSprint(sprintForPreferedTeam);
+        
+        // check we have an active sprint
+        if (!_.isNull(activeSprint) || !_.isUndefined(activeSprint)){
+            activeSprintId = activeSprint["_id"];
+        }
+    } 
 
     // populating params
     let params = {
@@ -115,12 +161,16 @@ router.get("/:id/manageTeam", middleware.isUserInProject, async function (req, r
         "projectUsers": users,
         "assignedUsers": users,
         "addUserModal": true,
-        "sprints": [],
+        "sprints": sprintForPreferedTeam,
+        "activeSprintId": activeSprintId,
         "currentPage": PAGES.MANAGE_TEAM,
         "userIds": userIds,
-        "userTeam": userBestTeam,
+        "userTeam": userPreferedTeam,
         "stylesPath": managePath["styles"],
-        "scriptsPath": managePath["scripts"]
+        "scriptsPath": managePath["scripts"],
+        "statusWorkItem": WORK_ITEM_STATUS,
+        "priorityPoints":PRIORITY_POINTS,
+        "workItemType": WORK_ITEM_ICONS,
     };
 
     res.render("manage-teams", params);

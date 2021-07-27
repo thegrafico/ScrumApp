@@ -37,13 +37,6 @@ const ENABLE_SAVE_BTN_CLASS = "saveBtnContainer";
 
 $(function () {
 
-    // ============== SELECT 2 ===================
-    $(WORK_ITEM["user"]).select2();
-    $(WORK_ITEM["team"]).select2();
-    $(WORK_ITEM["sprint"]).select2();
-    $(WORK_ITEM["priority"]).select2();
-    // ===========================================
-
     // Only run this function  at the begenning when we're working inside a work item.
     if ($(WORK_ITEM_ID).val()){
         // Set all variables to the initial state when this file is loaded

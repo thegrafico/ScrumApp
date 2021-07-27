@@ -11,6 +11,7 @@ const validator             = require("validator");
 const STATUS                = require('../dbSchema/Constanst').projectStatus;
 const moment                = require('moment');
 const projectCollection     = require("../dbSchema/projects");
+const SprintCollection       = require("../dbSchema/sprint");
 const userCollection        = require("../dbSchema/user");
 const middleware            = require("../middleware/auth");
 let router                  = express.Router();
@@ -19,6 +20,10 @@ const { statisticsPath }    = require("../middleware/includes");
 const {
     UNASSIGNED,
     PAGES,
+    UNASSIGNED_SPRINT,
+    WORK_ITEM_STATUS,
+    WORK_ITEM_ICONS,
+    PRIORITY_POINTS,
 } = require('../dbSchema/Constanst');
 // ===================================================
 
@@ -42,11 +47,36 @@ router.get("/:id", middleware.isUserInProject, async function (req, res) {
 
     // getting users from project
     let users = await projectInfo.getUsers().catch(err => console.log(err)) || [];
-    users.unshift(UNASSIGNED);
     
     // getting the teams
     let teams = [...projectInfo.teams];
+
+    //  ===== Data for create work item ====
+    // get the team for the user in order to filter by it.
+    let userPreferedTeam = projectInfo.getUserPreferedTeam();
+    let sprintForPreferedTeam = [];
+    let activeSprintId = null;
+
+     // if the user have a team
+     if (!_.isNull(userPreferedTeam)){
+        // getting all sprints for team
+        sprintForPreferedTeam = await SprintCollection.getSprintsForTeam(projectId, userPreferedTeam["_id"]).catch(err => {
+            console.log(err);
+        }) || [];
+
+        let activeSprint = SprintCollection.getActiveSprint(sprintForPreferedTeam);
+        
+        // check we have an active sprint
+        if (!_.isNull(activeSprint) || !_.isUndefined(activeSprint)){
+            activeSprintId = activeSprint["_id"];
+        }
+
+    } 
+
+    // adding defaults
+    users.unshift(UNASSIGNED);
     teams.unshift(UNASSIGNED);
+    sprintForPreferedTeam.unshift(UNASSIGNED_SPRINT);
 
     // populating params
     let params = {
@@ -54,6 +84,9 @@ router.get("/:id", middleware.isUserInProject, async function (req, res) {
         "project": projectInfo,
         "projectId": projectId,
         "projectStatus": STATUS,
+        "statusWorkItem": WORK_ITEM_STATUS,
+        "workItemType": WORK_ITEM_ICONS,
+        "priorityPoints":PRIORITY_POINTS,
         "creationDate": formatDate(projectInfo["createdAt"]),
         "currentSprint": "Not sprint found",
         "activeTab": "Statistics",
@@ -61,7 +94,8 @@ router.get("/:id", middleware.isUserInProject, async function (req, res) {
         "currentPage": PAGES.STATISTICS,
         "assignedUsers": users,
         "projectTeams": teams,
-        "sprints": [],
+        "activeSprintId": activeSprintId,
+        "sprints": sprintForPreferedTeam,
         "addUserModal": true,
         "stylesPath": statisticsPath["styles"],
         "scriptsPath": statisticsPath["scripts"],

@@ -854,3 +854,97 @@ function addUserToTable(userInfo){
 
     $(`${MANAGE_TABLE_ID} > tbody:last-child`).append(table_row);
 }
+
+
+/**
+ * Add a comment to a work item for a project
+ * @param {String} projectId 
+ * @param {String} workItemId 
+ * @param {String} comment 
+ */
+ async function addCommentToWorkItem(projectId, workItemId, comment){
+    
+    if (projectId == undefined || workItemId == undefined){
+        // TODO: add error message to the user
+        alert("Error getting the paramenters to add the comment to work item");
+        return;
+    }
+
+    // link to make the request
+    const API_LINK_ADD_COMMENT = `/dashboard/api/${projectId}/addCommentToWorkItem/${workItemId}`;
+    
+    // check of comments
+    if (comment.trim().length == 0){
+        console.error("Cannot add empty comment");
+        return;
+    }
+
+    // Data to make the request
+    const request_data = {comment: comment.trim()}
+
+    let response_error = null;
+    const response = await make_post_request(API_LINK_ADD_COMMENT, request_data).catch(err=> {
+        response_error = err;
+    });
+    
+    if (response){
+        // since the request is done (Success), we can add the html 
+        const comment_html = COMMENT_HTML_TEMPLATE.replace(REPLACE_SYMBOL, comment);
+        addToHtml(USER_COMMENT_CONTAINER, comment_html); // Helper function
+
+        // update the number of comments
+        let currentNumberOfComments = parseInt($(NUMBER_OF_COMMENTS_SPAN).text().trim());
+        $(NUMBER_OF_COMMENTS_SPAN).text(++currentNumberOfComments);
+
+        // clean the textarea for the user
+        $(WORK_ITEM["discussion"]).val('');
+    }else{
+        $.notify(response_error.data.responseText, "error");
+    }
+}
+
+/**
+ * Remove the work item from the project
+ * @param {Array} workItemsId - Array with all work item ids 
+ */
+ async function removeWorkItems(projectId, workItemsId){
+    // TODO: maybe change this to the https: format? 
+    const API_LINK_REMOVE_WORK_ITEMS =`/dashboard/api/${projectId}/removeWorkItems`;
+
+    if (!workItemsId || workItemsId.length == 0){
+        console.error("Cannot find the work items to remove");
+        return;
+    }
+
+    const request_data = {workItemsId};
+
+    let response_error = null;
+    const response = await make_post_request(API_LINK_REMOVE_WORK_ITEMS, request_data).catch(err=> {
+        response_error = err;
+    });
+
+    if (response){
+        removeCheckedElement();
+
+        $.notify(response, "success");
+
+        // disable the trash button again
+        enableTrashButton(false);
+    }else{
+        $.notify(response_error.data.responseText, "error");
+    }
+}
+
+/**
+ * In order to focus the work item, click the title when focus
+ */
+function checkTitleWhenOpen(){
+    try{
+        //  PRIOR check if the title has already something in it
+        if ($(WORK_ITEM["title"]).val().length == 0){
+            showElement(spanTitleMsg);
+        }
+    }catch(err) {
+
+    }
+}

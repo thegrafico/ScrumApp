@@ -60,6 +60,7 @@ router.get("/:id/planing/sprint", middleware.isUserInProject, async function (re
     
     let sprints = [];
     let workItems = [];
+    let activeSprintId = undefined;
 
     // if there is a least one team.
     if (!_.isNull(userPreferedTeam)){
@@ -79,18 +80,24 @@ router.get("/:id/planing/sprint", middleware.isUserInProject, async function (re
             
             let activeSprint = SprintCollection.getActiveSprint(sprints);
 
+            // check we have an active sprint
+            if (!_.isNull(activeSprint) || !_.isUndefined(activeSprint)){
+                activeSprintId = activeSprint["_id"];
+            }
+
             // get the work items by the sprint
             workItems = await workItemCollection.find({projectId: projectId, _id: {$in: activeSprint.tasks}}).catch(err => {
                 console.error("Error getting work items: ", err)
             }) || [];
         }
     }
-    
+
     // add default values
     teams.unshift(UNASSIGNED);
-    sprints.unshift(UNASSIGNED_SPRINT);
     users.unshift(UNASSIGNED);
+    sprints.unshift(UNASSIGNED_SPRINT);
 
+    console.log(sprints);
     // populating params
     let params = {
         "title": projectInfo["title"],
@@ -102,12 +109,12 @@ router.get("/:id/planing/sprint", middleware.isUserInProject, async function (re
         "statusWorkItem": WORK_ITEM_STATUS,
         "projectTeams": teams,
         "sprints": sprints,
-        "activeSprintId": undefined,
+        "activeSprintId": activeSprintId,
         "addUserModal": true,
         "workItemType": WORK_ITEM_ICONS,
         "workItems": workItems,
         "currentPage": PAGES.SPRINT,
-        "userTeam": userPreferedTeam,
+        "userTeam": userPreferedTeam["_id"],
         "sprintDefaultTimePeriod": SPRINT_DEFAULT_PERIOD_TIME, // Here the user can selet the time, but defualt is two weeks
         "priorityPoints":PRIORITY_POINTS,
         "stylesPath": sprintPath["styles"],
