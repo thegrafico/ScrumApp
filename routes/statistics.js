@@ -21,7 +21,7 @@ const {
     UNASSIGNED,
     PAGES,
     UNASSIGNED_SPRINT,
-    WORK_ITEM_STATUS,
+    WORK_ITEM_STATUS_COLORS,
     WORK_ITEM_ICONS,
     PRIORITY_POINTS,
 } = require('../dbSchema/Constanst');
@@ -84,7 +84,7 @@ router.get("/:id", middleware.isUserInProject, async function (req, res) {
         "project": projectInfo,
         "projectId": projectId,
         "projectStatus": STATUS,
-        "statusWorkItem": WORK_ITEM_STATUS,
+        "statusWorkItem": WORK_ITEM_STATUS_COLORS,
         "workItemType": WORK_ITEM_ICONS,
         "priorityPoints":PRIORITY_POINTS,
         "creationDate": formatDate(projectInfo["createdAt"]),

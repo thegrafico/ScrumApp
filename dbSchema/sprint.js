@@ -383,7 +383,7 @@ sprintSchema.statics.getSprintForWorkItem = async function(projectId, workItemId
                 console.error(err);
             }
         )
-
+        
         if (_.isUndefined(sprint) || _.isNull(sprint)){
             return reject(err_msg);
         }

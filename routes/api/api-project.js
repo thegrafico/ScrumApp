@@ -22,7 +22,7 @@ const {
     MAX_PRIORITY_POINTS,
     MAX_STORY_POINTS,
     EMPTY_SPRINT,
-    WORK_ITEM_STATUS,
+    WORK_ITEM_STATUS_COLORS,
     WORK_ITEM_ICONS,
     capitalize,
     getSprintDateStatus,

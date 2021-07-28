@@ -19,7 +19,7 @@ const {
     UNASSIGNED, 
     UNASSIGNED_SPRINT,
     WORK_ITEM_ICONS,
-    WORK_ITEM_STATUS,
+    WORK_ITEM_STATUS_COLORS,
     PRIORITY_POINTS,
     PAGES,
     joinData
@@ -99,7 +99,7 @@ router.get("/:id/planing/workitems", middleware.isUserInProject, async function 
         "tabTitle": "Work Items",
         "currentPage": PAGES.WORK_ITEMS,
         "assignedUsers": users,
-        "statusWorkItem": WORK_ITEM_STATUS,
+        "statusWorkItem": WORK_ITEM_STATUS_COLORS,
         "projectTeams": teams, 
         "userTeam": userPreferedTeam["_id"],
         "sprints": sprintForPreferedTeam,
@@ -119,6 +119,8 @@ router.get("/:id/planing/workitems", middleware.isUserInProject, async function 
  * METHOD: GET - show the main page for projects
  */
 router.get("/:id/planing/workitems/:workItemId", middleware.isUserInProject, async function (req, res) {
+
+    console.log("Getting request to show work item...");
 
     const projectId = req.params.id;
     const workItemId = req.params.workItemId;
@@ -147,7 +149,7 @@ router.get("/:id/planing/workitems/:workItemId", middleware.isUserInProject, asy
     // ===================================================
 
     // get all users for this project -> expected an array
-    let users = await projectInfo.getUsers().catch(err => console.log(err)) || [];
+    let users = await projectInfo.getUsers().catch(err => console.error("Error getting the users: ", err)) || [];
 
     // get all the teams for this project
     let teams = [...projectInfo.teams];
@@ -163,13 +165,13 @@ router.get("/:id/planing/workitems/:workItemId", middleware.isUserInProject, asy
 
         // getting all sprints for team
         sprints = await sprintCollection.getSprintsForTeam(projectId, userPreferedTeam["id"]).catch(err => {
-            console.log(err)
+            console.error("Error getting sprints for team: ", err)
         }) || [];  
         
         let workItemSprint = await sprintCollection.getSprintForWorkItem(projectId, workItemId).catch(err => {
-            console.error(err);
+            console.error("Error getting work items: ", err);
         });
-        console.log(workItemSprint);
+
         if (!_.isUndefined(workItemSprint) && !_.isNull(workItemSprint)){
             workItemSprintId = workItemSprint["_id"];
         }
@@ -189,7 +191,7 @@ router.get("/:id/planing/workitems/:workItemId", middleware.isUserInProject, asy
         "tabTitle": "Work Item",
         "currentPage": PAGES.UNIQUE_WORK_ITEM,
         "assignedUsers": users,
-        "statusWorkItem": WORK_ITEM_STATUS,
+        "statusWorkItem": WORK_ITEM_STATUS_COLORS,
         "projectTeams": teams,
         "activeSprintId": workItemSprintId,
         "sprints": sprints,

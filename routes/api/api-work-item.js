@@ -17,6 +17,7 @@ const {
     MAX_STORY_POINTS,
     UNASSIGNED_SPRINT,
     WORK_ITEM_STATUS,
+    WORK_ITEM_STATUS_COLORS,
     WORK_ITEM_ICONS,
     capitalize,
     SPRINT_STATUS
@@ -51,7 +52,7 @@ router.post("/api/:id/newWorkItem", middleware.isUserInProject, async function (
     // Fixing variables 
     userAssigned = userAssigned                 || UNASSIGNED.id;
     teamAssigned = teamAssigned                 || UNASSIGNED.id;
-    workItemStatus = capitalize(workItemStatus) || Object.keys(WORK_ITEM_STATUS)[0]; // New is the default
+    workItemStatus = capitalize(workItemStatus) || WORK_ITEM_STATUS["New"]; // default
     workItemType = capitalize(workItemType)     || Object.keys(WORK_ITEM_ICONS)[0]; // Story is the default value
     storyPoints = parseInt(storyPoints)         || 0;
     priorityPoints = parseInt(priorityPoints)   || MAX_PRIORITY_POINTS;
@@ -122,6 +123,14 @@ router.post("/api/:id/newWorkItem", middleware.isUserInProject, async function (
         console.error("unknow work item");
         req.flash("error", "Sorry, There is a problem with the status of the work item.");
         res.redirect(400, "back");
+        return;
+    }
+
+    // check if there is any user, if not, return error;
+    if (workItemStatus === WORK_ITEM_STATUS["Completed"] && !addUserToTeam){
+        console.error("unknow work item");
+        req.flash("error", "Sorry, Work item must have an user assigned in order to be completed");
+        res.redirect("back");
         return;
     }
 
@@ -316,7 +325,15 @@ router.post("/api/:id/update_work_item/:workItemId", middleware.isUserInProject,
         
         // verify if the user was selected to unnasigned
         if (assignedUser == UNASSIGNED.id){
+
+            // check if there is any user, if not, return error;
+            if (workItem["status"] === WORK_ITEM_STATUS["Completed"]){
+                res.status(400).send("Sorry, Work Item cannot be completed without an user assigned.");
+                return;
+            }
+
             updateValues["assignedUser"] = {name: UNASSIGNED.name};
+
         }else if(project.isUserInProject(assignedUser)){
 
             const user = await project.getUserName(assignedUser).catch(err => 
@@ -372,12 +389,21 @@ router.post("/api/:id/update_work_item/:workItemId", middleware.isUserInProject,
         }        
     }
 
+    console.log("ASSIGNED USER: ", workItem["assignedUser"]);
+
     // verify Status
     if (_.isString(status)){
         const STATUS = Object.keys(WORK_ITEM_STATUS);
         status = capitalize(status);
 
         if (STATUS.includes(status)){
+
+            // check if there is any user, if not, return error;
+            if (status === WORK_ITEM_STATUS["Completed"] && (!addUserToTeam && workItem["assignedUser"].id == null)){
+                res.status(400).send("Sorry, Work Item cannot be completed without an user assigned.");
+                return;
+            }
+
             updateValues["status"] = status;
         }else{
             res.status(400).send("The status for the work item does not match any of the status available");

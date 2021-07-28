@@ -20,7 +20,7 @@ const {
     UNASSIGNED, 
     UNASSIGNED_SPRINT,
     WORK_ITEM_ICONS,
-    WORK_ITEM_STATUS,
+    WORK_ITEM_STATUS_COLORS,
     PRIORITY_POINTS,
     PAGES,
 } = require('../dbSchema/Constanst');
@@ -106,7 +106,7 @@ router.get("/:id/planing/backlog", middleware.isUserInProject, async function (r
         "activeTab": "Backlog,Planing",
         "tabTitle": "Backlog",
         "assignedUsers": users,
-        "statusWorkItem": WORK_ITEM_STATUS,
+        "statusWorkItem": WORK_ITEM_STATUS_COLORS,
         "projectTeams": teams,
         "sprints": sprints,
         "activeSprintId": activeSprintId,

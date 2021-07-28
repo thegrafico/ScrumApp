@@ -20,7 +20,7 @@ const {
     PAGES,
     UNASSIGNED, 
     WORK_ITEM_ICONS,
-    WORK_ITEM_STATUS,
+    WORK_ITEM_STATUS_COLORS,
     PRIORITY_POINTS,
     UNASSIGNED_SPRINT,
 } = require('../dbSchema/Constanst');
@@ -90,7 +90,7 @@ router.get("/:id/manageUsers", middleware.isUserInProject, async function (req, 
         "scriptsPath": managePath["scripts"],
         "sprints": sprintForPreferedTeam,
         "activeSprintId": activeSprintId,
-        "statusWorkItem": WORK_ITEM_STATUS,
+        "statusWorkItem": WORK_ITEM_STATUS_COLORS,
         "priorityPoints":PRIORITY_POINTS,
         "workItemType": WORK_ITEM_ICONS,
     };
@@ -168,7 +168,7 @@ router.get("/:id/manageTeam", middleware.isUserInProject, async function (req, r
         "userTeam": userPreferedTeam,
         "stylesPath": managePath["styles"],
         "scriptsPath": managePath["scripts"],
-        "statusWorkItem": WORK_ITEM_STATUS,
+        "statusWorkItem": WORK_ITEM_STATUS_COLORS,
         "priorityPoints":PRIORITY_POINTS,
         "workItemType": WORK_ITEM_ICONS,
     };
