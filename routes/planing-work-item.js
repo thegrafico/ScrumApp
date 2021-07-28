@@ -20,6 +20,7 @@ const {
     UNASSIGNED_SPRINT,
     WORK_ITEM_ICONS,
     WORK_ITEM_STATUS_COLORS,
+    MAIN_WORK_ITEMS_TO_SHOW,
     PRIORITY_POINTS,
     PAGES,
     joinData
@@ -51,8 +52,8 @@ router.get("/:id/planing/workitems", middleware.isUserInProject, async function 
     // get all users for this project -> expected an array
     let users = await projectInfo.getUsers().catch(err => console.log(err)) || [];
 
-    // LOADING TABLE WORK ITEMS
-    workItems = await workItemCollection.find({projectId}).catch(err => 
+    // LOADING TABLE WORK ITEMS. We're not showing completed, deleted and abandoned
+    let workItems = await workItemCollection.find({projectId, status: {$in: MAIN_WORK_ITEMS_TO_SHOW}}).catch(err => 
         console.error("Error getting work items: ", err)
     ) || [];
 

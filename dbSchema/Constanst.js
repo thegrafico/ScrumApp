@@ -63,20 +63,24 @@ module.exports.WORK_ITEM_ICONS = {
 //  STATUS FOR THE WORK ITEMS
 module.exports.WORK_ITEM_STATUS = {
     "New":          "New",
-    "Active":       "Active", 
+    "Active":       "Active",
+    "Review":       "Review",
     "Completed":    "Completed", 
-    "Deleted":      "Deleted", 
     "Block":        "Block", 
     "Abandoned":    "Abandoned"
 };
+
+//  This is the general work items to show to the user
+module.exports.MAIN_WORK_ITEMS_TO_SHOW = ["New", "Active", "Review", "Block"];
+
 // if we change the variable here, we need to change the fron-end js to in order to show the
 // values in the dropdown select opction
 module.exports.WORK_ITEM_STATUS_COLORS = {
     "New":          {"class": "newColor", default: true},
     "Active":       {"class": "activeColor"}, 
+    "Review":       {"class": "blockColor"}, 
     "Completed":    {"class": "completedColor"}, 
-    "Deleted":      {"class": "delectedColor"}, 
-    "Block":        {"class": "blockColor"}, 
+    "Block":        {"class": "delectedColor"}, 
     "Abandoned":    {"class": "abandonedColor"}
 };
 
