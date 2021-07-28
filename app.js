@@ -119,7 +119,7 @@ app.use(function (req, res, next) {
   res.locals.SPRINT_TIME_PERIOD = SPRINT_TIME_PERIOD;
   res.locals.sprintDefaultTimePeriod = SPRINT_TIME_PERIOD["Two Weeks"];
   res.locals.userTeam = null;
-  
+
   next();
 });
 
@@ -187,4 +187,12 @@ module.exports = app;
  * create a new file in the services folder
  * To running the test -> Test Application
  * if you had run client verify, then is not available
+ * HUM detailed bu
+ */
+
+/**
+ * NOTES FROM PATRICK
+ * 1152092
+ * Add to goal -> work on mst. capture that what I did there - successfully deleveriy on OES4
+ * add a goal for the new team. for DTx
  */

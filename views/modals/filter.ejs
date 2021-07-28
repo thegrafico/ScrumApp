@@ -1,6 +1,33 @@
 <div id="filterDiv">
     <div class="d-flex flex-row-reverse">
-        <div class="p-2 pr-4 pb-2">
+        
+        <% if (projectTeams.length > 1){ %>
+            <div class="p-2 pr-4 pb-2">
+
+                <div class="button-group">
+                    <button type="button" class="btn btn-primary dropdown-toggle btn-sm" data-toggle="dropdown">Team </button>
+
+                    <ul class="dropdown-menu filterOptions">
+
+                        <% for (let i = 1; i < projectTeams.length; i++) { %>
+                            <li>
+                                <label class="small checkbox-container">
+                                    <input class="teamCheckbox" type="checkbox" value="<%=projectTeams[i]['name']%>"/>
+                                    <%=projectTeams[i]['name']%>
+                                </label>
+                            </li>
+                        <%}%>
+
+                        <div class="d-flex flex-row-reverse filterDivisor">
+                            <button type="button" class="btn btn-secondary">Clear</button>
+                        </div>
+                    </ul>
+                    
+                </div>
+            </div>
+        <%}%>
+
+        <div class="p-2 pb-2">
 
             <div class="button-group">
                 <button type="button" class="btn btn-primary dropdown-toggle btn-sm" data-toggle="dropdown">State </button>

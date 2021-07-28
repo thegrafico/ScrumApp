@@ -56,6 +56,9 @@ router.get("/:id/planing/workitems", middleware.isUserInProject, async function 
         console.error("Error getting work items: ", err)
     ) || [];
 
+    // sorting the work items
+    workItems  = workItems.sort((a,b) => new moment(b.createdAt) - new moment(a.createdAt))
+
     // Create new key (team/sprint) to store the work item team
     joinData(workItems, teams, "teamId", "equal", "_id", "team", UNASSIGNED);
     joinData(workItems, sprints, "_id", "is in", "tasks", "sprint", UNASSIGNED_SPRINT);
@@ -84,8 +87,8 @@ router.get("/:id/planing/workitems", middleware.isUserInProject, async function 
 
     // adding defaults
     teams.unshift(UNASSIGNED);
-    sprintForPreferedTeam.unshift(UNASSIGNED_SPRINT);
     users.unshift(UNASSIGNED);
+    sprintForPreferedTeam.unshift(UNASSIGNED_SPRINT);
     
     // populating params
     let params = {

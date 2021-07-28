@@ -127,8 +127,8 @@ router.get("/:id/manageTeam", middleware.isUserInProject, async function (req, r
     let userTeams = [];
     let userIds = [];
 
-     // if the user have a team
-     if (!_.isNull(userPreferedTeam)){
+    // if the user have a team
+    if (!_.isNull(userPreferedTeam)){
         // getting all sprints for team
         sprintForPreferedTeam = await SprintCollection.getSprintsForTeam(projectId, userPreferedTeam["_id"]).catch(err => {
             console.log(err);

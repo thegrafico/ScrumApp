@@ -2,13 +2,20 @@ const TYPE_CHECKBOX_CLASS = ".typeCheckBox";
 const STATE_CHECKBOX_CLASS = ".stateCheckBox";
 const USER_CHECKBOX_CLASS = ".userCheckbox"
 const FILTER_SEARCH_ID = "searchTable";
+const TEAM_CHECKBOX_CLASS = ".teamCheckbox";
 const FILTER_GENERAL_CLASS = ".filterOptions";
 
 const FILTER_MANAGE_TEAM_ID = "#filter-manage-team";
 const MANAGE_TEAM_COLUMNS_TO_FILTER = ["name", "email"];
 
 // Header of the table
-const filterElements = {"title": "title", "type": "type", "assigned": "assigned", "state": "state"};
+const filterElements = {
+    "title": "title", 
+    "type": "type", 
+    "assigned": "assigned", 
+    "state": "state",
+    "team": "team",
+};
 
 $(function () {
 
@@ -22,7 +29,6 @@ $(function () {
         filterTable();
     });
 
-
     // filter by user
     $(USER_CHECKBOX_CLASS).change(function() {
         filterTable();
@@ -33,12 +39,19 @@ $(function () {
         filterTable();
     });
 
+    // filter by team
+    $(TEAM_CHECKBOX_CLASS).change(function() {
+        filterTable();
+    });
+
+
+    // ================== MANAGE ROUTES FILTERS =========================
+    // filtering manage routes for team
     $(FILTER_MANAGE_TEAM_ID).keyup(function (){
         let userInput = $(this).val().toLowerCase();
         
         filterManageTable(MANAGE_TABLE_ID, userInput, MANAGE_TEAM_COLUMNS_TO_FILTER);
     })
-
 
     // TODO: maybe there is a better way of not closing the filter type when clicking inside?
     $(document).on('click', FILTER_GENERAL_CLASS, function (e) {
@@ -92,11 +105,21 @@ function filterTable() {
     const typeIndex = headers.indexOf(filterElements["type"]); 
     const stateIndex = headers.indexOf(filterElements["state"]);
     const usersIndex = headers.indexOf(filterElements["assigned"]);
+    
+
 
     let searchInput = getSearchInput(FILTER_SEARCH_ID);
     let activeTypeCheckbox = getCheckboxInput(TYPE_CHECKBOX_CLASS);
     let activeStateCheckbox = getCheckboxInput(STATE_CHECKBOX_CLASS);
-    let activeUsersChecbox = getCheckboxInput(USER_CHECKBOX_CLASS);
+    let activeUsersCheckbox = getCheckboxInput(USER_CHECKBOX_CLASS);
+
+    // add team to the filter
+    let teamIndex = null;
+    let activeTeamCheckbox = null;
+    if (headers.includes(filterElements["team"])){
+        teamIndex = headers.indexOf(filterElements["team"]);
+        activeTeamCheckbox = getCheckboxInput(TEAM_CHECKBOX_CLASS)
+    }
 
     // console.log("Rows: ", tableRow.length);
 
@@ -109,30 +132,45 @@ function filterTable() {
 
         // getting the text of each column we need. COMPLETE TODO
         // td = tr[i].getElementsByTagName("td")[0];
-        td_title = tableRow[i].getElementsByTagName("td")[searchIndex];
-        td_type = tableRow[i].getElementsByTagName("td")[typeIndex];
-        td_state = tableRow[i].getElementsByTagName("td")[stateIndex];
-        td_users = tableRow[i].getElementsByTagName("td")[usersIndex];
+        let td_title = tableRow[i].getElementsByTagName("td")[searchIndex];
+        let td_type = tableRow[i].getElementsByTagName("td")[typeIndex];
+        let td_state = tableRow[i].getElementsByTagName("td")[stateIndex];
+        let td_users = tableRow[i].getElementsByTagName("td")[usersIndex];
     
-        searchTxt = td_title.textContent || td_title.innerText;
-        typeTxt = td_type.textContent || td_type.innerText;
-        stateTxt = td_state.textContent || td_state.innerText;
-        usersTxt = td_users.textContent || td_users.innerText;
+        let searchTxt = td_title.textContent || td_title.innerText;
+        let typeTxt = td_type.textContent || td_type.innerText;
+        let stateTxt = td_state.textContent || td_state.innerText;
+        let usersTxt = td_users.textContent || td_users.innerText;
 
+
+        // SEARCH
         if (searchInput && !textInColumn (searchTxt, searchInput, false)){
             style = "none";
         }
 
+        // TYPE
         if (activeTypeCheckbox && !textInColumn (typeTxt, activeTypeCheckbox)){
             style = "none";
         }
 
+        // STATUS
         if (activeStateCheckbox && !textInColumn (stateTxt, activeStateCheckbox)){
             style = "none"
         }
 
-        if (activeUsersChecbox && !textInColumn (usersTxt, activeUsersChecbox)){
+        // ASSIGNED USER
+        if (activeUsersCheckbox && !textInColumn (usersTxt, activeUsersCheckbox)){
             style = "none"
+        }
+
+        // TEAM
+        if (teamIndex != null){
+            let td_team = tableRow[i].getElementsByTagName("td")[teamIndex];
+            let teamTxt = td_team.textContent || td_team.innerText;
+
+            if (activeTeamCheckbox && !textInColumn (teamTxt, activeTeamCheckbox)){
+                style = "none"
+            }
         }
 
         tableRow[i].style.display = style;
@@ -174,7 +212,6 @@ function getTableHeaders(tableRow){
             headers.push(tableHeaders[i].textContent.trim().toLowerCase());
         }
     }
-
     return headers;
 }
 
