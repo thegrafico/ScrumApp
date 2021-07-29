@@ -91,7 +91,7 @@ router.get("/api/:id/getworkItemsByTeamId/:teamId", middleware.isUserInProject, 
 /**
  * METHOD: GET - fetch all work items for a team
  */
- router.get("/api/:id/getworkItemsAndSprintsByTeam/:teamId", middleware.isUserInProject, async function (req, res) {
+router.get("/api/:id/getworkItemsAndSprintsByTeam/:teamId", middleware.isUserInProject, async function (req, res) {
     
     const projectId = req.params.id;
     const teamId = req.params.teamId;
@@ -113,7 +113,7 @@ router.get("/api/:id/getworkItemsByTeamId/:teamId", middleware.isUserInProject, 
         }
 
         // getting sprints
-        const sprints = await SprintCollection.getSprintsForTeam(projectId, teamId).catch(err => {
+        let sprints = await SprintCollection.getSprintsForTeam(projectId, teamId).catch(err => {
             console.error(err);
         });
 
@@ -127,6 +127,8 @@ router.get("/api/:id/getworkItemsByTeamId/:teamId", middleware.isUserInProject, 
 
         let activeSprint = SprintCollection.getActiveSprint(sprints);
 
+
+        sprints.unshift(UNASSIGNED_SPRINT);
         response["msg"] = "Success.";
         response["workItems"] = workItems;
         response["sprints"] = sprints;
@@ -203,6 +205,8 @@ router.get("/api/:id/getAllSprintWorkItems/:teamId", middleware.isUserInProject,
         res.status(200).send(response);
         return;
     }
+
+    teamSprints.unshift(UNASSIGNED_SPRINT);
 
     response["msg"] = "success";
     response["activeSprint"] = activeSprint._id;
@@ -361,13 +365,16 @@ router.get("/api/:id/getTeamSprints/:teamId", middleware.isUserInProject, async 
             res.status(400).send(response);
             return;
         }
+        sprints.unshift(UNASSIGNED_SPRINT);
+
         // send response to user
         response["msg"] = "Success";
         response["sprints"] = sprints;
         res.status(200).send(response);
         return;
     }else{
-        res.status(400).send("Oops, it looks like this is an invalid team.");
+        response["msg"] = "Oops, it looks like this is an invalid team.";
+        res.status(400).send(response);
         return;
     }
 });

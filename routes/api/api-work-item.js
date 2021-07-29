@@ -25,6 +25,71 @@ const {
 
 
 // ============= GET ======================
+/**
+ * METHOD: GET - fetch all work items for a team
+ */
+router.get("/api/:id/getWorkItem/:workItemId", middleware.isUserInProject, async function (req, res) {
+    console.log("Getting request to get work item...");
+
+    const projectId = req.params.id;
+    const workItemId = req.params.workItemId;
+    let response = {};
+
+    // verify is the project exists
+    let projectInfo = await projectCollection.findOne({_id: projectId}).catch(err => {
+        console.log("Error is: ", err.reason);
+    });
+
+    if (_.isUndefined(projectInfo) || _.isEmpty(projectInfo)) {
+        response["msg"] = "Sorry, There was a problem getting the project information.";
+        return res.status(400).send(response);
+    }
+
+    // ============== CHECK WORK ITEM INFO ==============
+    // Load work item specify data
+    let workItem = await projectInfo.getWorkItem(workItemId).catch(err => {
+        console.error("Error getting work items: ", err);
+    }) || [];
+
+
+    if (_.isUndefined(workItem) || _.isEmpty(workItem)){
+        response["msg"] = "Sorry, There was a problem getting the work item information.";
+        return res.status(400).send(response);
+    }
+    
+    // ============ GETTING SPRINTS for the team of the work item =====
+
+    // getting all sprints for team
+    let sprints = await SprintCollection.getSprintsForTeam(projectId, workItem["teamId"]).catch(err => {
+        console.error("Error getting sprints for team: ", err)
+    }) || [];
+
+    let activeSprintId = null;
+
+    // if the user have a team
+    if (!_.isEmpty(sprints)){
+
+        let activeSprint = sprints.filter(each => {
+           return each.tasks.includes(workItemId);
+        })[0];
+
+        if (!_.isUndefined(activeSprint) && !_.isNull(activeSprint)){
+            activeSprintId = activeSprint["_id"];
+        }
+    }
+
+    sprints.unshift(UNASSIGNED_SPRINT);
+
+    response["workItem"] = workItem;
+    response["sprints"] = sprints;
+    response["activeSprint"] = activeSprintId;
+    response["msg"] = "success";
+
+    console.log(workItem);
+    // console.log(sprints);
+
+    return res.status(200).send(response);
+});
 
 
 

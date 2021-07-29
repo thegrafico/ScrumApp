@@ -56,7 +56,7 @@ html,body {
     margin-right: 4%;
 }
 
-#new-item-title{
+#new-item-title, #update-new-item-title{
     background: transparent;
     border: 1px solid transparent;
     padding: 5px;
@@ -67,16 +67,16 @@ html,body {
     border-radius: 5px;
 }
 
-#new-item-title:hover{
+#new-item-title:hover, #update-new-item-title:hover{
     cursor: pointer;
     border-color: grey;
 }
 
-#new-item-title:focus{
+#new-item-title:focus, #update-new-item-title:focus{
     border-color: grey;
 }
 
-#title-span-msg{
+#title-span-msg, .title-span-msg{
     color: red;
     font-size: 0.8em;
     font-weight: bold;
@@ -139,7 +139,7 @@ html,body {
     padding-bottom: 1%;
 }
 
-#description-textarea, #comment-textarea{
+#update-description-textarea,#description-textarea,#update-description-textarea, #comment-textarea{
     width: 100%;
     border-radius: 5px;
     padding: 1%;
@@ -283,7 +283,7 @@ tbody tr td i {
     color: #e74c3c !important;
 }
 
-.blockColor, .BlockColor{
+.reviewColor, .ReviewColor{
     color: #ffc107 !important
 }
 

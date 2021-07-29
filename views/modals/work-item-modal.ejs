@@ -1,0 +1,220 @@
+<!-- Large modal -->
+<div class="modal fade work-item-information" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalTitle">Work item </h5> &nbsp; &nbsp; <i
+                    class="fas fa-bolt taskIcon"></i>
+                <button type="button" class="close close-modal-button" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+            <div class="modal-body">
+
+                <fieldset>
+
+                    <div class="row">
+
+                        <div class="col-12">
+                            <div class="d-inline-flex titleAndId">
+                                
+                                <div class="labelForTitle">
+                                    <label for="title"> <span id="update-work-item-sub-id"></span> </label>
+                                </div>
+                                
+                                <div class="inputForTitle">
+                                    <input type="text" 
+                                    autocomplete="off" 
+                                    name="title" 
+                                    id="update-new-item-title" 
+                                    class="bx-shadow " 
+                                    value="0" 
+                                    placeholder="Enter title">        
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col ml-12">
+                            <span id="title-span-msg" class="d-none">
+                                <i class="fas fa-exclamation-circle"></i>
+                                Title cannot be empty
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="row no-m-bt">
+                        <div class="col-3">
+
+                            <div class="form-group d-flex">
+                                <i class="fas fa-user userLogo"></i>
+                                <select class="custom-select my-custon-select" name="userAssigned"
+                                    id="update-assigned-user">
+                                    <!-- TODO: assing the user when modal is  -->
+                                    <% for (user of assignedUsers){ %>
+                                        <option value="<%=user['id']%>"> <%=user["name"]%> </option>
+                                    <%}%>
+                                </select>
+                            </div>
+
+                        </div>
+
+                        <!-- TODO: add comments number from the db -->
+                        <div class="col-1">
+                            <span>
+                                <i class="fas fa-comments"></i> 0
+                            </span>
+                        </div>
+
+                        <div class="col-7 tagsContainer" id="tagsContainer">
+                            <button type="button" id="addTagBtn" class="btn btn-primary">Add tag</button>
+                        </div>
+
+                        <!-- BUTTON TO SAVE THE WORK ITEM STATUS -->
+                        <div class="col">
+                            <div class="saveStatusBtn" id="saveStatusBtn">
+                                <i class="far fa-save"></i>
+                                <span class="tooltiptext">Save</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row create-work-item-bg">
+                        <div class="col-12 mt-4">
+                            <div class="row">
+                                <div class="col-3 d-flex">
+                                    <span class="aling-vertically align-self-center"> Status: </span>
+
+
+                                    <ul class="nav nav-pills flex-column" id="customSelectStatus">
+                                        <li class="nav-item dropdown">
+                                            
+                                            <a 
+                                            class="nav-link dropdown-toggle currentWorkItemStatus" 
+                                            data-toggle="dropdown" 
+                                            href="#" 
+                                            role="button" 
+                                            aria-haspopup="true"  
+                                            id="update-current-workitem-status" 
+                                            aria-expanded="false">
+                                                <!-- <i class="fa fa-circle " aria-hidden="true"></i> new -->
+                                            </a>
+
+                                            <div class="dropdown-menu">
+
+                                                <% for (const [key, value] of Object.entries(statusWorkItem)) { %>
+                                                    <a class="dropdown-item btnWorkItemStatus update-work-item-status" href="#">
+                                                        <span> <i class="fa fa-circle <%=value['class']%>" aria-hidden="true"></i> <%=key%></span>
+                                                    </a>
+                                                <%}%>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                    <input type="hidden" name="workItemStatus" id="update-work-item-status" value="New">
+
+                                </div>
+
+                                <div class="col-4 d-flex teamAssigned-container">
+                                    <span class="aling-vertically align-self-center"> Team: </span>
+                                    <select class="custom-select my-custon-select "  name="teamAssigned" id="update-team-assigned">
+                                        <% for (team of projectTeams){ %>
+                                            <option value="<%=team['id']%>"><%=team['name']%></option>
+                                        <%}%>   
+                                    </select>
+                                </div>
+
+
+                            </div>
+
+                            <div class="row">
+                                <div class="col-3 d-flex">
+                                    <span class="aling-vertically align-self-center"> Type: </span>
+
+                                    <ul class="nav nav-pills flex-column" id="customSelect">
+                                        <li class="nav-item dropdown">
+                                            
+                                            <a class="nav-link dropdown-toggle currentType" data-toggle="dropdown" href="#" role="button" aria-haspopup="true"  id="currentType" aria-expanded="false"> 
+                                                <% for(let key in workItemType){ %>
+                                                    <% if (workItemType[key].default){ %>
+                                                        <i class="fas <%=workItemType[key].icon%>"></i> &nbsp; <%=key%>
+                                                        <%break;%>
+                                                    <%}%>
+                                                <%}%>
+                                            </a>
+
+                                            <div class="dropdown-menu">
+                                                <% for(let key in workItemType){ %>
+                                                    <a class="dropdown-item btnType update-work-item-type" href="#"> 
+                                                        <span>  <i class="fas <%=workItemType[key].icon%> <%=key%>"></i> &nbsp; <%=key%>  </span>    
+                                                    </a>
+                                                <%}%>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                    <input type="hidden" name="workItemType" id="update-work-item-type" value="story">
+                                </div>
+
+                                <div class="col-4 d-flex">
+                                    <span class="aling-vertically align-self-center"> Iteration: </span>
+                                    <select class="custom-select my-custon-select " name="sprint" id="update-sprint">
+                                    </select>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <div class="row desc-planing-development">
+
+                        <div class="col">
+                            <h5 class="pd-p">Description</h5>
+                            <textarea name="workItemDescription" id="update-description-textarea" rows="10" placeholder="Enter Description."
+                                class="bx-shadow"></textarea>
+                        </div>
+
+                        <div class="col-3 planing-work-item">
+                            <h5 class="pd-p">Planing</h5>
+
+                            <p>Story Points</p>
+                            <input type="text" name="storyPoints" class="input-style" id="update-work-item-points" placeholder="Enter points: i.e 5">
+
+                            <p>Priority</p>
+                            <select
+                                class="custom-select my-custon-select input-border"
+                                name="priorityPoints" 
+                                id="update-work-item-priority" 
+                                aria-label="Default select example">
+
+                                <% for( const [key, value] of Object.entries(priorityPoints) ) { %>
+                                    <option value="<%=value%>"> <%=key%> - <%=value%> </option>
+                                <% } %>
+                            </select>
+                        </div>
+
+                        <div class="col-3 addLink">
+                            <h5 class="pd-p">Related work</h5>
+                            <p> <i class="fas fa-plus "></i> Add link</p>
+                        </div>
+
+                    </div>
+
+                    <div class="row desc-planing-development">
+                        <div class="col-6">
+                            <!-- TODO: add post button -->
+                            <h5 class="pd-p">Discussion</h5>
+                            <textarea name="comments" id="comment-textarea" rows="4"
+                                placeholder="Discussion is available after creating the work item." class="bx-shadow" disabled>
+                            </textarea>
+                        </div>
+                    </div>
+
+                </fieldset>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary close-modal-button" data-dismiss="modal">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>

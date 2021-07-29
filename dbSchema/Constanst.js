@@ -78,7 +78,7 @@ module.exports.MAIN_WORK_ITEMS_TO_SHOW = ["New", "Active", "Review", "Block"];
 module.exports.WORK_ITEM_STATUS_COLORS = {
     "New":          {"class": "newColor", default: true},
     "Active":       {"class": "activeColor"}, 
-    "Review":       {"class": "blockColor"}, 
+    "Review":       {"class": "reviewColor"}, 
     "Completed":    {"class": "completedColor"}, 
     "Block":        {"class": "delectedColor"}, 
     "Abandoned":    {"class": "abandonedColor"}

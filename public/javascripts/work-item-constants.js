@@ -30,6 +30,15 @@ const WORK_ITEM_ICONS = {
     },
 }
 
+const WORK_ITEM_STATUS_COLORS = {
+    "New":          {"class": "newColor", default: true},
+    "Active":       {"class": "activeColor"}, 
+    "Review":       {"class": "reviewColor"}, 
+    "Completed":    {"class": "completedColor"}, 
+    "Block":        {"class": "delectedColor"}, 
+    "Abandoned":    {"class": "abandonedColor"}
+};
+
 const createWorkItemModal = ".createNewItemModal";
 
 // Symbol to replaces
@@ -143,6 +152,11 @@ const SPRINT_STATUS = {
     "Past": "Past", // Today - 6 days
     "Coming": "Coming", 
     "Active": "Active",
+};
+
+const UNASSIGNED_SPRINT = {
+    name: "unassigned",
+    _id: "0",
 };
 
 const MOVE_TO_BACKLOG_BTN = ".moveToBacklog";
