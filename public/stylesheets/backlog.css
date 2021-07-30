@@ -56,7 +56,7 @@ html,body {
     margin-right: 4%;
 }
 
-#new-item-title, #update-new-item-title{
+.inputForTitle input{
     background: transparent;
     border: 1px solid transparent;
     padding: 5px;
@@ -67,12 +67,12 @@ html,body {
     border-radius: 5px;
 }
 
-#new-item-title:hover, #update-new-item-title:hover{
+.inputForTitle input:hover{
     cursor: pointer;
     border-color: grey;
 }
 
-#new-item-title:focus, #update-new-item-title:focus{
+.inputForTitle input:focus{
     border-color: grey;
 }
 
@@ -139,7 +139,7 @@ html,body {
     padding-bottom: 1%;
 }
 
-#update-description-textarea,#description-textarea,#update-description-textarea, #comment-textarea{
+.descriptionBox, .addCommentBox{
     width: 100%;
     border-radius: 5px;
     padding: 1%;

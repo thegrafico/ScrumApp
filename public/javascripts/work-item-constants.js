@@ -1,6 +1,11 @@
 
+// TAG TEMPLATE FOR WORK ITEM
+const TAG_TEMPLATE = `<span class="badge badge-secondary"> <input type="text" autocomplete="off" name="tags[]" placeholder="Enter tag" class='tagNme'> <span aria-hidden="true" class="rmTag">&times;</span>  </span>`;
+const UPDATE_TAG_TEMPLATE = `<span class="badge badge-secondary"> <input type="text" autocomplete="off" name="tags[]" placeholder="Enter tag" class='update-work-item-tags'> <span aria-hidden="true" class="rmTag">&times;</span>  </span>`;
+
 // Work item schema - all values that change from work item are in here
 const WORK_ITEM = {
+    // FOR WORK ITEM
     title: "#new-item-title",
     user: "#assignedUser",
     state: "#workItemStatus",
@@ -12,6 +17,50 @@ const WORK_ITEM = {
     priority: "#workItemPriority",
     discussion: "#comment-textarea",
     tags: ".tagNme",
+
+    // OTHER DATA VALUES
+    title_span_msg: "#title-span-msg",
+    btn_add_comment: "#add-comment", 
+    btn_change_type: ".btnType",
+    btn_change_status: ".btnWorkItemStatus",
+    btn_add_tags: "#addTagBtn",
+    btn_remove_tag: ".rmTag",
+
+    // CONTAINERS
+    tag_container: ".tagsContainer",
+    tag_template: TAG_TEMPLATE,
+
+};
+
+// same as work item but for the update part
+const UPDATE_WORK_ITEM = {
+    // FOR WORK ITEM
+    title: "#update-work-item-title",
+    user: "#update-assigned-user",
+    state: "#update-work-item-status",
+    team: "#update-work-item-team",
+    type: "#update-work-item-type",
+    description: "#update-work-item-description",
+    points: "#update-work-item-points",
+    sprint: "#update-work-item-sprints",
+    priority: "#update-work-item-priority",
+    discussion: "#update-work-item-comments",
+    tags: ".update-work-item-tags",
+
+    // OTHER VALUES
+    title_span_msg: "#update-title-span-msg",
+    btn_add_comment: "#update-add-comment",
+    btn_change_type: ".update-btn-type",
+    btn_change_status: ".update-btn-status",
+    btn_add_tags: "#udpate-add-tags-btn",
+    btn_remove_tag: ".rmTag",
+
+
+    // CONTAINERS
+    tag_container: ".update-tags-container",
+    tag_template: UPDATE_TAG_TEMPLATE,
+
+
 };
 
 const WORK_ITEM_ICONS = {
@@ -90,9 +139,8 @@ const PROJECT_ID = "#projectId";
 const CREATE_WORK_ITEM_FORM = "#createWorkItemForm";
 const BTN_PLANING = "#Planing";
 
-// TAG TEMPLATE FOR WORK ITEM
-const TAG_TEMPLATE = `<span class="badge badge-secondary"> <input type="text" autocomplete="off" name="tags[]" placeholder="Enter tag " class='tagNme'> <span aria-hidden="true" class="rmTag">&times;</span>  </span>`;
-const COMMENT_HTML_TEMPLATE = `<div> <textarea name="comments" id="comment-textarea" rows="4" placeholder="Add a comment for this story." class="bx-shadow">${REPLACE_SYMBOL}</textarea></div>`;
+
+const COMMENT_HTML_TEMPLATE = `<div> <textarea name="comments" class="addCommentBox" rows="4" placeholder="Add a comment for this work item." class="bx-shadow">${REPLACE_SYMBOL}</textarea></div>`;
 const USER_COMMENT_CONTAINER = ".user-comments-container";
 const NUMBER_OF_COMMENTS_SPAN = "#numberOfCommentSpan";
 

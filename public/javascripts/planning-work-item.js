@@ -9,8 +9,6 @@ $(function () {
     // show the active tab in the sidebar
     showActiveTab();
 
-    checkTitleWhenOpen();
-
     // click on planing just to show to the user in the sidebar
     $(BTN_PLANING).click();
 

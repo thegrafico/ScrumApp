@@ -213,33 +213,33 @@ function swap(currentVal, newVal){
  * Clean the work item modal
  * This function is call anywhere is possible to create a work item
  */
-function cleanModal() {
+function cleanModal(element) {
 
     // reset title
-    $(WORK_ITEM["title"]).val("");
+    $(element["title"]).val("");
     $(spanTitleMsg).removeClass("d-none");
 
     // reset assigned user
-    $(WORK_ITEM["user"]).val(0);
+    $(element["user"]).val(0);
 
     // reset tags
-    $(`${TAG_CONTAINER} span`).remove();
+    $(`${element["tag_container"]} span`).remove();
 
     // reset state
     // TODO: set the default value to be the firts from an array from CONSTANTS.js
-    $(WORK_ITEM["state"]).val("New");
+    $(element["state"]).val("New");
 
     // Reset description
-    $(WORK_ITEM["description"]).val("");
+    $(element["description"]).val("");
 
     // reset points
-    $(WORK_ITEM["points"]).val("");
+    $(element["points"]).val("");
 
     // reset priority
-    $(WORK_ITEM["priority"]).val("");
+    $(element["priority"]).val("");
 
     // reset discussion
-    $(WORK_ITEM["discussion"]).val("");
+    $(element["discussion"]).val("");
 
     // TODO: reset links
     // TODO: reset type
@@ -890,16 +890,17 @@ function addUserToTable(userInfo){
     if (response){
         // since the request is done (Success), we can add the html 
         const comment_html = COMMENT_HTML_TEMPLATE.replace(REPLACE_SYMBOL, comment);
+        
         addToHtml(USER_COMMENT_CONTAINER, comment_html); // Helper function
 
         // update the number of comments
         let currentNumberOfComments = parseInt($(NUMBER_OF_COMMENTS_SPAN).text().trim());
         $(NUMBER_OF_COMMENTS_SPAN).text(++currentNumberOfComments);
 
-        // clean the textarea for the user
-        $(WORK_ITEM["discussion"]).val('');
+        return true;
     }else{
         $.notify(response_error.data.responseText, "error");
+        return false;
     }
 }
 
@@ -938,13 +939,142 @@ function addUserToTable(userInfo){
 /**
  * In order to focus the work item, click the title when focus
  */
-function checkTitleWhenOpen(){
+function checkTitleWhenOpen(selectorId){
     try{
         //  PRIOR check if the title has already something in it
-        if ($(WORK_ITEM["title"]).val().length == 0){
+        if ($(selector["title"]).val().length == 0){
             showElement(spanTitleMsg);
         }
     }catch(err) {
 
     }
+}
+
+function addWorkItemEvents(element){
+    
+    // When title input is changed
+    $(element["title"]).on("input", function () {
+    
+        // Using functions from helper.js in order to show or hide the elements
+        if ( (($(this).val()).length) > 0) {
+            hideElement(element["title_span_msg"]);
+        } else {
+            showElement(element["title_span_msg"]);
+        }
+    });
+
+    // ADD COMMENT 
+    // TODO: refactor this
+    $(element["btn_add_comment"]).on("click", function(){
+        
+        const comment = $(element["discussion"]).val();
+        const workItemId = $(WORK_ITEM_ID).val();
+        const projectId = $(PROJECT_ID).val();
+    
+        if (workItemId == undefined || projectId == undefined){
+            // TODO: add a message to the UI
+            alert("There is a problem getting the information for this work item");
+            return;
+        }
+
+        // TODO: clean text before inserting in database
+        if ( (comment && comment.trim().length > 0)){
+            
+            let commentWasAdded = addCommentToWorkItem(projectId, workItemId, comment.trim());
+
+            // cleaning the dissusion val
+            if (commentWasAdded){
+                $(element["discussion"]).val("");
+            }
+        }else{
+            // TODO: show a message to the user that empty comment cannot be added
+            alert("Cannot add an empty comment.")
+        }
+    });
+
+    // TEAM - CHANGE EVENT ON WORK ITEM
+    $(element["team"]).on("change", async function () {
+    
+        // check from where the change trigger is coming
+        if (IS_UPDATE_SELECT_OPTION){
+            console.log("Canceled on change");
+            IS_UPDATE_SELECT_OPTION = false;
+            return;
+        }
+
+        // clean select opction
+        removeAllOptionsFromSelect(
+            element["sprint"], 
+            null,
+        );
+        const teamId = $(this).val();
+        const projectId = $(PROJECT_ID).val();
+
+        if (!_.isString(teamId) || !_.isString(projectId) || teamId == "0"){
+            $.notify("Invalid team was selected.", "error");
+            return;
+        }
+
+        const API_LINK_GET_SPRINTS_FOR_TEAM = `/dashboard/api/${projectId}/getTeamSprints/${teamId}`;
+
+        let response_error = null;
+        const response = await make_get_request(API_LINK_GET_SPRINTS_FOR_TEAM).catch(err => {
+            response_error = err;
+        });
+        
+        // Success message
+        if (response){
+
+            if (response.sprints && response.sprints.length > 0){
+                for (const sprint of response.sprints) {
+                    updateSelectOption(
+                        element["sprint"], 
+                        UPDATE_TYPE.ADD,
+                        {"value": sprint["_id"], "text":sprint["name"]}
+                    );
+                }
+            }else{
+                $.notify("Sorry, it seems this team does not have sprints yet.", "error");
+            }
+        }else{ // error messages
+            $.notify(response_error.data.responseJSON.msg, "error");
+        }
+    });
+
+    // TYPE - CHANGE EVENT ON WORK ITEM
+    $(element["btn_change_type"]).on("click", function () {
+        updateCustomSelect(this, CURRENT_WORK_ITEM_TYPE, element["type"]);
+    });
+
+    // STATUS - CHANGE EVENT ON WORK ITEM
+    $(element["btn_change_status"]).on("click", function () {
+        updateCustomSelect(this, CURRENT_WORK_ITEM_STATUS, element["state"]);
+    });
+
+    // =============== TAGS ================
+    // TAGS - Add tag to work item
+    $(element['btn_add_tags']).on("click", function () {
+
+        // get number of element
+        let childrens = ($(element["tag_container"]).children()).length;
+        
+        if (childrens <= MAX_NUMBER_OF_TAGS) {
+            $(element["tag_container"]).append(element["tag_template"]);
+        } else {
+            $.notify(`Each story cannot have more than ${MAX_NUMBER_OF_TAGS} tags`, "error");
+        }
+    });
+
+
+    // REMOVE TAGS - work item
+    $(document).on("click", element["btn_remove_tag"], function () {
+        $(this).parent().remove();
+
+        // Trigger the tags container in oder to active the save button
+        $(element["tag_container"]).trigger("change");
+    });
+
+    // =====================================
+
+    
 }

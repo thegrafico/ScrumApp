@@ -32,7 +32,7 @@
                                     <div class="inputForTitle">
                                         <input type="text" autocomplete="off" 
                                         name="title" 
-                                        id="new-item-title" 
+                                        id="update-work-item-title" 
                                         class="bx-shadow " 
                                         value="<%=workItem['title']%>" 
                                         placeholder="Enter title">        
@@ -41,7 +41,7 @@
                             </div>
 
                             <div class="col ml-12">
-                                <span id="title-span-msg" class="d-none">
+                                <span id="update-title-span-msg" class="d-none">
                                     <i class="fas fa-exclamation-circle"></i>
                                     Title cannot be empty
                                 </span>
@@ -54,7 +54,7 @@
 
                                 <div class="form-group d-flex">
                                     <i class="fas fa-user userLogo"></i>
-                                    <select class="custom-select my-custon-select " name="userAssigned" id="assignedUser">
+                                    <select class="custom-select my-custon-select " name="userAssigned" id="update-assigned-user">
                                         <% for (user of assignedUsers){ %>
                                             <% if (user.selected || (workItem["assignedUser"]["id"] && (user["id"].toString() === workItem["assignedUser"]["id"].toString())) ) {%>
                                                 <option value="<%=user['id']%>" selected>
@@ -77,14 +77,14 @@
                                 </span>
                             </div>
 
-                            <div class="col-7 tagsContainer" id="tagsContainer">
-                                <button type="button" id="addTagBtn" class="btn btn-primary">
+                            <div class="col-7 update-tags-container">
+                                <button type="button" id="udpate-add-tags-btn" class="btn btn-primary">
                                     Add tag
                                 </button>
 
                                 <% for (let tag of workItem["tags"]){ %>
                                     <span class="badge badge-secondary"> 
-                                        <input type="text" name="tags[]" autocomplete="off" value="<%=tag%>" placeholder="Enter tag " class='tagNme'> 
+                                        <input type="text" name="tags[]" autocomplete="off" value="<%=tag%>" placeholder="Enter tag " class='update-work-item-tags'> 
                                         <span aria-hidden="true" class="rmTag">&times;</span>  
                                     </span>
                                 <%}%>
@@ -128,7 +128,7 @@
                                                 <div class="dropdown-menu">
 
                                                     <% for (const [key, value] of Object.entries(statusWorkItem)) { %>
-                                                        <a class="dropdown-item btnWorkItemStatus" href="#">
+                                                        <a class="dropdown-item update-btn-status" href="#">
                                                             <span> 
                                                                 <i class="fa fa-circle <%=value['class']%>" aria-hidden="true"></i>
                                                                 <%=key%>
@@ -138,13 +138,13 @@
                                                 </div>
                                             </li>
                                         </ul>
-                                        <input type="hidden" class="" name="workItemStatus" id="workItemStatus" value="<%=workItem['status']%>">
+                                        <input type="hidden" class="" name="workItemStatus" id="update-work-item-status" value="<%=workItem['status']%>">
                                     </div>
 
                                     <div class="col-4 d-flex assignedTeam-container">
                                         <span class="aling-vertically align-self-center"> Team: </span>
 
-                                        <select class="custom-select my-custon-select" name="teamAssigned" id="teamAssigned">
+                                        <select class="custom-select my-custon-select" name="teamAssigned" id="update-work-item-team">
                                             <% for (team of projectTeams){ %>
                                                 <% if (team.selected || (workItem["teamId"] && (team["id"].toString() === workItem["teamId"].toString()))) {%>
                                                     <option value="<%=team['id']%>" selected>
@@ -183,7 +183,7 @@
 
                                                 <div class="dropdown-menu">
                                                     <% for(let key in workItemType){ %>
-                                                        <a class="dropdown-item btnType" href="#">
+                                                        <a class="dropdown-item update-btn-type" href="#">
                                                             <span> <i class="fas <%=workItemType[key].icon%>"></i> &nbsp; 
                                                                 <%=key%> 
                                                             </span>
@@ -192,13 +192,13 @@
                                                 </div>
                                             </li>
                                         </ul>
-                                        <input type="hidden" name="workItemType" class="" id="workItemType" value="<%=workItem['type']%>">
+                                        <input type="hidden" name="workItemType" class="" id="update-work-item-type" value="<%=workItem['type']%>">
                                     </div>
 
                                     <div class="col-4 d-flex">
                                         <span class="aling-vertically align-self-center"> Iteration:</span>
                                         <select class="custom-select my-custon-select "
-                                            name="sprint" id="sprints">
+                                            name="sprint" id="update-work-item-sprints">
                                             <% for (sprint of sprints){ %>
 
                                                 <% if ( sprint["_id"].toString() == activeSprintId) {%>
@@ -225,9 +225,10 @@
                                 <div class="col">
                                     <h5 class="pd-p">Description</h5>
                                     <textarea name="workItemDescription" 
-                                        id="description-textarea"
-                                        rows="8" placeholder="Enter Description."
-                                        class="bx-shadow "
+                                        id="update-work-item-description"
+                                        rows="8" 
+                                        placeholder="Enter Description."
+                                        class="bx-shadow descriptionBox"
                                         ><%=workItem['description']%></textarea>
                                 </div>
 
@@ -238,7 +239,7 @@
                                     <input type="text" 
                                         name="storyPoints" 
                                         class="input-style input-border"
-                                        id="workItemPoints" 
+                                        id="update-work-item-points" 
                                         placeholder="Enter points: i.e 5" 
                                         value="<%=workItem['storyPoints']%>">
 
@@ -246,7 +247,7 @@
                                     <select 
                                         class="custom-select my-custon-select input-border"
                                         name="priorityPoints" 
-                                        id="workItemPriority" 
+                                        id="update-work-item-priority" 
                                         aria-label="Default select example">
                                         <% for( const [key, value] of Object.entries(priorityPoints) ) { %>
 
@@ -275,12 +276,12 @@
                                     <div>
                                         <h5 class="pd-p">Discussion</h5>
                                         <textarea name="comments" 
-                                            id="comment-textarea" rows="4"
+                                            id="update-work-item-comments" rows="4"
                                             placeholder="Add a comment for this story." 
-                                            class="bx-shadow"></textarea>
+                                            class="bx-shadow addCommentBox"></textarea>
                                     </div>
 
-                                    <button id="add-comment"type="button" class="btn btn-success">Add</button>
+                                    <button id="update-add-comment" type="button" class="btn btn-success addComment">Add</button>
                                 </div>
                             </div>
 
@@ -292,9 +293,9 @@
                                         <% for (let comment of workItem['comments'].reverse()) {%>
                                             <div>
                                                 <textarea name="comments" 
-                                                id="comment-textarea" rows="4"
-                                                placeholder="Add a comment for this story." 
-                                                class="bx-shadow"><%=comment%></textarea>
+                                                rows="4"
+                                                placeholder="Add a comment for this work item." 
+                                                class="bx-shadow addCommentBox"><%=comment%></textarea>
                                             </div>
                                         <%}%>    
                                     <%}%>
