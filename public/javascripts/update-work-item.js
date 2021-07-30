@@ -36,6 +36,7 @@ const ENABLE_SAVE_BTN_CLASS = "saveBtnContainer";
 const UPDATE_TAGS_CONTAINER = ".update-tags-container";
 const UPDATE_TAGS_BTN = "#udpate-add-tags-btn";
 
+const LOG_AVAILABLE = false;
 $(function () {
 
     // ================ SELECT option =============
@@ -59,54 +60,84 @@ $(function () {
     $(UPDATE_WORK_ITEM["title"]).keyup(function(){
         workItemValuesToUpdate["title"] = swap(currentTitle, $(this).val() || "");
         activeSaveButton();
+        if (LOG_AVAILABLE){
+            console.log("title changed");
+        }
     });
 
     // assigned user
     $(UPDATE_WORK_ITEM["user"]).change(function(){
         workItemValuesToUpdate["assignedUser"] = swap(currentAssignedUser, $(this).val() || "");
         activeSaveButton();
+        if (LOG_AVAILABLE){
+            console.log("user changed");
+        }
     });
  
     // Status - select
     $(UPDATE_WORK_ITEM["state"]).change(function(){
         workItemValuesToUpdate["status"] = swap(currentStatus, $(this).val() || "");
         activeSaveButton();
+        if (LOG_AVAILABLE){
+            console.log("state changed");
+        }
     });
 
     // Team
     $(UPDATE_WORK_ITEM["team"]).change(function(){
         workItemValuesToUpdate["teamId"] = swap(currentTeam, $(this).val() || "");
         activeSaveButton();
+        if (LOG_AVAILABLE){
+            console.log("team changed");
+        }
     });
 
     // Type
     $(UPDATE_WORK_ITEM["type"]).change(function(){        
         workItemValuesToUpdate["type"] = swap(currentType, $(this).val() || "");
         activeSaveButton();
+        if (LOG_AVAILABLE){
+            console.log("type changed");
+        }
+
     });
 
     // sprint
     $(UPDATE_WORK_ITEM["sprint"]).change(function(){        
         workItemValuesToUpdate["sprint"] = swap(currentIteration, $(this).val() || "");
         activeSaveButton();
+        if (LOG_AVAILABLE){
+            console.log("sprint changed");
+        }
+
     });
 
     // Description
     $(UPDATE_WORK_ITEM["description"]).keyup(function(){        
         workItemValuesToUpdate["description"] = swap(currentDescription, $(this).val() || "");
         activeSaveButton();
+        if (LOG_AVAILABLE){
+            console.log("description changed");
+        }
     });
 
     // Story Points
     $(UPDATE_WORK_ITEM["points"]).keyup(function(){
         workItemValuesToUpdate["storyPoints"] = swap(currentStoryPoints, $(this).val() || "0");
         activeSaveButton();
+        if (LOG_AVAILABLE){
+            console.log("points changed");
+        }
+
     });
 
     // Priority Points
     $(UPDATE_WORK_ITEM["priority"]).change(function(){
         workItemValuesToUpdate["priorityPoints"] = swap(currentPriorityPoints, $(this).val() || "0");
         activeSaveButton();
+        if (LOG_AVAILABLE){
+            console.log("priority changed");
+        }
     });
 
     // Tags - if the div changes, then we update
@@ -199,4 +230,11 @@ function setWorkItemState(){
     currentDescription    = $(UPDATE_WORK_ITEM["description"]).val();
     currentStoryPoints    = $(UPDATE_WORK_ITEM["points"]).val();
     currentPriorityPoints = $(UPDATE_WORK_ITEM["priority"]).val();
+}
+
+/**
+ * Reset the work item so the current value is the actual value
+ */
+function resetWorkItemState(){
+    Object.keys(workItemValuesToUpdate).forEach(function(key){ workItemValuesToUpdate[key] = undefined });
 }

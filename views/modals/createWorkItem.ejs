@@ -72,7 +72,7 @@
                                         <ul class="nav nav-pills flex-column" id="customSelectStatus">
                                             <li class="nav-item dropdown">
                                                 
-                                                <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true"  id="currentWorkItemStatus" aria-expanded="false"> 
+                                                <a class="nav-link dropdown-toggle currentWorkItemStatus" data-toggle="dropdown" href="#" role="button" aria-haspopup="true"  id="currentWorkItemStatus" aria-expanded="false"> 
                                                     <% for (const [key, value] of Object.entries(statusWorkItem)) { %>
                                                         <% if (value.default){ %>
                                                             <i class="fa fa-circle <%=value['class']%>" aria-hidden="true"></i> <%=key%>
@@ -119,7 +119,13 @@
                                         <ul class="nav nav-pills flex-column" id="customSelect">
                                             <li class="nav-item dropdown">
                                                 
-                                                <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true"  id="currentType" aria-expanded="false"> 
+                                                <a class="nav-link dropdown-toggle" 
+                                                data-toggle="dropdown"
+                                                href="#" 
+                                                role="button" 
+                                                aria-haspopup="true"  
+                                                id="currentType" 
+                                                aria-expanded="false"> 
                                                     <% for(let key in workItemType){ %>
                                                         <% if (workItemType[key].default){ %>
                                                             <i class="fas <%=workItemType[key].icon%>"></i> &nbsp; <%=key%>

@@ -140,7 +140,7 @@ function toggleFilter(){
  * @param {String} containerId 
  * @param {String} html 
  */
- function addToHtml(containerId, html){
+function addToHtml(containerId, html){
     $(containerId).prepend(html);
 }
 
@@ -1043,12 +1043,12 @@ function addWorkItemEvents(element){
 
     // TYPE - CHANGE EVENT ON WORK ITEM
     $(element["btn_change_type"]).on("click", function () {
-        updateCustomSelect(this, CURRENT_WORK_ITEM_TYPE, element["type"]);
+        updateCustomSelect(this, element["current_type"], element["type"]);
     });
 
     // STATUS - CHANGE EVENT ON WORK ITEM
     $(element["btn_change_status"]).on("click", function () {
-        updateCustomSelect(this, CURRENT_WORK_ITEM_STATUS, element["state"]);
+        updateCustomSelect(this, element["current_status"], element["state"]);
     });
 
     // =============== TAGS ================

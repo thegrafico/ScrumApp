@@ -84,14 +84,8 @@ router.get("/api/:id/getWorkItem/:workItemId", middleware.isUserInProject, async
     response["sprints"] = sprints;
     response["activeSprint"] = activeSprintId;
     response["msg"] = "success";
-
-    console.log(workItem);
-    // console.log(sprints);
-
     return res.status(200).send(response);
 });
-
-
 
 // ============== POST ==================
 

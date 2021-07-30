@@ -18,6 +18,9 @@ const WORK_ITEM = {
     discussion: "#comment-textarea",
     tags: ".tagNme",
 
+    current_type: "#currentType",
+    current_status: "#currentWorkItemStatus",
+
     // OTHER DATA VALUES
     title_span_msg: "#title-span-msg",
     btn_add_comment: "#add-comment", 
@@ -54,6 +57,11 @@ const UPDATE_WORK_ITEM = {
     btn_change_status: ".update-btn-status",
     btn_add_tags: "#udpate-add-tags-btn",
     btn_remove_tag: ".rmTag",
+    subId: "#update-work-item-sub-id",
+    numberOfComments: "#update-number-of-comments",
+
+    current_type: "#update-current-type",
+    current_status: "#update-current-work-item-status",
 
 
     // CONTAINERS
@@ -101,11 +109,11 @@ const rmTag = ".rmTag";
 
 // WORK ITEM TYPE
 const BTN_CHANGE_WORK_ITEM_TYPE = ".btnType";
-const CURRENT_WORK_ITEM_TYPE = "#currentType";
+const CURRENT_WORK_ITEM_TYPE = ".currentType";
 
 // WORK ITEM STATUS
 const BTN_CHANGE_WORK_ITEM_STATUS = ".btnWorkItemStatus";
-const CURRENT_WORK_ITEM_STATUS = "#currentWorkItemStatus";
+const CURRENT_WORK_ITEM_STATUS = ".currentWorkItemStatus";
 
 // CHECKBOX ROW ELEMENT IN TABLE
 const TABLE_ROW_CHECKBOX_ELEMENT_CONTAINER = ".tableCheckBoxRowElement";
@@ -140,9 +148,12 @@ const CREATE_WORK_ITEM_FORM = "#createWorkItemForm";
 const BTN_PLANING = "#Planing";
 
 
-const COMMENT_HTML_TEMPLATE = `<div> <textarea name="comments" class="addCommentBox" rows="4" placeholder="Add a comment for this work item." class="bx-shadow">${REPLACE_SYMBOL}</textarea></div>`;
+const COMMENT_HTML_TEMPLATE = `<div> <textarea name="comments" class=" bx-shadow addCommentBox" rows="4" placeholder="Add a comment for this work item.">${REPLACE_SYMBOL}</textarea></div>`;
 const USER_COMMENT_CONTAINER = ".user-comments-container";
 const NUMBER_OF_COMMENTS_SPAN = "#numberOfCommentSpan";
+
+// TAGS template for adding
+const ADD_TAG_TEMPLATE = `<span class="badge badge-secondary"> <input type="text" name="tags[]" autocomplete="off" value="${REPLACE_SYMBOL}" placeholder="Enter tag " class='update-work-item-tags'> <span aria-hidden="true" class="rmTag">&times;</span></span>`;
 
 const WORK_ITEM_TABLE = "#workItemTable";
 

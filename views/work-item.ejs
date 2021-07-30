@@ -28,7 +28,7 @@
                                     <div class="labelForTitle">
                                         <label for="title"> <%=workItem["itemId"]%> </label>
                                     </div>
-                                    
+                                    <!-- TITLE -->
                                     <div class="inputForTitle">
                                         <input type="text" autocomplete="off" 
                                         name="title" 
@@ -54,6 +54,7 @@
 
                                 <div class="form-group d-flex">
                                     <i class="fas fa-user userLogo"></i>
+                                    <!-- ASSIGNED USER -->
                                     <select class="custom-select my-custon-select " name="userAssigned" id="update-assigned-user">
                                         <% for (user of assignedUsers){ %>
                                             <% if (user.selected || (workItem["assignedUser"]["id"] && (user["id"].toString() === workItem["assignedUser"]["id"].toString())) ) {%>
@@ -73,7 +74,7 @@
 
                             <div class="col-1">
                                 <span>
-                                    <i class="fas fa-comments"></i> <span id="numberOfCommentSpan"> <%=workItem['comments'].length%></span>
+                                    <i class="fas fa-comments"></i> <span id="update-number-of-comments"> <%=workItem['comments'].length%></span>
                                 </span>
                             </div>
 
@@ -111,10 +112,13 @@
 
                                         <ul class="nav nav-pills flex-column" id="customSelectStatus">
                                             <li class="nav-item dropdown">
-
-                                                <a class="nav-link dropdown-toggle"
-                                                    data-toggle="dropdown" href="#" role="button"
-                                                    aria-haspopup="true" id="currentWorkItemStatus"
+                                                <!-- STATUS -->
+                                                <a class="nav-link dropdown-toggle currentWorkItemStatus"
+                                                    data-toggle="dropdown" 
+                                                    href="#" 
+                                                    role="button"
+                                                    aria-haspopup="true" 
+                                                    id="update-current-work-item-status"
                                                     aria-expanded="false">
                                                     
                                                     <% for (const [key, value] of Object.entries(statusWorkItem)) { %>
@@ -128,7 +132,7 @@
                                                 <div class="dropdown-menu">
 
                                                     <% for (const [key, value] of Object.entries(statusWorkItem)) { %>
-                                                        <a class="dropdown-item update-btn-status" href="#">
+                                                        <a class="dropdown-item update-btn-status <%=key%>" href="#">
                                                             <span> 
                                                                 <i class="fa fa-circle <%=value['class']%>" aria-hidden="true"></i>
                                                                 <%=key%>
@@ -168,9 +172,13 @@
                                         <ul class="nav nav-pills flex-column" id="customSelect">
                                             
                                             <li class="nav-item dropdown">
+                                                <!-- TYPE -->
                                                 <a class="nav-link dropdown-toggle"
-                                                    data-toggle="dropdown" href="#" role="button"
-                                                    aria-haspopup="true" id="currentType"
+                                                    data-toggle="dropdown" 
+                                                    href="#" 
+                                                    role="button"
+                                                    aria-haspopup="true" 
+                                                    id="update-current-type"
                                                     aria-expanded="false">
                                                     <% for(let key in workItemType){ %>
                                                         <% if (key.toString() === workItem["type"]){ %>
@@ -224,7 +232,8 @@
 
                                 <div class="col">
                                     <h5 class="pd-p">Description</h5>
-                                    <textarea name="workItemDescription" 
+                                    <textarea 
+                                    name="workItemDescription" 
                                         id="update-work-item-description"
                                         rows="8" 
                                         placeholder="Enter Description."
@@ -285,7 +294,6 @@
                                 </div>
                             </div>
 
-                            <!-- TODO: There is a bug when the comment is added that is being added at the end -->
                             <div class="col-6 comments-container">
                                 <div class="user-comments-container">
                                     <% if (workItem['comments'] && workItem['comments'].length > 0){%>
