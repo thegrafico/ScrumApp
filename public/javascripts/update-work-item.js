@@ -49,7 +49,6 @@ $(function () {
     checkTitleWhenOpen(UPDATE_WORK_ITEM);
     addWorkItemEvents(UPDATE_WORK_ITEM);
 
-
     // Only run this function  at the begenning when we're working inside a work item.
     if ($(WORK_ITEM_ID).val()){
         // Set all variables to the initial state when this file is loaded

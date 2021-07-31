@@ -48,10 +48,11 @@ module.exports = {
             "/javascripts/filter-and-search.js",
             "/javascripts/create-work-item-modal.js",
             "/javascripts/update-work-item.js",
+            "/javascripts/show-work-item-modal.js",
+
             "/javascripts/modals/user-controller.js",
             "/javascripts/modals/team-controller.js",
             "/javascripts/modals/sprint-controller.js",
-            "/javascripts/show-work-item-modal.js",
         ]
     },
     sprintPath: {
@@ -65,6 +66,7 @@ module.exports = {
             "/javascripts/filter-and-search.js",
             "/javascripts/create-work-item-modal.js",
             "/javascripts/update-work-item.js",
+            "/javascripts/show-work-item-modal.js",
             "/javascripts/modals/user-controller.js",
             "/javascripts/modals/team-controller.js",
             "/javascripts/modals/sprint-controller.js",
