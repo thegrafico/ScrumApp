@@ -87,6 +87,16 @@ const WORK_ITEM_ICONS = {
     },
 }
 
+// ============ WORK ITEM =============
+const WORK_ITEM_STATUS = {
+    "New":          "New",
+    "Active":       "Active",
+    "Review":       "Review",
+    "Completed":    "Completed", 
+    "Block":        "Block", 
+    "Abandoned":    "Abandoned"
+};
+
 const WORK_ITEM_STATUS_COLORS = {
     "New":          {"class": "newColor", default: true},
     "Active":       {"class": "activeColor"}, 
@@ -95,6 +105,8 @@ const WORK_ITEM_STATUS_COLORS = {
     "Block":        {"class": "delectedColor"}, 
     "Abandoned":    {"class": "abandonedColor"}
 };
+// =============================
+
 
 const createWorkItemModal = ".createNewItemModal";
 
@@ -225,3 +237,5 @@ const MOVE_TO_NEXT_SPRINT_BTN = ".moveToNextSprintBtn";
 // if the function "updateSelectOption" changes, then this variable becomes true
 let IS_UPDATE_SELECT_OPTION = false;
 // =========== END
+
+const CURRENT_USER_ID = "#current-user-id";

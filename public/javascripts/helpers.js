@@ -1049,6 +1049,14 @@ function addWorkItemEvents(element){
     // STATUS - CHANGE EVENT ON WORK ITEM
     $(element["btn_change_status"]).on("click", function () {
         updateCustomSelect(this, element["current_status"], element["state"]);
+        
+        // check if the user assigned have something, if not, them assign this user to the work item
+        let selectedStatus = $(this).text().trim();
+        let currentAssignedUser = $(element["user"]).val();
+
+        if (selectedStatus != WORK_ITEM_STATUS["New"] && currentAssignedUser == "0"){
+            $(element["user"]).val($(CURRENT_USER_ID).val()).change();
+        }
     });
 
     // =============== TAGS ================
