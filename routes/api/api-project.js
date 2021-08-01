@@ -354,7 +354,7 @@ router.get("/api/:id/getTeamSprints/:teamId", middleware.isUserInProject, async 
             return;
         }
 
-        let sprints = await SprintCollection.getSprintsForTeam(projectId, teamId).catch(err => {
+        let sprints = await SprintCollection.getSprintsForTeam(projectId, teamId, true).catch(err => {
             console.error(err);
         });
 
@@ -365,6 +365,8 @@ router.get("/api/:id/getTeamSprints/:teamId", middleware.isUserInProject, async 
             return;
         }
         sprints.unshift(UNASSIGNED_SPRINT);
+
+        console.log(sprints);
 
         // send response to user
         response["msg"] = "Success";

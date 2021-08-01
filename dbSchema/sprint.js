@@ -73,10 +73,9 @@ let sprintSchema = new mongoose.Schema({
  * @param {String} teamId - id of the team.
  * @param {String} projectId - id of the project.
  * @param {Boolean} getJsObject if true, return a js object instead a mongoose object
- * 
  * @returns {Promise} - array of sprints
 */
-sprintSchema.statics.getSprintsForTeam = async function(projectId, teamId, getJsObject=false) {
+sprintSchema.statics.getSprintsForTeam = async function(projectId, teamId, getJsObject=true) {
     
 
     let father = this;

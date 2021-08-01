@@ -215,10 +215,16 @@ $(function () {
 
             if (response.sprints && response.sprints.length > 0){
                 for (const sprint of response.sprints) {
+                    
+                    // jump on unnasigned sprint
+                    if (sprint["_id"] == "0"){continue;}
+
+                    let optionText = `${sprint["name"]} : ${sprint["startDateFormated"]} - ${sprint["endDateFormated"]}`;
+
                     updateSelectOption(
                         SPRINT_DELETE_MODAL_SELECT_SPRINT, 
                         UPDATE_TYPE.ADD,
-                        {"value": sprint["_id"], "text":sprint["name"]}
+                        {"value": sprint["_id"], "text":optionText}
                     );
                 }
             }else{

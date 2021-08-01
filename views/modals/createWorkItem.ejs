@@ -95,7 +95,7 @@
 
                                     </div>
 
-                                    <div class="col-4 d-flex teamAssigned-container">
+                                    <div class="col-6 d-flex teamAssigned-container">
                                         <span class="aling-vertically align-self-center"> Team: </span>
                                         <select class="custom-select my-custon-select "  name="teamAssigned" id="teamAssigned">
                                             <% for (team of projectTeams){ %>
@@ -146,16 +146,28 @@
                                         <input type="hidden" name="workItemType" id="workItemType" value="story">
                                     </div>
 
-                                    <div class="col-4 d-flex">
+                                    <div class="col-6 d-flex">
                                         <span class="aling-vertically align-self-center"> Iteration: </span>
                                         <select class="custom-select my-custon-select " name="sprint" id="sprints">
                                             <% if(sprints.length > 1){ %>
                                                 <% for (sprint of sprints){ %>
                                                     <% if (sprint["_id"] == activeSprintId){ %>
-                                                        <option value="<%=sprint['_id']%>" selected><%=sprint['name']%></option>
-                                                    <%}else {%>
-                                                        <option value="<%=sprint['_id']%>"><%=sprint['name']%></option>
-                                                    <%}%>
+
+                                                        <% if (sprint["startDateFormated"]) { %>
+                                                            <option value="<%=sprint['_id']%>" selected>
+                                                                <%=sprint['name']%> : <%=sprint['startDateFormated']%> - <%=sprint['endDateFormated']%> 
+                                                            </option>
+                                                        <%} else {%>
+                                                            <option value="<%=sprint['_id']%>" selected><%=sprint['name']%></option>
+                                                        <%}%>
+                                                        
+                                                        <%}else {%>
+                                                            <% if( sprint["startDateFormated"]){ %>
+                                                                <option value="<%=sprint['_id']%>" ><%=sprint['name']%> : <%=sprint['startDateFormated']%> - <%=sprint['endDateFormated']%> </option>
+                                                            <%}else {%>
+                                                                <option value="<%=sprint['_id']%>" ><%=sprint['name']%></option>
+                                                            <%}%>
+                                                        <%}%>
 
                                                 <%}%>
                                             <%}%>  

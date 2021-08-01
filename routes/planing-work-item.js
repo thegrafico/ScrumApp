@@ -35,7 +35,7 @@ router.get("/:id/planing/workitems", middleware.isUserInProject, async function 
 
     // verify is the project exists
     let projectInfo = await projectCollection.findOne({_id: projectId}).catch(err => {
-        console.log("Error is: ", err.reason);
+        console.error("Error is: ", err.reason);
     });
 
     if (_.isUndefined(projectInfo) || _.isEmpty(projectInfo)) {
@@ -47,10 +47,10 @@ router.get("/:id/planing/workitems", middleware.isUserInProject, async function 
     let teams = [...projectInfo.teams];
 
     // get all sprints for project
-    let sprints = await sprintCollection.find({projectId}).catch(err => console.log(err)) || [];
+    let sprints = await sprintCollection.find({projectId}).catch(err => console.error(err)) || [];
 
     // get all users for this project -> expected an array
-    let users = await projectInfo.getUsers().catch(err => console.log(err)) || [];
+    let users = await projectInfo.getUsers().catch(err => console.error(err)) || [];
 
     // LOADING TABLE WORK ITEMS. We're not showing completed, deleted and abandoned
     let workItems = await workItemCollection.find({projectId, status: {$in: MAIN_WORK_ITEMS_TO_SHOW}}).catch(err => 
@@ -75,7 +75,7 @@ router.get("/:id/planing/workitems", middleware.isUserInProject, async function 
     if (!_.isNull(userPreferedTeam)){
         // getting all sprints for team
         sprintForPreferedTeam = await sprintCollection.getSprintsForTeam(projectId, userPreferedTeam["_id"]).catch(err => {
-            console.log(err);
+            console.error(err);
         }) || [];
         let activeSprint = sprintCollection.getActiveSprint(sprintForPreferedTeam);
         
@@ -85,7 +85,6 @@ router.get("/:id/planing/workitems", middleware.isUserInProject, async function 
 
     } 
     // === END
-
     // adding defaults
     teams.unshift(UNASSIGNED);
     users.unshift(UNASSIGNED);
@@ -128,7 +127,7 @@ router.get("/:id/planing/workitems/:workItemId", middleware.isUserInProject, asy
 
     // verify is the project exists
     let projectInfo = await projectCollection.findOne({_id: projectId}).catch(err => {
-        console.log("Error is: ", err.reason);
+        console.error("Error is: ", err.reason);
     });
 
     if (_.isUndefined(projectInfo) || _.isEmpty(projectInfo)) {

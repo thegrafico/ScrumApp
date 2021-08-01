@@ -125,7 +125,7 @@
                             <th class="orderColumn">Order</th>
                             <th scope="col" class="tableColumnID">ID</th>
                             <th class="d-none" scope="col">Type</th>
-                            <th scope="col">Title</th>
+                            <th class="col-title"  scope="col">Title</th>
                             <th scope="col" class="thworkItemSubMenu"> <span class="d-none">submenu</span> </th>
                             <th scope="col">Assigned</th>
                             <th scope="col">State</th>
@@ -155,7 +155,7 @@
                                 <!-- TYPE  - HIDEN -->
                                 <td class="d-none" > <i class="fas <%=workItemType[workItems[i]['type']].icon%>"></i> <%=workItems[i]["type"]%></td>
                                 
-                                <!-- TODO: CHANGE TO A BETTER LINK -->
+                                <!-- TITLE -->
                                 <td class="openStory"> 
                                     <a href="workitems/<%=workItems[i]['_id']%>" class="open-existing-work-item-modal" rel="<%=workItems[i]['_id']%>">  
                                         <span class="table-icon"> <i class="fas <%=workItemType[workItems[i]['type']].icon%>"></i> </span>  <%=workItems[i]["title"]%> 

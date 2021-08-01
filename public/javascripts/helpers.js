@@ -394,7 +394,12 @@ function appendToWotkItemTable(workItems, showIfSprint=true){
 
         // TITLE
         let title = `
-            <td class="openStory"> <a href="workitems/${workItem['_id']}"> <i class="fas  ${WORK_ITEM_ICONS[workItems[i]['type']].icon}"></i> ${workItem['title']} </a> </td>
+            <td class="openStory">
+                <a href="workitems/${workItem['_id']} rel="${workItem['_id']}">
+                    <i class="fas  ${WORK_ITEM_ICONS[workItems[i]['type']].icon}"></i> 
+                    ${workItem['title']} 
+                </a> 
+            </td>
         `;
         headers_object["title"] = title;
 
@@ -463,25 +468,16 @@ function appendToWotkItemTable(workItems, showIfSprint=true){
         `;
         headers_object["points"] = points;
 
-
-        let table_row = "<tr class='rowValues'>"
+        // Init row
+        let table_row = `<tr class="rowValues" id="${workItem['_id']}">`
         
         // since the headers_array is in order, we just need to append it to the table row
         for (const headerKey of headers_array) {
             table_row += headers_object[headerKey];
         }
+
+        // End row
         table_row += "</tr>";
-        //     ${td_checkbox}
-        //     ${td_order}
-        //     ${td_id}
-        //     ${td_type}
-        //     ${td_title}
-        //     ${td_user}
-        //     ${td_status}
-        //     ${td_tags}
-        //     ${td_comments}
-        // </tr>
-        // `;
 
         $(`${WORK_ITEM_TABLE} > tbody:last-child`).append(table_row);
     }
@@ -1033,10 +1029,18 @@ function addWorkItemEvents(element){
 
             if (response.sprints && response.sprints.length > 0){
                 for (const sprint of response.sprints) {
+                    let optionText = "";
+                    
+                    if (sprint["_id"] == "0"){
+                        optionText = sprint["name"];
+                    }else{
+                        optionText = `${sprint["name"]} : ${sprint["startDateFormated"]} - ${sprint["endDateFormated"]}`;
+                    }
+                    
                     updateSelectOption(
                         element["sprint"], 
                         UPDATE_TYPE.ADD,
-                        {"value": sprint["_id"], "text":sprint["name"]}
+                        {"value": sprint["_id"], "text":optionText}
                     );
                 }
             }else{
