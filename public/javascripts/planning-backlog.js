@@ -34,7 +34,7 @@ $(function () {
             
             // Check work items
             if (_.isArray(response.workItems) && response.workItems.length > 0){
-                appendToWotkItemTable(response.workItems);
+                appendToWotkItemTable(response.workItems, false);
             }else{
                 $.notify("This team does not have any work item yet.", "error");
             }
@@ -45,7 +45,6 @@ $(function () {
             // Check sprint
             if (response.sprints && response.sprints.length > 0){
                 
-                console.log(response.sprints)
                 // update the select option
                 for (const sprint of response.sprints) {    
                     let isSelected = sprint["_id"].toString() == response["activeSprint"].toString();

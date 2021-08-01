@@ -43,9 +43,7 @@ router.get("/:id/planing/backlog", middleware.isUserInProject, async function (r
     if (_.isUndefined(projectInfo) || _.isEmpty(projectInfo)) {
         req.flash("error", "Cannot find the project you're looking for.");
         return res.redirect('/');
-    }
-    
-    let query_work_item = {};
+    }    
 
     // get all the teams for this project
     let teams = [...projectInfo.teams];
@@ -56,12 +54,15 @@ router.get("/:id/planing/backlog", middleware.isUserInProject, async function (r
     let sprints = null;
     let activeSprintId = null;
 
+    // to get the work items
+    let query_work_item = {};
+
     // if the user have a team
     if (!_.isNull(userPreferedTeam)){
         query_work_item["teamId"] = userPreferedTeam["_id"];
 
         // getting all sprints for team
-        sprints = await sprintCollection.getSprintsForTeam(projectId,userPreferedTeam["id"]).catch(err => {
+        sprints = await sprintCollection.getSprintsForTeam(projectId, userPreferedTeam["id"]).catch(err => {
             console.log(err)
         }) || [];
 
@@ -95,8 +96,6 @@ router.get("/:id/planing/backlog", middleware.isUserInProject, async function (r
     teams.unshift(UNASSIGNED);
     users.unshift(UNASSIGNED);
     sprints.unshift(UNASSIGNED_SPRINT);
-
-    console.log()
 
     // populating params
     let params = {

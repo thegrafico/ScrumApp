@@ -93,6 +93,7 @@ router.get("/api/:id/getworkItemsByTeamId/:teamId", middleware.isUserInProject, 
  */
 router.get("/api/:id/getworkItemsAndSprintsByTeam/:teamId", middleware.isUserInProject, async function (req, res) {
     
+
     const projectId = req.params.id;
     const teamId = req.params.teamId;
     let response = {teamId};
@@ -124,9 +125,7 @@ router.get("/api/:id/getworkItemsAndSprintsByTeam/:teamId", middleware.isUserInP
         }
 
         joinData(workItems, sprints, "_id", "is in", "tasks", "sprint", UNASSIGNED_SPRINT);
-
         let activeSprint = SprintCollection.getActiveSprint(sprints);
-
 
         sprints.unshift(UNASSIGNED_SPRINT);
         response["msg"] = "Success.";

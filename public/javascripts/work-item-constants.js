@@ -79,6 +79,9 @@ const WORK_ITEM_ICONS = {
     "Task": {
         icon: "fa-clipboard-check"
     },
+    "Research": {
+        icon: "far fa-newspaper"
+    },
     "Bug": {
         icon: "fa-bug cl-danger"
     },

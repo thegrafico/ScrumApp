@@ -342,8 +342,9 @@ function getTableHeadersArray(tableId){
 /**
  * Add data to work item table
  * @param {Array} workItems - array of work items
+ * @param {Boolean} showIfSprint -if work item have a sprint assigned, show it
  */
-function appendToWotkItemTable(workItems){
+function appendToWotkItemTable(workItems, showIfSprint=true){
 
     if (!_.isArray(workItems) || _.isEmpty(workItems)){
         // console.log("Work items is empty");
@@ -358,6 +359,11 @@ function appendToWotkItemTable(workItems){
 
     for(let i = 0; i < workItems.length; i++){
         const workItem = workItems[i];
+
+        // if showIfSprint if false, and the work item have a sprint
+        if (!showIfSprint && workItem["sprint"] && workItem["sprint"]["_id"] != "0"){
+            continue;
+        }
 
         // CHECKBOX
         let checkbox = `
