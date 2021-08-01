@@ -10,7 +10,7 @@
                     <ul class="dropdown-menu filterOptions">
 
                         <% for (let i = 1; i < projectTeams.length; i++) { %>
-                            <li>
+                            <li class="clearTeam">
                                 <label class="small checkbox-container">
                                     <input class="teamCheckbox" type="checkbox" value="<%=projectTeams[i]['name']%>"/>
                                     <%=projectTeams[i]['name']%>
@@ -19,7 +19,7 @@
                         <%}%>
 
                         <div class="d-flex flex-row-reverse filterDivisor">
-                            <button type="button" class="btn btn-secondary">Clear</button>
+                            <button type="button" class="btn btn-secondary btnClear" id="clearTeam">Clear</button>
                         </div>
                     </ul>
                     
@@ -35,7 +35,7 @@
                 <ul class="dropdown-menu filterOptions">
 
                     <% for (const [key, value] of Object.entries(statusWorkItem)) { %>
-                        <li>
+                        <li class="clearState">
                             <label class="small checkbox-container">
                                 <input class="stateCheckBox" type="checkbox" value="<%=key%>"/>&nbsp; <i class="fa fa-circle <%=value['class']%>" aria-hidden="true"></i> <%=key%>
                             </label>
@@ -43,7 +43,7 @@
                     <%}%>
 
                     <div class="d-flex flex-row-reverse filterDivisor">
-                        <button type="button" class="btn btn-secondary">Clear</button>
+                        <button type="button" class="btn btn-secondary btnClear" id="clearState">Clear</button>
                     </div>
                 </ul>
             </div>
@@ -59,7 +59,7 @@
 
                     <% for(let user of assignedUsers){ %>
 
-                        <li>
+                        <li class="clearUser">
                             <!-- TODO: add width on user if case user name is to big -->
                             <label class="small checkbox-container">
                                 <input type="checkbox" class="userCheckbox" value="<%=user['name']%>"/>&nbsp; <%=user['name']%>
@@ -68,7 +68,7 @@
                     <%}%>
 
                     <div class="d-flex flex-row-reverse filterDivisor">
-                        <button type="button" class="btn btn-secondary">Clear</button>
+                        <button type="button" class="btn btn-secondary btnClear" id="clearUser">Clear</button>
                     </div>
                 </ul>
             </div>
@@ -84,7 +84,7 @@
 
                     <% for(let key in workItemType){ %>
 
-                        <li>
+                        <li class="clearType">
                             <label class="small checkbox-container">
                                 <input type="checkbox" class="typeCheckBox" value="<%=key%>"/>&nbsp; <i class="fas <%=workItemType[key].icon%> small-fas"></i>  <%=key%>
                             </label>
@@ -92,7 +92,7 @@
                     <%}%>
 
                     <div class="d-flex flex-row-reverse filterDivisor">
-                        <button type="button" class="btn btn-secondary">Clear</button>
+                        <button type="button" class="btn btn-secondary btnClear" id="clearType">Clear</button>
                     </div>
                 </ul>
             </div>

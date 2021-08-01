@@ -4,6 +4,7 @@ const USER_CHECKBOX_CLASS = ".userCheckbox"
 const FILTER_SEARCH_ID = "searchTable";
 const TEAM_CHECKBOX_CLASS = ".teamCheckbox";
 const FILTER_GENERAL_CLASS = ".filterOptions";
+const CLEAR_FILTER_BTN = ".btnClear";
 
 const FILTER_MANAGE_TEAM_ID = "#filter-manage-team";
 const MANAGE_TEAM_COLUMNS_TO_FILTER = ["name", "email"];
@@ -44,6 +45,14 @@ $(function () {
         filterTable();
     });
 
+    // CLEAN FILTER ELEMENTS
+    $(CLEAR_FILTER_BTN).on("click", function(){
+        let filterElement = $(this).attr("id");
+ 
+        let checkboxes = $(`li.${filterElement}`).find(':checkbox');
+        
+        checkboxes.prop('checked', false).change();
+    });
 
     // ================== MANAGE ROUTES FILTERS =========================
     // filtering manage routes for team
