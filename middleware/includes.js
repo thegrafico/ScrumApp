@@ -36,6 +36,7 @@ module.exports = {
             "/javascripts/modals/user-controller.js",
             "/javascripts/modals/team-controller.js",
             "/javascripts/modals/sprint-controller.js",
+            "/javascripts/dependecies/col-resizable-min.js",
         ]
     },
     backlogPath: {
@@ -49,10 +50,11 @@ module.exports = {
             "/javascripts/create-work-item-modal.js",
             "/javascripts/update-work-item.js",
             "/javascripts/show-work-item-modal.js",
-
             "/javascripts/modals/user-controller.js",
             "/javascripts/modals/team-controller.js",
             "/javascripts/modals/sprint-controller.js",
+            "/javascripts/dependecies/col-resizable-min.js",
+
         ]
     },
     sprintPath: {
@@ -70,6 +72,7 @@ module.exports = {
             "/javascripts/modals/user-controller.js",
             "/javascripts/modals/team-controller.js",
             "/javascripts/modals/sprint-controller.js",
+            "/javascripts/dependecies/col-resizable-min.js",
         ]
     },
 

@@ -1089,6 +1089,4 @@ function addWorkItemEvents(element){
     });
 
     // =====================================
-
-    
 }

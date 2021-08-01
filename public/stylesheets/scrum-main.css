@@ -192,6 +192,11 @@ a:hover {
     margin-left: 5%;
 }
 
+.statistics-boxs{
+    width: 100% !important;
+    max-width: 100% !important;
+}
+
 .filterDivisor{
     margin-top: 4%;
     border-top: 1px solid gray;
@@ -205,10 +210,16 @@ a:hover {
 
 /* TABLE FOR SHOWING VALUES */
 
+#table-container{
+   width: 100%;
+   overflow-x: scroll;
+}
+
 #workItemTable{
     table-layout: fixed;
     width: 100%;  
 }
+
 
 #workItemTable td {
     /* border: 2px solid #000; */

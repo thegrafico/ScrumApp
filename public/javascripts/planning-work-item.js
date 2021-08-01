@@ -12,6 +12,13 @@ $(function () {
     // click on planing just to show to the user in the sidebar
     $(BTN_PLANING).click();
 
+    // // TABLE resized
+    // $(WORK_ITEM_TABLE).colResizable({
+    //     liveDrag:true,
+    //     gripInnerHtml:"<div class='grip'></div>", 
+    //     draggingClass:"dragging", 
+    // });
+    // $(WORK_ITEM_TABLE).colResizable({resizeMode:'flex'});
     /**
      * CHECKBOX FOR WORK ITEM TABLE 
      */
