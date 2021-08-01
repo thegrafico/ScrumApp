@@ -112,7 +112,9 @@ sprintSchema.statics.getSprintsForTeam = async function(projectId, teamId, getJs
             // format sprint date.
         for (let sprint of sprints) {
             sprint["startDateFormated"] = moment(sprint["startDate"], SPRINT_FORMAT_DATE).format("MMM Do");
-            sprint["endDateFormated"] = moment(sprint["endDate"], SPRINT_FORMAT_DATE).format("MMM Do"); 
+            sprint["endDateFormated"] = moment(sprint["endDate"], SPRINT_FORMAT_DATE).format("MMM Do");
+
+            sprint["tasks"] = sprint.tasks.map(each => each.toString());
         }
 
         resolve(sprints);

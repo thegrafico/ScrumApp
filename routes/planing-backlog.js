@@ -84,13 +84,14 @@ router.get("/:id/planing/backlog", middleware.isUserInProject, async function (r
         // workItems[i]["sprint"] = UNASSIGNED_SPRINT;
         workItems[i]["show"] = true;
         for (let sprint of sprints){
-            if (sprint && sprint.tasks && sprint.tasks.includes(workItems[i]._id)){
-                // workItems[i]["sprint"] = {_id: sprint._id, name: sprint.name};
+            let isInSprint = sprint && sprint.tasks && sprint.tasks.includes(workItems[i]._id.toString());
+            if (isInSprint){
                 workItems[i]["show"] = false;
                 break;
             }
         }
     }
+
 
     // adding defaults
     teams.unshift(UNASSIGNED);

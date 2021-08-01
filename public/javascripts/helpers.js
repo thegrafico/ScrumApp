@@ -359,7 +359,7 @@ function appendToWotkItemTable(workItems, showIfSprint=true){
 
     for(let i = 0; i < workItems.length; i++){
         const workItem = workItems[i];
-
+        
         // if showIfSprint if false, and the work item have a sprint
         if (!showIfSprint && workItem["sprint"] && workItem["sprint"]["_id"] != "0"){
             continue;

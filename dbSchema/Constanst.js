@@ -178,7 +178,7 @@ module.exports.joinData = (dataA, dataB, keyA, action, keyB, newKey, defaultValu
 
             if (action == "is in"){
 
-                if (b && b[keyB] && b[keyB].includes(dataA[i][keyA])){
+                if (b && b[keyB] && b[keyB].includes(dataA[i][keyA].toString())){
                     dataA[i][newKey] = {_id: b["_id"], name: b["name"]};
                     break;
                 }
