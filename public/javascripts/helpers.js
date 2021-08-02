@@ -343,17 +343,23 @@ function getTableHeadersArray(tableId){
  * Add data to work item table
  * @param {Array} workItems - array of work items
  * @param {Boolean} showIfSprint -if work item have a sprint assigned, show it
+ * @param {Number} index - index where you want to add the element
+ * @param {Boolean} removeTable - true if wants to remove all elements from table
+ * 
+ * 
  */
-function appendToWotkItemTable(workItems, showIfSprint=true){
+function appendToWotkItemTable(workItems, showIfSprint=true, index=null, removeTable=true){
 
     if (!_.isArray(workItems) || _.isEmpty(workItems)){
         // console.log("Work items is empty");
         return;
     }
     
-    // clean the table
-    cleanTable(WORK_ITEM_TABLE);
-
+    if (removeTable){
+        // clean the table
+        cleanTable(WORK_ITEM_TABLE);
+    }
+    
     let headers_array = getTableHeadersArray(WORK_ITEM_TABLE);
     let headers_object = {};
 
@@ -395,7 +401,7 @@ function appendToWotkItemTable(workItems, showIfSprint=true){
         // TITLE
         let title = `
             <td class="openStory">
-                <a href="workitems/${workItem['_id']} rel="${workItem['_id']}">
+                <a href="workitems/${workItem['_id']}" rel="${workItem['_id']}">
                     <i class="fas  ${WORK_ITEM_ICONS[workItems[i]['type']].icon}"></i> 
                     ${workItem['title']} 
                 </a> 
@@ -439,6 +445,21 @@ function appendToWotkItemTable(workItems, showIfSprint=true){
         `;
         headers_object["state"] = state;
 
+        // TEAM
+        if (workItem["team"] && workItem["team"]["name"]){
+            let team = `
+                <td> ${workItem["team"]["name"]}</td>
+            `;
+            headers_object["team"] = team;
+        }
+
+        // ITERATION / SPRINT
+        if (workItem["sprint"] && workItem["sprint"]["name"]){
+            let iteration = `
+                <td> ${workItem["sprint"]["name"]}</td>
+            `;
+            headers_object["iteration"] = iteration;
+        }
 
         // TAGS
         let tags = null;
@@ -479,7 +500,13 @@ function appendToWotkItemTable(workItems, showIfSprint=true){
         // End row
         table_row += "</tr>";
 
-        $(`${WORK_ITEM_TABLE} > tbody:last-child`).append(table_row);
+        // add at index if user wants to.
+        if (index != null){
+            console.log("adding at index: ", index);
+            $(`${WORK_ITEM_TABLE} > tbody > tr`).eq(index).before(table_row);
+        }else{
+            $(`${WORK_ITEM_TABLE} > tbody:last-child`).append(table_row);
+        }
     }
 
 }

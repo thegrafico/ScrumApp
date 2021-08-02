@@ -176,12 +176,17 @@ $(function () {
             const response = await make_post_request(API_LINK_UPDATE_WORK_ITEM, workItemValuesToUpdate).catch(err=> {
                 response_error = err;
             });
-
+            console.log(response["workItem"]);
             // Success message
             if (response){
-                $.notify(response, "success");
+                $.notify(response.msg, "success");
+                
+                let index = $(`tr#${workItemId}`).index();
+                removeWorkItemsFromTable([workItemId]);
+                appendToWotkItemTable([response["workItem"]], true, index, false);
+
             }else{ // error messages
-                $.notify(response_error.data.responseText, "error");
+                $.notify(response_error.data.responseJSON.msg, "error");
             }
 
             // set all values in object to default value

@@ -23,7 +23,7 @@ $(function () {
      * CHECKBOX FOR WORK ITEM TABLE 
      */
     $(document).on("click", TABLE_ROW_CHECKBOX_ELEMENT, function () {
-        highliteWorkItemRow(this, this.checked);   
+        highliteWorkItemRow(this, this.checked);
     });
 
     // CHECK ALL ROWS ELEMENT

@@ -20,7 +20,8 @@ const {
     WORK_ITEM_STATUS_COLORS,
     WORK_ITEM_ICONS,
     capitalize,
-    SPRINT_STATUS
+    SPRINT_STATUS,
+    joinData
 } = require('../../dbSchema/Constanst');
 
 
@@ -326,6 +327,7 @@ router.post("/api/:id/update_work_item/:workItemId", middleware.isUserInProject,
     
     const projectId = req.params.id;
     const workItemId = req.params.workItemId;
+    let response = {};
 
     // =========== Validate project exist =================
     
@@ -335,7 +337,8 @@ router.post("/api/:id/update_work_item/:workItemId", middleware.isUserInProject,
 
     // verify project is good.
     if (_.isUndefined(project) || _.isEmpty(project)){
-        res.status(400).send("Error getting the project information. Try later");
+        response["msg"] = "Error getting the project information. Try later";
+        res.status(400).send(response);
         return;
     }
     
@@ -347,12 +350,14 @@ router.post("/api/:id/update_work_item/:workItemId", middleware.isUserInProject,
 
      // verify project is good.
      if (_.isUndefined(workItem) || _.isEmpty(workItem)){
-        res.status(400).send("Error getting the work Item information. Try later");
+        response["msg"] = "Error getting the work Item information. Try later";
+        res.status(400).send(response);
         return;
     }
     // Validate work item belong to this project id
     if (workItem.projectId != projectId){
-        res.status(400).send("This work item does not belong to the project.");
+        response["msg"] = "This work item does not belong to the project.";
+        res.status(400).send(response);
         return;
     }
     // ======================================================
@@ -387,7 +392,8 @@ router.post("/api/:id/update_work_item/:workItemId", middleware.isUserInProject,
 
             // check if there is any user, if not, return error;
             if (workItem["status"] === WORK_ITEM_STATUS["Completed"]){
-                res.status(400).send("Sorry, Work Item cannot be completed without an user assigned.");
+                response["msg"] = "Sorry, Work Item cannot be completed without an user assigned.";
+                res.status(400).send(response);
                 return;
             }
 
@@ -430,7 +436,9 @@ router.post("/api/:id/update_work_item/:workItemId", middleware.isUserInProject,
                 updateValues["storyPoints"] = storyPoints;
             }
         }else{
-            res.status(400).send("Story points is either empty or out of range.");
+            response["msg"] = "Story points is either empty or out of range.";
+            res.status(400).send(response);
+            return;
         }
     }
 
@@ -443,12 +451,11 @@ router.post("/api/:id/update_work_item/:workItemId", middleware.isUserInProject,
                 updateValues["priorityPoints"] = priorityPoints;
             }
         }else{
-            res.status(400).send("Priority points is either empty or out of range.");
+            response["msg"] = "Priority points is either empty or out of range.";
+            res.status(400).send(response);
             return;
-        }        
+        } 
     }
-
-    console.log("ASSIGNED USER: ", workItem["assignedUser"]);
 
     // verify Status
     if (_.isString(status)){
@@ -459,13 +466,15 @@ router.post("/api/:id/update_work_item/:workItemId", middleware.isUserInProject,
 
             // check if there is any user, if not, return error;
             if (status === WORK_ITEM_STATUS["Completed"] && (!addUserToTeam && workItem["assignedUser"].id == null)){
-                res.status(400).send("Sorry, Work Item cannot be completed without an user assigned.");
+                response["msg"] = "Sorry, Work Item cannot be completed without an user assigned.";
+                res.status(400).send(response);
                 return;
             }
 
             updateValues["status"] = status;
         }else{
-            res.status(400).send("The status for the work item does not match any of the status available");
+            response["msg"] = "The status for the work item did not match any of the status available";
+            res.status(400).send(response);
             return;
         }
     }
@@ -480,7 +489,8 @@ router.post("/api/:id/update_work_item/:workItemId", middleware.isUserInProject,
             // verify is the user is in the project
             updateValues["teamId"] = teamId;
         }else{
-            res.status(400).send("Cannot find the team.");
+            response["msg"] = "Sorry, We cannot find the team.";
+            res.status(400).send(response);
             return;
         }
     }
@@ -493,7 +503,8 @@ router.post("/api/:id/update_work_item/:workItemId", middleware.isUserInProject,
         if (TYPES.includes(type)){
             updateValues["type"] = type;
         }else{
-            res.status(400).send("The type for the work item does not match any of the types available");
+            response["msg"] = "The type for the work item does not match any of the types available";
+            res.status(400).send(response);
             return;
         }
     }
@@ -504,7 +515,8 @@ router.post("/api/:id/update_work_item/:workItemId", middleware.isUserInProject,
         if (description.length <= MAX_LENGTH_DESCRIPTION){
             updateValues["description"] = description;
         }else{
-            res.status(400).send("Descrition is bigger than expected.");
+            response["msg"] = `Descrition is bigger than expected. Limit is: ${MAX_LENGTH_DESCRIPTION} chars`;
+            res.status(400).send(response);
             return;
         }
     }
@@ -521,7 +533,8 @@ router.post("/api/:id/update_work_item/:workItemId", middleware.isUserInProject,
             if (all_are_string){
                 updateValues["tags"] = tags;
             }else{
-                res.status(400).send("Sorry, there was an error adding the tags.");
+                response["msg"] = "Sorry, there was an error adding the tags.";
+                res.status(400).send(response);
                 return;
             }
         }
@@ -544,11 +557,35 @@ router.post("/api/:id/update_work_item/:workItemId", middleware.isUserInProject,
         workItem[key] = updateValues[key];
     }
     
-    await workItem.save().catch(err => {
+    let updatedWorkItem = await workItem.save().catch(err => {
         console.error("Error saving the work item: ", err);
     });
 
-    res.status(200).send("Work Item was updated successfully!");
+    if (_.isUndefined(updatedWorkItem) || _.isNull(updatedWorkItem)){
+        response["msg"] = "Sorry, there was an error saving the changes to the work item.";
+        res.status(400).send(response);
+        return;
+    }
+
+
+    // ======== TO JOIN THE WORK ITEM WITH THE TEAMS =============
+    updatedWorkItem = updatedWorkItem.toObject();
+    
+    // get all the teams for this project
+    let teams = [...project.teams];
+
+    // get all sprints for project
+    let sprints = await SprintCollection.find({projectId}).catch(err => console.error(err)) || [];
+    
+    // Create new key (team/sprint) to store the work item team
+    joinData([updatedWorkItem], teams, "teamId", "equal", "_id", "team", UNASSIGNED);
+    joinData([updatedWorkItem], sprints, "_id", "is in", "tasks", "sprint", UNASSIGNED_SPRINT);
+    console.log(updatedWorkItem);
+    // ============================================================ 
+    
+    response["msg"] = "Work Item was updated successfully!";
+    response["workItem"] = updatedWorkItem;
+    res.status(200).send(response);
 });
 
 /**

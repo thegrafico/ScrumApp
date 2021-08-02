@@ -83,7 +83,7 @@ module.exports.WORK_ITEM_STATUS_COLORS = {
     "Active":       {"class": "activeColor"}, 
     "Review":       {"class": "reviewColor"}, 
     "Completed":    {"class": "completedColor"}, 
-    "Block":        {"class": "delectedColor"}, 
+    "Block":        {"class": "blockColor"}, 
     "Abandoned":    {"class": "abandonedColor"}
 };
 
