@@ -510,7 +510,7 @@ function highliteWorkItemRow(checkedElement, checkElement){
  * @param {String} elementClassOrId 
  * @returns {Array} array with checked elements
  */
-function getCheckedElements(elementClassOrId){
+function getVisibleElements(elementClassOrId){
     let row_checked = []
     
     $(`${elementClassOrId}:visible`).each(function(){
@@ -539,6 +539,15 @@ function removeCheckedElement(checkboxClass=TABLE_ROW_CHECKBOX_ELEMENT_CHECKED){
 function addDisableAttr(selectElement, value){
     $(`${selectElement}`).children(`[value="${value}"]`).attr('disabled', true);
     $(selectElement).val("0").change();
+}
+
+/**
+ * Return if there is at least one element checked from the selector class
+ * @param {String} inputClassCheckbox - class that the input element has 
+ * @returns {Boolean} True if there is at least one elemenet checked
+ */
+function anyCheckboxCheked(inputClassCheckbox){
+    return ($(`${inputClassCheckbox}:checked`).length > 0);
 }
 
 /**
@@ -618,10 +627,10 @@ function updateSelectOption(selectId, updateType, valueToUpdate, selected=false)
  * @param {*} message - message to show
  * @param {*} style - style class ("success" | "error" | "warning")
  */
-function showPopupMessage(selector, message, style="error"){
+function showPopupMessage(selector, message, style="error", position="top"){
     $(selector).notify(
         message, 
-        { position:"top", autoHide: false, clickToHide: true, className: style}
+        { position:position, autoHide: false, clickToHide: true, className: style}
     );
 }
 

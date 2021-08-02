@@ -372,3 +372,7 @@ td.off{
     height: 5vh;
     vertical-align: middle;
 }
+
+.addOpacity{
+    opacity: .6;
+}

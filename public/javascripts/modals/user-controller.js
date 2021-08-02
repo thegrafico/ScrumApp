@@ -106,7 +106,7 @@ $(function (){
     // TRASH BTN EVENT 
     $(TRASH_BTN_REMOVE_USER_PROJECT).on("click", async function(){
     
-        let checkedElements = getCheckedElements(TABLE_ROW_CHECKBOX_ELEMENT_CHECKED);
+        let checkedElements = getVisibleElements(TABLE_ROW_CHECKBOX_ELEMENT_CHECKED);
         
         // check if not empty
         if (!_.isArray(checkedElements) || _.isEmpty(checkedElements) ){

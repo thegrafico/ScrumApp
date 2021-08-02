@@ -9,6 +9,14 @@ const CLEAR_FILTER_BTN = ".btnClear";
 const FILTER_MANAGE_TEAM_ID = "#filter-manage-team";
 const MANAGE_TEAM_COLUMNS_TO_FILTER = ["name", "email"];
 
+// CONTAINERS
+const FILTER_TEAM_CONTAINER = "#filter-btn-team";
+const FILTER_STATE_CONTAINER = "#filter-btn-state";
+const FILTER_USER_CONTAINER = "#filter-btn-user";
+const FILTER_TYPE_CONTAINER = "#filter-btn-type";
+
+const opacityStyle = "addOpacity";
+
 // Header of the table
 const filterElements = {
     "title": "title", 
@@ -23,25 +31,49 @@ $(function () {
     // filter by type
     $(TYPE_CHECKBOX_CLASS).change(function() {
         filterTable();
+        
+        if (anyCheckboxCheked(TYPE_CHECKBOX_CLASS)){
+            $(FILTER_TYPE_CONTAINER).addClass(opacityStyle);
+            return;
+        }
+        $(FILTER_TYPE_CONTAINER).removeClass(opacityStyle);
     });
 
     // filter by state
     $(STATE_CHECKBOX_CLASS).change(function() {
         filterTable();
+
+        if (anyCheckboxCheked(STATE_CHECKBOX_CLASS)){
+            $(FILTER_STATE_CONTAINER).addClass(opacityStyle);
+            return;
+        }
+        $(FILTER_STATE_CONTAINER).removeClass(opacityStyle);
     });
 
     // filter by user
     $(USER_CHECKBOX_CLASS).change(function() {
         filterTable();
-    });
 
-    // filter by search
-    $(`#${FILTER_SEARCH_ID}`).keyup( function(){
-        filterTable();
+        if (anyCheckboxCheked(USER_CHECKBOX_CLASS)){
+            $(FILTER_USER_CONTAINER).addClass(opacityStyle);
+            return;
+        }
+        $(FILTER_USER_CONTAINER).removeClass(opacityStyle);
     });
 
     // filter by team
     $(TEAM_CHECKBOX_CLASS).change(function() {
+        filterTable();
+        
+        if (anyCheckboxCheked(TEAM_CHECKBOX_CLASS)){
+            $(FILTER_TEAM_CONTAINER).addClass(opacityStyle);
+            return;
+        }
+        $(FILTER_TEAM_CONTAINER).removeClass(opacityStyle);
+    });
+
+    // filter by search
+    $(`#${FILTER_SEARCH_ID}`).keyup( function(){
         filterTable();
     });
 

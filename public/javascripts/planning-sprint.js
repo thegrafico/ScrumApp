@@ -55,7 +55,7 @@ $(function () {
                     );
                     if (isSelected && sprint["status"] != SPRINT_STATUS["Active"]){
                         let message = `This is a ${sprint["status"]} sprint.`;
-                        showPopupMessage(FILTER_BY_SPRINT_INPUT, message)
+                        showPopupMessage(FILTER_BY_SPRINT_INPUT, message);
                     }
                 }
             }else{ 

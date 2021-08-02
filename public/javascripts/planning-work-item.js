@@ -46,7 +46,7 @@ $(function () {
     $(TRASH_BTN_WORK_ITEM).on("click", function(){
         
         // get checked elements in table
-        const row_checked = getCheckedElements(TABLE_ROW_CHECKBOX_ELEMENT_CHECKED);
+        const row_checked = getVisibleElements(TABLE_ROW_CHECKBOX_ELEMENT_CHECKED);
 
         const projectId = $(PROJECT_ID).val();
         
@@ -65,7 +65,7 @@ $(function () {
         let workItemId = $(this).attr("rel");
 
         // get checked elements in table
-        const workItems = getCheckedElements(TABLE_ROW_CHECKBOX_ELEMENT_CHECKED);
+        const workItems = getVisibleElements(TABLE_ROW_CHECKBOX_ELEMENT_CHECKED);
 
         if (_.isArray(workItems) && !_.isEmpty(workItems)){   
             moveWorkItemToSprint(workItems, 'backlog');
@@ -80,7 +80,7 @@ $(function () {
         let workItemId = $(this).attr("rel");
 
         // get checked elements in table
-        const workItems = getCheckedElements(TABLE_ROW_CHECKBOX_ELEMENT_CHECKED);
+        const workItems = getVisibleElements(TABLE_ROW_CHECKBOX_ELEMENT_CHECKED);
 
         if (_.isArray(workItems) && !_.isEmpty(workItems)){   
             moveWorkItemToSprint(workItems, 'current');
@@ -95,7 +95,7 @@ $(function () {
         let workItemId = $(this).attr("rel");
 
         // get checked elements in table
-        const workItems = getCheckedElements(TABLE_ROW_CHECKBOX_ELEMENT_CHECKED);
+        const workItems = getVisibleElements(TABLE_ROW_CHECKBOX_ELEMENT_CHECKED);
 
         if (_.isArray(workItems) && !_.isEmpty(workItems)){   
             moveWorkItemToSprint(workItems, 'next');

@@ -4,10 +4,12 @@
         <% if (projectTeams.length > 1){ %>
             <div class="p-2 pr-4 pb-2">
 
-                <div class="button-group">
-                    <button type="button" class="btn btn-primary dropdown-toggle btn-sm" data-toggle="dropdown">Team </button>
+                <div class="button-group" >
+                    <button type="button" class="btn btn-primary dropdown-toggle btn-sm" data-toggle="dropdown" id="filter-btn-team">
+                        Team 
+                    </button>
 
-                    <ul class="dropdown-menu filterOptions">
+                    <ul class="dropdown-menu filterOptions" >
 
                         <% for (let i = 1; i < projectTeams.length; i++) { %>
                             <li class="clearTeam">
@@ -30,7 +32,9 @@
         <div class="p-2 pb-2">
 
             <div class="button-group">
-                <button type="button" class="btn btn-primary dropdown-toggle btn-sm" data-toggle="dropdown">State </button>
+                <button type="button" class="btn btn-primary dropdown-toggle btn-sm" data-toggle="dropdown"  id="filter-btn-state">
+                    State 
+                </button>
 
                 <ul class="dropdown-menu filterOptions">
 
@@ -53,7 +57,9 @@
         <div class="p-2 pb-2">
 
             <div class="button-group">
-                <button type="button" class="btn btn-primary dropdown-toggle btn-sm" data-toggle="dropdown">Assigned User</button>
+                <button type="button" class="btn btn-primary dropdown-toggle btn-sm" data-toggle="dropdown" id="filter-btn-user">
+                    Assigned User
+                </button>
 
                 <ul class="dropdown-menu filterOptions" id="filterUser">
 
@@ -78,7 +84,9 @@
         
         <div class="p-2 pb-2">
             <div class="button-group">
-                <button type="button" class="btn btn-primary dropdown-toggle btn-sm" data-toggle="dropdown">Type </i></button>
+                <button type="button" class="btn btn-primary dropdown-toggle btn-sm" data-toggle="dropdown" id="filter-btn-type">
+                    Type 
+                </button>
 
                 <ul class="dropdown-menu filterOptions" id="filterType">
 

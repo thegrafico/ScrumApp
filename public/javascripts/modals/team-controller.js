@@ -154,7 +154,7 @@ $(function (){
     // TRASH BTN EVENT 
     $(TRASH_BTN_MANAGE).on("click", async function(){
         
-        let checkedElements = getCheckedElements(TABLE_ROW_CHECKBOX_ELEMENT_CHECKED);
+        let checkedElements = getVisibleElements(TABLE_ROW_CHECKBOX_ELEMENT_CHECKED);
        
         // check if not empty
         if (!_.isArray(checkedElements) || _.isEmpty(checkedElements) ){return;}
