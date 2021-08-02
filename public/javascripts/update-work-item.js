@@ -84,7 +84,7 @@ $(function () {
 
     // Team
     $(UPDATE_WORK_ITEM["team"]).change(function(){
-        workItemValuesToUpdate["teamId"] = swap(currentTeam, $(this).val() || "");
+        workItemValuesToUpdate["teamId"] = swap(currentTeam, $(this).val() || "0");
         activeSaveButton();
         if (LOG_AVAILABLE){
             console.log("team changed");
@@ -103,7 +103,7 @@ $(function () {
 
     // sprint
     $(UPDATE_WORK_ITEM["sprint"]).change(function(){        
-        workItemValuesToUpdate["sprint"] = swap(currentIteration, $(this).val() || "");
+        workItemValuesToUpdate["sprint"] = swap(currentIteration, $(this).val() || "0");
         activeSaveButton();
         if (LOG_AVAILABLE){
             console.log("sprint changed");
@@ -176,13 +176,18 @@ $(function () {
             const response = await make_post_request(API_LINK_UPDATE_WORK_ITEM, workItemValuesToUpdate).catch(err=> {
                 response_error = err;
             });
-            console.log(response["workItem"]);
+
             // Success message
             if (response){
                 $.notify(response.msg, "success");
                 
+                // get the index of the element
                 let index = $(`tr#${workItemId}`).index();
+
+                // remove the element from the table
                 removeWorkItemsFromTable([workItemId]);
+
+                // add the element to the table
                 appendToWotkItemTable([response["workItem"]], true, index, false);
 
             }else{ // error messages
@@ -228,9 +233,9 @@ function setWorkItemState(){
     currentAssignedUser   = $(UPDATE_WORK_ITEM["user"]).val();
     currentStatus         = $(UPDATE_WORK_ITEM["state"]).val().toLowerCase();
     currentTags           = $(UPDATE_WORK_ITEM["tags"]).map((_,element) => element.value).get();
-    currentTeam           = $(UPDATE_WORK_ITEM["team"]).val().toLowerCase();
+    currentTeam           = ($(UPDATE_WORK_ITEM["team"]).val() || "0").toLowerCase();
     currentType           = $(UPDATE_WORK_ITEM["type"]).val().toLowerCase();
-    currentIteration      = $(UPDATE_WORK_ITEM["sprint"]).val().toLowerCase();
+    currentIteration      = ($(UPDATE_WORK_ITEM["sprint"]).val() || "0").toLowerCase();
     currentDescription    = $(UPDATE_WORK_ITEM["description"]).val();
     currentStoryPoints    = $(UPDATE_WORK_ITEM["points"]).val();
     currentPriorityPoints = $(UPDATE_WORK_ITEM["priority"]).val();

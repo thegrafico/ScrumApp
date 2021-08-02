@@ -580,7 +580,6 @@ router.post("/api/:id/update_work_item/:workItemId", middleware.isUserInProject,
     // Create new key (team/sprint) to store the work item team
     joinData([updatedWorkItem], teams, "teamId", "equal", "_id", "team", UNASSIGNED);
     joinData([updatedWorkItem], sprints, "_id", "is in", "tasks", "sprint", UNASSIGNED_SPRINT);
-    console.log(updatedWorkItem);
     // ============================================================ 
     
     response["msg"] = "Work Item was updated successfully!";

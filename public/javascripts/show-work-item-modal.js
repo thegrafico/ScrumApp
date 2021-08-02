@@ -92,7 +92,7 @@ async function populateWorkItemModal(workItemId){
 
     // TEAM
     IS_UPDATE_SELECT_OPTION = true; // enable to  make a request when changin the team select
-    $(UPDATE_WORK_ITEM["team"]).val(workItem["teamId"]).change();
+    $(UPDATE_WORK_ITEM["team"]).val(workItem["teamId"] || "0").change();
 
     // DESCRIPTION
     $(UPDATE_WORK_ITEM["description"]).val(workItem["description"]);

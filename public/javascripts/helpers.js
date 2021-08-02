@@ -401,7 +401,7 @@ function appendToWotkItemTable(workItems, showIfSprint=true, index=null, removeT
         // TITLE
         let title = `
             <td class="openStory">
-                <a href="workitems/${workItem['_id']}" rel="${workItem['_id']}">
+                <a href="workitems/${workItem['_id']}" class="open-existing-work-item-modal" rel="${workItem['_id']}">
                     <i class="fas  ${WORK_ITEM_ICONS[workItems[i]['type']].icon}"></i> 
                     ${workItem['title']} 
                 </a> 
@@ -502,7 +502,6 @@ function appendToWotkItemTable(workItems, showIfSprint=true, index=null, removeT
 
         // add at index if user wants to.
         if (index != null){
-            console.log("adding at index: ", index);
             $(`${WORK_ITEM_TABLE} > tbody > tr`).eq(index).before(table_row);
         }else{
             $(`${WORK_ITEM_TABLE} > tbody:last-child`).append(table_row);
@@ -1049,7 +1048,7 @@ function addWorkItemEvents(element){
         const projectId = $(PROJECT_ID).val();
 
         if (!_.isString(teamId) || !_.isString(projectId) || teamId == "0"){
-            $.notify("Invalid team was selected.", "error");
+            // $.notify("Invalid team was selected.", "error");
             return;
         }
 
