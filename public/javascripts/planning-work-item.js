@@ -60,6 +60,7 @@ $(function () {
         toggleFilter()
     });
 
+    // ==================== MOVE TO ======================
     // BACKLOG
     $(document).on("click", MOVE_TO_BACKLOG_BTN, function(){
         let workItemId = $(this).attr("rel");
@@ -103,6 +104,9 @@ $(function () {
             moveWorkItemToSprint([workItemId], 'next');
         }
     });
+    // =====================================================
 
+    updateWorkItemFeedback();
 });
+
 

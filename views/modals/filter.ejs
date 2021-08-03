@@ -1,38 +1,29 @@
-<div class="row" id="filterDiv" style="border: 1px solid red;">
+<div class="row" id="filterDiv">
 
 
-        <div class="col-8" style="border: 1px solid green;">
-            <div class="pt-2 pb-2">
+        <div class="col-8">
 
-                <div class="button-group" >
-                    <button type="button" class="btn btn-primary dropdown-toggle btn-sm" data-toggle="dropdown" id="filter-btn-team">
-                        Team 
-                    </button>
+            <% if (workItems != null) { %>                
+                <div class="p-2 pr-2 pb-2">
 
-                    <ul class="dropdown-menu filterOptions" >
+                    <!-- Total number of work items -->
+                    <button type="button" class="btn btn-outline-light btn-sm invisible"> <span id="numberOfWorkItems"> 0 Work Items</span></button>
 
-                        <% for (let i = 1; i < projectTeams.length; i++) { %>
-                            <li class="clearTeam">
-                                <label class="small checkbox-container">
-                                    <input class="teamCheckbox" type="checkbox" value="<%=projectTeams[i]['name']%>"/>
-                                    <%=projectTeams[i]['name']%>
-                                </label>
-                            </li>
-                        <%}%>
+                    <!-- Active work Items -->
+                    <button type="button" class="btn btn-outline-info btn-sm invisible"> <span id="numberOfActiveWorkItems"> </span> Active</button>
 
-                        <div class="d-flex flex-row-reverse filterDivisor">
-                            <button type="button" class="btn btn-secondary btnClear" id="clearTeam">Clear</button>
-                        </div>
-                    </ul>
-                    
+                    <!-- IN REVIEW work items -->
+                    <button type="button" class="btn btn-outline-warning btn-sm invisible"> <span id="numberOfReviewWorkItems">  </span> In Review</button>
+
                 </div>
-            </div>
+            <% } %>
+
         </div>
 
-        <div class="col-4 d-flex flex-row-reverse" style="border: 1px solid blue;">
+        <div class="col-4 d-flex flex-row-reverse" >
 
             <% if (projectTeams.length > 1){ %>
-                <div class="p-2 pr-4 pb-2">
+                <div class="p-2 pr-2 pb-2">
 
                     <div class="button-group" >
                         <button type="button" class="btn btn-primary dropdown-toggle btn-sm" data-toggle="dropdown" id="filter-btn-team">

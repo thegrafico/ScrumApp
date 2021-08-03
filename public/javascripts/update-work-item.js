@@ -190,6 +190,9 @@ $(function () {
                 // add the element to the table
                 appendToWotkItemTable([response["workItem"]], true, index, false);
 
+                // updating the feedback messages
+                updateWorkItemFeedback();
+
             }else{ // error messages
                 $.notify(response_error.data.responseJSON.msg, "error");
             }

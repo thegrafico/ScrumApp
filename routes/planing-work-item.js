@@ -89,7 +89,9 @@ router.get("/:id/planing/workitems", middleware.isUserInProject, async function 
     teams.unshift(UNASSIGNED);
     users.unshift(UNASSIGNED);
     sprintForPreferedTeam.unshift(UNASSIGNED_SPRINT);
-    
+
+    let tam = (workItems.filter(each => {return each["status"] == "Active"})).length;
+    console.log(tam);
     // populating params
     let params = {
         "title": projectInfo["title"],

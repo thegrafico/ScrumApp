@@ -968,6 +968,9 @@ function addUserToTable(userInfo){
 
         // disable the trash button again
         enableTrashButton(false);
+
+        // updating the feedback messages
+        updateWorkItemFeedback();
     }else{
         $.notify(response_error.data.responseText, "error");
     }
@@ -1128,4 +1131,51 @@ function addWorkItemEvents(element){
     });
 
     // =====================================
+}
+
+
+/**
+ * Update the feedback message from the work item table
+*/
+function updateWorkItemFeedback(){
+    updateNumberOfWorkItems("#numberOfWorkItems");
+    updateNumberOfWorkItems("#numberOfActiveWorkItems", "Active");
+    updateNumberOfWorkItems("#numberOfReviewWorkItems", "Review");
+}
+
+/**
+ * Update the text of the box for the feedback
+ * @param {String} selector 
+ * @param {String} option 
+*/
+function updateNumberOfWorkItems(selector, option){
+
+    try {
+        let numberOfElements = 0;
+
+        if (option == null){
+            numberOfElements = $("tr.rowValues").length;
+
+            let text = numberOfElements > 0 ? `${numberOfElements} Work Items`: `${numberOfElements} Work Item`;
+            
+            $(selector).text(text);
+        }else{
+
+            
+            let tableHeader = getTableHeadersArray(WORK_ITEM_TABLE);
+            let stateIndex = tableHeader.indexOf("state") + 1; // add one couse index is 0 base
+            
+            $(`tr.rowValues td:nth-child(${stateIndex})`).each(function(i){
+                if (option.toLowerCase().trim() === $(this).text().toLowerCase().trim()){
+                    numberOfElements++;
+                }
+            });
+            
+            
+            $(selector).text(numberOfElements);
+        }
+        $(selector).parent().removeClass("invisible");       
+    } catch (error) {
+        $(selector).parent().addClass("invisible");       
+    }
 }
