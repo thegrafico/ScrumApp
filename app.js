@@ -168,7 +168,7 @@ module.exports = app;
  * launch module
  * launch controller at the beggining we importing
  * ampd-testbase
- */
+*/
 
 
 /**
@@ -188,7 +188,7 @@ module.exports = app;
  * To running the test -> Test Application
  * if you had run client verify, then is not available
  * HUM detailed bu
- */
+*/
 
 /**
  * NOTES FROM PATRICK

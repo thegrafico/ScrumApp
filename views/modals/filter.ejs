@@ -1,8 +1,8 @@
-<div id="filterDiv">
-    <div class="d-flex flex-row-reverse">
-        
-        <% if (projectTeams.length > 1){ %>
-            <div class="p-2 pr-4 pb-2">
+<div class="row" id="filterDiv" style="border: 1px solid red;">
+
+
+        <div class="col-8" style="border: 1px solid green;">
+            <div class="pt-2 pb-2">
 
                 <div class="button-group" >
                     <button type="button" class="btn btn-primary dropdown-toggle btn-sm" data-toggle="dropdown" id="filter-btn-team">
@@ -27,83 +27,113 @@
                     
                 </div>
             </div>
-        <%}%>
-
-        <div class="p-2 pb-2">
-
-            <div class="button-group">
-                <button type="button" class="btn btn-primary dropdown-toggle btn-sm" data-toggle="dropdown"  id="filter-btn-state">
-                    State 
-                </button>
-
-                <ul class="dropdown-menu filterOptions">
-
-                    <% for (const [key, value] of Object.entries(statusWorkItem)) { %>
-                        <li class="clearState">
-                            <label class="small checkbox-container">
-                                <input class="stateCheckBox" type="checkbox" value="<%=key%>"/>&nbsp; <i class="fa fa-circle <%=value['class']%>" aria-hidden="true"></i> <%=key%>
-                            </label>
-                        </li>
-                    <%}%>
-
-                    <div class="d-flex flex-row-reverse filterDivisor">
-                        <button type="button" class="btn btn-secondary btnClear" id="clearState">Clear</button>
-                    </div>
-                </ul>
-            </div>
-
         </div>
 
-        <div class="p-2 pb-2">
+        <div class="col-4 d-flex flex-row-reverse" style="border: 1px solid blue;">
 
-            <div class="button-group">
-                <button type="button" class="btn btn-primary dropdown-toggle btn-sm" data-toggle="dropdown" id="filter-btn-user">
-                    Assigned User
-                </button>
+            <% if (projectTeams.length > 1){ %>
+                <div class="p-2 pr-4 pb-2">
 
-                <ul class="dropdown-menu filterOptions" id="filterUser">
+                    <div class="button-group" >
+                        <button type="button" class="btn btn-primary dropdown-toggle btn-sm" data-toggle="dropdown" id="filter-btn-team">
+                            Team 
+                        </button>
 
-                    <% for(let user of assignedUsers){ %>
+                        <ul class="dropdown-menu filterOptions" >
 
-                        <li class="clearUser">
-                            <!-- TODO: add width on user if case user name is to big -->
-                            <label class="small checkbox-container">
-                                <input type="checkbox" class="userCheckbox" value="<%=user['name']%>"/>&nbsp; <%=user['name']%>
-                            </label>
-                        </li>
-                    <%}%>
+                            <% for (let i = 1; i < projectTeams.length; i++) { %>
+                                <li class="clearTeam">
+                                    <label class="small checkbox-container">
+                                        <input class="teamCheckbox" type="checkbox" value="<%=projectTeams[i]['name']%>"/>
+                                        <%=projectTeams[i]['name']%>
+                                    </label>
+                                </li>
+                            <%}%>
 
-                    <div class="d-flex flex-row-reverse filterDivisor">
-                        <button type="button" class="btn btn-secondary btnClear" id="clearUser">Clear</button>
+                            <div class="d-flex flex-row-reverse filterDivisor">
+                                <button type="button" class="btn btn-secondary btnClear" id="clearTeam">Clear</button>
+                            </div>
+                        </ul>
+                        
                     </div>
-                </ul>
+                </div>
+            <%}%>
+
+            <div class="p-2 pb-2">
+
+                <div class="button-group">
+                    <button type="button" class="btn btn-primary dropdown-toggle btn-sm" data-toggle="dropdown"  id="filter-btn-state">
+                        State 
+                    </button>
+
+                    <ul class="dropdown-menu filterOptions">
+
+                        <% for (const [key, value] of Object.entries(statusWorkItem)) { %>
+                            <li class="clearState">
+                                <label class="small checkbox-container">
+                                    <input class="stateCheckBox" type="checkbox" value="<%=key%>"/>&nbsp; <i class="fa fa-circle <%=value['class']%>" aria-hidden="true"></i> <%=key%>
+                                </label>
+                            </li>
+                        <%}%>
+
+                        <div class="d-flex flex-row-reverse filterDivisor">
+                            <button type="button" class="btn btn-secondary btnClear" id="clearState">Clear</button>
+                        </div>
+                    </ul>
+                </div>
+
             </div>
 
-        </div>
-        
-        
-        <div class="p-2 pb-2">
-            <div class="button-group">
-                <button type="button" class="btn btn-primary dropdown-toggle btn-sm" data-toggle="dropdown" id="filter-btn-type">
-                    Type 
-                </button>
+            <div class="p-2 pb-2">
 
-                <ul class="dropdown-menu filterOptions" id="filterType">
+                <div class="button-group">
+                    <button type="button" class="btn btn-primary dropdown-toggle btn-sm" data-toggle="dropdown" id="filter-btn-user">
+                        Assigned User
+                    </button>
 
-                    <% for(let key in workItemType){ %>
+                    <ul class="dropdown-menu filterOptions" id="filterUser">
 
-                        <li class="clearType">
-                            <label class="small checkbox-container">
-                                <input type="checkbox" class="typeCheckBox" value="<%=key%>"/>&nbsp; <i class="fas <%=workItemType[key].icon%> small-fas"></i>  <%=key%>
-                            </label>
-                        </li>
-                    <%}%>
+                        <% for(let user of assignedUsers){ %>
 
-                    <div class="d-flex flex-row-reverse filterDivisor">
-                        <button type="button" class="btn btn-secondary btnClear" id="clearType">Clear</button>
-                    </div>
-                </ul>
+                            <li class="clearUser">
+                                <!-- TODO: add width on user if case user name is to big -->
+                                <label class="small checkbox-container">
+                                    <input type="checkbox" class="userCheckbox" value="<%=user['name']%>"/>&nbsp; <%=user['name']%>
+                                </label>
+                            </li>
+                        <%}%>
+
+                        <div class="d-flex flex-row-reverse filterDivisor">
+                            <button type="button" class="btn btn-secondary btnClear" id="clearUser">Clear</button>
+                        </div>
+                    </ul>
+                </div>
+
+            </div>
+            
+            
+            <div class="p-2 pb-2">
+                <div class="button-group">
+                    <button type="button" class="btn btn-primary dropdown-toggle btn-sm" data-toggle="dropdown" id="filter-btn-type">
+                        Type 
+                    </button>
+
+                    <ul class="dropdown-menu filterOptions" id="filterType">
+
+                        <% for(let key in workItemType){ %>
+
+                            <li class="clearType">
+                                <label class="small checkbox-container">
+                                    <input type="checkbox" class="typeCheckBox" value="<%=key%>"/>&nbsp; <i class="fas <%=workItemType[key].icon%> small-fas"></i>  <%=key%>
+                                </label>
+                            </li>
+                        <%}%>
+
+                        <div class="d-flex flex-row-reverse filterDivisor">
+                            <button type="button" class="btn btn-secondary btnClear" id="clearType">Clear</button>
+                        </div>
+                    </ul>
+                </div>
             </div>
         </div>
-    </div>
 </div>
