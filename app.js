@@ -196,3 +196,13 @@ module.exports = app;
  * Add to goal -> work on mst. capture that what I did there - successfully deleveriy on OES4
  * add a goal for the new team. for DTx
  */
+
+/**
+ * each teach will have their own test in static/spec
+ * in the testbed we need to add it like a module
+ * in the testing-req-config adding the spect
+ * if a have a 404 sasying something about cannot find the module
+ * service paste service - look for it
+ * ampd-tree-table-paste-service --- ampd-tree-table-paste-svc-spec
+ * maven update project
+ */

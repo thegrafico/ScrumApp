@@ -188,6 +188,7 @@ a:hover {
 }
 
 
+
 .filterOptions li{
     margin-left: 5%;
 }
@@ -214,10 +215,18 @@ a:hover {
    width: 100%;
    overflow-x: scroll;
 }
+#filterDiv{
+    margin-bottom: 0 !important;
+}
 
 #workItemTable{
     table-layout: fixed;
     width: 100%;  
+}
+
+#workItemTable th{
+  position: sticky; top: 0; z-index: 999; 
+  background-color: #303030 !important;
 }
 
 
