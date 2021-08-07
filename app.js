@@ -206,3 +206,10 @@ module.exports = app;
  * ampd-tree-table-paste-service --- ampd-tree-table-paste-svc-spec
  * maven update project
  */
+
+/**
+ * Remove client, client-config, docs, serivce. AMPD is everythin I need
+ * Once I commit, I can add revision. 
+ * Once I added, I need to go to the web UI for the collab. 
+ * collaborator.tuc.us.ray.com/ui
+ */

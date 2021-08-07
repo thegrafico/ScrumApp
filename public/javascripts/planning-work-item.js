@@ -23,22 +23,43 @@ $(function () {
      * CHECKBOX FOR WORK ITEM TABLE 
      */
     $(document).on("click", TABLE_ROW_CHECKBOX_ELEMENT, function () {
+        
         highliteWorkItemRow(this, this.checked);
+
+        let counter = 0;
+
+        $(`${TABLE_ROW_CHECKBOX_ELEMENT}:visible`).each(function(){
+           
+            if (this.checked){
+                counter++;
+            }
+        });
+
+        showFeedbackCheckedElements(counter);
     });
 
     // CHECK ALL ROWS ELEMENT
     $(CHECK_ALL_CHECKBOX_TABLE_ROWS).on("click", function(){
-        
+
+        // get checked
         let isChecked = this.checked;
 
+        // enable the trash button if checked
         enableTrashButton(isChecked);
+        let counter = 0;
+
         $(`${TABLE_ROW_CHECKBOX_ELEMENT}:visible`).each(function(){
+           
+            if (isChecked){
+                counter++;
+            }
             
             $(this).prop('checked', isChecked);
             
             highliteWorkItemRow(this, isChecked);
         });
-        
+
+        showFeedbackCheckedElements(counter);
     });
 
     // REMOVE THE WORK ITEMS SELECTED IN CHECKBOX

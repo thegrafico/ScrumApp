@@ -242,3 +242,31 @@ let IS_UPDATE_SELECT_OPTION = false;
 // =========== END
 
 const CURRENT_USER_ID = "#current-user-id";
+
+const NOTIFY = {
+
+    isShowm: false,
+    showGlobalNotification: function (message, position="right botton", autoHide=false){
+        
+        if (!this.isShowm){
+            $.notify({
+                text: message,
+            }, { 
+                style: 'custom',
+                autoHide: autoHide,
+                position: position
+            });
+            this.isShowm = true;
+        }else{
+            this.updateNotifyText(message);
+        }
+    },
+    hideGlobalNotifyMsg: function(){
+        this.isShowm = false;
+        $('.notifyjs-custom-base').trigger("notify-hide");
+    },
+
+    updateNotifyText: function(text){
+        $('.notifyjs-custom-base .text').text(text);
+    }
+}

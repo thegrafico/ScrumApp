@@ -1179,3 +1179,17 @@ function updateNumberOfWorkItems(selector, option){
         $(selector).parent().addClass("invisible");       
     }
 }
+
+/**
+ * Show the feedback message for the checked elements
+ * @param {Number} counter - Number of elements
+ */
+function showFeedbackCheckedElements(counter){
+    if (counter > 4){
+        // console.log("showing");
+        NOTIFY.showGlobalNotification(`${counter} Work items selected`);
+    }else{
+        // console.log("HIDING");
+        NOTIFY.hideGlobalNotifyMsg();
+    }
+}

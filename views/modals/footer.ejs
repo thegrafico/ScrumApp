@@ -50,6 +50,20 @@
 <!-- Add defaults for notify -->
 <script>
     $.notify.defaults({ "autoHideDelay": 4000, "position":"top center"});
+
+    // to show custon message
+    $.notify.addStyle('custom', {
+        html: 
+        `<div>
+            <div class="notifyjs-wrapper notifyjs-hidable">
+                <div class="notifyjs-container" style="">
+                    <div class="notifyjs-bootstrap-base notifyjs-bootstrap-success">
+                        <span class="text" data-notify-text="text"></span>
+                    </div>
+                </div>
+            </div>
+        </div>`
+    });
 </script>
 
 
