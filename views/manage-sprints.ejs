@@ -1,0 +1,155 @@
+<%- include('modals/header'); %>
+
+<body>
+
+    <%- include('modals/topNavbar'); %>
+
+    <div class="wrapper d-flex align-items-stretch">
+
+        <%- include('modals/sideNavbar'); %>
+
+        <!-- Page Content  -->
+        <div id="content" class="p-4 p-md-5">
+
+            <%- include('modals/titleOptionsMenu'); %>
+
+            <div class="container-fluid statistics-boxs">
+                <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+
+                    <i class="fas fa-users"></i>
+                    <div class="filterByTeamContainer">
+                        <% if(userTeam){ %>
+                            <select 
+                            class="custom-select my-custon-select input-border"
+                            name="filterByTeam" 
+                            id="update-sprint-filter-by-team" 
+                            aria-label="select-team-options">
+                                <% for (let i = 0; i < projectTeams.length; i++) { %>
+
+                                    <% if (projectTeams[i]['id'] == userTeam.id) { %>
+                                        <option value="<%=projectTeams[i]['id']%>" selected><%=projectTeams[i]['name']%></option>
+                                    <% }else{ %>
+                                        <option value="<%=projectTeams[i]['id']%>"><%=projectTeams[i]['name']%></option>
+                                    <% } %>
+                                
+                                <% } %>
+                            </select>
+                        <% }else{ %>
+                            <select 
+                            class="custom-select my-custon-select input-border"
+                            name="filterByTeam" 
+                            id="update-sprint-filter-by-team" 
+                            aria-label="select-team-options"
+                            disabled>
+                            <option value="0" selected>Not team found</option>
+                            </select>
+                        <% } %>
+                    </div>
+                
+                    <div class="collapse navbar-collapse" id="navbarColor02">
+                        <ul class="navbar-nav mr-auto">
+                            <li class="nav-item active">
+                                <a class="nav-link" href="#">
+                                    <span class="sr-only">(current)</span>
+                                </a>
+                            </li>
+
+                            <li class="nav-item">
+                                <a class="nav-link"
+                                    href="#"
+                                    role="button"
+                                    id="createSprintBtn"
+                                    data-toggle="modal" 
+                                    data-target=".create-sprint-modal">
+                                    <i class="fas fa-plus addIcon"></i> Create Sprint
+                                </a>
+                            </li>
+
+                            <li class="nav-item trashIconWrapper">
+                                &nbsp;
+                                <button id="trashBtnManage" class="trash-btn" disabled> <i class="far fa-trash-alt grayColor"></i> </button>
+                            </li>
+
+                        </ul>
+                        <div class="form-inline my-2 my-lg-0">
+                            <input id="filter-manage-team" class="form-control mr-sm-2" type="text" placeholder="Name or dates">
+                            
+                            <button id="filterBtn" class="btn btn-secondary my-2 my-sm-0 filterBtn">
+                                <i class="fas fa-filter"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <!-- INCLUDE FILTER DIV HERE -->
+                </nav>
+
+
+            </div>
+
+            <div class="p-4" id="table-container">
+                <table class="table table-hover managesSprintTable" id="manage-table">
+                    <thead>
+                        <tr class="tableHeader">
+                            <th class="tableCheckBoxRowHeader">Check</th>
+                            <th scope="col">Name</th>
+                            <th scope="col">Dates</th>
+                            <th scope="col">Work Items</th>
+                            <th class="column-edit-team" scope="col">Edit</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% for (let i = 1; i < sprints.length; ++i) {%>
+                            <tr class="rowValues" id="<%=sprints[i]['_id']%>">
+                                
+                                <td class="tableCheckBoxRowElement"> 
+                                    <label class="invisible labelcheckbox"> 
+                                        <input type="checkbox" aria-label="table-row-checkbox" name="checkboxWorkItem[]" value="<%=sprints[i]['_id']%>" class="checkboxRowElement" />
+                                    </label> 
+                                </td>
+
+                                <td>
+                                    <%=sprints[i]["name"]%> 
+                                </td>
+
+                                <td>
+                                    <% if (sprints[i]["status"] == "Active") { %>
+                                        <%=sprints[i]["startDateFormated"]%> - <%=sprints[i]["endDateFormated"]%> <br>
+                                        <span class="small text-danger"><%=sprints[i]["status"]%></span>
+                                    <% } else { %>
+                                        <%=sprints[i]["startDateFormated"]%> - <%=sprints[i]["endDateFormated"]%> 
+                                    <% } %>
+                                </td>
+
+                                <td class="d-none sprintValues"> 
+                                    <span class="title"><%=sprints[i]["name"]%></span>
+                                    <span class="startDate"><%=sprints[i]["startDate"]%></span>
+                                    <span class="endDate"><%=sprints[i]["endDate"]%></span>
+                                </td>
+                                
+                                <td>
+                                    <%=sprints[i]["tasks"].length%> 
+                                </td>
+
+                                <td class="column-edit-team">
+                                    <button 
+                                        class="btn btn-warning edit-user-team-btn btn-update-sprint-modal-open"  
+                                        data-toggle="modal" 
+                                        id="<%=sprints[i]['_id']%>"
+                                        data-target=".update-sprint-modal">
+                                        <i class="fas fa-user-edit"></i>
+                                    </button>
+                                </td>
+
+                            </tr>
+                        <%}%>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <input type="hidden" name="projectId" id="projectId" value="<%=projectId%>">
+        <input type="hidden" name="currentTab" id="currentTab" value="<%=activeTab%>">
+    </div>
+
+
+    <%- include('modals/team/add-user-team'); %>
+
+<%- include('modals/footer'); %>

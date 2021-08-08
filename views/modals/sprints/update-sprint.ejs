@@ -1,0 +1,46 @@
+<!-- MODAL TO CREATE USER -->
+<div class="modal fade update-sprint-modal" id="update-sprint" tabindex="-1" role="dialog" aria-labelledby="modal-update-sprints"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+
+        <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="createUserTitle" style="width: 60%;">
+                        Update Sprint <i class="fas fa-running"></i> 
+                    </h5>
+                    <button type="button" id="close-sprint-modal" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+
+                <div class="modal-body">
+
+                    <fieldset>
+                        
+                        <div class="form-group">
+                            <label for="sprintName">  <span style="color:red;">*</span> Name: </label>
+                            <input type="text" class="form-control update-sprint-name" name="sprintName"  id="sprint-name-input" aria-describedby="nameHelp" placeholder="Sprint name">
+                            <small id="sprint-name-span-error" class="text-danger invisible"></small>
+                        </div>
+
+
+                        <div class="form-group update-container-date">
+                            <label for="sprintStartDate">  <span style="color:red;">*</span> Sprint Dates: </label>
+                            <input type="text" class="form-control sprint-start-date-input" name="sprintStartDate"  id="update-sprint-start-date-input" aria-describedby="nameHelp" placeholder="Select Range">
+                            <small id="sprint-date-span-error" class="text-danger invisible"></small>
+                        </div>
+                        
+                        
+                    </fieldset>
+
+                </div>
+
+                <div class="modal-footer">
+                    <button type="cancel-update-sprint-btn" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    <button id="update-sprint-btn-submit" class="btn btn-success">Update</button>
+                </div>
+                <!-- This value is loaded when modal is opened -->
+                <input type="hidden" id="update-sprint-id" name="sprintId" value="0">
+        </div>
+    </div>
+</div>

@@ -97,7 +97,6 @@ router.get("/:id/planing/sprint", middleware.isUserInProject, async function (re
     users.unshift(UNASSIGNED);
     sprints.unshift(UNASSIGNED_SPRINT);
 
-    console.log(sprints);
     // populating params
     let params = {
         "title": projectInfo["title"],

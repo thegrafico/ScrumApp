@@ -57,8 +57,8 @@ router.get("/:id/planing/workitems", middleware.isUserInProject, async function 
         console.error("Error getting work items: ", err)
     ) || [];
 
-    // sorting the work items
-    workItems  = workItems.sort((a,b) => new moment(b.createdAt) - new moment(a.createdAt))
+    // sorting the work items. SORT
+    workItems  = workItems.sort((a,b) => new moment(b.createdAt) - new moment(a.createdAt));
 
     // Create new key (team/sprint) to store the work item team
     joinData(workItems, teams, "teamId", "equal", "_id", "team", UNASSIGNED);

@@ -11,17 +11,16 @@
 <% } %>
 
 <!-- team Modals -->
-<% if (assignedUsers) { %>
+<% if (assignedUsers && projectTeams) { %>
     <%- include('team/create-team'); %>
-<% } %>
-
-<% if (projectTeams) { %>
     <%- include('team/delete-team'); %>
 <% } %>
 
+<!-- Sprints -->
 <% if (sprints) { %>
     <%- include('sprints/create-sprint'); %>
     <%- include('sprints/remove-sprint'); %>
+    <%- include('sprints/update-sprint'); %>
 <% } %>
 
 

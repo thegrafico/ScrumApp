@@ -32,3 +32,28 @@
 .table{
     border: 1px solid #444;
 }
+
+.fa-fire{
+    color: rgba(255, 0, 0, 0.719);
+    font-size: 1.1em !important;
+}
+
+/* ======== MANAGES SPRINTS TABLE ========== */
+/* .managesSprintTable th{
+    border: 1px solid red;
+} */
+
+.managesSprintTable th, .managesSprintTable td{
+    width: 20% !important;
+}
+
+
+/* First row */
+.managesSprintTable th:first-child, .managesSprintTable td:first-child{
+    width: 5% !important;
+}
+
+.fa-running{
+    color: green;
+    font-size: 1.2em;
+}

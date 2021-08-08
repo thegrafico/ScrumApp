@@ -588,15 +588,8 @@ router.post("/api/:id/createSprint", middleware.isUserInProject, async function 
         return;
     }
 
-    const today = moment(new Date());
-    let sprintStatus = ""; // default?
-    if (today.isAfter(momentEndDate)){
-        sprintStatus = SPRINT_STATUS["Past"];
-    }else if(today.isBefore(momentStartDate)){
-        sprintStatus = SPRINT_STATUS["Coming"];
-    }else if(today.isBetween(momentStartDate, momentEndDate)){
-        sprintStatus = SPRINT_STATUS["Active"];
-    }
+    // TODO: check if this is working
+    let sprintStatus = getSprintDateStatus(startDate, endDate); // default?
 
     // sprint data - team Id is added below
     let sprintData = {
@@ -1109,6 +1102,127 @@ router.post("/api/:id/deleteUsersFromProject", middleware.isUserInProject, async
     if (_.isUndefined(response)){
         res.status(400).send(response_error);
     }
+
+    res.status(200).send(response);
+});
+
+
+/**
+ * METHOD: POST - UPDATE SPRINT FOR TEAM
+ */
+// TODO: refactor this. instead of doing the query to update, uses the same sprint mongoose element
+router.post("/api/:id/updateSprint/:teamId/:sprintId", middleware.isUserInProject, async function (req, res) {
+    
+    console.log("Getting request to update sprint...");
+    
+    const projectId = req.params.id;
+    const teamId = req.params.teamId;
+    const sprintId = req.params.sprintId;
+
+    let response = {};
+
+    // expected data
+    let  { name, startDate, endDate } = req.body;
+    console.log("received: ", req.body);
+    let updateData = {};
+
+    // getting the current sprint
+    let sprint = await SprintCollection.findById(sprintId).catch(err => {
+        console.error(err);
+    });
+
+    if (_.isUndefined(sprint) || _.isNull(sprint)){
+        response["msg"] = "Sorry, Cannot find the sprint selected.";
+        res.status(400).send(response);
+        return;
+    }
+
+    // ========= VERIFY DATA RECEIVED ============
+    // if the name is received
+    if (!_.isUndefined(name)){
+
+        if (_.isString(name) && !_.isEmpty(name)){
+            updateData["name"] = name;
+        }else{
+            response["msg"] = "Sorry, Invalid name for the sprint was received.";
+            res.status(400).send(response);
+            return;
+        }
+    }
+
+    // to store the date with the udated values
+    let currentStartDate = undefined;
+    let currentEndDate = undefined;
+
+    // if startDate is received
+    if (!_.isUndefined(startDate)){
+        if (_.isString(startDate) && moment(startDate, SPRINT_FORMAT_DATE).isValid()){
+            updateData["startDate"] = startDate;
+            currentStartDate = startDate;
+        }else{
+            response["msg"] = "Sorry, Invalid start date for the sprint was received.";
+            res.status(400).send(response);
+            return;
+        }
+    }else{
+        currentStartDate = sprint["startDate"];
+    }
+
+    // if endDate is received
+    if (!_.isUndefined(endDate)){
+        if (_.isString(endDate) && moment(endDate, SPRINT_FORMAT_DATE).isValid()){
+            updateData["endDate"] = endDate;
+            currentEndDate = endDate;
+        }else{
+            response["msg"] = "Sorry, Invalid end date for the sprint was received.";
+            res.status(400).send(response);
+            return;
+        }
+    }else{
+        currentEndDate = sprint["endDate"];
+    }
+    
+    if (_.isEmpty(updateData)){
+        response["msg"] = "Sorry, There is not information to update the sprint";
+        res.status(400).send(response);
+        return;
+    }
+
+    // =============== Verify the date of the sprint is valid ===========
+    if ( updateData["startDate"] || updateData["endDate"]){
+
+        let errorMsg = null;
+        let teamSprints = await SprintCollection.getSprintsForTeam(projectId, teamId).catch(err => {
+            console.error(err);
+            errorMsg = err;
+        });
+
+        if (_.isUndefined(teamSprints) || errorMsg){
+            response["msg"] = "Sorry, There was a problem getting the sprints for this team.";
+            res.status(400).send(response);
+            return;
+        }
+
+        if (!_.isEmpty(teamSprints) && !SprintCollection.isValidSprintDate(teamSprints, currentStartDate, currentEndDate)){
+            response["msg"] = "Sorry, A team cannot have more than one sprint at the same time.";
+            res.status(400).send(response);
+            return;
+        }
+    }
+    // ==================================================================
+
+    // updating work item from sprints
+    const updatedSprint = await SprintCollection.findOneAndUpdate({_id: sprintId}, updateData, {new:true}).catch(err => {
+        console.error(err);
+    });
+
+    if (_.isUndefined(updatedSprint) || _.isNull(updatedSprint)){
+        response["msg"] = "Sorry, There was an error updating the sprint information. Please try later.";
+        res.status(400).send(response);
+        return;
+    }
+    response["msg"] = "success";
+    response["sprint"] = updatedSprint;
 
     res.status(200).send(response);
 });
