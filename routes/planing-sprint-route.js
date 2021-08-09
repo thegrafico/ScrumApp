@@ -26,6 +26,7 @@ const {
     PRIORITY_POINTS,
     PAGES,
     SPRINT_FORMAT_DATE,
+    sortByDate,
 } = require('../dbSchema/Constanst');
 
 // ===================================================
@@ -92,10 +93,13 @@ router.get("/:id/planing/sprint", middleware.isUserInProject, async function (re
         }
     }
 
+    sprints = sortByDate(sprints, "startDate");
+
     // add default values
     teams.unshift(UNASSIGNED);
     users.unshift(UNASSIGNED);
     sprints.unshift(UNASSIGNED_SPRINT);
+
 
     // populating params
     let params = {

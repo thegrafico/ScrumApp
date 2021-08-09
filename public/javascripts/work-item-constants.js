@@ -231,6 +231,8 @@ const SPRINT_STATUS = {
     "Active": "Active",
 };
 
+const UNNASIGNED_VALUE = "0";
+
 const UNASSIGNED_SPRINT = {
     name: "unassigned",
     _id: "0",
@@ -239,6 +241,12 @@ const UNASSIGNED_SPRINT = {
 const MOVE_TO_BACKLOG_BTN = ".moveToBacklog";
 const MOVE_TO_CURRENT_SPRINT_BTN = ".moveToCurrentSprintBtn";
 const MOVE_TO_NEXT_SPRINT_BTN = ".moveToNextSprintBtn";
+
+
+const MOVE_TO_SUB_MENU_SPRINT_ITEM = ".subMenuSprintItem";
+const OPEN_WORK_ITEM_SUB_MENU_BTN = ".workItemOpenSubMenu";
+// for the scroll bar in the sub menu for moving work item to differents sprints
+let SCROLL_TO_CURRENT_SPRINT_ONCE = false;
 
 // if the function "updateSelectOption" changes, then this variable becomes true
 let IS_UPDATE_SELECT_OPTION = false;

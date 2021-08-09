@@ -24,6 +24,7 @@ const {
     PRIORITY_POINTS,
     UNASSIGNED_SPRINT,
     SPRINT_FORMAT_DATE,
+    sortByDate,
 } = require('../dbSchema/Constanst');
 
 // ===================================================
@@ -228,8 +229,8 @@ router.get("/:id/manageTeam", middleware.isUserInProject, async function (req, r
     }
 
     // sorting by date
-    sprintForPreferedTeam  = sprintForPreferedTeam.sort((a,b) => new moment(b["startDate"], SPRINT_FORMAT_DATE) - new moment(a["endDate"], SPRINT_FORMAT_DATE));
-    
+    sprintForPreferedTeam = sortByDate(sprintForPreferedTeam, "startDate");
+
     teams.unshift(UNASSIGNED);
     sprintForPreferedTeam.unshift(UNASSIGNED_SPRINT);
 

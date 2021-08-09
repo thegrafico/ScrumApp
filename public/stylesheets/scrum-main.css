@@ -385,3 +385,36 @@ td.off{
 .addOpacity{
     opacity: .6;
 }
+
+.sub-menu-move-to-sprint-container{
+    overflow-y: scroll;
+    max-height: 15vh;
+    width: 20vw;
+}
+
+.floatRigth{
+    padding-top: .5em;
+    float: right;
+}
+
+.selectForSubMenuMoveTo{
+    width: 100% !important;
+}
+
+.currentSubMenuSprint{
+    background-color:  rgba(55, 90, 127, .5);
+}
+.subMenuMoveToContainer{
+    width: 20vh;
+}
+
+.sub-menu-sprint-element-container{
+    border-bottom: 1px solid gray;
+}
+
+.sub-menu-sprint-element-container a{
+    padding-top: .5em;
+    padding-bottom: .5em;
+    text-align: center;
+    /* border: 1px solid red; */
+}

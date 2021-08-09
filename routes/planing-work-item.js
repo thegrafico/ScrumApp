@@ -23,7 +23,8 @@ const {
     MAIN_WORK_ITEMS_TO_SHOW,
     PRIORITY_POINTS,
     PAGES,
-    joinData
+    joinData,
+    sortByDate
 } = require('../dbSchema/Constanst');
 
 /**
@@ -58,7 +59,7 @@ router.get("/:id/planing/workitems", middleware.isUserInProject, async function 
     ) || [];
 
     // sorting the work items. SORT
-    workItems  = workItems.sort((a,b) => new moment(b.createdAt) - new moment(a.createdAt));
+    workItems = sortByDate(workItems, "createdAt");
 
     // Create new key (team/sprint) to store the work item team
     joinData(workItems, teams, "teamId", "equal", "_id", "team", UNASSIGNED);

@@ -109,10 +109,17 @@ async function populateWorkItemModal(workItemId){
     // add sprint
     for (const sprint of sprints) {
         let isSelected = (sprint["_id"].toString() === activeSprint.toString());
+        
+        let selectedText = sprint["name"];
+        
+        if (sprint["startDateFormated"] && sprint["endDateFormated"]){
+            selectedText += `: ${sprint["startDateFormated"]} - ${sprint["endDateFormated"]}`;
+        }
+
         updateSelectOption(
             UPDATE_WORK_ITEM["sprint"], 
             UPDATE_TYPE.ADD,
-            {text: sprint["name"], value: sprint["_id"]},
+            {text: selectedText, value: sprint["_id"]},
             isSelected
         );
     }    

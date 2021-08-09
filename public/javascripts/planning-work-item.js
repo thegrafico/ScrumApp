@@ -12,6 +12,12 @@ $(function () {
     // click on planing just to show to the user in the sidebar
     $(BTN_PLANING).click();
 
+    // make the sprint available when user view all sprints in sub menu
+    $(document).on("click", OPEN_WORK_ITEM_SUB_MENU_BTN, function(){
+        // console.log("reset scroll");
+        SCROLL_TO_CURRENT_SPRINT_ONCE = true;
+    });
+
     // // TABLE resized
     // $(WORK_ITEM_TABLE).colResizable({
     //     liveDrag:true,
@@ -90,24 +96,28 @@ $(function () {
         const workItems = getVisibleElements(TABLE_ROW_CHECKBOX_ELEMENT_CHECKED);
 
         if (_.isArray(workItems) && !_.isEmpty(workItems)){   
-            moveWorkItemToSprint(workItems, 'backlog');
+            moveWorkItemToSprint(workItems, UNNASIGNED_VALUE);
         }else{
-            moveWorkItemToSprint([workItemId], 'backlog');
+            moveWorkItemToSprint([workItemId], UNNASIGNED_VALUE);
         }
         
     });
 
-    // CURRENT
-    $(document).on("click", MOVE_TO_CURRENT_SPRINT_BTN, function(){
-        let workItemId = $(this).attr("rel");
+    // MOVE WORK ITEM TO SPRINT
+    $(document).on("click", MOVE_TO_SUB_MENU_SPRINT_ITEM, function(){
+        
+        let sprintId = $(this).attr("rel");
+        let workItemId = $(this).attr("id");
 
+        console.log(`Moving ${workItemId} to: ${sprintId}`);
+        
         // get checked elements in table
         const workItems = getVisibleElements(TABLE_ROW_CHECKBOX_ELEMENT_CHECKED);
 
         if (_.isArray(workItems) && !_.isEmpty(workItems)){   
-            moveWorkItemToSprint(workItems, 'current');
+            moveWorkItemToSprint(workItems, sprintId);
         }else{
-            moveWorkItemToSprint([workItemId], 'current');
+            moveWorkItemToSprint([workItemId], sprintId);
         }
 
     });
@@ -126,6 +136,22 @@ $(function () {
         }
     });
     // =====================================================
+
+    // TODO: REFACTOR THIS
+    $(document).on('mouseover', '.open-sub-menu-select-sprints-container', function(){
+        $(this).find('.dropdown-menu').show();
+
+        if (SCROLL_TO_CURRENT_SPRINT_ONCE){
+            $(this).find(".currentSubMenuSprint")[0].scrollIntoView({
+                behavior: 'smooth'
+            });
+            SCROLL_TO_CURRENT_SPRINT_ONCE = false;
+        }    
+    });
+
+    $(document).on('mouseover', '.subMenuItem', function(e){
+        $(".open-sub-menu-select-sprints-container").find('.dropdown-menu').hide();
+    });
 
     updateWorkItemFeedback();
 });

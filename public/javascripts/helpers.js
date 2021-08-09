@@ -599,6 +599,12 @@ function removeDisableAttr(selectElement, values){
  * @param {Array} workItems - array with the work item ids
  */
 function removeWorkItemsFromTable(workItems){
+    
+    if (!_.isArray(workItems) || _.isEmpty(workItems)){
+        console.error("Cannot remove the work item from table 'cause is either empty or undefined");
+        return;
+    }
+
     for (let itemId of workItems){
         $(`tr#${itemId}`).remove();
     }        
@@ -698,18 +704,13 @@ function unCheckAll(){
 /**
  * Move a work item to the next sprint
  * @param {Array} workItemId - Array with the Ids of the work items
- * @param {String} where ('current' | 'next' | 'backlog')
+ * @param {String} sprintId - id of the sprint. if null, then is sent to the backlog 
  */
-async function moveWorkItemToSprint(workItemId, where){
+async function moveWorkItemToSprint(workItemId, sprintId){
 
     // check work item
     if (_.isUndefined(workItemId) || _.isEmpty(workItemId) || !_.isArray(workItemId)){
         $.notify("Invalid work item was selected.", "error");
-        return;
-    }
-
-    if (_.isEmpty(where) || !_.isString(where) || !["current", 'next', 'backlog'].includes(where)){
-        $.notify("Sorry, Bad information received", "error");
         return;
     }
 
@@ -722,13 +723,12 @@ async function moveWorkItemToSprint(workItemId, where){
 
 
     const teamId = $(FILTER_BY_TEAM_GENERAL_CLASS).val();
-    console.log(teamId);
     if (_.isUndefined(teamId) || _.isEmpty(teamId)){
         $.notify("Please select a team to move to work item.", "error");
         return;
     }
 
-    const data = {"where": where, workItemIds: workItemId};
+    const data = {"sprintId": sprintId, workItemIds: workItemId};
 
     // link to make the request
     const API_LINK_MOVE_WORK_ITEM_TO_SPRINT = `/dashboard/api/${projectId}/moveWorkItemsToSprint/${teamId}`;

@@ -27,6 +27,7 @@ const {
     capitalize,
     getSprintDateStatus,
     joinData,
+    sortByDate,
 } = require('../../dbSchema/Constanst');
 
 // ================= GET REQUEST ==============
@@ -127,7 +128,7 @@ router.get("/api/:id/getworkItemsAndSprintsByTeam/:teamId", middleware.isUserInP
         joinData(workItems, sprints, "_id", "is in", "tasks", "sprint", UNASSIGNED_SPRINT);
 
         // sorting sprint
-        sprints  = sprints.sort((a,b) => new moment(b["startDate"], SPRINT_FORMAT_DATE) - new moment(a["endDate"], SPRINT_FORMAT_DATE));
+        sprints = sortByDate(sprints, "startDate");
 
         let activeSprint = SprintCollection.getActiveSprint(sprints);
 

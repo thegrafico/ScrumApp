@@ -1,6 +1,6 @@
 // =========== This function is fire as soon as the file is loaded after the HTML ===========
 $(function () {
-
+    
     // start dragg event
     startDraggable(WORK_ITEM_TABLE);
 
@@ -34,7 +34,7 @@ $(function () {
             
             // Check work items
             if (_.isArray(response.workItems) && response.workItems.length > 0){
-                appendToWotkItemTable(response.workItems, false);
+                appendToWotkItemTable(response.workItems, null, false);
             }else{
                 $.notify("This team does not have any work item yet.", "error");
             }

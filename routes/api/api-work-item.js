@@ -598,10 +598,16 @@ router.post("/api/:id/moveWorkItemsToSprint/:teamId", middleware.isUserInProject
     const teamId = req.params.teamId;
     let response = {projectId, teamId};
 
-    const {where, workItemIds} = req.body;
+    const {sprintId, workItemIds} = req.body;
 
-    if (_.isUndefined(where) || !_.isArray(workItemIds)){
-        response["msg"] = "Invalid data was received.";
+    if (_.isUndefined(sprintId) || _.isNull(sprintId)){
+        response["msg"] = "Invalid sprint was received.";
+        res.status(400).send(response);
+        return;
+    }
+
+    if (!_.isArray(workItemIds) || _.isEmpty(workItemIds)){
+        response["msg"] = "Invalid work items were received.";
         res.status(400).send(response);
         return;
     }
@@ -638,7 +644,7 @@ router.post("/api/:id/moveWorkItemsToSprint/:teamId", middleware.isUserInProject
     
     // =========== UPDATE SPRINT =================
 
-    if (where == "backlog"){
+    if (sprintId == UNASSIGNED_SPRINT["_id"]){
         let backlog_error = null;
         await SprintCollection.updateMany(
             {projectId, teamId},
@@ -657,52 +663,24 @@ router.post("/api/:id/moveWorkItemsToSprint/:teamId", middleware.isUserInProject
         response["msg"] = "Work items were moved to the backlog.";
         res.status(200).send(response);
         return;
-    }
+    } // if the 'if' above is true, the program ends there. 
 
-    let sprints = await SprintCollection.find({projectId, teamId}).catch(err => {
+    let sprint = await SprintCollection.updateOne(
+        {"_id": sprintId, "projectId": projectId},
+        {$push: {"tasks": {$each: workItemIds}}}
+    ).catch(err => {
         console.error(err);
     });
 
-    if (_.isUndefined(sprints)){
-        response["msg"] = "Sorry, There was a problem getting the sprints information.";
+    if (_.isUndefined(sprint) || _.isNull(sprint)){
+        response["msg"] = "Sorry, There was a problem moving Work item/s to the sprint. Try later.";
         res.status(400).send(response);
         return;
     }
-
-    // check if there is any sprint
-    if (_.isEmpty(sprints)){
-        response["msg"] = "Sorry, There is not sprint to move to the work item.";
-        res.status(400).send(response);
-        return;
-    }
-
-    let activeSprints = sprints.filter( each => {
-        return each.status == SPRINT_STATUS["Active"];
-    });
-
-    // TODO: check if there is more than one sprint active, if so, update and just select one 
-    // base on the current date
-    if (_.isEmpty(activeSprints)){
-        response["msg"] = "Sorry, There is not ACTIVE sprint to move to the work item.";
-        res.status(400).send(response);
-        return;
-    }
-
-    let activeSprint = activeSprints[0];
-    for (const itemId of workItemIds) {
-        activeSprint.tasks.push(itemId);
-    }
-
-    await activeSprint.save().then(doc => {
-        console.log("Work item was moved!");
-        response["msg"] = "Work Item was moved to the sprint.";
-        res.status(200).send(response);
-    }).catch(err => {
-        console.error(err);
-        response["msg"] = "Sorry, There was a problem moving the work item to the sprint. Try later.";
-        res.status(200).send(response);
-    });
+    console.log(sprint);
     
+    response["msg"] = (workItemIds.length > 0) ? "Work Items were moved to the sprint.": "Work Item was moved to the sprint.";
+    res.status(200).send(response);
 });
 
 module.exports = router;

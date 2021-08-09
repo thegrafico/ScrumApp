@@ -1,0 +1,32 @@
+<div class="btn-group dropright open-sub-menu-select-sprints-container">
+
+    <div class="subMenuMoveToContainer">
+        
+        <a class="dropdown-item" href="#" rel="<%=workItems[i]['_id']%>">
+            Move to sprint...
+            <span><i class="fas fa-chevron-right floatRigth"></i></span>
+        </a>
+    </div>
+
+    <div class="dropdown-menu sub-menu-move-to-sprint-container">
+       
+        <% for (let j = 1; j < sprints.length; j++) { %>
+            <div class="sub-menu-sprint-element-container">
+
+            <% if (sprints[j]["_id"] == activeSprintId) { %>
+                <a class="dropdown-item subMenuSprintItem currentSubMenuSprint" href="#" rel="<%=sprints[j]['_id']%>" id="<%=workItems[i]['_id']%>"> 
+                    <%=sprints[j]['name']%> :
+                    <%=sprints[j]['startDateFormated']%> - <%=sprints[j]['endDateFormated']%>
+                </a>
+            <% }else{ %>
+                <a class="dropdown-item subMenuSprintItem" href="#" rel="<%=sprints[j]['_id']%>" id="<%=workItems[i]['_id']%>"> 
+                    <%=sprints[j]['name']%> :
+                    <%=sprints[j]['startDateFormated']%> - <%=sprints[j]['endDateFormated']%>
+                </a>
+            <% } %>
+            </div>
+        
+        <% } %>
+        
+    </div>
+</div>

@@ -23,6 +23,7 @@ const {
     WORK_ITEM_STATUS_COLORS,
     PRIORITY_POINTS,
     PAGES,
+    sortByDate
 } = require('../dbSchema/Constanst');
 
 // ===================================================
@@ -92,6 +93,8 @@ router.get("/:id/planing/backlog", middleware.isUserInProject, async function (r
         }
     }
 
+    // sorting sprint by date
+    sprints = sortByDate(sprints, "startDate");
 
     // adding defaults
     teams.unshift(UNASSIGNED);

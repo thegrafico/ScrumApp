@@ -195,3 +195,18 @@ module.exports.joinData = (dataA, dataB, keyA, action, keyB, newKey, defaultValu
         }
     }
 }
+
+/**
+ * Sort an array by the key (date)
+ * @param {Array} elements - array to sort
+ * @param {String} key - sorting key
+ * @returns 
+ */
+module.exports.sortByDate = (elements, keyA, how="asc") => {
+
+    if (how === "asc"){
+        return elements.sort((a,b) => new moment(b[keyA], SPRINT_FORMAT_DATE) - new moment(a[keyA], SPRINT_FORMAT_DATE));
+    }
+
+    return elements.sort((a,b) => new moment(a[keyA], SPRINT_FORMAT_DATE) - new moment(b[keyA], SPRINT_FORMAT_DATE));
+}

@@ -99,7 +99,7 @@
                         </tr>
                     </thead>
                     <tbody class="backlog-table-body">
-                        <% for (let i = 0; i < workItems.length; ++i) {%>
+                        <% for (let i = 0, order = 1; i < workItems.length; ++i) {%>
 
                             <% if(workItems[i].show){ %>
 
@@ -113,7 +113,7 @@
                                     </td> 
                                     
                                     <!-- Order -->
-                                    <td class="orderColumn"><%=i+1%></td>
+                                    <td class="orderColumn"><%=order++%></td>
                                     
                                     <!-- ID -->
                                     <td class="tableColumnID"> <%=workItems[i]["itemId"]%></td>
@@ -130,23 +130,20 @@
 
                                     <!-- Sub MENU -->
                                     <td class="tdWorkItemSubMenu">
-                                        <span class="btn btn-outline-info" data-bs-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                                        <span class="btn btn-outline-info workItemOpenSubMenu" data-bs-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
                                             <i class="fas fa-ellipsis-v workItemSubMenuIcon"></i>
                                         </span>
-                                        <!-- <a class="nav-link dropdown-toggle show" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="true">Dropdown</a> -->
                                         <div id="workItemSubMenu" class="dropdown-menu " data-bs-popper="none">
-                                            
-                                            <a class="dropdown-item moveToCurrentSprintBtn" href="#" role="button" rel="<%=workItems[i]['_id']%>">
-                                                Move to current Sprint
-                                            </a>                                        
-                                            
-                                            <a class="dropdown-item moveToNextSprintBtn" href="#" rel="<%=workItems[i]['_id']%>">
-                                                Move to next Sprint
+
+                                            <a class="dropdown-item subMenuItem subMenuSprintItem" href="#" rel="<%=activeSprintId%>" id="<%=workItems[i]['_id']%>">
+                                                Move to current sprint
                                             </a>
+
+                                            <%- include('modals/subMenuMoveToSprint', {i: i}); %>
+
                                             
-                                            <a class="dropdown-item" href="#">Something else here</a>
                                             <div class="dropdown-divider"></div>
-                                            <a class="dropdown-item" href="#">Separated link</a>
+                                            <a class="dropdown-item subMenuItem" href="#">Separated link</a>
                                         </div>
                                     </td>
                                     
