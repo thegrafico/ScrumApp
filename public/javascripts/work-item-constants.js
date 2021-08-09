@@ -202,6 +202,9 @@ const PAGES = {
 
 //  ======= SPRINT
 
+const FILTER_BY_SPRINT_INPUT = "#filterBySprint";
+const FILTER_BY_TEAM_SPRINT = "#filter-by-team-sprint";
+
 // CREATE MODAL
 const SPRINT_CREATE_MODAL_TEAM_INPUT = "#sprint-team-input";
 

@@ -348,7 +348,7 @@ function getTableHeadersArray(tableId){
  * 
  * 
  */
-function appendToWotkItemTable(workItems, showIfSprint=true, index=null, removeTable=true){
+function appendToWotkItemTable(workItems, index=null, showIfSprint=true, removeTable=true){
 
     if (!_.isArray(workItems) || _.isEmpty(workItems)){
         // console.log("Work items is empty");
@@ -755,8 +755,9 @@ async function moveWorkItemToSprint(workItemId, where){
  * @param {String} updateType 
  * @param {Any} valueToUpdate 
  * @param {Object} inputType 
+ * @param {Object} others 
  */
-function update_html(currentPage, updateType, valueToUpdate, inputType){
+function update_html(currentPage, updateType, valueToUpdate, inputType, others=null){
     switch (currentPage){
         case "statistics":
             updateStatisticsHtml(updateType, valueToUpdate);
@@ -816,19 +817,61 @@ function update_html(currentPage, updateType, valueToUpdate, inputType){
             // TODO: verify userBestTeam
             updateSelectOption(WORK_ITEM["sprint"], updateType, valueToUpdate);
 
-            // sprint modal
-            updateSelectOption(SPRINT_CREATE_MODAL_TEAM_INPUT, updateType, valueToUpdate);
-            updateSelectOption(SPRINT_DELETE_MODAL_SELECT_TEAM, updateType, valueToUpdate);
-
             // SPRINT FILTERING
             updateSelectOption(SPRINT_FILTER_BY_SPRINT_SELECT, updateType, valueToUpdate);
             updateSelectOption(FILTER_BY_TEAM_SPRINT, updateType, valueToUpdate);
-
+        case "manageSprint":
             
+            // USER 
+            if (inputType === UPDATE_INPUTS.USER){
+                updateSelectOption(WORK_ITEM["user"], updateType, valueToUpdate);
+                updateSelectOption(MODAL_REMOVE_USER_INPUT, updateType, valueToUpdate);
+            }
+
+            // SPRINT
+            if (inputType === UPDATE_INPUTS.SPRINT){
+                updateSelectOption(WORK_ITEM["sprint"], updateType, valueToUpdate);
+
+                // SPRINT FILTERING
+                updateSelectOption(SPRINT_FILTER_BY_SPRINT_SELECT, updateType, valueToUpdate);
+                updateSelectOption(FILTER_BY_TEAM_SPRINT, updateType, valueToUpdate);
+
+                // in case we received a sprint
+                if (others && others["sprint"]){
+                    addSprintToTable(others["sprint"]);
+                }
+            }
+
+            // TEAM 
+            if (inputType === UPDATE_INPUTS.TEAM){
+                updateSelectOption(SPRINT_DELETE_MODAL_SELECT_TEAM, updateType, valueToUpdate);               
+                updateSelectOption(SPRINT_CREATE_MODAL_TEAM_INPUT, updateType, valueToUpdate);
+                updateSelectOption(WORK_ITEM["team"], updateType, valueToUpdate);
+                updateSelectOption(TEAM_SELECT_INPUT_ID, updateType, valueToUpdate);
+            }   
         default:
             break;
     }
 }
+
+/**
+ * 
+ * @param {String} rowId - id of the row to be update
+ * @param {Object} elementToUpdate - data of the element to be updated in the tab;e
+ * @param {*} appendFunction  - function to append the element to the table
+ * @param {*} functionParams - parameters of the function to append the element to the table
+ */
+function updateTableElement(rowId, elementToUpdate, appendFunction, functionParams = []){
+    // get the index of the element
+    let index = $(`tr#${rowId}`).index();
+
+    // remove the element from the table
+    removeWorkItemsFromTable([rowId]);
+
+    // add the element to the table
+    appendFunction(elementToUpdate, index, ...functionParams);
+}
+
 
 /**
  * Enable the functionality for the trash button
@@ -846,6 +889,7 @@ function enableTrashButton(enable){
         $(`${TRASH_BTN_GENERAL_CLASS} i`).addClass("grayColor");
     }
 }
+
 
 /**
  * Add user to table for manage table
@@ -941,6 +985,7 @@ function addUserToTable(userInfo){
     }
 }
 
+
 /**
  * Remove the work item from the project
  * @param {Array} workItemsId - Array with all work item ids 
@@ -976,6 +1021,7 @@ function addUserToTable(userInfo){
     }
 }
 
+
 /**
  * In order to focus the work item, click the title when focus
  */
@@ -990,6 +1036,10 @@ function checkTitleWhenOpen(selectorId){
     }
 }
 
+/**
+ * Add events for work item update and create
+ * @param {Object} element 
+ */
 function addWorkItemEvents(element){
     
     // When title input is changed
@@ -1143,6 +1193,7 @@ function updateWorkItemFeedback(){
     updateNumberOfWorkItems("#numberOfReviewWorkItems", "Review");
 }
 
+
 /**
  * Update the text of the box for the feedback
  * @param {String} selector 
@@ -1179,6 +1230,7 @@ function updateNumberOfWorkItems(selector, option){
         $(selector).parent().addClass("invisible");       
     }
 }
+
 
 /**
  * Show the feedback message for the checked elements

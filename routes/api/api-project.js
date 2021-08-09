@@ -125,6 +125,10 @@ router.get("/api/:id/getworkItemsAndSprintsByTeam/:teamId", middleware.isUserInP
         }
 
         joinData(workItems, sprints, "_id", "is in", "tasks", "sprint", UNASSIGNED_SPRINT);
+
+        // sorting sprint
+        sprints  = sprints.sort((a,b) => new moment(b["startDate"], SPRINT_FORMAT_DATE) - new moment(a["endDate"], SPRINT_FORMAT_DATE));
+
         let activeSprint = SprintCollection.getActiveSprint(sprints);
 
         sprints.unshift(UNASSIGNED_SPRINT);
@@ -205,6 +209,7 @@ router.get("/api/:id/getAllSprintWorkItems/:teamId", middleware.isUserInProject,
         return;
     }
 
+    teamSprints = teamSprints.sort((a,b) => new moment(b["startDate"], SPRINT_FORMAT_DATE) - new moment(a["endDate"], SPRINT_FORMAT_DATE));
     teamSprints.unshift(UNASSIGNED_SPRINT);
 
     response["msg"] = "success";
@@ -364,9 +369,9 @@ router.get("/api/:id/getTeamSprints/:teamId", middleware.isUserInProject, async 
             res.status(400).send(response);
             return;
         }
-        sprints.unshift(UNASSIGNED_SPRINT);
 
-        console.log(sprints);
+        sprints = sprints.sort((a,b) => new moment(b["startDate"], SPRINT_FORMAT_DATE) - new moment(a["endDate"], SPRINT_FORMAT_DATE));
+        sprints.unshift(UNASSIGNED_SPRINT);
 
         // send response to user
         response["msg"] = "Success";
@@ -479,7 +484,7 @@ router.post("/api/:id/newTeam", middleware.isUserInProject, async function (req,
 /**
  * METHOD: POST - REMOVE TEAM
  */
- router.post("/api/:id/deleteTeam", middleware.isUserInProject, async function (req, res) {
+router.post("/api/:id/deleteTeam", middleware.isUserInProject, async function (req, res) {
     
     const projectId = req.params.id;
 
@@ -643,6 +648,12 @@ router.post("/api/:id/createSprint", middleware.isUserInProject, async function 
                 return;
             }
 
+            newSprint = newSprint.toObject();
+
+            // formatting sprint dates
+            newSprint["startDateFormated"] = moment(newSprint["startDate"], SPRINT_FORMAT_DATE).format("MMM Do");
+            newSprint["endDateFormated"] = moment(newSprint["endDate"], SPRINT_FORMAT_DATE).format("MMM Do");
+
             sprints.push(newSprint);
         }
 
@@ -687,6 +698,13 @@ router.post("/api/:id/createSprint", middleware.isUserInProject, async function 
             res.status(400).send(response);
             return;
         }
+
+        newSprint = newSprint.toObject();
+
+        // formatting sprint dates
+        newSprint["startDateFormated"] = moment(newSprint["startDate"], SPRINT_FORMAT_DATE).format("MMM Do");
+        newSprint["endDateFormated"] = moment(newSprint["endDate"], SPRINT_FORMAT_DATE).format("MMM Do");
+        
         response["sprint"] = newSprint;
         response["multiple"] = false; // just one sprint was added
         response["msg"] = "Sprint was created!";
@@ -1066,7 +1084,6 @@ router.post("/api/:id/deleteUsersFromProject", middleware.isUserInProject, async
     
     let response = {userIds: userIds}
 
-    console.log("Request from user: ", userIds);
     // empty, or not array, or not all elements in array are string
     if (_.isEmpty(userIds) || !_.isArray(userIds) || !userIds.every( each => _.isString(each))){
         response["msg"] = "Sorry, Invalid users were received.";
@@ -1108,6 +1125,41 @@ router.post("/api/:id/deleteUsersFromProject", middleware.isUserInProject, async
 
 
 /**
+ * METHOD: POST - REMOVE SPRINT FROM PROJECT
+ */
+router.post("/api/:id/deleteSprintsFromProject", middleware.isUserInProject, async function (req, res) {
+    
+    console.log("Getting request to remove sprint from project...");
+
+    const projectId = req.params.id;
+    
+    let  { sprintsIds } = req.body; 
+    
+    let response = {sprintsIds: sprintsIds};
+
+    // empty, or not array, or not all elements in array are string
+    if (_.isEmpty(sprintsIds) || !_.isArray(sprintsIds) || !sprintsIds.every( each => _.isString(each))){
+        response["msg"] = "Sorry, Invalid sprints were received.";
+        res.status(400).send(response);
+        return;
+    }
+
+    let removedSprint = await SprintCollection.deleteMany({projectId: projectId, _id: {$in: sprintsIds}}).catch(err => {
+        console.error(err);
+    });
+    
+    if (_.isUndefined(removedSprint) || _.isNull(removedSprint)){
+        response["msg"] = "Sorry, There was an error removing the sprints.";
+        res.status(400).send(response);
+        return;  
+    }
+
+    response["msg"] =  (sprintsIds.length > 0 ) ?  "Sprints were removed." : "Sprint was removed.";
+    res.status(200).send(response);
+});
+
+
+/**
  * METHOD: POST - UPDATE SPRINT FOR TEAM
  */
 // TODO: refactor this. instead of doing the query to update, uses the same sprint mongoose element
@@ -1123,7 +1175,6 @@ router.post("/api/:id/updateSprint/:teamId/:sprintId", middleware.isUserInProjec
 
     // expected data
     let  { name, startDate, endDate } = req.body;
-    console.log("received: ", req.body);
     let updateData = {};
 
     // getting the current sprint
@@ -1203,6 +1254,8 @@ router.post("/api/:id/updateSprint/:teamId/:sprintId", middleware.isUserInProjec
             return;
         }
 
+        teamSprints = teamSprints.filter(each => { return each["_id"] != sprintId});
+
         if (!_.isEmpty(teamSprints) && !SprintCollection.isValidSprintDate(teamSprints, currentStartDate, currentEndDate)){
             response["msg"] = "Sorry, A team cannot have more than one sprint at the same time.";
             res.status(400).send(response);
@@ -1212,7 +1265,7 @@ router.post("/api/:id/updateSprint/:teamId/:sprintId", middleware.isUserInProjec
     // ==================================================================
 
     // updating work item from sprints
-    const updatedSprint = await SprintCollection.findOneAndUpdate({_id: sprintId}, updateData, {new:true}).catch(err => {
+    let updatedSprint = await SprintCollection.findOneAndUpdate({_id: sprintId}, updateData, {new:true}).catch(err => {
         console.error(err);
     });
 
@@ -1221,6 +1274,11 @@ router.post("/api/:id/updateSprint/:teamId/:sprintId", middleware.isUserInProjec
         res.status(400).send(response);
         return;
     }
+    updatedSprint = updatedSprint.toObject();
+    updatedSprint["startDateFormated"] = moment(updatedSprint["startDate"], SPRINT_FORMAT_DATE).format("MMM Do");
+    updatedSprint["endDateFormated"] = moment(updatedSprint["endDate"], SPRINT_FORMAT_DATE).format("MMM Do");
+
+
     response["msg"] = "success";
     response["sprint"] = updatedSprint;
 

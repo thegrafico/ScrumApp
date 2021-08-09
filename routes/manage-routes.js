@@ -247,7 +247,7 @@ router.get("/:id/manageTeam", middleware.isUserInProject, async function (req, r
         "addUserModal": true,
         "sprints": sprintForPreferedTeam,
         "activeSprintId": activeSprintId,
-        "currentPage": PAGES.MANAGE_TEAM,
+        "currentPage": PAGES.MANAGE_SPRINT,
         "userIds": userIds,
         "userTeam": userPreferedTeam,
         "stylesPath": managePath["styles"],

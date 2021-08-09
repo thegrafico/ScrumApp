@@ -180,15 +180,8 @@ $(function () {
             // Success message
             if (response){
                 $.notify(response.msg, "success");
-                
-                // get the index of the element
-                let index = $(`tr#${workItemId}`).index();
 
-                // remove the element from the table
-                removeWorkItemsFromTable([workItemId]);
-
-                // add the element to the table
-                appendToWotkItemTable([response["workItem"]], true, index, false);
+                updateTableElement(workItemId, [response["workItem"]], appendToWotkItemTable, [true, false]);
 
                 // updating the feedback messages
                 updateWorkItemFeedback();

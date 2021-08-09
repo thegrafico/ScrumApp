@@ -7,6 +7,8 @@ const UPDATE_SPRINT_NAME = ".update-sprint-name";
 const UPDATE_SPRINT_BTN_SUBMIT = "#update-sprint-btn-submit";
 const UPDATE_DATE_RANGE_CONTAINER = ".update-container-date";
 const UPDATE_FILTER_BY_TEAM = "#update-sprint-filter-by-team";
+const TRASH_BTN_REMOVE_SPRINT = "#trashBtnManageSprint";
+
 
 const DATE_RANGE_INPUT_ID = ".sprint-start-date-input";
 
@@ -82,7 +84,6 @@ $(function () {
         hideErrSpanMessage(SPRINT_NAME_SPAN_ERROR);
 
         // ============ DATE ==============
-        console.log($(DATE_RANGE_INPUT_ID).val() );
         let {startDate, endDate} = formatDates( $(DATE_RANGE_INPUT_ID).val() )
         
         if (_.isNull(startDate) || _.isNull(endDate)){
@@ -111,26 +112,22 @@ $(function () {
 
         // Success message
         if (response){
+            
             $.notify(response.msg, "success");
             $(CLOSE_MODAL_SPRINT_BTN).click();
 
             $(SPRINT_FILTER_BY_SPRINT_SELECT).attr("disabled", false);
             updateSelectOption(SPRINT_FILTER_BY_SPRINT_SELECT, UPDATE_TYPE.DELETE, "0");   
 
-            if (response.multiple){
-                console.log("Multiple were added");
-                // get user best team or selected team is available
-                // update selected team
-            }else{
-                console.log("One sprint added");
-                // get user best team or selected team is available
-                update_html( 
-                    $(CURRENT_PAGE_ID).val(), 
-                    UPDATE_TYPE.ADD, 
-                    {"value": response.sprint._id, "text": response.sprint.name},
-                    UPDATE_INPUTS.TEAM
-                );
-            }
+            
+            // get user best team or selected team is available
+            update_html( 
+                $(CURRENT_PAGE_ID).val(), 
+                UPDATE_TYPE.ADD, 
+                {"value": response.sprint._id, "text": response.sprint.name},
+                UPDATE_INPUTS.SPRINT,
+                { "sprint": response["sprint"]}
+            );
             
         }else{ // error messages
             $.notify(response_error.data.responseJSON.msg, "error");
@@ -180,7 +177,7 @@ $(function () {
                 $(CURRENT_PAGE_ID).val(), 
                 UPDATE_TYPE.DELETE, 
                 sprintId,
-                undefined,
+                UPDATE_INPUTS.SPRINT,
             );            
         }else{ // error messages
             $.notify(response_error.data.responseJSON.msg, "error");
@@ -243,6 +240,7 @@ $(function () {
         }
     });
 
+    // ================ UPDATE ===============
     // UPDATE MODAL BUTTON
     $(document).on("click", OPEN_UPDATE_SPRINT_MODAL_BTN, function(){
         let sprintId = $(this).attr("id");
@@ -298,7 +296,6 @@ $(function () {
         let projectId   = $(PROJECT_ID).val();
 
         // check team Id
-        console.log(teamId);
         if (_.isUndefined(teamId) || teamId === "0"){
             $.notify("Sorry, undefined team is selected", "error");
             return;
@@ -320,9 +317,11 @@ $(function () {
 
         // Success message
         if (response){
-            // TODO: update the html
-            $.notify(response.msg, "success");
-            console.log(response);
+            
+            let sprintId = response["sprint"]["_id"];
+
+            updateTableElement(sprintId, response["sprint"], addSprintToTable);
+
         }else{ // error messages
             $.notify(response_error.data.responseJSON.msg, "error");
         }
@@ -354,13 +353,12 @@ $(function () {
 
 
             if (response.sprints.length > 1){
-
-                for(let sprint of response.sprints){
+                for (const sprint of response.sprints) {
                     
                     // ignore unnasigned sprint
                     if (sprint["_id"] == "0"){ continue;}
 
-                    addSprintToTable(sprint);
+                    addSprintToTable(response.sprints);
                 }
             }else{
                 $.notify("It seems this team does not have any sprint yet.", "error");
@@ -373,6 +371,49 @@ $(function () {
 
     });
 
+    // TRASH BTN EVENT 
+    $(TRASH_BTN_REMOVE_SPRINT).on("click", async function(){
+    
+        let checkedElements = getVisibleElements(TABLE_ROW_CHECKBOX_ELEMENT_CHECKED);
+
+        // check if not empty
+        if (!_.isArray(checkedElements) || _.isEmpty(checkedElements) ){
+            $.notify("Invalid sprints were selected", "error");
+            return;
+        }
+
+        const projectId = $(PROJECT_ID).val();
+
+        const data = {"sprintsIds": checkedElements};
+        const API_LINK_REMOVE_SPRINTS_FROM_PROJECT = `/dashboard/api/${projectId}/deleteSprintsFromProject/`
+
+        let response_error = undefined;
+        const response = await make_post_request(API_LINK_REMOVE_SPRINTS_FROM_PROJECT, data).catch(err => {
+            response_error = err;
+        });
+
+        if (response){
+            removeCheckedElement();
+            
+            $.notify(response.msg, "success");
+            
+            // disable the trash button again
+            enableTrashButton(false);
+
+            for (let i = 0; i < checkedElements.length; i++) {
+                let sprintId = checkedElements[i];
+                update_html( 
+                    $(CURRENT_PAGE_ID).val(), 
+                    UPDATE_TYPE.DELETE, 
+                    sprintId,
+                    null
+                );
+            }
+        }else{
+            $.notify(response_error.data.responseJSON.msg, "error");
+        }
+    });
+    
 });
 
 
@@ -426,10 +467,12 @@ function formatDates(pickerDateValue){
 }
 
 /**
- * Add user to table for manage table
- * @param {Object} userInfo 
+ * Add the sprints to the table
+ * @param {Object} sprint 
+ * @param {number} index
+ * @returns 
  */
-function addSprintToTable(sprint){
+function addSprintToTable(sprint, index=null){
 
     if (_.isEmpty(sprint)){
         return;
@@ -499,6 +542,11 @@ function addSprintToTable(sprint){
         ${td_edit}
     </tr>`;
 
-    $(`${MANAGE_TABLE_ID} > tbody:last-child`).append(table_row);
+    if (index != null){
+        $(`${MANAGE_TABLE_ID} > tbody > tr`).eq(index).before(table_row);
+        index = null; // appply index just to the first element
+    }else{
+        $(`${MANAGE_TABLE_ID} > tbody`).prepend(table_row);
+    }
 }
 
