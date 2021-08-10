@@ -502,7 +502,15 @@ function appendToWotkItemTable(workItems, index=null, showIfSprint=true, removeT
 
         // add at index if user wants to.
         if (index != null){
-            $(`${WORK_ITEM_TABLE} > tbody > tr`).eq(index).before(table_row);
+
+            let numberOflements = $(`${WORK_ITEM_TABLE} > tbody > tr`).length;
+
+            if (numberOflements != index){
+                $(`${WORK_ITEM_TABLE} > tbody > tr`).eq(index).before(table_row);
+            }else{
+                $(`${WORK_ITEM_TABLE} > tbody > tr`).eq(index -1).after(table_row);
+            }
+            index = null;
         }else{
             $(`${WORK_ITEM_TABLE} > tbody:last-child`).append(table_row);
         }

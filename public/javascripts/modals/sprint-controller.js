@@ -543,8 +543,15 @@ function addSprintToTable(sprint, index=null){
     </tr>`;
 
     if (index != null){
-        $(`${MANAGE_TABLE_ID} > tbody > tr`).eq(index).before(table_row);
-        index = null; // appply index just to the first element
+
+        let numberOflements = $(`${MANAGE_TABLE_ID} > tbody > tr`).length;
+
+        if (numberOflements != index){
+            $(`${MANAGE_TABLE_ID} > tbody > tr`).eq(index).before(table_row);
+        }else{
+            $(`${MANAGE_TABLE_ID} > tbody > tr`).eq(index -1).after(table_row);
+        }
+        index = null;
     }else{
         $(`${MANAGE_TABLE_ID} > tbody`).prepend(table_row);
     }
