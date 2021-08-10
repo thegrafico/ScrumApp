@@ -568,6 +568,15 @@ function addDisableAttr(selectElement, value){
 }
 
 /**
+ * 
+ * @param {String} selectId - id of the select element
+ * @param {Boolean} enable - true to enable the disabled attr
+ */
+function setDisabledAttr(selectId, enable){
+    $(selectId).attr("disabled", enable);
+}
+
+/**
  * Return if there is at least one element checked from the selector class
  * @param {String} inputClassCheckbox - class that the input element has 
  * @returns {Boolean} True if there is at least one elemenet checked

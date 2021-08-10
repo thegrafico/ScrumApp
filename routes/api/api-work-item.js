@@ -321,7 +321,7 @@ router.post("/api/:id/addCommentToWorkItem/:workItemId", middleware.isUserInProj
 /**
  * METHOD: POST - Update work item
  */
-router.post("/api/:id/update_work_item/:workItemId", middleware.isUserInProject, async function (req, res) {
+router.post("/api/:id/updateWorkItem/:workItemId", middleware.isUserInProject, async function (req, res) {
     
     console.log("Getting request to update work item...");
     
@@ -357,6 +357,13 @@ router.post("/api/:id/update_work_item/:workItemId", middleware.isUserInProject,
     // Validate work item belong to this project id
     if (workItem.projectId != projectId){
         response["msg"] = "This work item does not belong to the project.";
+        res.status(400).send(response);
+        return;
+    }
+
+    // validate work item is not completed yet
+    if (workItem["status"] === WORK_ITEM_STATUS["Completed"]){
+        response["msg"] = "Sorry, Completed work items cannot be edited. Still you can add comments to it.";
         res.status(400).send(response);
         return;
     }

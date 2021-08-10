@@ -418,3 +418,12 @@ td.off{
     text-align: center;
     /* border: 1px solid red; */
 }
+
+.taskIcon{
+    font-size: 1.0em !important;
+}
+
+.completedWorkItemsMsg{
+    text-align: center;
+    color: #dc3545!important;
+}

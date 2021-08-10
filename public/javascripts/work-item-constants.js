@@ -144,6 +144,10 @@ const FILTER_BY_TEAM_MANAGE_INPUT = "#manage-filter-by-team";
 
 // SAVE WORK ITEM BTN
 const SAVE_WORK_ITEM_BTN = "#saveStatusBtn";
+const SAVE_UPDATE_WORK_ITEM_BTN = ".saveUpdateWorkItem";
+
+const COMPLETED_WORK_ITEM_MESSAGE = ".completedWorkItemsMsg";
+
 
 // TRASH CAN ICON
 const TRASH_BTN_WORK_ITEM = "#trashBtnWorkItem";

@@ -170,7 +170,7 @@ $(function () {
             const projectId = $(PROJECT_ID).val();
             const workItemId = $(WORK_ITEM_ID).val();
 
-            const API_LINK_UPDATE_WORK_ITEM = `/dashboard/api/${projectId}/update_work_item/${workItemId}`;
+            const API_LINK_UPDATE_WORK_ITEM = `/dashboard/api/${projectId}/updateWorkItem/${workItemId}`;
             
             let response_error = null;
             const response = await make_post_request(API_LINK_UPDATE_WORK_ITEM, workItemValuesToUpdate).catch(err=> {

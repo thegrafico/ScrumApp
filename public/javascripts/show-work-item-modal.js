@@ -83,7 +83,7 @@ async function populateWorkItemModal(workItemId){
     $(UPDATE_WORK_ITEM["numberOfComments"]).text(workItem["comments"].length);
 
     // STATUS
-    let status = workItem["status"];
+    const status = workItem["status"];
     $(`${UPDATE_WORK_ITEM["btn_change_status"]} span.${status}`)[0].click();
     
     // TYPE
@@ -134,6 +134,25 @@ async function populateWorkItemModal(workItemId){
     resetWorkItemState();
     activeSaveButton();
     setWorkItemState();
+
+    let isCompletedWorkItem = (status == "Completed");
+
+    makeWorkItemUpdatable(isCompletedWorkItem);
+}
+
+/**
+ * Make the work item updatable, meaning it can be update. 
+ * @param {Boolean} makeItUpdatable - if true work item can be saved. 
+ */
+function makeWorkItemUpdatable(makeItUpdatable){
+    // ASSIGNED USER
+    if (makeItUpdatable){
+        $(SAVE_UPDATE_WORK_ITEM_BTN).addClass("d-none");
+        $(COMPLETED_WORK_ITEM_MESSAGE).removeClass("d-none");
+    }else{
+        $(COMPLETED_WORK_ITEM_MESSAGE).addClass("d-none");
+        $(SAVE_UPDATE_WORK_ITEM_BTN).removeClass("d-none");
+    }
 }
 
 /**

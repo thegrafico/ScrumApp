@@ -4,8 +4,16 @@
 
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="modalTitle">Work item </h5> &nbsp; &nbsp; <i
-                    class="fas fa-bolt taskIcon"></i>
+                
+                <div>
+                    <h5 class="modal-title" id="modalTitle">
+                        Work item
+                        <span>
+                            <i class="fas fa-bolt taskIcon"></i>
+                        </span>  
+                    </h5> 
+                </div>                
+
                 <button type="button" class="close close-modal-button" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -74,7 +82,7 @@
 
                         <!-- BUTTON TO SAVE THE WORK ITEM STATUS -->
                         <div class="col">
-                            <div class="saveStatusBtn" id="saveStatusBtn">
+                            <div class="saveStatusBtn saveUpdateWorkItem" id="saveStatusBtn">
                                 <i class="far fa-save"></i>
                                 <span class="tooltiptext">Save</span>
                             </div>
@@ -100,9 +108,9 @@
                                                 aria-expanded="false">
                                                 
                                                 <% for (const [key, value] of Object.entries(statusWorkItem)) { %>
-                                                        <i class="fa fa-circle <%=value['class']%>" aria-hidden="true"></i>
-                                                        <%=key%>
-                                                        <%break%>
+                                                    <i class="fa fa-circle <%=value['class']%>" aria-hidden="true"></i>
+                                                    <%=key%>
+                                                    <%break%>
                                                 <%}%>
                                             </a>
 
@@ -251,6 +259,11 @@
                 </fieldset>
 
             </div>
+
+            <div class="completedWorkItemsMsg d-none">
+                <span class="small">Completed work items cannot be edited. (You still can add comments)</span>
+            </div>
+            
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary close-modal-button" data-dismiss="modal">Cancel</button>
             </div>
