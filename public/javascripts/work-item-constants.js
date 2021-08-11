@@ -28,10 +28,14 @@ const WORK_ITEM = {
     btn_change_status: ".btnWorkItemStatus",
     btn_add_tags: "#addTagBtn",
     btn_remove_tag: ".rmTag",
+    number_of_comments: "#numberOfCommentSpan",
 
     // CONTAINERS
     tag_container: ".tagsContainer",
     tag_template: TAG_TEMPLATE,
+
+    // Modal Id
+    modal_id :".createNewItemModal",
 
 };
 
@@ -58,7 +62,7 @@ const UPDATE_WORK_ITEM = {
     btn_add_tags: "#udpate-add-tags-btn",
     btn_remove_tag: ".rmTag",
     subId: "#update-work-item-sub-id",
-    numberOfComments: "#update-number-of-comments",
+    number_of_comments: "#update-number-of-comments",
 
     current_type: "#update-current-type",
     current_status: "#update-current-work-item-status",
@@ -68,6 +72,8 @@ const UPDATE_WORK_ITEM = {
     tag_container: ".update-tags-container",
     tag_template: UPDATE_TAG_TEMPLATE,
 
+    // Modal Id
+    modal_id: ".work-item-information",
 
 };
 

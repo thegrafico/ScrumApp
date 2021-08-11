@@ -79,9 +79,6 @@ async function populateWorkItemModal(workItemId){
     // ASSIGNED USER
     $(UPDATE_WORK_ITEM["user"]).val(workItem["assignedUser"]["id"] || "0").change();
 
-    // NUMBER OF COMMENTS
-    $(UPDATE_WORK_ITEM["numberOfComments"]).text(workItem["comments"].length);
-
     // STATUS
     const status = workItem["status"];
     $(`${UPDATE_WORK_ITEM["btn_change_status"]} span.${status}`)[0].click();
@@ -97,7 +94,10 @@ async function populateWorkItemModal(workItemId){
     // DESCRIPTION
     $(UPDATE_WORK_ITEM["description"]).val(workItem["description"]);
 
-    // TAGS
+    // Cleaning tags
+    $(`${UPDATE_WORK_ITEM["tag_container"]} span`).remove();
+
+    // Adding TAGS
     for (const tag of workItem["tags"]) {
         const html_tag = ADD_TAG_TEMPLATE.replace(REPLACE_SYMBOL, tag);
         $(UPDATE_WORK_ITEM["tag_container"]).append(html_tag);
@@ -124,7 +124,10 @@ async function populateWorkItemModal(workItemId){
         );
     }    
 
-    // COMMENTS
+    // add update number of comments
+    $(UPDATE_WORK_ITEM["number_of_comments"]).text(workItem["comments"].length);
+
+    // Add comments
     for (let comment of workItem["comments"]){
         // since the request is done (Success), we can add the html 
         const comment_html = COMMENT_HTML_TEMPLATE.replace(REPLACE_SYMBOL, comment);

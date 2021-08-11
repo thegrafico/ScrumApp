@@ -122,20 +122,6 @@ $(function () {
 
     });
 
-    // NEXT
-    $(document).on("click", MOVE_TO_NEXT_SPRINT_BTN, function(){
-        let workItemId = $(this).attr("rel");
-
-        // get checked elements in table
-        const workItems = getVisibleElements(TABLE_ROW_CHECKBOX_ELEMENT_CHECKED);
-
-        if (_.isArray(workItems) && !_.isEmpty(workItems)){   
-            moveWorkItemToSprint(workItems, 'next');
-        }else{
-            moveWorkItemToSprint([workItemId], 'next');
-        }
-    });
-    // =====================================================
 
     // TODO: REFACTOR THIS
     $(document).on('mouseover', '.open-sub-menu-select-sprints-container', function(){

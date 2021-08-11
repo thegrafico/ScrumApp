@@ -960,7 +960,7 @@ function addUserToTable(userInfo){
  * @param {String} workItemId 
  * @param {String} comment 
  */
- async function addCommentToWorkItem(projectId, workItemId, comment){
+ async function addCommentToWorkItem(projectId, workItemId, comment, numbeOfCommentSpan=NUMBER_OF_COMMENTS_SPAN){
     
     if (projectId == undefined || workItemId == undefined){
         // TODO: add error message to the user
@@ -992,8 +992,8 @@ function addUserToTable(userInfo){
         addToHtml(USER_COMMENT_CONTAINER, comment_html); // Helper function
 
         // update the number of comments
-        let currentNumberOfComments = parseInt($(NUMBER_OF_COMMENTS_SPAN).text().trim());
-        $(NUMBER_OF_COMMENTS_SPAN).text(++currentNumberOfComments);
+        let currentNumberOfComments = parseInt($(numbeOfCommentSpan).text().trim());
+        $(numbeOfCommentSpan).text(++currentNumberOfComments);
 
         return true;
     }else{
@@ -1079,23 +1079,21 @@ function addWorkItemEvents(element){
         const projectId = $(PROJECT_ID).val();
     
         if (workItemId == undefined || projectId == undefined){
-            // TODO: add a message to the UI
-            alert("There is a problem getting the information for this work item");
+            $.notify("Sorry, We cannot find the information of this work item", "error")
             return;
         }
 
-        // TODO: clean text before inserting in database
         if ( (comment && comment.trim().length > 0)){
             
-            let commentWasAdded = addCommentToWorkItem(projectId, workItemId, comment.trim());
+            let commentWasAdded = addCommentToWorkItem(projectId, workItemId, comment.trim(), element["number_of_comments"]);
 
             // cleaning the dissusion val
             if (commentWasAdded){
                 $(element["discussion"]).val("");
             }
         }else{
-            // TODO: show a message to the user that empty comment cannot be added
-            alert("Cannot add an empty comment.")
+            $.notify("Sorry, Invalid comment", "error")
+            return;
         }
     });
 
