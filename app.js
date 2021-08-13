@@ -119,6 +119,7 @@ app.use(function (req, res, next) {
   res.locals.SPRINT_TIME_PERIOD = SPRINT_TIME_PERIOD;
   res.locals.sprintDefaultTimePeriod = SPRINT_TIME_PERIOD["Two Weeks"];
   res.locals.userTeam = null;
+  res.locals.showCompletedWorkItems = false;
 
   next();
 });
@@ -195,7 +196,7 @@ module.exports = app;
  * 1152092
  * Add to goal -> work on mst. capture that what I did there - successfully deleveriy on OES4
  * add a goal for the new team. for DTx
- */
+*/
 
 /**
  * each teach will have their own test in static/spec
@@ -205,7 +206,7 @@ module.exports = app;
  * service paste service - look for it
  * ampd-tree-table-paste-service --- ampd-tree-table-paste-svc-spec
  * maven update project
- */
+*/
 
 /**
  * Remove client, client-config, docs, serivce. AMPD is everythin I need
@@ -213,3 +214,10 @@ module.exports = app;
  * Once I added, I need to go to the web UI for the collab. 
  * collaborator.tuc.us.ray.com/ui
  */
+
+//  <!-- launchController.js -->
+
+/**
+ * widge code line six tausen nine hunde and sevent, 
+ * Start looking 488
+*/

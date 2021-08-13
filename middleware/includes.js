@@ -72,6 +72,7 @@ module.exports = {
             "/javascripts/modals/user-controller.js",
             "/javascripts/modals/team-controller.js",
             "/javascripts/modals/sprint-controller.js",
+            "/javascripts/modals/sprint-points-graph.js",
             "/javascripts/dependecies/col-resizable-min.js",
         ]
     },

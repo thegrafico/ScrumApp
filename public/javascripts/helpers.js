@@ -485,7 +485,7 @@ function appendToWotkItemTable(workItems, index=null, showIfSprint=true, removeT
 
         // POINTS
         let points = `
-            <td class="storyPointsRow">${workItem['storyPoints']}</td>
+            <td class="storyPointsRow ${workItem['status']}">${workItem['storyPoints']}</td>
         `;
         headers_object["points"] = points;
 
@@ -1206,6 +1206,42 @@ function updateWorkItemFeedback(){
     updateNumberOfWorkItems("#numberOfWorkItems");
     updateNumberOfWorkItems("#numberOfActiveWorkItems", "Active");
     updateNumberOfWorkItems("#numberOfReviewWorkItems", "Review");
+    updateNumberOfWorkItems("#numberOfCompletedWorkItems", "Completed");
+    getPointsAndUpdate("td.storyPointsRow");
+}
+
+function getPointsAndUpdate(selector, updateTextValue = true){
+
+    let totalNumberOfPoints = sumTextValueOnClassElement(`${selector}`);
+    let totalOfCompletedPoints = sumTextValueOnClassElement(`${selector}.Completed`);
+    let totalOfActivePoints = sumTextValueOnClassElement(`${selector}.Active`);
+    let totalOfNewPoints = sumTextValueOnClassElement(`${selector}.New`);
+    let totalOfReviewPoints = sumTextValueOnClassElement(`${selector}.Review`);
+    console.log("IN REVIEW", totalOfReviewPoints);
+    if (updateTextValue){
+        $("#numberOfPoints").text(`${totalNumberOfPoints} Points total`);
+    }
+
+    return {
+        total: totalNumberOfPoints, 
+        completed: totalOfCompletedPoints, 
+        active: totalOfActivePoints,
+        new: totalOfNewPoints,
+        review: totalOfReviewPoints
+    };
+}
+
+function sumTextValueOnClassElement(selector){
+    try {
+        let total = 0;
+        $(selector).each( function(){
+            total += parseInt( $(this).text().trim());
+        });
+        return total;
+    } catch (error) {
+        return 0;
+    }
+    
 }
 
 

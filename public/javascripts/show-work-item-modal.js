@@ -94,6 +94,12 @@ async function populateWorkItemModal(workItemId){
     // DESCRIPTION
     $(UPDATE_WORK_ITEM["description"]).val(workItem["description"]);
 
+    // POINTS
+    $(UPDATE_WORK_ITEM["points"]).val(workItem["storyPoints"]);
+
+    // Priority
+    $(UPDATE_WORK_ITEM["priority"]).val(workItem["priorityPoints"]).change();
+
     // Cleaning tags
     $(`${UPDATE_WORK_ITEM["tag_container"]} span`).remove();
 

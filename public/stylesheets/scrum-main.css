@@ -427,3 +427,7 @@ td.off{
     text-align: center;
     color: #dc3545!important;
 }
+
+.tdWorkItemSubMenu{
+    color: #cf850fa1;
+}

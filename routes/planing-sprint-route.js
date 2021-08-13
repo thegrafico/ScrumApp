@@ -121,7 +121,8 @@ router.get("/:id/planing/sprint", middleware.isUserInProject, async function (re
         "sprintDefaultTimePeriod": SPRINT_DEFAULT_PERIOD_TIME, // Here the user can selet the time, but defualt is two weeks
         "priorityPoints":PRIORITY_POINTS,
         "stylesPath": sprintPath["styles"],
-        "scriptsPath": sprintPath["scripts"]
+        "scriptsPath": sprintPath["scripts"],
+        "showCompletedWorkItems": true,
     };
 
     res.render("planing-sprint", params);
