@@ -1,0 +1,105 @@
+
+.card{
+    margin: 0 !important;
+    color: white;
+    margin-bottom: 0 !important;
+    /* background-color: white; */
+
+}
+
+.card-body{
+    padding: 0;
+    padding-top: 0;
+    margin-bottom: 0;
+}
+
+.chartContainer{
+    margin-left: 0;
+    max-height: 40vh !important;
+}
+
+.maxHeithChar > div{
+    max-height: 40vh !important;
+    height: 40vh;
+}
+
+
+#burndownChart{
+    margin-left: 1%;
+    width: 98% !important;
+    height: 100% !important;
+}
+
+.test{
+    color: rgba(12, 98, 179, 0.794);
+}
+
+.donutContainer{
+    width: 95%;
+    margin-right: 3%;
+}
+
+.statusReportContainer{
+    height: 3vh;
+}
+
+.font-size-standart{
+    font-size: 1em;
+}
+
+.small-mb{
+    margin-bottom: 1% !important;
+}
+
+.completedWorkItems{
+    font-size: 1.1em;
+    font-weight: bold;
+}
+
+.centerText{
+    text-align: center !important;
+}
+
+.card-title {
+    font-size: 1.2em;
+    font-weight: bold;
+}
+
+.card-text{
+    font-size: 2.5em;
+}
+
+.border-hover-success:hover { 
+    outline: none;
+    border-color: #9ecaed;
+    box-shadow: 0 0 10px #9ecaed;
+    cursor: pointer;
+}
+
+.border-hover-warning:hover{
+    outline: none;
+    border-color: #e4ab6a;
+    box-shadow: 0 0 10px #e4ab6a;
+    cursor: pointer;
+}
+
+.border-hover-info:hover{
+    outline: none;
+    border-color: #6ab7e4;
+    box-shadow: 0 0 10px #6ab7e4;
+    cursor: pointer;
+}
+
+
+#review-work-items #table-container{
+    max-height: 50vh;
+}
+
+#review-work-items table{
+    overflow-y: scroll;
+}
+
+/* .overflowScrool{
+    overflow-y: scroll !important;
+} */
+

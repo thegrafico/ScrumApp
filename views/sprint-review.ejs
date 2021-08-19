@@ -1,0 +1,219 @@
+<%- include('modals/header'); %>
+
+<body>
+
+    <%- include('modals/topNavbar'); %>
+
+    <div class="wrapper d-flex align-items-stretch overflowScrool">
+
+        <%- include('modals/sideNavbar'); %>
+
+        <!-- Page Content  -->
+        <div id="content" class="p-4 p-md-5">
+
+            <%- include('modals/titleOptionsMenu'); %>
+
+            <div class="container-fluid statistics-boxs">
+                <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+
+                    <i class="fas fa-users"></i>
+                    <div class="filterByTeamContainer">
+                        <% if(projectTeams.length > 1){ %>
+                            <select 
+                                class="custom-select my-custon-select input-border seletedTeamToFilter"
+                                name="filterByTeamSprint" 
+                                id="filter-by-team-sprint-review" 
+                                aria-label="Default select example">
+                                
+                                <% for (let i = 1; i < projectTeams.length; i++) { %>
+                                    <% if (projectTeams[i]['id'] == userTeam.id) { %>
+                                        <option value="<%=projectTeams[i]['id']%>" selected><%=projectTeams[i]['name']%></option>
+                                    <% }else{ %>
+                                        <option value="<%=projectTeams[i]['id']%>"><%=projectTeams[i]['name']%></option>
+                                    <% } %>
+                                <% } %>
+                                
+                            </select>
+                        <% }else{ %>
+                            <select 
+                                class="custom-select my-custon-select input-border" 
+                                name="filterByTeam"
+                                id="filter-by-team-sprint-review" 
+                                aria-label="Filter by team" disabled>
+                                <option value="0" selected>Not team found</option>
+                            </select>
+                        <% } %>
+                    </div>
+
+                    <div class="collapse navbar-collapse" id="navbarColor02">
+                        <ul class="navbar-nav mr-auto">
+                            <li class="nav-item active">
+                                <a class="nav-link" href="#">
+                                    <span class="sr-only">(current)</span>
+                                </a>
+                            </li>
+                        </ul>
+
+                        <a class="nav-link"  id="goToSprintLink" href="/dashboard/<%=projectId%>/planing/sprint?sprintId=<%=activeSprintId%>" target="_blank"> <span class="btn btn-link"> Go to sprint </span></a>
+
+                        <i class="fas fa-running sprintIcon"></i>
+
+                        <div class="filterBySprintContainer">
+                            <% if(sprints.length > 1){ %>
+                            <select class="custom-select my-custon-select input-border" name="sprintFilter"
+                                id="filter-by-sprint-review" aria-label="filter by sprint">
+                                <% for (let i = 1; i < sprints.length; i++) { %>
+
+                                    <% if (sprints[i].status == "Active") { %>
+                                        <option
+                                            class="selectedSprint" 
+                                            value="<%=sprints[i]['_id']%>" selected>
+                                            <%=sprints[i]['name']%> :
+                                            <%=sprints[i]['startDateFormated']%> - <%=sprints[i]['endDateFormated']%>
+                                            (current)
+                                        </option>
+                                    <% }else{ %>
+                                        <option value="<%=sprints[i]['_id']%>">
+                                            <%=sprints[i]['name']%> :
+                                            <%=sprints[i]['startDateFormated']%> - <%=sprints[i]['endDateFormated']%>
+                                        </option>
+                                    <% } %>
+
+                                <% } %>
+                            </select>
+                            <% }else{ %>
+                            <select class="custom-select my-custon-select input-border" name="sprintFilter"
+                                id="filter-by-sprint-review" aria-label="filter by sprint" disabled>
+                                <option value="0" selected>Not Sprint found</option>
+                            </select>
+                            <% } %>
+                        </div>
+
+                    </div>
+                    <!-- INCLUDE FILTER DIV HERE -->
+                </nav>
+
+            </div>
+
+            <div class="pt-4" id="plots-container">
+                <div class="container-fluid">
+
+                    <!-- PLOTS -->
+                    <div class="row">
+
+                        <div class="col-7 chartContainer">
+
+                            <div class="container-fluid">
+                                <div class="row">
+
+                                    <div class="col-12 chartTitle maxHeithChar">
+                                        <div class="card border-primary">
+                                            <div class="card-header">Burndown Story Points</div>
+                                            <div class="card-body"></div>
+                                            <canvas id="burndownChart"></canvas>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <div class="col-5 chartContainer">
+                            <div class="container-fluid">
+                                <div class="row">
+
+                                    <div class="col-12 chartTitle maxHeithChar">
+                                        <div class="card border-primary">
+                                            <div class="card-header">Type breakdown</div>
+                                            <div class="card-body donutContainer">
+                                                <canvas id="typeBreakdownChart"></canvas>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- Header -->
+                    <div class="row ml-2 mr-2 bg-dark statusReportContainer small-mb">
+
+                        <div class="col-8 my-auto">
+                            <span class="font-size-standart">Status Report</span>
+                        </div>
+
+                        <div class="col-4 my-auto">
+                            <span class="small float-right">* Work Items added after start time</span>
+                        </div>
+                    </div>
+
+                    <!-- REVIEW REPORT -->
+                    <div class="row ml-2 mr-2">
+                        <div class="col-3">
+
+                            <div class="card border-success border-hover-success p-2 " id="review-completed-story-points">
+                                <div class="card-body">
+                                  <h4 class="card-title centerText">Completed Story Points </h4>
+                                  <p class="card-text centerText" id="completedStoryPoints"><%=statusReport['completedPoints']%>/<%=statusReport['totalPoints']%></p>
+                                </div>
+                              </div>
+                        </div>
+
+                        <div class="col-3">
+                            <div class="card border-warning border-hover-warning p-2" id="review-incompleted-story-points">
+                                <div class="card-body ">
+                                  <h4 class="card-title centerText">Incompleted Story Points</h4>
+                                  <p class="card-text centerText" id="incompletedStoryPoitns"><%=statusReport['incompletedPoints']%>/<%=statusReport['totalPoints']%></p>
+                                </div>
+                              </div>
+                        </div>
+
+                        <div class="col-3">
+                            <div class="card border-info border-hover-info p-2" id="review-capacity">
+                                <div class="card-body">
+                                  <h4 class="card-title centerText">Capacity</h4>
+                                  <p class="card-text centerText" id="sprintCapacity"><%=statusReport['capacity']%></p>
+ 
+                                </div>
+                              </div>
+                        </div>
+
+                        <div class="col-3">
+                            <div class="card border-light p-2">
+                                <div class="card-body">
+                                  <h4 class="card-title centerText">Duartion</h4>
+                                  <p class="card-text centerText" id="sprintDuration"><%=statusReport['numberOfDays']%> Days</p>
+ 
+                                </div>
+                              </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <div class="d-none statusReportDataContainer">
+                <input type="hidden" name="total" id="numberOfWorkItems" value="<%=statusReport['numberOfWorkItems']%>">
+                <input type="hidden" name="total" id="totalPoints" value="<%=statusReport['totalPoints']%>">
+                <input type="hidden" name="durationDays" id="durationDays" value="<%=statusReport['numberOfDays']%>">
+                <input type="hidden" name="startDate" id="sprintStartDate" value="<%=statusReport['startDate']%>">
+                <input type="hidden" name="endDate" id="sprintEndDate" value="<%=statusReport['endDate']%>">    
+            </div>
+            
+
+            <script>
+                let workItems = <%- JSON.stringify(workItems) %>;
+            </script>
+
+        </div>
+    </div>
+
+    <%- include('modals/sprints/review-work-items'); %>
+
+
+    <input type="hidden" name="projectId" id="projectId" value="<%=projectId%>">
+    <input type="hidden" name="currentTab" id="currentTab" value="<%=activeTab%>">
+
+    <%- include('modals/footer'); %>

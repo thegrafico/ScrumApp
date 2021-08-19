@@ -199,14 +199,101 @@ module.exports.joinData = (dataA, dataB, keyA, action, keyB, newKey, defaultValu
 /**
  * Sort an array by the key (date)
  * @param {Array} elements - array to sort
- * @param {String} key - sorting key
+ * @param {String} dateKey - sorting key
+ * @param {String} dateFormat - format of the day. Null for general
+ * @param {String} how - 'asc' or 'des'
  * @returns 
  */
-module.exports.sortByDate = (elements, keyA, how="asc") => {
+module.exports.sortByDate = (elements, dateKey, dateFormat=SPRINT_FORMAT_DATE, how="asc") => {
 
     if (how === "asc"){
-        return elements.sort((a,b) => new moment(b[keyA], SPRINT_FORMAT_DATE) - new moment(a[keyA], SPRINT_FORMAT_DATE));
+
+        if (dateFormat){
+            return elements.sort((a,b) => new moment(b[dateKey], dateFormat) - new moment(a[dateKey], dateFormat));
+        }else{
+            return elements.sort((a,b) => new moment(b[dateKey]) - new moment(a[dateKey]));
+        }
     }
 
-    return elements.sort((a,b) => new moment(a[keyA], SPRINT_FORMAT_DATE) - new moment(b[keyA], SPRINT_FORMAT_DATE));
+    if (dateFormat){
+        return elements.sort((a,b) => new moment(a[dateKey], dateFormat) - new moment(b[dateKey], dateFormat));
+    }else{
+        return elements.sort((a,b) => new moment(a[dateKey]) - new moment(b[dateKey]));
+    }
+
 }
+
+/**
+ * Get number of elements in the array equal to the value
+ * @param {Array} data - array with the elements
+ * @param {Any} value - Value to look on the array
+ * @param {Boolean} notIn - if true, return number of elements different than the value
+ * 
+ * @returns 
+ */
+ module.exports.getNumberOfElements = (data, value, notIn = false) => {
+    
+    if (notIn){
+        return data.filter(each => {return each["status"] != value}).length;
+    }
+
+    return data.filter(each => {return each["status"] == value}).length;
+
+}
+
+/**
+ * Get number of elements in the array equal to the value
+ * @param {Array} data - array with the elements
+ * @param {Any} value - Value to look on the array
+ * @param {Boolean} notIn - if true, return number of elements different than the value
+ * 
+ * @returns 
+ */
+module.exports.getNumberOfDays = (dateA, dateB) => {
+    
+    let dA = moment(dateA, SPRINT_FORMAT_DATE);
+    let dB = moment(dateB, SPRINT_FORMAT_DATE);
+
+
+    if (!dA.isValid() || !dB.isValid()){
+        console.error("Invalid dates");
+        return -1;
+    }
+
+    return Math.abs(dB.diff(dA, 'days'));
+}
+
+/**
+ * Get number of elements in the array equal to the value
+ * @param {Array} data - array with the elements
+ * @param {Any} filterValue - Value to look on the array
+ * @param {Boolean} notIn - if true, return number of elements different than the value
+ * 
+ * @returns 
+ */
+ module.exports.getPointsForStatus = (data, filterValue = null, notIn=false) => {
+    let arr = undefined;
+    
+    if (filterValue){
+    
+        if (notIn){
+            arr = data.filter(each => {return each["status"] != filterValue});
+        }else{
+            arr = data.filter(each => {return each["status"] == filterValue});
+        }
+        
+    }else{
+        arr = data;
+    }
+    
+    let sum = 0;
+    for (let i = 0; i < arr.length; i++) {
+        const element = arr[i];
+        sum += element["storyPoints"];
+    }
+
+    return sum;
+
+}
+
+

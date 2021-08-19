@@ -64,6 +64,8 @@ $(function () {
                 );
             }
 
+            updateWorkItemFeedback();
+
         }else{ // error messages
             $.notify(response_error.data.responseJSON.msg, "error");
         } 

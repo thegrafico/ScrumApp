@@ -155,19 +155,20 @@
 
                                                         <% if (sprint["startDateFormated"]) { %>
                                                             <option value="<%=sprint['_id']%>" selected>
-                                                                <%=sprint['name']%> : <%=sprint['startDateFormated']%> - <%=sprint['endDateFormated']%> 
+                                                                <%=sprint['name']%> : <%=sprint['startDateFormated']%> - <%=sprint['endDateFormated']%>
+                                                                (current)
                                                             </option>
                                                         <%} else {%>
-                                                            <option value="<%=sprint['_id']%>" selected><%=sprint['name']%></option>
+                                                            <option value="<%=sprint['_id']%>" selected><%=sprint['name']%> (current)</option>
                                                         <%}%>
                                                         
+                                                    <%}else {%>
+                                                        <% if( sprint["startDateFormated"]){ %>
+                                                            <option value="<%=sprint['_id']%>" ><%=sprint['name']%> : <%=sprint['startDateFormated']%> - <%=sprint['endDateFormated']%> </option>
                                                         <%}else {%>
-                                                            <% if( sprint["startDateFormated"]){ %>
-                                                                <option value="<%=sprint['_id']%>" ><%=sprint['name']%> : <%=sprint['startDateFormated']%> - <%=sprint['endDateFormated']%> </option>
-                                                            <%}else {%>
-                                                                <option value="<%=sprint['_id']%>" ><%=sprint['name']%></option>
-                                                            <%}%>
+                                                            <option value="<%=sprint['_id']%>" ><%=sprint['name']%></option>
                                                         <%}%>
+                                                    <%}%>
 
                                                 <%}%>
                                             <%}%>  

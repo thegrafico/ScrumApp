@@ -393,5 +393,42 @@ sprintSchema.statics.getSprintForWorkItem = async function(projectId, workItemId
     });
 };
 
+/**
+ * get the team information for the sprint
+ * @param {String} sprintId - id of the project
+ * @returns {Promise} team for the sprint
+ */
+sprintSchema.statics.getSprintById = async function(projectId, sprintId) {
+    
+    let father = this;
+
+    return new Promise(async function (resolve, reject){
+
+        if (!_.isString(sprintId) || _.isEmpty(sprintId)){
+            console.error(`Invalid parameters were received: sprintId: ${sprintId}`);
+            return reject(false);
+        }
+
+        // ============= GETTING THE SPRINT ==============
+        let err_msg = null;
+        let sprint = await father.findOne( 
+            { projectId: projectId, _id: sprintId})
+            .catch(err =>{
+                err_msg = err;
+                console.error(err);
+            }
+        )
+        
+        if (_.isUndefined(sprint) || _.isNull(sprint) || err_msg){
+            return reject(err_msg || "Error getting the sprint");
+        }
+
+        // ============= GETTING THE TEAM ==============
+        return resolve(sprint);
+    });
+};
+
+
+
 
 module.exports = mongoose.model("Sprint", sprintSchema);

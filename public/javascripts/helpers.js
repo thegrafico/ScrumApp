@@ -116,11 +116,18 @@ function validateEmail(emailId, formId, spanId, event) {
 function showActiveTab(){
 
     currentTabValue = $("#currentTab").val();
-    
+
     if (currentTabValue.includes(",")){
+        
         currentTabs = currentTabValue.split(",");
+
+        // click on planing just to show to the user in the sidebar
+        $(`#${currentTabs[1]}`).click();
+        
         currentTabs.forEach(each=> {$(`#${each}`).addClass("currentTab");})
         return;
+    }else{
+        $(`#${currentTabValue}`).click();
     }
 
     $(`#${currentTabValue}`).addClass("currentTab");
@@ -490,7 +497,7 @@ function appendToWotkItemTable(workItems, index=null, showIfSprint=true, removeT
         headers_object["points"] = points;
 
         // Init row
-        let table_row = `<tr class="rowValues" id="${workItem['_id']}">`
+        let table_row = `<tr class="rowValues ${workItem['status']}" id="${workItem['_id']}">`
         
         // since the headers_array is in order, we just need to append it to the table row
         for (const headerKey of headers_array) {
@@ -1217,7 +1224,7 @@ function getPointsAndUpdate(selector, updateTextValue = true){
     let totalOfActivePoints = sumTextValueOnClassElement(`${selector}.Active`);
     let totalOfNewPoints = sumTextValueOnClassElement(`${selector}.New`);
     let totalOfReviewPoints = sumTextValueOnClassElement(`${selector}.Review`);
-    console.log("IN REVIEW", totalOfReviewPoints);
+
     if (updateTextValue){
         $("#numberOfPoints").text(`${totalNumberOfPoints} Points total`);
     }
@@ -1295,4 +1302,49 @@ function showFeedbackCheckedElements(counter){
         // console.log("HIDING");
         NOTIFY.hideGlobalNotifyMsg();
     }
+}
+
+
+/**
+ * Update link
+ * @param {String} selector 
+ * @param {String} newLink 
+ */
+ function updateLinkHref(selector, newLink){
+    $(selector).attr("href", newLink);
+}
+
+
+/**
+ * 
+ * @param {Array} data 
+ * @param {String} key 
+ * @param {Any} value 
+ * @param {Boolean} notIn 
+ * @returns 
+ */
+function filterElementsByValue (data, key, value, notIn = false) {
+    
+    if (notIn){
+        return data.filter(each => {return each[key] != value});
+    }
+
+    return data.filter(each => {return each[key] == value});
+
+}
+
+/**
+ * Return the sum of the values
+ * @param {Array} element -  
+ * @param {String} key -
+ */
+function sumObjectValue(element, key){
+
+    let sum = 0;
+    
+    element.forEach( each => {
+        sum += each[key];
+    });
+
+    return sum;
 }

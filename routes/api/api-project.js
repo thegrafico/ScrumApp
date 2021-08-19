@@ -23,11 +23,15 @@ const {
     MAX_STORY_POINTS,
     EMPTY_SPRINT,
     WORK_ITEM_STATUS_COLORS,
+    WORK_ITEM_STATUS,
     WORK_ITEM_ICONS,
     capitalize,
     getSprintDateStatus,
     joinData,
     sortByDate,
+    getNumberOfElements,
+    getNumberOfDays,
+    getPointsForStatus,
 } = require('../../dbSchema/Constanst');
 
 // ================= GET REQUEST ==============
@@ -279,6 +283,180 @@ router.get("/api/:id/getSprintWorkItems/:teamId/:sprintId", middleware.isUserInP
 
     response["msg"] = "success";
     response["workItems"] = workItems;
+
+    res.status(200).send(response);
+    return;
+
+});
+
+/**
+ * METHOD: GET - Get sprint review data by team
+ */
+ router.get("/api/:id/getSprintReview/:teamId", middleware.isUserInProject, async function (req, res) {
+    
+    const projectId = req.params.id;
+    const teamId = req.params.teamId;
+
+    let response = {};
+
+    // ========= GETTING PROJECT INFO ==========
+    let project = await projectCollection.findById(projectId).catch(err => {
+        console.error(err);
+    });
+
+    if (_.isUndefined(project) || _.isNull(project)){
+        response["msg"] = "Sorry, there was a problem getting the project information";
+        res.status(400).send(response);
+        return;
+    }
+
+    if (!project.isTeamInProject(teamId)){
+        response["msg"] = "Sorry, it seams the team received does not belong to the project.";
+        res.status(400).send(response);
+        return;    
+    }
+
+    // get all users for this project -> expected an array
+    let users = await project.getUsers().catch(err => console.log(err)) || [];
+
+    let workItems = [];
+    let activeSprint = undefined;
+    let activeSprintId = undefined;
+    let numberOfDays = 0;
+    let startDate = '', endDate = '';
+
+    // getting sprints for team
+    let sprints = await SprintCollection.getSprintsForTeam(projectId, teamId).catch(err => {
+        console.log(err);
+    }) || [];
+
+    // in case this team does not have any team
+    if (!_.isEmpty(sprints)){
+
+        activeSprint = SprintCollection.getActiveSprint(sprints);
+
+        // check we have an active sprint
+        if (!_.isNull(activeSprint) || !_.isUndefined(activeSprint)){
+
+            activeSprintId = activeSprint["_id"];
+
+            startDate = activeSprint["startDate"];
+            endDate = activeSprint["endDate"];
+            numberOfDays = getNumberOfDays(startDate, endDate);
+
+            // get the work items by the sprint
+            workItems = await workItemCollection.find({projectId: projectId, _id: {$in: activeSprint.tasks}}).catch(err => {
+                console.error("Error getting work items: ", err)
+            }) || [];
+        }
+        
+    }
+
+    let statusReport = {
+        totalPoints: getPointsForStatus(workItems, null),
+        completedPoints: getPointsForStatus(workItems, WORK_ITEM_STATUS["Completed"]),
+        incompletedPoints: getPointsForStatus(workItems, WORK_ITEM_STATUS["Completed"], true),
+
+        numberOfWorkItems: workItems.length, 
+        numberOfWorkItemsCompleted: getNumberOfElements(workItems, WORK_ITEM_STATUS["Completed"]),
+        numberOfWorkItemsIncompleted: getNumberOfElements(workItems, WORK_ITEM_STATUS["Completed"], true),
+        capacity: users.length,
+        numberOfDays: numberOfDays,
+        startDate: startDate,
+        endDate: endDate,
+    }
+
+    // sorting data
+    sprints = sortByDate(sprints, "startDate");
+    workItems = sortByDate(workItems, "updatedAt", null, "desc");
+
+    response["msg"] = "success";
+    response["sprints"] = sprints;
+    response["workItems"] = workItems;
+    response["statusReport"] = statusReport;
+    response["activeSprint"] = activeSprintId;
+
+    res.status(200).send(response);
+    return;
+
+});
+
+/**
+ * METHOD: GET - Get sprint review data by sprint
+ */
+router.get("/api/:id/getSprintReview/:teamId/:sprintId", middleware.isUserInProject, async function (req, res) {
+    
+    const projectId = req.params.id;
+    const teamId = req.params.teamId;
+    const sprintId = req.params.sprintId;
+
+    let response = {};
+
+    // ========= GETTING PROJECT INFO ==========
+    let project = await projectCollection.findById(projectId).catch(err => {
+        console.error(err);
+    });
+
+    if (_.isUndefined(project)){
+        response["msg"] = "Sorry, there was a problem getting the project information";
+        res.status(400).send(response);
+        return;
+    }
+
+    if (!project.isTeamInProject(teamId)){
+        response["msg"] = "Sorry, it seams the team received does not belong to the project.";
+        res.status(400).send(response);
+        return;    
+    }
+
+    // ======== GETTING SPRINTS ============
+    let sprint = await SprintCollection.findOne({projectId, _id: sprintId}).catch(err => {
+        console.error(err);
+    });
+
+    if (_.isUndefined(sprint) || _.isNull(sprint)){
+        response["msg"] = "Sorry, There was a problem getting the sprints for the team selected.";
+        res.status(400).send(response);
+        return; 
+    }
+
+    // ======== GETTING WORK ITEMS FOR SPRINT ============
+
+    // get sprint work items
+    let workItems = await workItemCollection.find({projectId, _id: {$in: sprint["tasks"]}}).catch(err => {
+        console.error(err);
+    });
+
+    if (_.isUndefined(workItems)){
+        response["msg"] = "Sorry, There was a problem getting the work items for the sprint.";
+        response["sprints"] = [];
+        res.status(200).send(response);
+        return;
+    }
+
+    let startDate = sprint["startDate"];
+    let endDate = sprint["endDate"];
+    let numberOfDays  = getNumberOfDays(startDate, endDate);
+
+    let statusReport = {
+        totalPoints: getPointsForStatus(workItems, null),
+        completedPoints: getPointsForStatus(workItems, WORK_ITEM_STATUS["Completed"]),
+        incompletedPoints: getPointsForStatus(workItems, WORK_ITEM_STATUS["Completed"], true),
+
+        numberOfWorkItems: workItems.length, 
+        numberOfWorkItemsCompleted: getNumberOfElements(workItems, WORK_ITEM_STATUS["Completed"]),
+        numberOfWorkItemsIncompleted: getNumberOfElements(workItems, WORK_ITEM_STATUS["Completed"], true),
+        
+        capacity: project["users"].length,
+        numberOfDays: numberOfDays,
+        startDate: startDate,
+        endDate: endDate,
+    }
+
+
+    response["msg"] = "success";
+    response["workItems"] = workItems;
+    response["statusReport"] = statusReport;
 
     res.status(200).send(response);
     return;

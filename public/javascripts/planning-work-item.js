@@ -9,9 +9,6 @@ $(function () {
     // show the active tab in the sidebar
     showActiveTab();
 
-    // click on planing just to show to the user in the sidebar
-    $(BTN_PLANING).click();
-
     // make the sprint available when user view all sprints in sub menu
     $(document).on("click", OPEN_WORK_ITEM_SUB_MENU_BTN, function(){
         // console.log("reset scroll");

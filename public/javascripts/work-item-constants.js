@@ -212,6 +212,8 @@ const PAGES = {
 
 //  ======= SPRINT
 
+const SPRINT_FORMAT_DATE = "MM/DD/YYYY";
+
 const FILTER_BY_SPRINT_INPUT = "#filterBySprint";
 const FILTER_BY_TEAM_SPRINT = "#filter-by-team-sprint";
 

@@ -77,6 +77,23 @@ module.exports = {
         ]
     },
 
+    sprintReview: {
+        styles: ["/stylesheets/scrum-main.css", "/stylesheets/work-item.css", "/stylesheets/backlog.css", "/stylesheets/sprint-review.css"], 
+        scripts: [
+            "/javascripts/dependecies/jquery-ui.min.js",
+            "/javascripts/planning-work-item.js",
+            "/javascripts/planning-backlog.js",
+            "/javascripts/planning-sprint.js",
+            "/javascripts/dependecies/bootstrap.bundle.min.js",
+            "/javascripts/create-work-item-modal.js",
+            "/javascripts/modals/user-controller.js",
+            "/javascripts/modals/team-controller.js",
+            "/javascripts/modals/sprint-controller.js",
+            "/javascripts/sprint-review.js",
+
+        ]
+    },
+
     managePath: {
         styles: ["/stylesheets/scrum-main.css", "/stylesheets/work-item.css", "/stylesheets/backlog.css", "/stylesheets/manage-routes.css"], 
         scripts: [
