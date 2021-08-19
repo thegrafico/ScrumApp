@@ -99,7 +99,14 @@ $(function () {
                 // update the select option
                 for (const sprint of response.sprints) {    
                     let isSelected = sprint["_id"].toString() == response["activeSprint"].toString();
-                    let optionText = `${sprint["name"]} : ${sprint["startDateFormated"]} - ${sprint["endDateFormated"]}`;
+                    
+                    let optionText = '';
+                    
+                    if (isSelected){
+                        optionText = `${sprint["name"]} : ${sprint["startDateFormated"]} - ${sprint["endDateFormated"]} (current)`;
+                    }else{
+                        optionText = `${sprint["name"]} : ${sprint["startDateFormated"]} - ${sprint["endDateFormated"]}`;
+                    }
                     
                     // add the options to the sprint
                     updateSelectOption(
@@ -180,6 +187,13 @@ $(function () {
 
 });
 
+/**
+ * Update sprint review page overall UI
+ * @param {Array} workItems 
+ * @param {Object} statusReport 
+ * @param {ChartJs} burnChart 
+ * @param {ChartJs} barchart 
+ */
 function updateReviewPage(workItems, statusReport, burnChart, barchart){
     
     // hiding elements
@@ -298,8 +312,18 @@ function getBurndownLineData(workItems, totalPoints, labelDates, isTodayBetween)
     let completePointsAtDatePoints = 0;
 
     for(let i = 0; i < labelDates.length; i++){
+
         
         let date = labelDates[i];
+
+
+        // break to avoid calculating future value and not ultil today values
+        if (isTodayBetween){
+            let today = moment(new Date()).format(DATE_LABEL_FORMAT);
+            if (date === today){
+                break;
+            }
+        }
 
         completePointsAtDateWorkItems = completedWorkItems.filter(each => each[NEW_KEY_DATA] == date);
 
@@ -325,7 +349,6 @@ function getBurndownLineData(workItems, totalPoints, labelDates, isTodayBetween)
                 
                 for (let j = i; j < labelDates.length; j++) {
                     date = labelDates[j];
-
                     if (date === today){
                         break;
                     }
@@ -547,6 +570,7 @@ function breakDownChart(workItems){
 
     return getChart(config, BREAKDOWN_CHART_CONTAINER);
 }
+
 
 /**
  * Update chart data
