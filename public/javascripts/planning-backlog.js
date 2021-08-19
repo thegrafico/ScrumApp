@@ -48,11 +48,13 @@ $(function () {
                 // update the select option
                 for (const sprint of response.sprints) {    
                     let isSelected = sprint["_id"].toString() == response["activeSprint"].toString();
-                    // let optionText = `${sprint["name"]} : ${sprint["startDateFormated"]} - ${sprint["endDateFormated"]}`;
+
+                    let optionText = formatSprintText(sprint, isSelected);
+                    
                     updateSelectOption(
                         WORK_ITEM["sprint"], 
                         UPDATE_TYPE.ADD,
-                        {"value": sprint["_id"], "text":sprint["name"]},
+                        {"value": sprint["_id"], "text":optionText},
                         isSelected
                     );
                 }

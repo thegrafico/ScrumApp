@@ -20,6 +20,14 @@ $(function () {
         // Success message
         cleanTable(WORK_ITEM_TABLE);
         removeAllOptionsFromSelect(FILTER_BY_SPRINT_INPUT, null);
+        removeAllOptionsFromSelect(WORK_ITEM["sprint"]);
+
+        // updating modal create work item
+        updateSelectOption(
+            WORK_ITEM["team"], 
+            UPDATE_TYPE.CHANGE,
+            teamId
+        );
 
         if (response){
             
@@ -42,15 +50,32 @@ $(function () {
                 removeAllOptionsFromSelect(FILTER_BY_SPRINT_INPUT, null);
                 
                 // update the select option
-                for (const sprint of response.sprints) {    
+                for (const sprint of response.sprints) {
+
+                    if (sprint["_id"] == UNASSIGNED_SPRINT["_id"]) {continue};
+                    
                     let isSelected = sprint["_id"].toString() == response["activeSprint"].toString();
-                    let optionText = `${sprint["name"]} : ${sprint["startDateFormated"]} - ${sprint["endDateFormated"]}`;
+                    
+                    let optionText = formatSprintText(sprint, isSelected);
+
+                    // Updating Filter by sprint value
                     updateSelectOption(
                         FILTER_BY_SPRINT_INPUT, 
                         UPDATE_TYPE.ADD,
                         {"value": sprint["_id"], "text":optionText},
                         isSelected
                     );
+
+                    // Updating modal create work item
+                    updateSelectOption(
+                        WORK_ITEM["sprint"], 
+                        UPDATE_TYPE.ADD,
+                        {"value": sprint["_id"], "text":optionText},
+                        isSelected
+                    );
+
+                    
+                    // in case the active sprint is a past or future sprint
                     if (isSelected && sprint["status"] != SPRINT_STATUS["Active"]){
                         let message = `This is a ${sprint["status"]} sprint.`;
                         showPopupMessage(FILTER_BY_SPRINT_INPUT, message);
@@ -59,6 +84,12 @@ $(function () {
             }else{ 
                removeAllOptionsFromSelect(
                     FILTER_BY_SPRINT_INPUT, 
+                    {"text": "Not sprint found", "value": "0"},
+                    true
+                );
+
+                removeAllOptionsFromSelect(
+                    WORK_ITEM["sprint"], 
                     {"text": "Not sprint found", "value": "0"},
                     true
                 );

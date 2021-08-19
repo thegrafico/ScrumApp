@@ -558,11 +558,14 @@ router.post("/api/:id/updateWorkItem/:workItemId", middleware.isUserInProject, a
             });
         }
     }
-
+    
     // iter all over the update values
     for( key in updateValues){
         workItem[key] = updateValues[key];
     }
+
+    workItem["updatedAt"] = Date.now();
+
     
     let updatedWorkItem = await workItem.save().catch(err => {
         console.error("Error saving the work item: ", err);

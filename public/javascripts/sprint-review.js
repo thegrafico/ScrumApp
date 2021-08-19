@@ -74,12 +74,14 @@ $(function () {
         let response = await make_get_request(API_LINK_GET_SPRINT_REVIEW_BY_TEAM).catch(err=> {
             response_error = err;
         });
-
-        console.log(response);
         
         // Success message
         removeAllOptionsFromSelect(FILTE_BY_SPRINT_REVIEW, null);
         cleanTable(WORK_ITEM_TABLE);
+
+        // change the select on the work item
+        updateSelectOption(WORK_ITEM["team"], UPDATE_TYPE.CHANGE,teamId);
+        removeAllOptionsFromSelect(WORK_ITEM["sprint"], {"text": "Not sprint found", "value": "0"},true);
 
         if (response){
             
@@ -100,17 +102,19 @@ $(function () {
                 for (const sprint of response.sprints) {    
                     let isSelected = sprint["_id"].toString() == response["activeSprint"].toString();
                     
-                    let optionText = '';
-                    
-                    if (isSelected){
-                        optionText = `${sprint["name"]} : ${sprint["startDateFormated"]} - ${sprint["endDateFormated"]} (current)`;
-                    }else{
-                        optionText = `${sprint["name"]} : ${sprint["startDateFormated"]} - ${sprint["endDateFormated"]}`;
-                    }
-                    
+                    let optionText = formatSprintText(sprint, isSelected);
+
                     // add the options to the sprint
                     updateSelectOption(
                         FILTE_BY_SPRINT_REVIEW, 
+                        UPDATE_TYPE.ADD,
+                        {"value": sprint["_id"], "text":optionText},
+                        isSelected
+                    );
+
+                    // updating create work item
+                    updateSelectOption(
+                        WORK_ITEM["sprint"], 
                         UPDATE_TYPE.ADD,
                         {"value": sprint["_id"], "text":optionText},
                         isSelected
@@ -311,23 +315,22 @@ function getBurndownLineData(workItems, totalPoints, labelDates, isTodayBetween)
     let completePointsAtDateWorkItems = undefined;
     let completePointsAtDatePoints = 0;
 
+    let today = moment(new Date()).format(DATE_LABEL_FORMAT);
+
     for(let i = 0; i < labelDates.length; i++){
 
-        
         let date = labelDates[i];
-
-
-        // break to avoid calculating future value and not ultil today values
-        if (isTodayBetween){
-            let today = moment(new Date()).format(DATE_LABEL_FORMAT);
-            if (date === today){
-                break;
-            }
-        }
 
         completePointsAtDateWorkItems = completedWorkItems.filter(each => each[NEW_KEY_DATA] == date);
 
         if (_.isEmpty(completePointsAtDateWorkItems)){
+
+
+            if (isTodayBetween){
+                if (date === today){
+                    break;
+                }
+            }
             burndownData.push(remainingPoints);
             continue;
         }
@@ -340,12 +343,18 @@ function getBurndownLineData(workItems, totalPoints, labelDates, isTodayBetween)
         remainingPoints -= completePointsAtDatePoints;
 
         burndownData.push(remainingPoints);
+
+        // break to avoid calculating future value and not ultil today values
+        if (isTodayBetween){
+            if (date === today){
+                break;
+            }
+        }
         
         // Exit the loop if we already have all the data for the work items
         if (remainingWorkItems == 0){
             
             if (isTodayBetween){
-                let today = moment(new Date()).format(DATE_LABEL_FORMAT);
                 
                 for (let j = i; j < labelDates.length; j++) {
                     date = labelDates[j];

@@ -1348,3 +1348,22 @@ function sumObjectValue(element, key){
 
     return sum;
 }
+
+/**
+ * Get the sprint text for the select options
+ * @param {Object} sprint 
+ * @param {Boolean} isSelected 
+ * @returns 
+ */
+function formatSprintText(sprint, isSelected=false){
+
+    let optionText = '';
+                    
+    if (isSelected){
+        optionText = `${sprint["name"]} : ${sprint["startDateFormated"]} - ${sprint["endDateFormated"]} (current)`;
+    }else{
+        optionText = `${sprint["name"]} : ${sprint["startDateFormated"]} - ${sprint["endDateFormated"]}`;
+    }
+
+    return optionText
+}
