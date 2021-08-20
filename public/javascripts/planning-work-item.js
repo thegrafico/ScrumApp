@@ -65,18 +65,18 @@ $(function () {
 
         showFeedbackCheckedElements(counter);
     });
-    
+
 
     // REMOVE THE WORK ITEMS SELECTED IN CHECKBOX
     // TODO: Create a database modal to store deleted element
-    $(TRASH_BTN_WORK_ITEM).on("click", function(){
+    $(TRASH_BTN_WORK_ITEM).on("click", async function(){
         
         // get checked elements in table
         const row_checked = getVisibleElements(TABLE_ROW_CHECKBOX_ELEMENT_CHECKED);
 
         const projectId = $(PROJECT_ID).val();
         
-        removeWorkItems(projectId, row_checked);
+        await removeWorkItems(projectId, row_checked);
 
         updateWorkItemFeedback();
 

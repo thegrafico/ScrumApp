@@ -15,13 +15,13 @@ $(function () {
     addWorkItemEvents(WORK_ITEM);
     
     // clean the modal to add an user
-    $(createWorkItemModal).on('shown.bs.modal', function (e) {
+    $(CREATE_WORK_ITEM_MODAL).on('shown.bs.modal', function (e) {
         $(WORK_ITEM["title"]).trigger("focus");
     });
 
 
     // clean the modal when opened
-    $(createWorkItemModal).on('show.bs.modal', function (e) {
+    $(CREATE_WORK_ITEM_MODAL).on('show.bs.modal', function (e) {
         cleanModal(WORK_ITEM);
     });
 
@@ -48,8 +48,6 @@ $(function () {
             tags :getTags(WORK_ITEM),
         };
 
-        console.log(workItemRequest);
-
         const projectId = $(PROJECT_ID).val();
 
         const API_LINK_CREATE_WORK_ITEM = `/dashboard/api/${projectId}/createWorkItem`;
@@ -74,20 +72,7 @@ $(function () {
             $.notify(response_error.data.responseJSON.msg, "error");
         }
 
-
-
-        // title,
-        // userAssigned,
-        // workItemStatus,
-        // teamAssigned,
-        // workItemType,
-        // sprint,
-        // workItemDescription,
-        // storyPoints,
-        // priorityPoints,
-        // tags
-
-
+        $(CREATE_WORK_ITEM_CLOSE_BTN).click();
     });
 
 });

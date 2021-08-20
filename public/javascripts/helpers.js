@@ -563,9 +563,17 @@ function getVisibleElements(elementClassOrId){
  * @param {String} checkboxClass 
  */
 function removeCheckedElement(checkboxClass=TABLE_ROW_CHECKBOX_ELEMENT_CHECKED){
-    $(checkboxClass).parent().parent().parent().each(function(){
-        $(this).remove();
+    console.log("Removing checked elements");    
+    console.log ("THERE IS: ", $(checkboxClass).length);
+    $(checkboxClass).each(function(){
+        let rowid = $(this).val();
+        // console.log("REMOVING: ", rowid);
+        $(`tr#${rowid}`).remove();
     });
+
+    // $(checkboxClass).parent().parent().parent().each(function(){
+    //     $(this).remove();
+    // });
 }
 
 /**
@@ -1045,7 +1053,7 @@ function addUserToTable(userInfo){
         console.error("Cannot find the work items to remove");
         return;
     }
-
+    // console.log("Number of elements to remove: ", workItemsId.length);
     const request_data = {workItemsId};
 
     let response_error = null;

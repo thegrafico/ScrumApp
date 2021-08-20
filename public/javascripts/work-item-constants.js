@@ -119,8 +119,9 @@ const WORK_ITEM_STATUS_COLORS = {
 };
 // =============================
 
-
-const createWorkItemModal = ".createNewItemModal";
+const CREATE_WORK_ITEM_MODAL = "#create-work-item-modal";
+const CREATE_WORK_ITEM_CLOSE_BTN = "#close-create-work-item";
+// const createWorkItemModal = ".createNewItemModal";
 
 // Symbol to replaces
 const REPLACE_SYMBOL = "???***";

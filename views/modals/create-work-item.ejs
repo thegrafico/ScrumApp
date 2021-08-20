@@ -1,12 +1,12 @@
 <!-- Large modal -->
-<div class="modal fade createNewItemModal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+<div class="modal fade createNewItemModal"  id="create-work-item-modal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
 
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="modalTitle">New work item </h5> &nbsp; &nbsp; <i
                     class="fas fa-bolt taskIcon"></i>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <button type="button" id="close-create-work-item" class="close close-create-work-item" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
@@ -231,9 +231,12 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                <button id="create-work-item-submit-btn" type="submit" value="submit" class="btn btn-primary">
+                <button id="create-work-item-submit-btn" class="btn btn-primary close-create-work-item">
                     Create work item
                 </button>
+                <!-- <button id="create-work-item-submit-btn" class="btn btn-primary">
+                    Create work item
+                </button> -->
             </div>
         </div>
 
