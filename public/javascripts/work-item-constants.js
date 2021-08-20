@@ -77,6 +77,9 @@ const UPDATE_WORK_ITEM = {
 
 };
 
+// create work item submit btn
+const CREATE_WORK_ITEM_SUBMIT_BTN = "#create-work-item-submit-btn";
+
 const WORK_ITEM_ICONS = {
     "Story": {
         icon: "fa-book-open cl-blue",
@@ -197,7 +200,7 @@ const MANAGE_TABLE_ID = "#manage-table";
 const CURRENT_PAGE_ID = "#current-page";
 
 const UPDATE_TYPE = {ADD: "ADD", DELETE: "DELETE", CHANGE: "CHANGE"};
-const UPDATE_INPUTS = {USER: "USER", TEAM: "TEAM", SPRINT: "SPRINT"};
+const UPDATE_INPUTS = {USER: "USER", TEAM: "TEAM", SPRINT: "SPRINT", CREATE_WORK_ITEM: "WORK_ITEM"};
 
 // find a way to create this in only one place. // also in db constants
 const PAGES = {

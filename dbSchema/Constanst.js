@@ -271,7 +271,7 @@ module.exports.getNumberOfDays = (dateA, dateB) => {
  * 
  * @returns 
  */
- module.exports.getPointsForStatus = (data, filterValue = null, notIn=false) => {
+module.exports.getPointsForStatus = (data, filterValue = null, notIn=false) => {
     let arr = undefined;
     
     if (filterValue){

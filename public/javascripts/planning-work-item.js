@@ -41,6 +41,7 @@ $(function () {
         showFeedbackCheckedElements(counter);
     });
 
+
     // CHECK ALL ROWS ELEMENT
     $(CHECK_ALL_CHECKBOX_TABLE_ROWS).on("click", function(){
 
@@ -64,6 +65,7 @@ $(function () {
 
         showFeedbackCheckedElements(counter);
     });
+    
 
     // REMOVE THE WORK ITEMS SELECTED IN CHECKBOX
     // TODO: Create a database modal to store deleted element
@@ -75,6 +77,8 @@ $(function () {
         const projectId = $(PROJECT_ID).val();
         
         removeWorkItems(projectId, row_checked);
+
+        updateWorkItemFeedback();
 
         unCheckAll();
     });

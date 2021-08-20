@@ -93,11 +93,11 @@ router.get("/api/:id/getWorkItem/:workItemId", middleware.isUserInProject, async
 /**
  * METHOD: POST - Create new work item
  */
-router.post("/api/:id/newWorkItem", middleware.isUserInProject, async function (req, res) {
+router.post("/api/:id/createWorkItem", middleware.isUserInProject, async function (req, res) {
 
     // new work item
     let {
-        title,
+        title,              //req
         userAssigned,
         workItemStatus,
         teamAssigned,
@@ -127,10 +127,12 @@ router.post("/api/:id/newWorkItem", middleware.isUserInProject, async function (
         console.log("Error is: ", err.reason);
     });
 
-    if (_.isEmpty(projectInfo) || _.isNull(projectInfo)){
+    let response = {};
+
+    if (_.isEmpty(projectInfo) || _.isNull(projectInfo) || _.isUndefined(projectInfo)){
         console.error("Error getting the project information: ", projectInfo);
-        req.flash("error", "Cannot find the project to add the work item.");
-        res.redirect(400, "back");
+        response["msg"] = "Sorry, Cannot find the project to add the work item.";
+        res.status(400).send(response);
         return;
     }
 
@@ -143,8 +145,8 @@ router.post("/api/:id/newWorkItem", middleware.isUserInProject, async function (
     // ============ Title ==============
     if (_.isEmpty(title) || title.length < 3){
         console.error("Title is to short");
-        req.flash("error", "The title of the project is to short.");
-        res.redirect(400, "back");
+        response["msg"] = "The title of the project is to short.";
+        res.status(400).send(response);
         return;
     }
     
@@ -152,8 +154,8 @@ router.post("/api/:id/newWorkItem", middleware.isUserInProject, async function (
     // Verify the user is in the project 
     if (userAssigned != UNASSIGNED.id && !users.includes(userAssigned)){
         console.error("Cannot find the user for the work item: ", userAssigned);
-        req.flash("error", "Cannot find the user assigned for this work item");
-        res.redirect(400, "back");
+        response["msg"] = "Cannot find the user assigned for this work item.";
+        res.status(400).send(response);
         return;
     }
 
@@ -171,8 +173,8 @@ router.post("/api/:id/newWorkItem", middleware.isUserInProject, async function (
             addUserToTeam = true;
         }else{
             console.error("Cannot find the user for the work item: ", userAssigned);
-            req.flash("error", "Cannot find the user assigned for this work item");
-            res.redirect(400, "back");
+            response["msg"] = "Cannot find the user assigned for this work item";
+            res.status(400).send(response);
             return;
         }
     }
@@ -181,24 +183,24 @@ router.post("/api/:id/newWorkItem", middleware.isUserInProject, async function (
     // If empty, if not string, if not part of the work items
     if (_.isEmpty(workItemStatus) || !_.isString(workItemStatus) || !Object.keys(WORK_ITEM_STATUS).includes(workItemStatus)){
         console.error("unknow work item");
-        req.flash("error", "Sorry, There is a problem with the status of the work item.");
-        res.redirect(400, "back");
+        response["msg"] = "Sorry, There is a problem with the status of the work item.";
+        res.status(400).send(response);
         return;
     }
 
     // check if there is any user, if not, return error;
     if (workItemStatus === WORK_ITEM_STATUS["Completed"] && !addUserToTeam){
         console.error("unknow work item");
-        req.flash("error", "Sorry, Work item must have an user assigned in order to be completed");
-        res.redirect("back");
+        response["msg"] = "Sorry, Work item must have an user assigned in order to be completed";
+        res.status(400).send(response);
         return;
     }
 
     // =============== TEAMS =============
     if (teamAssigned != UNASSIGNED.id && !teams.includes(teamAssigned)){
         console.error("Error getting the team assigned for the work item");
-        req.flash("error", "Sorry, We Cannot find the team assigned for this work item");
-        res.redirect(400, "back");
+        response["msg"] = "Sorry, We Cannot find the team assigned for this work item.";
+        res.status(400).send(response);
         return;
     }
 
@@ -257,11 +259,12 @@ router.post("/api/:id/newWorkItem", middleware.isUserInProject, async function (
 
     // verify work item was created
     if (_.isEmpty(newWorkItem) || _.isNull(newWorkItem)){
-        req.flash("error", `There was an error creating the work item: ${errors}`);
-        res.redirect(400, "back");
+        response["msg"] = `There was an error creating the work item: ${errors}`;
+        res.status(400).send(response);
         return;
     }
 
+    // Add the work item to the sprint if was selected by the user
     if (!_.isUndefined(sprint) && !_.isEmpty(sprint) && sprint != UNASSIGNED_SPRINT._id){
         let sprint_error_msg = null;
         await SprintCollection.findByIdAndUpdate(sprint, {$push: {tasks: newWorkItem._id} }).catch( err => {
@@ -276,9 +279,23 @@ router.post("/api/:id/newWorkItem", middleware.isUserInProject, async function (
         }
     }
 
-    console.log("Was work item created: ", newWorkItem != undefined);
-    res.redirect("back");
+    // get all the teams for this project
+    let projectTeams = [...projectInfo.teams];
+
+    // get all sprints for project
+    let projectSprints = await SprintCollection.find({projectId: req.params.id}).catch(err => console.error(err)) || [];
+
+    newWorkItem = newWorkItem.toObject();
+    // Create new key (team/sprint) to store the work item team
+    joinData([newWorkItem], projectTeams, "teamId", "equal", "_id", "team", UNASSIGNED);
+    joinData([newWorkItem], projectSprints, "_id", "is in", "tasks", "sprint", UNASSIGNED_SPRINT);
+
+    response["msg"] = "Success";
+    response["workItem"] = newWorkItem;
+
+    res.status(200).send(response);
 });
+
 
 /**
  * METHOD: POST - Add a comment to the work item
@@ -317,6 +334,7 @@ router.post("/api/:id/addCommentToWorkItem/:workItemId", middleware.isUserInProj
 
     res.status(200).send("Comment was added successfully!");
 });
+
 
 /**
  * METHOD: POST - Update work item

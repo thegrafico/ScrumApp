@@ -280,47 +280,43 @@ function updateCustomSelect(currentElement, tagCurrentItem, tagInputItem){
     $(tagInputItem).val(selecteTextValue).trigger("change");
 }
 
-
 /**
- * This funtion validates the form to create a new WorkItem
+ * Validate if the work item is valid for creation
+ * @param {Object} workItem - work item selector ids
+ * @returns {Object} - {Boolean, errorMessage}
  */
-// TODO: change alert for other better ui messages
-function validateFormWorkItem(){
+function validateFormWorkItem(workItem){
 
     try{
-        const title = $(WORK_ITEM["title"]).val().trim();
+        const title = $(workItem["title"]).val().trim();
         // const state = $(WORK_ITEM["state"]).val();
         // const teamId = $(WORK_ITEM["team"]).val();
         // const type = $(WORK_ITEM["type"]).val();
         // const sprint = $(WORK_ITEM["sprint"]).val();
-        const description = $(WORK_ITEM["description"]).val();
-        const points = $(WORK_ITEM["points"]).val() || 0;
-        const priority = $(WORK_ITEM["priority"]).val() || MAX_PRIORITY_POINTS;
+        const description = $(workItem["description"]).val();
+        const points = $(workItem["points"]).val() || 0;
+        const priority = $(workItem["priority"]).val() || MAX_PRIORITY_POINTS;
     
         // Validate title
         if (!_.isString(title) || title.length < MIN_LENGTH_TITLE){
-            alert(`Title cannot be less than ${MIN_LENGTH_TITLE} chars`);
-            return false;
+            return {isValid: false, msg: `Title cannot be less than ${MIN_LENGTH_TITLE} chars`};
         }
 
         // validate points
         if ( !_.isEmpty(points) && isNaN(points)){
-            alert("Points only accept numbers");
-            return false;
+            return {isValid: false, msg: "Points only accept numbers"};
         }
 
         // validate priority
         if (!_.isEmpty(priority) && isNaN(priority)){
-            alert("Priority only accept numbers");
-            return false;
+            return {isValid: false, msg: "Priority only accept numbers"};
         }
 
     }catch(err){
-        alert(err);
-        return false;  
+        return {isValid: false, msg: "Sorry, There was an unexpected error"};
     }
 
-    return true;
+    return {isValid: true, msg: "Valid work item"};
 }
 
 function cleanTable(tableId){
@@ -787,6 +783,11 @@ function update_html(currentPage, updateType, valueToUpdate, inputType, others=n
             updateStatisticsHtml(updateType, valueToUpdate);
             break;
         case "workItems":
+
+            if (inputType === UPDATE_INPUTS.CREATE_WORK_ITEM){
+                appendToWotkItemTable([valueToUpdate], 0, true, false);
+            }
+
             // TODO: Remove user form table? or just leave it to update the page?
             if (inputType === UPDATE_INPUTS.USER){
                 updateSelectOption(WORK_ITEM["user"], updateType, valueToUpdate);
@@ -812,6 +813,16 @@ function update_html(currentPage, updateType, valueToUpdate, inputType, others=n
                 updateSelectOption(SPRINT_DELETE_MODAL_SELECT_TEAM, updateType, valueToUpdate);
             }
             break;
+        case "backlog":
+            // adding work item to the backlog only if new work item does not have a sprint assigned
+            if (inputType === UPDATE_INPUTS.CREATE_WORK_ITEM){
+
+                if (valueToUpdate["sprint"] == null || valueToUpdate["sprint"]["_id"] === UNASSIGNED_SPRINT["_id"]){
+                    appendToWotkItemTable([valueToUpdate], 0, true, false);
+                }
+
+            }
+            break;
         case "manageUser":
             // TODO: Remove user form table? or just leave it to update the page?
             if (inputType === UPDATE_INPUTS.USER){
@@ -827,6 +838,18 @@ function update_html(currentPage, updateType, valueToUpdate, inputType, others=n
             }
             break;
         case "sprintPlanning":
+
+            // adding work item to the backlog only if new work item does not have a sprint assigned
+            if (inputType === UPDATE_INPUTS.CREATE_WORK_ITEM){
+                
+                const currentSprintSelected = $(FILTER_BY_SPRINT_INPUT).val() || "0";
+                console.log(valueToUpdate["sprint"]["_id"], currentSprintSelected);
+                if (valueToUpdate["sprint"]["_id"].toString() === currentSprintSelected){
+                    appendToWotkItemTable([valueToUpdate], null, true, false);
+                }
+
+                break;
+            }
 
             updateSelectOption(WORK_ITEM["user"], updateType, valueToUpdate);
             updateSelectOption(MODAL_REMOVE_USER_INPUT, updateType, valueToUpdate);
@@ -1049,7 +1072,7 @@ function addUserToTable(userInfo){
 /**
  * In order to focus the work item, click the title when focus
  */
-function checkTitleWhenOpen(selectorId){
+function checkTitleWhenOpen(selector){
     try{
         //  PRIOR check if the title has already something in it
         if ($(selector["title"]).val().length == 0){
@@ -1059,6 +1082,7 @@ function checkTitleWhenOpen(selectorId){
 
     }
 }
+
 
 /**
  * Add events for work item update and create
@@ -1217,6 +1241,12 @@ function updateWorkItemFeedback(){
     getPointsAndUpdate("td.storyPointsRow");
 }
 
+/**
+ * Get story points and update
+ * @param {String} selector 
+ * @param {Boolean} updateTextValue 
+ * @returns 
+ */
 function getPointsAndUpdate(selector, updateTextValue = true){
 
     let totalNumberOfPoints = sumTextValueOnClassElement(`${selector}`);
@@ -1238,6 +1268,12 @@ function getPointsAndUpdate(selector, updateTextValue = true){
     };
 }
 
+
+/**
+ * Sum the value for a class element
+ * @param {String} selector 
+ * @returns {Number} - total
+ */
 function sumTextValueOnClassElement(selector){
     try {
         let total = 0;
@@ -1310,7 +1346,7 @@ function showFeedbackCheckedElements(counter){
  * @param {String} selector 
  * @param {String} newLink 
  */
- function updateLinkHref(selector, newLink){
+function updateLinkHref(selector, newLink){
     $(selector).attr("href", newLink);
 }
 
@@ -1366,4 +1402,18 @@ function formatSprintText(sprint, isSelected=false){
     }
 
     return optionText
+}
+
+/**
+ * Get the text inside every tag
+ * @param {String} workItemSelector 
+ * @returns 
+ */
+function getTags(workItemSelector){
+    // get all the tags available
+    let tags_available = $(workItemSelector["tags"]).map((_,element) => element.value.trim()).get().filter( element => {
+        return !_.isEmpty(element);
+    });
+
+    return tags_available;
 }

@@ -143,9 +143,7 @@ $(function () {
     $(UPDATE_WORK_ITEM["tag_container"]).change(function(){
         
         // get all the tags available
-        let tags_available = $(UPDATE_WORK_ITEM["tags"]).map((_,element) => element.value.trim()).get().filter( element => {
-            return !_.isEmpty(element);
-        });
+        let tags_available = getTags(UPDATE_WORK_ITEM);
         
         // using lodash in order to know if the array has changed
         let arrayAreEqual = _.isEqual(_.sortBy(tags_available), _.sortBy(currentTags));
