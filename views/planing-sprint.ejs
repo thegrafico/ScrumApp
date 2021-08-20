@@ -137,7 +137,7 @@
                     </thead>
                     <tbody>
                         <% for (let i = 0; i < workItems.length; ++i) {%>
-                            <tr class="rowValues" id="<%=workItems[i]['_id']%>">
+                            <tr class="rowValues <%=workItems[i]['status']%>" id="<%=workItems[i]['_id']%>">
 
                                 <!-- CHECKBOX -->
                                 <td class="tableCheckBoxRowElement"> 

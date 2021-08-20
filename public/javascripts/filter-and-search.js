@@ -15,6 +15,26 @@ const FILTER_STATE_CONTAINER = "#filter-btn-state";
 const FILTER_USER_CONTAINER = "#filter-btn-user";
 const FILTER_TYPE_CONTAINER = "#filter-btn-type";
 
+// FEEDBACK BUTTONS
+const FILTER_FEEDBACK = {
+    "totalNumberOfWorkItemsBtn": {style: "total-feedback", status: null}, // same as all
+    "activeWorkItemsBtn": {style: "Active-feedback", status: WORK_ITEM_STATUS["Active"]},
+    "reviewWorkItemsBtn": {style: "Review-feedback", status: WORK_ITEM_STATUS["Review"]},
+    "completedWorkItemsBtn": {style: "Completed-feedback", status: WORK_ITEM_STATUS["Completed"]},
+}
+
+// BUTTONS
+const BTN_TOTAL_WORK_ITEMS = "totalNumberOfWorkItemsBtn";
+const BTN_ACTIVE_WORK_ITEMS = "activeWorkItemsBtn";
+const BTN_REVIEW_WORK_ITEMS = "reviewWorkItemsBtn";
+const BTN_COMPLETED_WORK_ITEMS = "completedWorkItemsBtn";
+
+const IS_ON_STYLE = ".ON";
+
+const FEEDBACK_WORK_ITEM_BTN = ".feedbackWorkItemBtn";
+
+
+// CSS class for opacity
 const opacityStyle = "addOpacity";
 
 // Header of the table
@@ -99,7 +119,79 @@ $(function () {
         e.stopPropagation();
     });
 
+    // FEEDBACK BUTTONS EVENTS
+    $(document).on("click", FEEDBACK_WORK_ITEM_BTN, function(){
+        
+        let clickedElementId = $(this).attr("id");
+        
+        let styleClass = FILTER_FEEDBACK[clickedElementId]["style"];
+
+        const clickedSelector = $(`#${clickedElementId}`);
+
+        clickedSelector.toggleClass(styleClass);
+        clickedSelector.toggleClass(IS_ON_STYLE);
+
+
+        if (clickedElementId == BTN_TOTAL_WORK_ITEMS){
+            let isActive = clickedSelector.hasClass(styleClass);
+
+            // $(`#${BTN_ACTIVE_WORK_ITEMS}`).attr("disabled", isActive);
+            // $(`#${BTN_REVIEW_WORK_ITEMS}`).attr("disabled", isActive);
+            // $(`#${BTN_COMPLETED_WORK_ITEMS}`).attr("disabled", isActive);
+
+            // check all work items
+            $(CHECK_ALL_CHECKBOX_TABLE_ROWS).click();
+            enableTrashButton(isActive);
+
+        }else{
+
+            let isActiveOn      = $(`#${BTN_ACTIVE_WORK_ITEMS}`).hasClass(IS_ON_STYLE);
+            let isReviewOn      = $(`#${BTN_REVIEW_WORK_ITEMS}`).hasClass(IS_ON_STYLE);
+            let isCompletedOn   = $(`#${BTN_COMPLETED_WORK_ITEMS}`).hasClass(IS_ON_STYLE);
+            
+            // console.log(isActiveOn, isReviewOn, isCompletedOn);
+            let isActive = isActiveOn || isReviewOn || isCompletedOn;
+
+            enableTrashButton(isActive);
+
+            // disable or enable total work items feedback button
+            $(`#${BTN_TOTAL_WORK_ITEMS}`).attr("disabled", isActive);
+
+            const status = FILTER_FEEDBACK[clickedElementId]["status"];
+            $(`tr.${status}`).each(function(){
+
+                $(this).toggleClass(HIGHLIGST_CLASS);
+
+                let isHighlited = $(this).hasClass(HIGHLIGST_CLASS);
+
+                $(this).find(".checkboxRowElement").prop('checked', isHighlited);
+                $(this).find(".checkboxRowElement").parent().toggleClass('invisible');
+
+                // console.log($(this).find(".checkboxRowElement"));
+            });
+        }
+
+    });
+
 });
+
+/**
+ * Set the feedbackButton active or disabled
+ * @param {String} selectorId 
+ * @param {Boolean} addClass 
+ */
+function setFeedbackButton(selectorId, addClass){
+
+    let styleClass = FILTER_FEEDBACK[selectorId]["style"];
+
+    if (addClass){
+        $(`#${selectorId}`).addClass(styleClass);
+        $(`#${selectorId}`).addClass(IS_ON_STYLE);
+    }else{
+        $(`#${selectorId}`).removeClass(styleClass);
+        $(`#${selectorId}`).removeClass(IS_ON_STYLE);
+    }
+}
 
 
 /**

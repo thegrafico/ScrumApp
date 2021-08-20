@@ -63,6 +63,8 @@ $(function () {
             highliteWorkItemRow(this, isChecked);
         });
 
+        setFeedbackButton(BTN_TOTAL_WORK_ITEMS, isChecked);
+
         showFeedbackCheckedElements(counter);
     });
 

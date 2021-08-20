@@ -431,3 +431,28 @@ td.off{
 .tdWorkItemSubMenu{
     color: #cf850fa1;
 }
+
+/* ========== FEEDBACK BUTTONS STYLES ============ */
+.total-feedback{
+    background-color:  rgb(173, 181, 189);
+    color: black;
+}
+
+.Active-feedback {
+    color: white;
+    background-color: rgb(52, 152, 219);
+}
+
+.Review-feedback {
+    color: white;
+    background-color: rgb(243, 156, 18);
+}
+
+.Completed-feedback {
+    color: white;
+    background-color: rgb(0, 188, 140);
+}
+
+.ON{
+    text-align: center;
+}

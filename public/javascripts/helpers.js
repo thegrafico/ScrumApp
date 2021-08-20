@@ -1,3 +1,4 @@
+const { disable } = require("debug");
 
 /**
  * expected value of param is {id: .., type: ..., null: ...}
@@ -1310,7 +1311,7 @@ function updateNumberOfWorkItems(selector, option){
             numberOfElements = $("tr.rowValues").length;
 
             let text = numberOfElements > 0 ? `${numberOfElements} Work Items`: `${numberOfElements} Work Item`;
-            
+
             $(selector).text(text);
         }else{
 
@@ -1327,6 +1328,8 @@ function updateNumberOfWorkItems(selector, option){
             
             $(selector).text(numberOfElements);
         }
+
+        $(selector).parent().attr("disabled", numberOfElements === 0);
         $(selector).parent().removeClass("invisible");       
     } catch (error) {
         $(selector).parent().addClass("invisible");       
