@@ -379,12 +379,7 @@ router.post("/api/:id/updateWorkItem/:workItemId", middleware.isUserInProject, a
         return;
     }
 
-    // validate work item is not completed yet
-    if (workItem["status"] === WORK_ITEM_STATUS["Completed"]){
-        response["msg"] = "Sorry, Completed work items cannot be edited. Still you can add comments to it.";
-        res.status(400).send(response);
-        return;
-    }
+
     // ======================================================
 
     // waiting for this params. Anything that cames undefined was not sent
@@ -400,6 +395,16 @@ router.post("/api/:id/updateWorkItem/:workItemId", middleware.isUserInProject, a
         description,
         tags,
     } = req.body;
+
+    // in case only updating the status
+    let UPDATING_ONLY_STATUS = (Object.keys(req.body).length == 1 && req.body["status"] != undefined);
+
+    // validate work item is not completed yet
+    if (workItem["status"] === WORK_ITEM_STATUS["Completed"] && !UPDATING_ONLY_STATUS){
+        response["msg"] = "Sorry, Completed work items cannot be edited. Still you can add comments to it.";
+        res.status(400).send(response);
+        return;
+    }
 
     let addUserToTeam = false;
     let updateValues = {};

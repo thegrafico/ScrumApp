@@ -1,0 +1,346 @@
+<%- include('modals/header'); %>
+
+<body>
+
+    <%- include('modals/topNavbar'); %>
+
+    <div class="wrapper d-flex align-items-stretch">
+
+        <%- include('modals/sideNavbar'); %>
+
+        <!-- Page Content  -->
+        <div id="content" class="p-4 p-md-5">
+
+            <%- include('modals/titleOptionsMenu'); %>
+
+            <!-- FILTERS -->
+            <div class="container-fluid statistics-boxs">
+                <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+
+                    <i class="fas fa-users"></i>
+                    <div class="filterByTeamContainer">
+                        <% if(projectTeams.length > 1){ %>
+                            <select 
+                            class="custom-select my-custon-select input-border seletedTeamToFilter"
+                            name="filterByTeamSprint" 
+                            id="filter-by-team-sprint" 
+                            aria-label="Default select example">
+                                <% for (let i = 1; i < projectTeams.length; i++) { %>
+
+                                    <% if (projectTeams[i]['id'] == userTeam.id) { %>
+                                        <option value="<%=projectTeams[i]['id']%>" selected><%=projectTeams[i]['name']%></option>
+                                    <% }else{ %>
+                                        <option value="<%=projectTeams[i]['id']%>"><%=projectTeams[i]['name']%></option>
+                                    <% } %>
+                                
+                                <% } %>
+                            </select>
+                        <% }else{ %>
+                            <select 
+                            class="custom-select my-custon-select input-border"
+                            name="filterByTeam" 
+                            id="filterByTeam" 
+                            aria-label="Default select example"
+                            disabled>
+                            <option value="0" selected>Not team found</option>
+                            </select>
+                        <% } %>
+                    </div>
+                
+                    <div class="collapse navbar-collapse" id="navbarColor02">
+                        <ul class="navbar-nav mr-auto">
+                            <li class="nav-item active">
+                                <a class="nav-link" href="#">
+                                    <span class="sr-only">(current)</span>
+                                </a>
+                            </li>
+                    
+
+                            <li class="nav-item trashIconWrapper">
+                                &nbsp;
+                                <button id="trashBtnWorkItem" class="trash-btn" disabled> <i class="far fa-trash-alt grayColor"></i> </button>
+                            </li>
+
+                        </ul>
+                        <!-- <i class="fas fa-sync sprintIcon"></i> -->
+                        <i class="fas fa-running sprintIcon"></i>
+
+                        <div class="filterBySprintContainer">
+                            <% if(sprints.length > 1){ %>
+                                <select 
+                                class="custom-select my-custon-select input-border"
+                                name="sprintFilter" 
+                                id="filterBySprint" 
+                                aria-label="filter by sprint">
+                                    <% for (let i = 1; i < sprints.length; i++) { %>
+    
+                                        <% if (sprints[i].status == "Active") { %>
+                                            <option value="<%=sprints[i]['_id']%>" selected>
+                                                <%=sprints[i]['name']%> :
+                                                <%=sprints[i]['startDateFormated']%> - <%=sprints[i]['endDateFormated']%>
+                                                (current)
+                                            </option>
+                                        <% }else{ %>
+                                            <option value="<%=sprints[i]['_id']%>">
+                                                <%=sprints[i]['name']%> :
+                                                <%=sprints[i]['startDateFormated']%> - <%=sprints[i]['endDateFormated']%>
+                                            </option>
+                                        <% } %>
+                                    
+                                    <% } %>
+                                </select>
+                            <% }else{ %>
+                                <select 
+                                class="custom-select my-custon-select input-border"
+                                name="sprintFilter" 
+                                id="filterBySprint" 
+                                aria-label="filter by sprint"
+                                disabled>
+                                <option value="0" selected>Not Sprint found</option>
+                                </select>
+                            <% } %>
+                        </div>
+
+                        <div class="form-inline my-2 my-lg-0">
+                            <input id="searchTable" class="form-control mr-sm-2" type="text" placeholder="Search">
+                            
+                            <button id="filterBtn" class="btn btn-secondary my-2 my-sm-0 filterBtn">
+                                <i class="fas fa-filter"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <!-- INCLUDE FILTER DIV HERE -->
+                </nav>
+
+            </div>
+
+            <!-- SPRINT BOARD -->
+            <div class="p-4 container-fluid" id="sprint-board-container">
+
+                <div class="row">
+                    
+                    <!-- -TODO- WORK ITEMS -->
+                    <div class="col-2 board-column" >
+                        
+                        <div class="border-status todoColor"> <span class="columnTitle">Todo</span></div>
+
+                        <div id="<%=WORK_ITEM_STATUS['New']%>" class="container-column">
+
+                            <% for (let workItem of workItems["new"]) { %>
+                                <div class="card border-dark mb-3" style="max-width: 20rem;" id="<%=workItem['_id']%>">
+                                    <div class="card-header">
+                                        <span class="table-icon"> 
+                                            <i class="fas <%=workItemType[workItem['type']].icon%>"></i> 
+                                        </span> 
+                                        ID: <%=workItem["itemId"]%>
+                                    </div>
+                                    <div class="card-body">
+                                        <h4 class="card-title">
+                                           
+                                            <a href="workitems/<%=workItem['_id']%>" class="open-existing-work-item-modal" rel="<%=workItem['_id']%>">  
+                                                <%=workItem["title"]%>
+                                            </a> 
+                                            
+                                        </h4>
+                                        <td class="tags-td"> 
+                                            <% if (workItem["tags"].length > 0)  {%>
+                                                <% workItem["tags"].forEach(each => { %>
+                                                    <span class="btn btn-info disabled btn-sm tags-container"><%=each%></span>
+                                                <% }); %>
+                                            <% } %>
+                                        </td>
+                                        <h4 class="card-botton"> <i class="far fa-user"></i> <%=workItem["assignedUser"]["name"]%></h4>
+                                    </div>
+                                </div>
+                            <% } %>
+
+                        </div>                          
+
+                    </div>
+
+                    <!-- ACTIVE WORK ITEMS -->
+                    <div class="col-2 board-column" id="activeWorkItems">
+                        <div class="border-status activeColor"> <span class="columnTitle">Active</span> </div>
+
+                        <div id="<%=WORK_ITEM_STATUS['Active']%>" class="container-column">
+                            <% for (let workItem of workItems["active"]) { %>
+                                <div class="card border-dark mb-3" style="max-width: 20rem;" id="<%=workItem['_id']%>">
+                                    <div class="card-header">
+                                    
+                                        <span class="table-icon"> 
+                                            <i class="fas <%=workItemType[workItem['type']].icon%>"></i> 
+                                        </span> 
+                                        ID: <%=workItem["itemId"]%>
+                                    </div>
+                                    <div class="card-body">
+                                        <h4 class="card-title">
+                                            <a href="workitems/<%=workItem['_id']%>" class="open-existing-work-item-modal" rel="<%=workItem['_id']%>">  
+                                                <%=workItem["title"]%>
+                                            </a> 
+                                        </h4>
+                                        <td class="tags-td"> 
+                                            <% if (workItem["tags"].length > 0)  {%>
+                                                <% workItem["tags"].forEach(each => { %>
+                                                    <span class="btn btn-info disabled btn-sm tags-container"><%=each%></span>
+                                                <% }); %>
+                                            <% } %>
+                                        </td>
+                                        <h4 class="card-botton"> <i class="far fa-user"></i> <%=workItem["assignedUser"]["name"]%></h4>
+                                    </div>
+                                </div>
+                            <% } %>
+                        </div>
+
+
+                    </div>
+
+                    <!-- REVIEW  WORK ITEMS-->
+                    <div class="col-2 board-column">
+                        <div class="border-status reviewColor"> <span class="columnTitle">Review</span> </div>
+
+                        <div id="<%=WORK_ITEM_STATUS['Review']%>" class="container-column">
+                            <% for (let workItem of workItems["review"]) { %>
+                                <div class="card border-dark mb-3" style="max-width: 20rem;" id="<%=workItem['_id']%>">
+                                    <div class="card-header">
+                                        <span class="table-icon"> 
+                                            <i class="fas <%=workItemType[workItem['type']].icon%>"></i> 
+                                        </span> 
+                                        ID: <%=workItem["itemId"]%>
+                                    </div>
+                                    <div class="card-body">
+                                        <h4 class="card-title">
+                                            <a href="workitems/<%=workItem['_id']%>" class="open-existing-work-item-modal" rel="<%=workItem['_id']%>">  
+                                                <%=workItem["title"]%>
+                                            </a> 
+                                        </h4>
+                                        <td class="tags-td"> 
+                                            <% if (workItem["tags"].length > 0)  {%>
+                                                <% workItem["tags"].forEach(each => { %>
+                                                    <span class="btn btn-info disabled btn-sm tags-container"><%=each%></span>
+                                                <% }); %>
+                                            <% } %>
+                                        </td>
+                                        <h4 class="card-botton"> <i class="far fa-user"></i> <%=workItem["assignedUser"]["name"]%></h4>
+                                    </div>
+                                </div>
+                            <% } %>
+
+                        </div>
+
+                    </div>
+
+                    <!-- DONE WORK ITEMS -->
+                    <div class="col-2 board-column">
+                      
+                        <div class="border-status completedColor"> <span class="columnTitle">Completed</span></div>
+
+                        <div id="<%=WORK_ITEM_STATUS['Completed']%>" class="container-column">
+
+                            <% for (let workItem of workItems["completed"]) { %>
+                                <div class="card border-dark mb-3" style="max-width: 20rem;" id="<%=workItem['_id']%>">
+                                    <div class="card-header">
+                                        <span class="table-icon"> 
+                                            <i class="fas <%=workItemType[workItem['type']].icon%>"></i> 
+                                        </span> 
+                                        ID: <%=workItem["itemId"]%>
+                                    </div>
+                                    <div class="card-body">
+                                        <h4 class="card-title">
+                                            <a href="workitems/<%=workItem['_id']%>" class="open-existing-work-item-modal" rel="<%=workItem['_id']%>">  
+                                                <%=workItem["title"]%>
+                                            </a> 
+                                        </h4>
+                                        <td class="tags-td"> 
+                                            <% if (workItem["tags"].length > 0)  {%>
+                                                <% workItem["tags"].forEach(each => { %>
+                                                    <span class="btn btn-info disabled btn-sm tags-container"><%=each%></span>
+                                                <% }); %>
+                                            <% } %>
+                                        </td>
+                                        <h4 class="card-botton"> <i class="far fa-user"></i> <%=workItem["assignedUser"]["name"]%></h4>
+                                    </div>
+                                </div>
+                            <% } %>
+                            
+                        </div>
+
+                    </div>
+
+                    <!-- BLOCKS -->
+                    <div class="col-2 board-column">
+                        <div class="border-status blockColor"> <span class="columnTitle">Block</span></div>
+
+                        <div id="<%=WORK_ITEM_STATUS['Block']%>" class="container-column">
+                            <% for (let workItem of workItems["block"]) { %>
+                                <div class="card border-dark mb-3" style="max-width: 20rem;" id="<%=workItem['_id']%>">
+                                    <div class="card-header"> 
+                                         <span class="table-icon"> 
+                                            <i class="fas <%=workItemType[workItem['type']].icon%>"></i> 
+                                        </span> 
+                                        ID: <%=workItem["itemId"]%>
+                                    </div>
+                                    
+                                    <div class="card-body">
+                                        <h4 class="card-title">
+                                            <a href="workitems/<%=workItem['_id']%>" class="open-existing-work-item-modal" rel="<%=workItem['_id']%>">  
+                                                <%=workItem["title"]%>
+                                            </a> 
+                                        </h4>
+                                        <td class="tags-td"> 
+                                            <% if (workItem["tags"].length > 0)  {%>
+                                                <% workItem["tags"].forEach(each => { %>
+                                                    <span class="btn btn-info disabled btn-sm tags-container"><%=each%></span>
+                                                <% }); %>
+                                            <% } %>
+                                        </td>
+                                        <h4 class="card-botton"> <i class="far fa-user"></i> <%=workItem["assignedUser"]["name"]%></h4>
+                                    </div>
+                                </div>
+                            <% } %>
+                        </div>
+
+                    </div>
+
+                    <!--  DELETED -->
+                    <div class="col-2 board-column">
+                        <div class="border-status removedColor"><span class="columnTitle">Abandoned</span></div>
+
+                        <div id="<%=WORK_ITEM_STATUS['Abandoned']%>"  class="container-column">
+                            <% for (let workItem of workItems["abandoned"]) { %>
+                                <div class="card border-dark mb-3" style="max-width: 20rem;" id="<%=workItem['_id']%>">
+                                    <div class="card-header">
+                                        <span class="table-icon"> 
+                                            <i class="fas <%=workItemType[workItem['type']].icon%>"></i> 
+                                        </span> 
+                                        ID: <%=workItem["itemId"]%>
+                                    </div>
+                                    <div class="card-body">
+                                        <h4 class="card-title">
+                                            <a href="workitems/<%=workItem['_id']%>" class="open-existing-work-item-modal" rel="<%=workItem['_id']%>">  
+                                                <%=workItem["title"]%>
+                                            </a> 
+                                        </h4>
+                                        <td class="tags-td"> 
+                                            <% if (workItem["tags"].length > 0)  {%>
+                                                <% workItem["tags"].forEach(each => { %>
+                                                    <span class="btn btn-info disabled btn-sm tags-container"><%=each%></span>
+                                                <% }); %>
+                                            <% } %>
+                                        </td>
+                                        <h4 class="card-botton"> <i class="far fa-user"></i> <%=workItem["assignedUser"]["name"]%></h4>
+                                    </div>
+                                </div>
+                            <% } %>
+                        </div>
+                    </div>
+                </div>
+               
+            </div>
+        </div>
+        <input type="hidden" name="projectId" id="projectId" value="<%=projectId%>">
+        <input type="hidden" name="currentTab" id="currentTab" value="<%=activeTab%>">
+    </div>
+
+    <%- include('./modals/sprints/show-points-graph'); %>
+
+<%- include('modals/footer'); %>

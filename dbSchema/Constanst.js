@@ -231,13 +231,30 @@ module.exports.sortByDate = (elements, dateKey, dateFormat=SPRINT_FORMAT_DATE, h
  * 
  * @returns 
  */
- module.exports.getNumberOfElements = (data, value, notIn = false) => {
+module.exports.getNumberOfElements = (data, value, notIn = false) => {
     
     if (notIn){
         return data.filter(each => {return each["status"] != value}).length;
     }
 
     return data.filter(each => {return each["status"] == value}).length;
+
+}
+
+/**
+ * 
+ * @param {Array} data - array of object 
+ * @param {String} status - status to filter
+ * @param {Boolean} notIn - status not equal
+ * @returns {Array}
+ */
+module.exports.filteByStatus = (data, status, notIn = false) => {
+    
+    if (notIn){
+        return data.filter(each => {return each["status"] != status});
+    }
+
+    return data.filter(each => {return each["status"] == status});
 
 }
 

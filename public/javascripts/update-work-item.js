@@ -165,15 +165,11 @@ $(function () {
     $(SAVE_BTN_CONTAINER).on("click", async function(){
         // only do the post when something has changed
         if (activeSaveButton()){
-            const projectId = $(PROJECT_ID).val();
+
             const workItemId = $(WORK_ITEM_ID).val();
 
-            const API_LINK_UPDATE_WORK_ITEM = `/dashboard/api/${projectId}/updateWorkItem/${workItemId}`;
-            
-            let response_error = null;
-            const response = await make_post_request(API_LINK_UPDATE_WORK_ITEM, workItemValuesToUpdate).catch(err=> {
-                response_error = err;
-            });
+            // Sending the request 
+            let {response, response_error} = await updateWorkItem(workItemId, workItemValuesToUpdate);
 
             // Success message
             if (response){
@@ -198,6 +194,26 @@ $(function () {
         }
     });
 });
+
+/**
+ * update work item
+ * @param {String} workItemId 
+ * @param {Object} values 
+ * @returns 
+ */
+async function updateWorkItem(workItemId, values){
+    
+    const projectId = $(PROJECT_ID).val();
+    const API_LINK_UPDATE_WORK_ITEM = `/dashboard/api/${projectId}/updateWorkItem/${workItemId}`;
+
+    let response_error = null;
+    const response = await make_post_request(API_LINK_UPDATE_WORK_ITEM, values).catch(err=> {
+        response_error = err;
+    });
+
+    return {"response": response, "response_error": response_error};
+
+}
 
 /**
  * Active the save button in order to save the current state of the work item if has changed
