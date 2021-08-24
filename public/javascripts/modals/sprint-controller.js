@@ -26,7 +26,8 @@ const SPRINT_SPRINT_SPAN_ERROR = "#remove-sprint-sprint-span-error";
 
 const OPEN_UPDATE_SPRINT_MODAL_BTN = ".btn-update-sprint-modal-open";
 
-const CLOSE_MODAL_SPRINT_BTN = "#close-sprint-modal";
+const CLOSE_MODAL_SPRINT_BTN = ".close-sprint-modal";
+
 const MODAL_DELETE_SPRINT_SUBMIT_BTN = "#modal-delete-sprint-submit-btn";
 
 $(function () {
@@ -44,7 +45,7 @@ $(function () {
         "opens": "center",
         "startDate": moment(), // today
         "endDate": moment().add(SPRINT_TIME_PERIOD_DAYS, 'days'),
-        "minDate": moment().subtract(ONE_WEEK, 'days'), // One week later
+        // "minDate": moment().subtract(ONE_WEEK, 'days'), // One week later
         "maxDate": moment().add(2, 'months'), // Two months ahead
     }, function(start, end, label) {
         manageDates(start, end);
@@ -318,6 +319,10 @@ $(function () {
         // Success message
         if (response){
             
+            $.notify("Sprint Updated", "success");
+
+            $(CLOSE_MODAL_SPRINT_BTN).click();
+
             let sprintId = response["sprint"]["_id"];
 
             updateTableElement(sprintId, response["sprint"], addSprintToTable);

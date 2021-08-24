@@ -1,7 +1,6 @@
 
 
 
-
 $( function() {
     
     $( ".container-column" ).sortable({
@@ -27,9 +26,9 @@ $( function() {
             let workItemId = $(cardDiv).attr("id");
 
             // update the status of the work item
-            await updateWorkItemStatus(workItemId, statusMoved);
+            await updateWorkItemBoard(workItemId, statusMoved);
 
-            console.log("ITE WAS MOVED TO: ", statusMoved);
+            console.log("ITEM WAS MOVED TO: ", statusMoved);
         },
     });
  
@@ -51,10 +50,27 @@ $( function() {
  * @param {String} workItemId 
  * @param {String} status 
  */
-async function updateWorkItemStatus(workItemId, status){
+async function updateWorkItemBoard(workItemId, status){
 
-    let {response, response_error} = await updateWorkItem(workItemId, {"status": status});
-    
+    const projectId = $(PROJECT_ID).val();
+    const sprintId  = $(FILTER_BY_SPRINT_INPUT).val();
+
+    const API_LINK_UPDATE_WORK_ITEM_BOARD = `/dashboard/api/${projectId}/updateWorkItemOrder/${workItemId}/${sprintId}`;
+
+    const indexOfWorkItemInBoard = $(`div#${workItemId}`).index();    
+
+    // request data
+    let request_data = {
+        "status": status,
+        "location": "sprintBoard",
+        "index": indexOfWorkItemInBoard,
+    }
+
+    let response_error = null;
+    const response = await make_post_request(API_LINK_UPDATE_WORK_ITEM_BOARD, request_data).catch(err=> {
+        response_error = err;
+    });
+
     // Success message
     if (response_error){
         $.notify(response_error.data.responseJSON.msg, "error");

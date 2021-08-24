@@ -621,6 +621,151 @@ router.post("/api/:id/updateWorkItem/:workItemId", middleware.isUserInProject, a
 });
 
 /**
+ * METHOD: POST - Update work item order & status
+ */
+router.post("/api/:id/updateWorkItemOrder/:workItemId/:sprintId", middleware.isUserInProject, async function (req, res) {
+    
+    console.log("Getting request to update work item status...");
+    
+    const projectId = req.params.id;
+    const workItemId = req.params.workItemId;
+    const sprintId = req.params.sprintId;
+    
+    let response = {};
+
+    // =========== Validate project exist =================
+    
+    const project = await projectCollection.findById(projectId).catch(err => {
+        console.error("Error getting the project info: ", err);
+    });
+
+    // verify project is good.
+    if (_.isUndefined(project) || _.isEmpty(project)){
+        response["msg"] = "Error getting the project information. Try later";
+        res.status(400).send(response);
+        return;
+    }
+    
+    // =========== Validate Work Item exist =================
+    
+    const workItem = await workItemCollection.findById(workItemId).catch ( err =>{
+        console.error("Error getting work item: ", err);
+    });
+
+    // verify project is good.
+    if (_.isUndefined(workItem) || _.isEmpty(workItem)){
+        response["msg"] = "Error getting the work Item information. Try later";
+        res.status(400).send(response);
+        return;
+    }
+
+    // Validate work item belong to this project id
+    if (workItem.projectId != projectId){
+        response["msg"] = "This work item does not belong to the project.";
+        res.status(400).send(response);
+        return;
+    }
+
+    let sprintOrderError = undefined;
+    const sprintOrder = await SprintCollection.getSprintOrder(sprintId, projectId).catch ( err =>{
+        console.error("Error getting work item: ", err);
+        sprintOrderError = err;
+    });
+
+    // if there is an error getting the sprint order
+    if (!_.isUndefined(sprintOrderError) ){
+        response["msg"] = "Sorry, there was an internal error getting the information of the sprint.";
+        res.status(400).send(response);
+        return;
+    }
+
+    // ======================================================
+
+    // waiting for this params. Anything that cames undefined was not sent
+    let  { 
+        status,
+        location,
+        index,
+    } = req.body;
+
+    if (_.isString(location) && !_.isUndefined(index) && !isNaN(index)){
+        console.log("\nAdding work item to an order...\n");
+        
+        if ( !(location in  sprintOrder["order"]) ){
+            response["msg"] = "Oops, it seems there was a problem moving the work item to a different status. Please try later.";
+            res.status(400).send(response);
+            return;
+        }
+
+        let isWorkItemFound = false;
+
+        // try to find the previus location of the work item and remove it
+        for (let sprintWorkItemPage of sprintOrder["order"][location]){
+            
+            // getting all ids of the work items 
+            let workItemsIds = sprintWorkItemPage["index"];
+
+            // check if the work items is in this location
+            isWorkItemFound = workItemsIds.some(each => {return each == workItemId});
+
+            if (isWorkItemFound){
+
+                // get the index of the work item - index is the order
+                let indexOfWorkItemFound = workItemsIds.indexOf(workItemId);
+                
+                // remove that element from the order
+                workItemsIds.splice(indexOfWorkItemFound, 1);
+                
+                break;
+            }
+
+        }
+
+        // find new location for the work item and add it. 
+        let newStatusLocation = sprintOrder["order"][location].filter(each => {
+            return each["status"] == status;
+        })[0];
+
+        // add workItemId to index and remove 0 elements.
+        newStatusLocation["index"].splice(index, 0, workItemId);
+
+        // update the order of the work item
+        await sprintOrder.save().catch( err => {
+            console.error("Error updating the order of the work item: ", err);
+        });
+
+    }   
+
+    // verify Status
+    if (_.isString(status)){
+        const STATUS = Object.keys(WORK_ITEM_STATUS);
+        status = capitalize(status);
+
+        if (STATUS.includes(status)){
+
+            // check if there is any user, if not, return error;
+            if (status === WORK_ITEM_STATUS["Completed"] && workItem["assignedUser"].id == null){
+                response["msg"] = "Sorry, Work Item cannot be completed without an user assigned.";
+                res.status(400).send(response);
+                return;
+            }
+
+            workItem["status"] = status;
+        }else{
+            response["msg"] = "The status for the work item did not match any of the status available";
+            res.status(400).send(response);
+            return;
+        }
+    }
+
+    await workItem.save().catch(err => {
+        console.error("Error saving the status of the work item: ", err);
+    });
+
+    res.status(200).send(response);
+});
+
+/**
  * METHOD: POST - Move work item to a sprint
  */
 router.post("/api/:id/moveWorkItemsToSprint/:teamId", middleware.isUserInProject, async function (req, res) {

@@ -1,10 +1,40 @@
 
+html, body{
+    height: 100% !important;
+    max-height: 100%;
+}
+
 .board-column{
     width: 100% !important;
-    /* border: 1px solid red; */
+}
+
+#sprint-board-container{
+    /* overflow-y: auto !important; */
+    /* max-height: 75vh; */
+    overflow-y: hidden;
+    max-height: 80%;
+    overflow-x: auto;
+}
+
+.flex-row{
+    overflow-x: scroll;
 }
 
 
+/* ============= */
+
+/* The heart of the matter */
+/* #sprint-board-container .row{
+    overflow-x: auto;
+    white-space: nowrap;
+} */
+
+/* #sprint-board-container .row > .col-2 {
+    display: inline-block;
+    float: none;
+} */
+
+/* ============= */
 #sprint-board-container .card:first-child{
     padding-top: 1rem;
 }
@@ -12,9 +42,10 @@
 .board-column .container-column{
     width: 100%;
     /* border: 1px solid yellow; */
-    padding-bottom: 1rem !important;
+    padding-bottom: 5rem !important;
     max-height: 75vh;
-    overflow-y: scroll;
+    overflow-y: auto;
+    scrollbar-color: gray #444 ;
 }
 
 #sprint-board-container .card{
@@ -23,6 +54,7 @@
     padding: 0;
     margin-left: auto;
     margin-right: auto;
+    min-width: 94% !important;
 }
 
 #sprint-board-container .board-column div:nth-child(2){
@@ -68,8 +100,15 @@
 
 .card-title{
     /* margin-top: 1rem; */
-    font-size: 1.1em;
-    font-weight: bold;
+    font-size: 1em;
+    font-weight: bolder;
+    overflow: hidden;
+    /* text-overflow: ellipsis;
+    white-space: nowrap; */
+
+    display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;  
 }
 
 .card-botton{
@@ -79,7 +118,7 @@
 
 .card-botton i{
     font-size: 1em;
-    color: yellowgreen;
+    color: white;
 }
 
 .card-body{

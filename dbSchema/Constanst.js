@@ -117,6 +117,7 @@ module.exports.PAGES = {
     UNIQUE_WORK_ITEM: "workItem",
     BACKLOG: "backlog",
     SPRINT: "sprintPlanning",
+    SPRINT_BOARD: "sprintBoard",
     MANAGE_TEAM: "manageTeam",
     MANAGE_USER: "manageUser",
     MANAGE_SPRINT: "manageSprint", 
@@ -310,7 +311,48 @@ module.exports.getPointsForStatus = (data, filterValue = null, notIn=false) => {
     }
 
     return sum;
-
 }
+
+
+/**
+ * Order work items by desired order
+ * @param {Object} workItems - work items separated by type
+ * @param {Array} desiredOrder - order of the work item
+ * @returns {Object}
+ */
+module.exports.sortByOrder = (workItems, desiredOrder, revertOrder = false) => {
+    // console.log("Sorting by order...");
+    
+    let statuses = Object.keys(workItems);
+
+    let sorted = {};
+
+    for (const status of statuses){
+
+        let desiredOrderForStatus = desiredOrder.filter(each => {return each["status"] === status})[0];
+        
+        let workItemsStatus = workItems[status];
+       
+        desiredOrderForStatusObject = {};
+        
+        for (let i = 0; i < desiredOrderForStatus["index"].length; i++) {
+            desiredOrderForStatusObject[desiredOrderForStatus["index"][i]] = i;
+        }
+
+        sorted[status] = workItemsStatus.sort(function(a, b) {
+
+            if (revertOrder){
+                return desiredOrderForStatusObject[b["_id"]] - desiredOrderForStatusObject[a["_id"]];
+            }
+
+            return desiredOrderForStatusObject[a["_id"]] - desiredOrderForStatusObject[b["_id"]]
+
+        ;});
+    }
+
+    return sorted;
+}
+
+
 
 

@@ -5,6 +5,7 @@ const workItemCollection        = require("../../dbSchema/workItem");
 const projectCollection         = require("../../dbSchema/projects");
 const userCollection            = require("../../dbSchema/user");
 const SprintCollection          = require("../../dbSchema/sprint");
+const OrderSprintCollection     = require("../../dbSchema/sprint-order");
 const moment                    = require("moment");
 const _                         = require("lodash");
 let router                      = express.Router();
@@ -708,7 +709,7 @@ router.post("/api/:id/deleteTeam", middleware.isUserInProject, async function (r
 
 // =========================== SPRINTS REQUEST =====================
 /**
- * METHOD: POST - Create SPRINT
+ * METHOD: POST - create sprint
  */
 router.post("/api/:id/createSprint", middleware.isUserInProject, async function (req, res) {
 
@@ -820,12 +821,19 @@ router.post("/api/:id/createSprint", middleware.isUserInProject, async function 
                 error_message = err;
                 console.error(err);
             });
+            
 
             if (_.isUndefined(newSprint) || error_message){
                 response["msg"] = "Sorry, There was a problem creating the Sprints for the teams";
                 res.status(400).send(response);
                 return;
             }
+
+            //  ===== create order for sprint =====
+            await OrderSprintCollection.create({sprintId: newSprint["_id"], projectId}).catch(err => {
+                console.error("Error creating the order for the sprint: ", err);
+            });
+            // ====================================
 
             newSprint = newSprint.toObject();
 
@@ -877,6 +885,13 @@ router.post("/api/:id/createSprint", middleware.isUserInProject, async function 
             res.status(400).send(response);
             return;
         }
+
+        //  ===== create order for sprint =====
+        await OrderSprintCollection.create({sprintId: newSprint["_id"], projectId}).catch(err => {
+            console.error("Error creating the order for the sprint: ", err);
+        });
+        // ====================================
+
 
         newSprint = newSprint.toObject();
 
@@ -943,6 +958,12 @@ router.post("/api/:id/removeSprintForTeam/:teamId", middleware.isUserInProject, 
         return;
     }
 
+    //  ===== create order for sprint =====
+    await OrderSprintCollection.findOneAndDelete({sprintId: sprintId, projectId}).catch(err => {
+        console.error("Error deleting the order for the sprint: ", err);
+    });
+    // ====================================
+
     response["msg"] = "Sprint was removed successfully.";
     res.status(200).send(response);
 });
@@ -988,6 +1009,7 @@ router.post("/api/:id/removeWorkItems", middleware.isUserInProject, async functi
     let item_str = workItemsId.length === 1 ? "item" : "items";
     res.status(200).send(`Successfully removed work ${item_str}`);
 });
+
 
 // ================================ USER API ======================================
 /**
@@ -1453,6 +1475,18 @@ router.post("/api/:id/updateSprint/:teamId/:sprintId", middleware.isUserInProjec
         res.status(400).send(response);
         return;
     }
+
+    const sprintHaveOrder = await updatedSprint.haveOrderSchema();
+  
+    if (!sprintHaveOrder){
+        console.log("Adding order schema to sprint");
+        //  ===== create order for sprint =====
+        await OrderSprintCollection.create({sprintId: sprintId, projectId}).catch(err => {
+            console.error("Error creating the order for the sprint: ", err);
+        });
+        // ====================================
+    }
+
     updatedSprint = updatedSprint.toObject();
     updatedSprint["startDateFormated"] = moment(updatedSprint["startDate"], SPRINT_FORMAT_DATE).format("MMM Do");
     updatedSprint["endDateFormated"] = moment(updatedSprint["endDate"], SPRINT_FORMAT_DATE).format("MMM Do");
@@ -1461,6 +1495,7 @@ router.post("/api/:id/updateSprint/:teamId/:sprintId", middleware.isUserInProjec
     response["msg"] = "success";
     response["sprint"] = updatedSprint;
 
+    console.log("Success updated sprint");
     res.status(200).send(response);
 });
 // ================================ END ======================================

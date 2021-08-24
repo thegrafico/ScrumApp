@@ -3,9 +3,10 @@
 */
 
 // import DB
-const mongoose  = require("mongoose");
-const moment    = require("moment");
-const _         = require("lodash");
+const mongoose                  = require("mongoose");
+const moment                    = require("moment");
+const OrderSprintCollection     = require("./sprint-order");
+const _                         = require("lodash");
 
 const {
     SPRINT_FORMAT_DATE,
@@ -428,6 +429,64 @@ sprintSchema.statics.getSprintById = async function(projectId, sprintId) {
     });
 };
 
+
+/**
+ * get the order of the sprint by id 
+ * @param {String} sprintId - Id of the sprint
+ * @param {String} projectId - id of the project
+ * @returns {Mongoose} object
+ */
+ sprintSchema.statics.getSprintOrder = async function(sprintId, projectId) {
+    
+    let error = undefined;
+
+    let sprintOrder = await OrderSprintCollection.findOne(
+        {sprintId: sprintId, projectId: projectId}
+    ).catch(err => {
+        error = err;
+        console.error("err: ", err);
+    });
+
+    if (_.isUndefined(sprintOrder) || _.isNull(sprintOrder) || error != undefined){
+        return null;
+    }
+
+    return sprintOrder;
+};
+
+
+/**
+ * Get the order of the sprint data
+ * @returns 
+ */
+sprintSchema.methods.getSprintOrder = async function() {
+    
+    const sprint = this;
+
+    let error = undefined;
+
+    let sprintOrder = await OrderSprintCollection.findOne(
+        {sprintId: sprint["_id"], projectId: sprint["projectId"]}
+    ).catch(err => {
+        error = err;
+        console.error("err: ", err);
+    });
+
+    if (_.isUndefined(sprintOrder) || _.isNull(sprintOrder) || error != undefined){
+        return null;
+    }
+
+    return sprintOrder;
+};
+
+/**
+ * check if the sprint has a order schema
+ * @returns {Boolean} - return true if the the sprint have a order schema
+ */
+ sprintSchema.methods.haveOrderSchema = async function() {
+    
+    return this.getSprintOrder() != null;
+};
 
 
 

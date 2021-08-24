@@ -175,7 +175,13 @@ $(function () {
             if (response){
                 $.notify(response.msg, "success");
 
-                updateTableElement(workItemId, [response["workItem"]], appendToWotkItemTable, [true, false]);
+
+                // in case we're in the sprint board page
+                if ($(CURRENT_PAGE_ID).val() === "sprintBoard"){
+                    updateSprintBoardWorkItem(workItemId, response["workItem"]);
+                }else{
+                    updateTableElement(workItemId, [response["workItem"]], appendToWotkItemTable, [true, false]);
+                }
 
                 // updating the feedback messages
                 updateWorkItemFeedback();

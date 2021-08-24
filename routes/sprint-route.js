@@ -32,6 +32,7 @@ const {
     getNumberOfDays,
     getPointsForStatus,
     filteByStatus,
+    sortByOrder,
 } = require('../dbSchema/Constanst');
 
 // ===================================================
@@ -206,16 +207,16 @@ router.get("/:id/sprint/board", middleware.isUserInProject, async function (req,
     let sprints = [];
     let workItems = [];
     let activeSprintId = undefined;
+    let activeSprint = {};
 
     // if there is a least one team.
     if (!_.isNull(userPreferedTeam) || sprintId){
 
-        let activeSprint = {};
         if (sprintId){
             // 60fcf6679dd6b4759dbcbe43
             activeSprint = await SprintCollection.getSprintById(projectId, sprintId).catch(err =>{
                 console.error(err);
-            }) || [];
+            }) || {};
         }
 
         userTeamId = activeSprint["teamId"] || userPreferedTeam["_id"];
@@ -249,13 +250,26 @@ router.get("/:id/sprint/board", middleware.isUserInProject, async function (req,
         }
     }
 
-    const ALL_WORK_ITEMS = {
-        new: filteByStatus(workItems, WORK_ITEM_STATUS["New"]),
-        active: filteByStatus(workItems, WORK_ITEM_STATUS["Active"]),
-        review: filteByStatus(workItems, WORK_ITEM_STATUS["Review"]),
-        completed: filteByStatus(workItems, WORK_ITEM_STATUS["Completed"]),
-        block: filteByStatus(workItems, WORK_ITEM_STATUS["Block"]),
-        abandoned: filteByStatus(workItems, WORK_ITEM_STATUS["Abandoned"]),
+    let ALL_WORK_ITEMS = {
+        New:  filteByStatus(workItems, WORK_ITEM_STATUS["New"]),
+        Active: filteByStatus(workItems, WORK_ITEM_STATUS["Active"]),
+        Review: filteByStatus(workItems, WORK_ITEM_STATUS["Review"]),
+        Completed: filteByStatus(workItems, WORK_ITEM_STATUS["Completed"]),
+        Block: filteByStatus(workItems, WORK_ITEM_STATUS["Block"]),
+        Abandoned: filteByStatus(workItems, WORK_ITEM_STATUS["Abandoned"]),
+    }
+
+    // ORDER FOR SPRINT
+    if (!_.isEmpty(activeSprint) && !_.isUndefined(activeSprintId)){
+        let sprintOrder = await SprintCollection.getSprintOrder(activeSprintId, projectId);
+
+        // if the sprint board have never been set
+        if (_.isEmpty(sprintOrder["order"]["sprintBoard"])){
+            sprintOrder = await setSprintOrder(sprintOrder, ALL_WORK_ITEMS);
+        }else{
+            // sort by the order
+            ALL_WORK_ITEMS = sortByOrder(ALL_WORK_ITEMS, sprintOrder["order"]["sprintBoard"]);
+        }
     }
 
     sprints = sortByDate(sprints, "startDate");
@@ -281,7 +295,7 @@ router.get("/:id/sprint/board", middleware.isUserInProject, async function (req,
         "workItemType": WORK_ITEM_ICONS,
         "WORK_ITEM_STATUS": WORK_ITEM_STATUS,
         "workItems": ALL_WORK_ITEMS,
-        "currentPage": PAGES.SPRINT,
+        "currentPage": PAGES.SPRINT_BOARD,
         "userTeam": userTeamId,
         "sprintDefaultTimePeriod": SPRINT_DEFAULT_PERIOD_TIME, // Here the user can selet the time, but defualt is two weeks
         "priorityPoints":PRIORITY_POINTS,
@@ -406,6 +420,33 @@ router.get("/:id/planing/sprint", middleware.isUserInProject, async function (re
 
     res.render("planing-sprint", params);
 });
+
+// ======= FUNCTIONS ===========
+async function setSprintOrder(sprint, workItems){
+    
+    let temp = [];
+
+    // if the sprint board have never been set
+    if (_.isEmpty(sprint["order"]["sprintBoard"])){
+    
+        // adding first time
+        for (let status of Object.keys(workItems)){
+            const workItemsIds = workItems[status].map(each => {return each["_id"]});
+            temp.push({status: status, index: workItemsIds, firstTimeSet: true})
+        }
+
+        sprint["order"]["sprintBoard"] = temp;
+
+        await sprint.save().catch(err => {
+            console.error("Error saving the order: ", err);
+        });
+
+        console.log("Sprint order for board was added");
+    }else{
+        console.log("Sprint board has an order");
+    }
+}
+
 
 module.exports = router;
 

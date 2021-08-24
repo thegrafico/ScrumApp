@@ -9,16 +9,17 @@
         <%- include('modals/sideNavbar'); %>
 
         <!-- Page Content  -->
-        <div id="content" class="p-4 p-md-5">
-
-            <%- include('modals/titleOptionsMenu'); %>
+        <div id="content" class="p-4 p-md-5 mt-3">
 
             <!-- FILTERS -->
             <div class="container-fluid statistics-boxs">
-                <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+                <nav class="navbar navbar-expand-lg navbar-dark bg-dark pb-2">
+
+                    <h5 class="mr-5">Sprint Board</h5>
 
                     <i class="fas fa-users"></i>
                     <div class="filterByTeamContainer">
+
                         <% if(projectTeams.length > 1){ %>
                             <select 
                             class="custom-select my-custon-select input-border seletedTeamToFilter"
@@ -54,13 +55,6 @@
                                     <span class="sr-only">(current)</span>
                                 </a>
                             </li>
-                    
-
-                            <li class="nav-item trashIconWrapper">
-                                &nbsp;
-                                <button id="trashBtnWorkItem" class="trash-btn" disabled> <i class="far fa-trash-alt grayColor"></i> </button>
-                            </li>
-
                         </ul>
                         <!-- <i class="fas fa-sync sprintIcon"></i> -->
                         <i class="fas fa-running sprintIcon"></i>
@@ -118,6 +112,8 @@
             <div class="p-4 container-fluid" id="sprint-board-container">
 
                 <div class="row">
+
+                   <!-- <div class="d-flex flex-row bd-highlight mb-3"> -->
                     
                     <!-- -TODO- WORK ITEMS -->
                     <div class="col-2 board-column" >
@@ -126,7 +122,7 @@
 
                         <div id="<%=WORK_ITEM_STATUS['New']%>" class="container-column">
 
-                            <% for (let workItem of workItems["new"]) { %>
+                            <% for (let workItem of workItems["New"]) { %>
                                 <div class="card border-dark mb-3" style="max-width: 20rem;" id="<%=workItem['_id']%>">
                                     <div class="card-header">
                                         <span class="table-icon"> 
@@ -137,7 +133,7 @@
                                     <div class="card-body">
                                         <h4 class="card-title">
                                            
-                                            <a href="workitems/<%=workItem['_id']%>" class="open-existing-work-item-modal" rel="<%=workItem['_id']%>">  
+                                            <a href="/dashboard/<%=projectId%>/planing/workitems/<%=workItem['_id']%>" class="open-existing-work-item-modal" rel="<%=workItem['_id']%>">  
                                                 <%=workItem["title"]%>
                                             </a> 
                                             
@@ -159,11 +155,11 @@
                     </div>
 
                     <!-- ACTIVE WORK ITEMS -->
-                    <div class="col-2 board-column" id="activeWorkItems">
+                    <div class="col-2 board-column">
                         <div class="border-status activeColor"> <span class="columnTitle">Active</span> </div>
 
                         <div id="<%=WORK_ITEM_STATUS['Active']%>" class="container-column">
-                            <% for (let workItem of workItems["active"]) { %>
+                            <% for (let workItem of workItems["Active"]) { %>
                                 <div class="card border-dark mb-3" style="max-width: 20rem;" id="<%=workItem['_id']%>">
                                     <div class="card-header">
                                     
@@ -199,7 +195,7 @@
                         <div class="border-status reviewColor"> <span class="columnTitle">Review</span> </div>
 
                         <div id="<%=WORK_ITEM_STATUS['Review']%>" class="container-column">
-                            <% for (let workItem of workItems["review"]) { %>
+                            <% for (let workItem of workItems["Review"]) { %>
                                 <div class="card border-dark mb-3" style="max-width: 20rem;" id="<%=workItem['_id']%>">
                                     <div class="card-header">
                                         <span class="table-icon"> 
@@ -236,7 +232,7 @@
 
                         <div id="<%=WORK_ITEM_STATUS['Completed']%>" class="container-column">
 
-                            <% for (let workItem of workItems["completed"]) { %>
+                            <% for (let workItem of workItems["Completed"]) { %>
                                 <div class="card border-dark mb-3" style="max-width: 20rem;" id="<%=workItem['_id']%>">
                                     <div class="card-header">
                                         <span class="table-icon"> 
@@ -271,7 +267,7 @@
                         <div class="border-status blockColor"> <span class="columnTitle">Block</span></div>
 
                         <div id="<%=WORK_ITEM_STATUS['Block']%>" class="container-column">
-                            <% for (let workItem of workItems["block"]) { %>
+                            <% for (let workItem of workItems["Block"]) { %>
                                 <div class="card border-dark mb-3" style="max-width: 20rem;" id="<%=workItem['_id']%>">
                                     <div class="card-header"> 
                                          <span class="table-icon"> 
@@ -306,7 +302,7 @@
                         <div class="border-status removedColor"><span class="columnTitle">Abandoned</span></div>
 
                         <div id="<%=WORK_ITEM_STATUS['Abandoned']%>"  class="container-column">
-                            <% for (let workItem of workItems["abandoned"]) { %>
+                            <% for (let workItem of workItems["Abandoned"]) { %>
                                 <div class="card border-dark mb-3" style="max-width: 20rem;" id="<%=workItem['_id']%>">
                                     <div class="card-header">
                                         <span class="table-icon"> 

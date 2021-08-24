@@ -521,6 +521,75 @@ function appendToWotkItemTable(workItems, index=null, showIfSprint=true, removeT
 
 }
 
+/**
+ * Add work item to the sprint baord
+ * @param {Object} workItem 
+ * @param {Number} index 
+ * @param {Boolean} cleanTable 
+ */
+function addWorkItemToBoard(workItem, index){
+
+    const projectId = $(PROJECT_ID).val();
+    let id = workItem["_id"]
+    let status = workItem["status"];
+    let type = workItem["type"];
+    let icon = WORK_ITEM_ICONS[type].icon;
+    let user = workItem["assignedUser"];
+
+    // TAGS
+    let tags = null;
+    if (workItem["tags"].length > 0){
+        let spans = "";
+        workItem["tags"].forEach(tag => {
+            spans += `<span class="btn btn-info disabled btn-sm tags-container">${tag}</span> `;
+        });
+
+        tags  = `<td class="tags-td"> ${spans} </td>`
+    }else{
+        tags = "<td class='tags-td'>   </td>"
+    }
+
+    const link = `/dashboard/${projectId}/planing/workitems/${id}`;
+    
+    let workItemBoardTemplate = `
+    
+    <div class="card border-dark mb-3" style="max-width: 20rem;" id="${id}">
+        <div class="card-header">
+            <span class="table-icon"> 
+                <i class="fas ${icon}"></i> 
+            </span> 
+            ID: ${workItem["itemId"]}
+        </div>
+        <div class="card-body">
+            <h4 class="card-title">
+                
+                <a href="${link}" class="open-existing-work-item-modal" rel="${id}">  
+                   ${workItem["title"]}
+                </a> 
+                
+            </h4>
+            ${tags}
+            <h4 class="card-botton"> <i class="far fa-user"></i> ${user["name"]} </h4>
+        </div>
+    </div>`;
+
+    // add at index if user wants to.
+    if (index != null){
+
+        let numberOflements = $(`div#${status} > div`).length;
+
+        if (numberOflements != index){
+            $(`div#${status} > div`).eq(index).before(workItemBoardTemplate);
+        }else{
+            $(`div#${status} > div`).eq(index -1).after(workItemBoardTemplate);
+        }
+        index = null;
+    }else{
+        // Adding here;
+        $(`div#${status}`).append(workItemBoardTemplate);
+    }
+}
+
 function highliteWorkItemRow(checkedElement, checkElement){
     // get the parent element. In this case, it will be the the label element
     let _parent = $( checkedElement ).parent();
@@ -875,6 +944,21 @@ function update_html(currentPage, updateType, valueToUpdate, inputType, others=n
             // SPRINT FILTERING
             updateSelectOption(SPRINT_FILTER_BY_SPRINT_SELECT, updateType, valueToUpdate);
             updateSelectOption(FILTER_BY_TEAM_SPRINT, updateType, valueToUpdate);
+            break;
+        case "sprintBoard":
+
+            // adding work item to the backlog only if new work item does not have a sprint assigned
+            if (inputType === UPDATE_INPUTS.CREATE_WORK_ITEM){
+                    
+                const currentSprintSelected = $(FILTER_BY_SPRINT_INPUT).val() || "0";
+                
+                if (valueToUpdate["sprint"]["_id"].toString() === currentSprintSelected){
+                    addWorkItemToBoard(valueToUpdate, null, false);
+                }
+
+                break;
+            }
+            break;
         case "manageSprint":
             
             // USER 
@@ -904,6 +988,7 @@ function update_html(currentPage, updateType, valueToUpdate, inputType, others=n
                 updateSelectOption(WORK_ITEM["team"], updateType, valueToUpdate);
                 updateSelectOption(TEAM_SELECT_INPUT_ID, updateType, valueToUpdate);
             }   
+            break;
         default:
             break;
     }
@@ -925,6 +1010,38 @@ function updateTableElement(rowId, elementToUpdate, appendFunction, functionPara
 
     // add the element to the table
     appendFunction(elementToUpdate, index, ...functionParams);
+}
+
+
+/**
+ * Update Work Item for Sprint board
+ * @param {String} elementId 
+ * @param {Object} wotkItem 
+ */
+function updateSprintBoardWorkItem(elementId, workItem){
+
+    const status = workItem["status"];
+    const NOT_FOUND = 0;
+    let index = $(`div#${status} div#${elementId}`).index();
+
+    console.log("index: ", index);
+
+    // remove element from UI
+    removeWorkItemFromBoard(elementId);
+
+    // Check if index is not found
+    if (index <= NOT_FOUND){
+        addWorkItemToBoard(workItem, null);
+    }else{
+        addWorkItemToBoard(workItem, index);
+    }
+}
+
+/**
+ * 
+*/
+function removeWorkItemFromBoard(workItemId){
+    $(`div#${workItemId}`).remove();
 }
 
 
