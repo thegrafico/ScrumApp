@@ -1477,7 +1477,7 @@ router.post("/api/:id/updateSprint/:teamId/:sprintId", middleware.isUserInProjec
     }
 
     const sprintHaveOrder = await updatedSprint.haveOrderSchema();
-  
+    
     if (!sprintHaveOrder){
         console.log("Adding order schema to sprint");
         //  ===== create order for sprint =====

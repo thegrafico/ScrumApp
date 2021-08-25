@@ -115,8 +115,8 @@ module.exports.PAGES = {
     STATISTICS: "statistics",
     WORK_ITEMS: "workItems",
     UNIQUE_WORK_ITEM: "workItem",
-    BACKLOG: "backlog",
-    SPRINT: "sprintPlanning",
+    BACKLOG: "sprintBacklog",
+    SPRINT: "sprintPlaning",
     SPRINT_BOARD: "sprintBoard",
     MANAGE_TEAM: "manageTeam",
     MANAGE_USER: "manageUser",
@@ -320,35 +320,66 @@ module.exports.getPointsForStatus = (data, filterValue = null, notIn=false) => {
  * @param {Array} desiredOrder - order of the work item
  * @returns {Object}
  */
-module.exports.sortByOrder = (workItems, desiredOrder, revertOrder = false) => {
+module.exports.sortByOrder = (workItems, desiredOrder, location, revertOrder = false) => {
     // console.log("Sorting by order...");
-    
-    let statuses = Object.keys(workItems);
+    let sorted = undefined;
 
-    let sorted = {};
+    switch(location){
+        case "sprintBacklog":
+        case "sprintPlaning":
+            
+        sorted = undefined;
 
-    for (const status of statuses){
-
-        let desiredOrderForStatus = desiredOrder.filter(each => {return each["status"] === status})[0];
-        
-        let workItemsStatus = workItems[status];
-       
-        desiredOrderForStatusObject = {};
-        
-        for (let i = 0; i < desiredOrderForStatus["index"].length; i++) {
-            desiredOrderForStatusObject[desiredOrderForStatus["index"][i]] = i;
-        }
-
-        sorted[status] = workItemsStatus.sort(function(a, b) {
-
-            if (revertOrder){
-                return desiredOrderForStatusObject[b["_id"]] - desiredOrderForStatusObject[a["_id"]];
+            desiredOrderObject = {};
+            
+            for (let i = 0; i < desiredOrder.length; i++) {
+                desiredOrderObject[desiredOrder[i]] = i;
             }
 
-            return desiredOrderForStatusObject[a["_id"]] - desiredOrderForStatusObject[b["_id"]]
+            sorted = workItems.sort(function(a, b) {
 
-        ;});
+                if (revertOrder){
+                    return desiredOrderObject[b["_id"]] - desiredOrderObject[a["_id"]];
+                }
+                return desiredOrderObject[a["_id"]] - desiredOrderObject[b["_id"]]
+
+            ;});
+            return sorted;
+            
+            break;
+        case "sprintBoard":
+            let statuses = Object.keys(workItems);
+
+            sorted = {};
+
+            for (const status of statuses){
+
+                let desiredOrderForStatus = desiredOrder.filter(each => {return each["status"] === status})[0];
+                
+                let workItemsStatus = workItems[status];
+            
+                desiredOrderForStatusObject = {};
+                
+                for (let i = 0; i < desiredOrderForStatus["index"].length; i++) {
+                    desiredOrderForStatusObject[desiredOrderForStatus["index"][i]] = i;
+                }
+
+                sorted[status] = workItemsStatus.sort(function(a, b) {
+
+                    if (revertOrder){
+                        return desiredOrderForStatusObject[b["_id"]] - desiredOrderForStatusObject[a["_id"]];
+                    }
+
+                    return desiredOrderForStatusObject[a["_id"]] - desiredOrderForStatusObject[b["_id"]]
+
+                ;});
+            }
+            return sorted;
+            break;
+        default: 
+            break;
     }
+
 
     return sorted;
 }

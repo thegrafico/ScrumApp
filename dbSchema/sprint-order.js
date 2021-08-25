@@ -27,29 +27,13 @@ let sprintOrderSchema = new mongoose.Schema({
     },
     order:{
 
-        sprintBacklog: [{
-            status: { 
-                type: String, 
-                enum: Object.keys(WORK_ITEM_STATUS),
-                required:true
-            },
-
+        sprintBacklog: {
             index : [{type: ObjectId, ref: "WorkItem"}],
+        },
 
-            firstTimeSet: {type: Boolean, default: false}
-        }],
-
-        sprintPlaning: [{
-            status: { 
-                type: String, 
-                enum: Object.keys(WORK_ITEM_STATUS),
-                required:true
-            },
-
-            orderIndex : [{type: ObjectId, ref: "WorkItem"}],
-            firstTimeSet: {type: Boolean, default: false}
-
-        }],
+        sprintPlaning: {
+            index : [{type: ObjectId, ref: "WorkItem"}],
+        },
 
         sprintBoard: [
             {
@@ -59,7 +43,6 @@ let sprintOrderSchema = new mongoose.Schema({
                     required:true,
                 },
                 index : [{type: ObjectId, ref: "WorkItem"}],
-                firstTimeSet: {type: Boolean, default: false}
             }
         ],
     },

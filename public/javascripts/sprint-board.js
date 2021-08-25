@@ -22,11 +22,18 @@ $( function() {
             const cardDiv = ui.item;
             
             // the parent element have the status where the dragble element was moved
-            let statusMoved = $(cardDiv).parent().attr("id");
-            let workItemId = $(cardDiv).attr("id");
+            const statusMoved = $(cardDiv).parent().attr("id");
+            const workItemId = $(cardDiv).attr("id");
+            const indexOfWorkItemInBoard = $(`div#${workItemId}`).index();    
+
+            const updateData = {
+                "status": statusMoved, 
+                "index": indexOfWorkItemInBoard, 
+                "location": "sprintBoard"
+            };
 
             // update the status of the work item
-            await updateWorkItemBoard(workItemId, statusMoved);
+            await updateWorkItemBoard(workItemId, updateData);
 
             console.log("ITEM WAS MOVED TO: ", statusMoved);
         },
@@ -44,36 +51,3 @@ $( function() {
         icon.closest(".portlet").find(".portlet-content").toggle();
     });
 } );
-
-/**
- * Update the status of the work item
- * @param {String} workItemId 
- * @param {String} status 
- */
-async function updateWorkItemBoard(workItemId, status){
-
-    const projectId = $(PROJECT_ID).val();
-    const sprintId  = $(FILTER_BY_SPRINT_INPUT).val();
-
-    const API_LINK_UPDATE_WORK_ITEM_BOARD = `/dashboard/api/${projectId}/updateWorkItemOrder/${workItemId}/${sprintId}`;
-
-    const indexOfWorkItemInBoard = $(`div#${workItemId}`).index();    
-
-    // request data
-    let request_data = {
-        "status": status,
-        "location": "sprintBoard",
-        "index": indexOfWorkItemInBoard,
-    }
-
-    let response_error = null;
-    const response = await make_post_request(API_LINK_UPDATE_WORK_ITEM_BOARD, request_data).catch(err=> {
-        response_error = err;
-    });
-
-    // Success message
-    if (response_error){
-        $.notify(response_error.data.responseJSON.msg, "error");
-    }
-
-}

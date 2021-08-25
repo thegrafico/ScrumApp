@@ -87,7 +87,6 @@
                                 <input type="checkbox" name="checkAll" id="checkAllTableRow"/>
                                 <span class="d-none">checkbox</span>
                             </th>
-                            <th class="orderColumn">Order</th>
                             <th scope="col" class="tableColumnID">ID</th>
                             <th class="d-none" scope="col">Type</th>
                             <th class="col-title"  scope="col">Title</th>
@@ -111,9 +110,6 @@
                                             <input type="checkbox" name="checkboxWorkItem[]" value="<%=workItems[i]['_id']%>" class="checkboxRowElement" />
                                         </label> 
                                     </td> 
-                                    
-                                    <!-- Order -->
-                                    <td class="orderColumn"><%=order++%></td>
                                     
                                     <!-- ID -->
                                     <td class="tableColumnID"> <%=workItems[i]["itemId"]%></td>
@@ -172,6 +168,7 @@
                 </table>
             </div>
         </div>
+
         <input type="hidden" name="projectId" id="projectId" value="<%=projectId%>">
         <input type="hidden" name="currentTab" id="currentTab" value="<%=activeTab%>">
     </div>

@@ -1544,3 +1544,28 @@ function getTags(workItemSelector){
 
     return tags_available;
 }
+
+
+/**
+ * Update the status of the work item
+ * @param {String} workItemId 
+ * @param {String} status 
+ */
+async function updateWorkItemBoard(workItemId, updateData){
+
+    const projectId = $(PROJECT_ID).val();
+    const sprintId  = $(FILTER_BY_SPRINT_INPUT).val();
+
+    const API_LINK_UPDATE_WORK_ITEM_BOARD = `/dashboard/api/${projectId}/updateWorkItemOrder/${workItemId}/${sprintId}`;
+
+    let response_error = null;
+    const response = await make_post_request(API_LINK_UPDATE_WORK_ITEM_BOARD, updateData).catch(err=> {
+        response_error = err;
+    });
+
+    // Success message
+    if (response_error){
+        $.notify(response_error.data.responseJSON.msg, "error");
+    }
+
+}

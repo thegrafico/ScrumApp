@@ -4,6 +4,9 @@ $(function () {
     $(FILTER_BY_SPRINT_INPUT).select2();
     $(FILTER_BY_TEAM_SPRINT).select2();
 
+    // start dragg event
+    startDraggable(WORK_ITEM_TABLE);
+
     // FILTER BY TEAM
     $(FILTER_BY_TEAM_SPRINT).on("change", async function(){
         const projectId = $(PROJECT_ID).val();
@@ -153,3 +156,55 @@ $(function () {
         updateWorkItemFeedback();
     });
 });
+
+
+/**
+ * Make the work item table dragable
+ * @param {String} tableId 
+ */
+function startDraggable(tableId){
+
+    $(tableId).sortable({
+        items: 'tr.rowValues',
+        cursor: 'row-resize',
+        axis: 'y',
+        // handle: ".handle" // TODO: Add icon to sort
+        dropOnEmpty: false,
+        delay: 400,
+        start: function (e, ui) {
+            // ui.item.addClass("selected");
+        },
+        stop: async function (e, ui) {
+
+            // getting the current draggable element
+            const rowElement = ui.item;
+            
+            // the parent element have the status where the dragble element was moved
+            let workItemId = $(rowElement).attr("id");
+            let newIndex = $(rowElement).index();
+
+            console.log()
+
+            let requestData = {
+                "index": newIndex,
+                "location": $(CURRENT_PAGE_ID).val(),
+            };
+
+            await updateWorkItemBoard(workItemId, requestData);
+
+            resetColumnOrder();
+        }
+    });
+}
+
+/**
+ * This function is used by startDraggable to reset the order column in the table. 
+ * So every time the columns chage the order, this function reset the value
+ */
+function resetColumnOrder(){
+    let counter = 1;
+    $("td.orderColumn").each(function() {
+        $(this).text(counter);
+        counter++;
+    });
+}

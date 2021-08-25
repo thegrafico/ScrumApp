@@ -699,12 +699,40 @@ router.post("/api/:id/updateWorkItemOrder/:workItemId/:sprintId", middleware.isU
 
         let isWorkItemFound = false;
 
-        // try to find the previus location of the work item and remove it
-        for (let sprintWorkItemPage of sprintOrder["order"][location]){
-            
-            // getting all ids of the work items 
-            let workItemsIds = sprintWorkItemPage["index"];
+        if ( _.isArray( sprintOrder["order"][location])){
 
+            // try to find the previus location of the work item and remove it
+            for (let sprintWorkItemPage of sprintOrder["order"][location]){
+                
+                // getting all ids of the work items 
+                let workItemsIds = sprintWorkItemPage["index"];
+
+                // check if the work items is in this location
+                isWorkItemFound = workItemsIds.some(each => {return each == workItemId});
+
+                if (isWorkItemFound){
+
+                    // get the index of the work item - index is the order
+                    let indexOfWorkItemFound = workItemsIds.indexOf(workItemId);
+                    
+                    // remove that element from the order
+                    workItemsIds.splice(indexOfWorkItemFound, 1);
+                    
+                    break;
+                }
+
+            }
+
+                // find new location for the work item and add it. 
+                let newStatusLocation = sprintOrder["order"][location].filter(each => {
+                    return each["status"] == status;
+                })[0];
+
+                // add workItemId to index and remove 0 elements.
+                newStatusLocation["index"].splice(index, 0, workItemId);
+        }else{
+            let workItemsIds = sprintOrder["order"][location]["index"];
+            
             // check if the work items is in this location
             isWorkItemFound = workItemsIds.some(each => {return each == workItemId});
 
@@ -716,18 +744,12 @@ router.post("/api/:id/updateWorkItemOrder/:workItemId/:sprintId", middleware.isU
                 // remove that element from the order
                 workItemsIds.splice(indexOfWorkItemFound, 1);
                 
-                break;
             }
 
+            // add element to the order
+            workItemsIds.splice(index, 0, workItemId);
+
         }
-
-        // find new location for the work item and add it. 
-        let newStatusLocation = sprintOrder["order"][location].filter(each => {
-            return each["status"] == status;
-        })[0];
-
-        // add workItemId to index and remove 0 elements.
-        newStatusLocation["index"].splice(index, 0, workItemId);
 
         // update the order of the work item
         await sprintOrder.save().catch( err => {
@@ -855,7 +877,6 @@ router.post("/api/:id/moveWorkItemsToSprint/:teamId", middleware.isUserInProject
         res.status(400).send(response);
         return;
     }
-    console.log(sprint);
     
     response["msg"] = (workItemIds.length > 0) ? "Work Items were moved to the sprint.": "Work Item was moved to the sprint.";
     res.status(200).send(response);

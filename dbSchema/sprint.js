@@ -448,6 +448,16 @@ sprintSchema.statics.getSprintById = async function(projectId, sprintId) {
     });
 
     if (_.isUndefined(sprintOrder) || _.isNull(sprintOrder) || error != undefined){
+    
+        console.log("Creating new sprint order");
+
+        //  ===== create order for sprint if cannot find one =====
+        sprintOrder = await OrderSprintCollection.create({sprintId: sprintId, projectId: projectId}).catch(err => {
+            console.error("Error creating the order for the sprint: ", err);
+        });
+    }
+
+    if (_.isUndefined(sprintOrder) || _.isNull(sprintOrder) || error != undefined){
         return null;
     }
 
@@ -472,8 +482,19 @@ sprintSchema.methods.getSprintOrder = async function() {
         console.error("err: ", err);
     });
 
+    console.log(_.isUndefined(sprintOrder));
+    console.log(_.isNull(sprintOrder));
+    console.log(error);
+
+
     if (_.isUndefined(sprintOrder) || _.isNull(sprintOrder) || error != undefined){
-        return null;
+    
+        console.log("Creating new sprint order");
+
+        //  ===== create order for sprint if cannot find one =====
+        sprintOrder = await OrderSprintCollection.create({sprintId: sprint["_id"], projectId: sprint["projectId"]}).catch(err => {
+            console.error("Error creating the order for the sprint: ", err);
+        });
     }
 
     return sprintOrder;

@@ -10,6 +10,7 @@ const _                         = require("lodash");
 const moment                    = require('moment');
 const projectCollection         = require("../dbSchema/projects");
 const SprintCollection          = require("../dbSchema/sprint");
+const OrderSprintCollection     = require("../dbSchema/sprint-order");
 const workItemCollection        = require("../dbSchema/workItem");
 const middleware                = require("../middleware/auth");
 let router                      = express.Router();
@@ -261,14 +262,15 @@ router.get("/:id/sprint/board", middleware.isUserInProject, async function (req,
 
     // ORDER FOR SPRINT
     if (!_.isEmpty(activeSprint) && !_.isUndefined(activeSprintId)){
+
         let sprintOrder = await SprintCollection.getSprintOrder(activeSprintId, projectId);
 
         // if the sprint board have never been set
         if (_.isEmpty(sprintOrder["order"]["sprintBoard"])){
-            sprintOrder = await setSprintOrder(sprintOrder, ALL_WORK_ITEMS);
+            sprintOrder = await setSprintOrder(sprintOrder, ALL_WORK_ITEMS, "sprintBoard");
         }else{
             // sort by the order
-            ALL_WORK_ITEMS = sortByOrder(ALL_WORK_ITEMS, sprintOrder["order"]["sprintBoard"]);
+            ALL_WORK_ITEMS = sortByOrder(ALL_WORK_ITEMS, sprintOrder["order"]["sprintBoard"], "sprintBoard");
         }
     }
 
@@ -313,7 +315,7 @@ router.get("/:id/sprint/board", middleware.isUserInProject, async function (req,
  */
 router.get("/:id/planing/sprint", middleware.isUserInProject, async function (req, res) {
 
-    let projectId = req.params.id;
+    const projectId = req.params.id;
 
     // check if there is a sprint id to look for
     let { sprintId }  = req.query;
@@ -344,16 +346,16 @@ router.get("/:id/planing/sprint", middleware.isUserInProject, async function (re
     let sprints = [];
     let workItems = [];
     let activeSprintId = undefined;
+    let activeSprint = {};
 
     // if there is a least one team.
     if (!_.isNull(userPreferedTeam) || sprintId){
 
-        let activeSprint = {};
         if (sprintId){
             // 60fcf6679dd6b4759dbcbe43
             activeSprint = await SprintCollection.getSprintById(projectId, sprintId).catch(err =>{
                 console.error(err);
-            }) || [];
+            }) || {};
         }
 
         userTeamId = activeSprint["teamId"] || userPreferedTeam["_id"];
@@ -384,6 +386,19 @@ router.get("/:id/planing/sprint", middleware.isUserInProject, async function (re
             workItems = await workItemCollection.find({projectId: projectId, _id: {$in: activeSprint.tasks}}).catch(err => {
                 console.error("Error getting work items: ", err)
             }) || [];
+        }
+    }
+
+    // ORDER FOR SPRINT
+    if (!_.isEmpty(activeSprint) && !_.isUndefined(activeSprintId)){
+        let sprintOrder = await SprintCollection.getSprintOrder(activeSprintId, projectId);
+       
+        // if the sprint board have never been set
+        if (_.isEmpty(sprintOrder["order"]["sprintPlaning"]["index"])){
+            sprintOrder = await setSprintOrder(sprintOrder, workItems, "sprintPlaning", true);
+        }else{
+            // sort by the order
+            workItems = sortByOrder(workItems, sprintOrder["order"]["sprintPlaning"]["index"], "sprintPlaning");
         }
     }
 
@@ -422,29 +437,41 @@ router.get("/:id/planing/sprint", middleware.isUserInProject, async function (re
 });
 
 // ======= FUNCTIONS ===========
-async function setSprintOrder(sprint, workItems){
-    
+async function setSprintOrder(sprint, workItems, location){
     let temp = [];
 
     // if the sprint board have never been set
-    if (_.isEmpty(sprint["order"]["sprintBoard"])){
-    
-        // adding first time
-        for (let status of Object.keys(workItems)){
-            const workItemsIds = workItems[status].map(each => {return each["_id"]});
-            temp.push({status: status, index: workItemsIds, firstTimeSet: true})
-        }
 
-        sprint["order"]["sprintBoard"] = temp;
+    switch(location){
+        case "sprintPlaning":
+        case "sprintBacklog":
+            let workItemsIds = workItems.map(each => {return each["_id"]});
+            
+            sprint["order"][location]["index"] = workItemsIds;
 
-        await sprint.save().catch(err => {
-            console.error("Error saving the order: ", err);
-        });
+            await sprint.save().catch(err => {
+                console.error("Error saving the order: ", err);
+            });
 
-        console.log("Sprint order for board was added");
-    }else{
-        console.log("Sprint board has an order");
+            break;
+        case "sprintBoard":
+            // adding first time
+            for (let status of Object.keys(workItems)){
+                const workItemsIds = workItems[status].map(each => {return each["_id"]});
+                temp.push({status: status, index: workItemsIds})
+            }
+
+            sprint["order"][location] = temp;
+
+            await sprint.save().catch(err => {
+                console.error("Error saving the order: ", err);
+            });
+            break;
+        default: 
+            break; 
     }
+
+    return sprint;
 }
 
 
