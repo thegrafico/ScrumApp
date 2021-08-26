@@ -856,10 +856,10 @@ async function moveWorkItemToSprint(workItemId, sprintId){
  */
 function update_html(currentPage, updateType, valueToUpdate, inputType, others=null){
     switch (currentPage){
-        case "statistics":
+        case PAGES["STATISTICS"]:
             updateStatisticsHtml(updateType, valueToUpdate);
             break;
-        case "workItems":
+        case PAGES["WORK_ITEMS"]:
 
             if (inputType === UPDATE_INPUTS.CREATE_WORK_ITEM){
                 appendToWotkItemTable([valueToUpdate], 0, true, false);
@@ -890,7 +890,7 @@ function update_html(currentPage, updateType, valueToUpdate, inputType, others=n
                 updateSelectOption(SPRINT_DELETE_MODAL_SELECT_TEAM, updateType, valueToUpdate);
             }
             break;
-        case "backlog":
+        case PAGES["BACKLOG"]:
             // adding work item to the backlog only if new work item does not have a sprint assigned
             if (inputType === UPDATE_INPUTS.CREATE_WORK_ITEM){
 
@@ -900,7 +900,7 @@ function update_html(currentPage, updateType, valueToUpdate, inputType, others=n
 
             }
             break;
-        case "manageUser":
+        case PAGES["MANAGE_USER"]:
             // TODO: Remove user form table? or just leave it to update the page?
             if (inputType === UPDATE_INPUTS.USER){
                 updateSelectOption(MODAL_REMOVE_USER_INPUT, updateType, valueToUpdate);
@@ -914,7 +914,7 @@ function update_html(currentPage, updateType, valueToUpdate, inputType, others=n
                 updateSelectOption(WORK_ITEM["sprint"], updateType, valueToUpdate);
             }
             break;
-        case "sprintPlanning":
+        case PAGES["SPRINT"]:
 
             // adding work item to the backlog only if new work item does not have a sprint assigned
             if (inputType === UPDATE_INPUTS.CREATE_WORK_ITEM){
@@ -923,6 +923,7 @@ function update_html(currentPage, updateType, valueToUpdate, inputType, others=n
                 console.log(valueToUpdate["sprint"]["_id"], currentSprintSelected);
                 if (valueToUpdate["sprint"]["_id"].toString() === currentSprintSelected){
                     appendToWotkItemTable([valueToUpdate], null, true, false);
+                    resetColumnOrder();
                 }
 
                 break;
@@ -945,7 +946,7 @@ function update_html(currentPage, updateType, valueToUpdate, inputType, others=n
             updateSelectOption(SPRINT_FILTER_BY_SPRINT_SELECT, updateType, valueToUpdate);
             updateSelectOption(FILTER_BY_TEAM_SPRINT, updateType, valueToUpdate);
             break;
-        case "sprintBoard":
+        case PAGES["SPRINT_BOARD"]:
 
             // adding work item to the backlog only if new work item does not have a sprint assigned
             if (inputType === UPDATE_INPUTS.CREATE_WORK_ITEM){
@@ -959,7 +960,7 @@ function update_html(currentPage, updateType, valueToUpdate, inputType, others=n
                 break;
             }
             break;
-        case "manageSprint":
+        case PAGES["MANAGE_SPRINT"]:
             
             // USER 
             if (inputType === UPDATE_INPUTS.USER){
