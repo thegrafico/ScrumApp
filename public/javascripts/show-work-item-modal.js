@@ -70,14 +70,13 @@ async function populateWorkItemModal(workItemId){
         return;
     }
 
+    const assignedUserId =  workItem["assignedUser"]["id"] || "0";
+
     // SUB ID
     $(UPDATE_WORK_ITEM["subId"]).text(workItem["itemId"]);
 
     // TITLE
     $(UPDATE_WORK_ITEM["title"]).val(workItem["title"]);
-
-    // ASSIGNED USER
-    $(UPDATE_WORK_ITEM["user"]).val(workItem["assignedUser"]["id"] || "0").change();
 
     // STATUS
     const status = workItem["status"];
@@ -102,6 +101,9 @@ async function populateWorkItemModal(workItemId){
 
     // Cleaning tags
     $(`${UPDATE_WORK_ITEM["tag_container"]} span`).remove();
+
+    // ASSIGNED USER
+    $(UPDATE_WORK_ITEM["user"]).val(assignedUserId).change();
 
     // Adding TAGS
     for (const tag of workItem["tags"]) {
@@ -135,6 +137,8 @@ async function populateWorkItemModal(workItemId){
             isSelected
         );
     }    
+
+
 
     // add update number of comments
     $(UPDATE_WORK_ITEM["number_of_comments"]).text(workItem["comments"].length);
