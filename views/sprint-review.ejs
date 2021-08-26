@@ -195,16 +195,19 @@
             </div>
 
             <div class="d-none statusReportDataContainer">
-                <input type="hidden" name="total" id="numberOfWorkItems" value="<%=statusReport['numberOfWorkItems']%>">
+                <input type="hidden" name="numberOfWorkItems" id="numberOfWorkItems" value="<%=statusReport['numberOfWorkItems']%>">
                 <input type="hidden" name="total" id="totalPoints" value="<%=statusReport['totalPoints']%>">
                 <input type="hidden" name="durationDays" id="durationDays" value="<%=statusReport['numberOfDays']%>">
                 <input type="hidden" name="startDate" id="sprintStartDate" value="<%=statusReport['startDate']%>">
-                <input type="hidden" name="endDate" id="sprintEndDate" value="<%=statusReport['endDate']%>">    
+                <input type="hidden" name="endDate" id="sprintEndDate" value="<%=statusReport['endDate']%>">
+                <input type="hidden" name="initalPoints" id="initalPoints" value="<%=statusReport['initalSprintPoints']%>">    
+
             </div>
             
 
             <script>
                 let workItems = <%- JSON.stringify(workItems) %>;
+                let pointsHistory = <%- JSON.stringify(statusReport["pointsHistory"]) %>;
             </script>
 
         </div>

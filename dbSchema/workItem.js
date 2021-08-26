@@ -5,6 +5,10 @@
 // import DB
 const mongoose          = require("mongoose");
 const AutoIncrement     = require('mongoose-sequence')(mongoose);
+const SprintCollection  = require("./sprint");
+const _                 = require("lodash");
+const moment            = require("moment");;
+
 
 const {
     WORK_ITEM_ICONS,
@@ -12,7 +16,10 @@ const {
     MAX_STORY_POINTS,
     MAX_PRIORITY_POINTS,
     MAX_LENGTH_DESCRIPTION,
-    MAX_NUMBER_OF_TAGS_PER_WORK_ITEM
+    MAX_NUMBER_OF_TAGS_PER_WORK_ITEM,
+    SPRINT_FORMAT_DATE,
+    WORK_ITEM_STATUS,
+    getPointsForStatus
 } = require("./Constanst");
 
 // get just the name since that will be in the db
@@ -97,5 +104,121 @@ function limitOfTags(tags){
     return tags.length <= MAX_NUMBER_OF_TAGS_PER_WORK_ITEM;
 }
 
+// Triggers: create, update
+workItemSchema.post('save', async function(workItem) {
+
+    console.log("Saving the work item...");
+
+    const projectId = workItem["projectId"].toString();
+    const workItemId = workItem["_id"].toString();
+
+    const sprint = await SprintCollection.getSprintForWorkItem(projectId, workItemId).catch( err => {
+        console.error("error getting sprint for work item: ", err);
+    });
+
+    // exit if not found
+    if (!sprint){return;}
+
+    let sprintWorkItems = await this.constructor.find({_id: {$in: sprint["tasks"]}}).catch(err => {
+        console.error("Error getting work items: ", err);
+    });
+
+    // check work items
+    if (!_.isArray(sprintWorkItems) || _.isEmpty(sprintWorkItems)){
+        console.log("Not work item found");
+        return;
+    }
+
+    const today = moment(new Date).format(SPRINT_FORMAT_DATE);
+    let totalPoints = getPointsForStatus(sprintWorkItems);
+    let completedPoints = getPointsForStatus(sprintWorkItems, WORK_ITEM_STATUS['Completed']);
+    let currentAmountOfPoints = (totalPoints - completedPoints >= 0) ? totalPoints - completedPoints : 0;
+
+    // if note empty, check 
+    if (!_.isEmpty(sprint["pointsHistory"])){
+        let todaysPoints = sprint["pointsHistory"].filter(each => {return each["date"] == today});
+
+        // there is not record for today
+        if (_.isEmpty(todaysPoints)){
+            sprint["pointsHistory"].push( {date: today, points: currentAmountOfPoints} );
+        }else{ // there is record for points changes for today's date
+            todaysPoints[0]["points"] = currentAmountOfPoints;
+        }
+    }
+
+    await sprint.save().catch(err => {
+        console.error("error saving sprint");
+    });
+});
+
+workItemSchema.post('findOneAndDelete', async function(workItem) {
+
+    console.log("Removing work item...");
+
+    const projectId = workItem["projectId"].toString();
+    const workItemId = workItem["_id"].toString();
+    
+    // getting sprint of the work item
+    const sprint = await SprintCollection.getSprintForWorkItem(projectId, workItemId).catch( err => {
+        console.error("error getting sprint for work item: ", err);
+    });
+
+    // exit if not found
+    if (!sprint){return;}
+
+    // removing work item from sprint
+    sprint["tasks"].pull(workItemId);
+ 
+    let sprintWorkItems = await this.model.find({"_id": {$in: sprint["tasks"]}}).catch(err => {
+        console.error("Error getting work items: ", err);
+    });
+
+    // check work items
+    if (!_.isArray(sprintWorkItems) || _.isEmpty(sprintWorkItems)){
+        console.log("Not work item found");
+
+        // saving before closing
+        await sprint.save().catch(err => {
+            console.error("error saving sprint");
+        });
+
+        return;
+    }
+
+    const today = moment(new Date).format(SPRINT_FORMAT_DATE);
+    let totalPoints = getPointsForStatus(sprintWorkItems);
+    let completedPoints = getPointsForStatus(sprintWorkItems, WORK_ITEM_STATUS['Completed']);
+    let currentAmountOfPoints = (totalPoints - completedPoints >= 0) ? totalPoints - completedPoints : 0;
+
+    // if note empty, check 
+    if (!_.isEmpty(sprint["pointsHistory"])){
+        let todaysPoints = sprint["pointsHistory"].filter(each => {return each["date"] == today});
+
+        // there is not record for today
+        if (_.isEmpty(todaysPoints)){
+            sprint["pointsHistory"].push( {date: today, points: currentAmountOfPoints} );
+        }else{ // there is record for points changes for today's date
+            todaysPoints[0]["points"] = currentAmountOfPoints;
+        }
+    }
+
+    await sprint.save().catch(err => {
+        console.error("error saving sprint");
+    });
+
+});
+
 
 module.exports = mongoose.model("WorkItem", workItemSchema);
+
+
+
+// sprint["pointsHistory"] = [
+//     {date: "08/16/2021", points: initialPoints},
+//     {date: "08/17/2021", points: 35},
+//     {date: "08/19/2021", points: 32},
+//     {date: "08/20/2021", points: 37},
+//     {date: "08/22/2021", points: 30},
+//     {date: "08/23/2021", points: 15},
+//     {date: "08/24/2021", points: 12},
+// ];

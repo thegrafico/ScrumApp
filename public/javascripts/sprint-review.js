@@ -23,6 +23,7 @@ const COMPLETED_STORY_POINTS = "#completedStoryPoints";
 const INCOMPLETED_STORY_POINTS = "#incompletedStoryPoitns";
 const CAPACITY_FOR_SPRINT = "#sprintCapacity";
 const DURATION_SPRINT = "#sprintDuration";
+const INITAL_POINTS = "#initalPoints";
 
 const REVIEW_CONTAINER = "#plots-container";
 const DATE_LABEL_FORMAT = "DD MMM";
@@ -55,7 +56,7 @@ $(function () {
     workItems = formatWorkItemDates(workItems, DATE_LABEL_FORMAT);
 
     // ====== PLOTS ======
-    let burnChart = burndownChart(workItems, DATE_LABEL_FORMAT);
+    let burnChart = burndownChart(pointsHistory, DATE_LABEL_FORMAT);
     let barchart = breakDownChart(workItems);
     // console.log(getBreakdownTypeData(workItems));
 
@@ -214,7 +215,7 @@ function updateReviewPage(workItems, statusReport, burnChart, barchart){
     $(CAPACITY_FOR_SPRINT).text(capacityText);
     $(DURATION_SPRINT).text(durationText);
 
-    updateBurnDownChart(burnChart, workItems, statusReport);
+    updateBurnDownChart(burnChart, statusReport);
     updateBreakdownChart(barchart, workItems);
 
     // Update status report data for work items
@@ -259,17 +260,17 @@ function filterWorkItemTableForReview(showCompleted){
  * @param {Array} workItems - work items 
  * @param {Object} statusReport - Status report data
  */
-function updateBurnDownChart(burnDownChart, workItems, statusReport){
+function updateBurnDownChart(burnDownChart, statusReport){
 
     // Work Items - This variable is declare in the ejs view. 
-    workItems = formatWorkItemDates(workItems, DATE_LABEL_FORMAT);
+    let pointsHistory = statusReport["pointsHistory"];
 
     // getting range dates for the sprint
     let startDate = statusReport["startDate"];
     let endDate = statusReport["endDate"];
 
     // getting total points of the sprint
-    let totalPoints = statusReport["totalPoints"];
+    let totalPoints = statusReport["initalSprintPoints"];
 
     // getting dates between the sprint in desired format
     const dates = getDaysBetween(startDate, endDate, DATE_LABEL_FORMAT);
@@ -281,7 +282,7 @@ function updateBurnDownChart(burnDownChart, workItems, statusReport){
     const guidelineData = getGuideleValues(totalPoints, dates.length -1);
 
     // getting the actual burndown of the sprint
-    const actualBurndownData = getBurndownLineData(workItems, totalPoints, dates, isTodayBetween);
+    const actualBurndownData = getBurndownLineData(pointsHistory, totalPoints, dates, isTodayBetween);
 
     // Updating labels
     burnDownChart.data.labels = dates;
@@ -302,47 +303,40 @@ function updateBurnDownChart(burnDownChart, workItems, statusReport){
  * get the line data for the workItems completed
  * @param {Array} workItems - array of object with work items completed
  */
-function getBurndownLineData(workItems, totalPoints, labelDates, isTodayBetween){
+function getBurndownLineData(pointsHistory, totalPoints, labelDates, isTodayBetween){
     
-    let completedWorkItems = workItems.filter(each => {
-        return each["status"] === WORK_ITEM_STATUS["Completed"];
-    });
-
-    let remainingWorkItems = completedWorkItems.length;
-    let remainingPoints = totalPoints;
-
-    let burndownData = [] //new Array(labelDates.length).fill(0);
-    let completePointsAtDateWorkItems = undefined;
-    let completePointsAtDatePoints = 0;
 
     let today = moment(new Date()).format(DATE_LABEL_FORMAT);
+
+    let burndownData = [];
+
+    let currentPoints = totalPoints;
 
     for(let i = 0; i < labelDates.length; i++){
 
         let date = labelDates[i];
 
-        completePointsAtDateWorkItems = completedWorkItems.filter(each => each[NEW_KEY_DATA] == date);
+        let pointsCompletedAtDate = pointsHistory.filter(each => {
+            return moment(each["date"], SPRINT_FORMAT_DATE).format(DATE_LABEL_FORMAT) == date;
+        });
 
-        if (_.isEmpty(completePointsAtDateWorkItems)){
+        if (_.isEmpty(pointsCompletedAtDate)){
 
+            burndownData.push(currentPoints);
 
             if (isTodayBetween){
                 if (date === today){
                     break;
                 }
             }
-            burndownData.push(remainingPoints);
+
             continue;
         }
 
-        for (const workItem of completePointsAtDateWorkItems){
-            completePointsAtDatePoints += workItem["storyPoints"];
-            remainingWorkItems--;
-        }
+        // get current points
+        currentPoints = pointsCompletedAtDate[0]["points"];
 
-        remainingPoints -= completePointsAtDatePoints;
-
-        burndownData.push(remainingPoints);
+        burndownData.push(currentPoints);
 
         // break to avoid calculating future value and not ultil today values
         if (isTodayBetween){
@@ -352,7 +346,7 @@ function getBurndownLineData(workItems, totalPoints, labelDates, isTodayBetween)
         }
         
         // Exit the loop if we already have all the data for the work items
-        if (remainingWorkItems == 0){
+        if (currentPoints == 0){
             
             if (isTodayBetween){
                 
@@ -362,7 +356,7 @@ function getBurndownLineData(workItems, totalPoints, labelDates, isTodayBetween)
                         break;
                     }
                     
-                    burndownData.push(remainingPoints);
+                    burndownData.push(currentPoints);
                     
                 }
             }
@@ -370,11 +364,9 @@ function getBurndownLineData(workItems, totalPoints, labelDates, isTodayBetween)
             break;
         };
 
-        // reset
-        completePointsAtDatePoints = 0;
-
         // console.log(`At ${date} they were ${completePointsAtDatePoints} Story Points completed`);
     }
+
     return burndownData;
 }
 
@@ -396,17 +388,17 @@ function formatWorkItemDates(workItems, desiredFormat){
  * Create burndownChart
  * @returns
  */
-function burndownChart(workItems, labelDateFormat){
+function burndownChart(pointsHistory, labelDateFormat){
 
     // getting range dates for the sprint
     let startDate = $(START_DATE).val();
     let endDate = $(END_DATE).val();
 
     // getting total points of the sprint
-    let totalPoints = parseInt( $(TOTAL_POINTS).val());
+    let totalPoints = parseInt( $(INITAL_POINTS).val());
 
     // getting dates between the sprint in desired format
-    const dates = getDaysBetween(startDate, endDate, labelDateFormat);
+    let dates = getDaysBetween(startDate, endDate, labelDateFormat);
 
     // to update the plot until today
     const isTodayBetween = isDateBetween(startDate, endDate);
@@ -415,7 +407,7 @@ function burndownChart(workItems, labelDateFormat){
     const guidelineData = getGuideleValues(totalPoints, dates.length -1);
     
     // getting the actual burndown of the sprint
-    const actualBurndownData = getBurndownLineData(workItems, totalPoints, dates, isTodayBetween);
+    const actualBurndownData = getBurndownLineData(pointsHistory, totalPoints, dates, isTodayBetween);
 
     const data = {
       labels: dates,

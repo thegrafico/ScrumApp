@@ -325,6 +325,8 @@ router.get("/api/:id/getSprintWorkItems/:teamId/:sprintId", middleware.isUserInP
     let activeSprintId = undefined;
     let numberOfDays = 0;
     let startDate = '', endDate = '';
+    let pointsHistory = [];
+    let initalSprintPoints = 0;
 
     // getting sprints for team
     let sprints = await SprintCollection.getSprintsForTeam(projectId, teamId).catch(err => {
@@ -344,6 +346,8 @@ router.get("/api/:id/getSprintWorkItems/:teamId/:sprintId", middleware.isUserInP
             startDate = activeSprint["startDate"];
             endDate = activeSprint["endDate"];
             numberOfDays = getNumberOfDays(startDate, endDate);
+            pointsHistory = activeSprint["pointsHistory"];
+            initalSprintPoints = activeSprint["initialPoints"];
 
             // get the work items by the sprint
             workItems = await workItemCollection.find({projectId: projectId, _id: {$in: activeSprint.tasks}}).catch(err => {
@@ -365,6 +369,8 @@ router.get("/api/:id/getSprintWorkItems/:teamId/:sprintId", middleware.isUserInP
         numberOfDays: numberOfDays,
         startDate: startDate,
         endDate: endDate,
+        initalSprintPoints: initalSprintPoints,
+        pointsHistory: pointsHistory,
     }
 
     // sorting data
@@ -452,6 +458,8 @@ router.get("/api/:id/getSprintReview/:teamId/:sprintId", middleware.isUserInProj
         numberOfDays: numberOfDays,
         startDate: startDate,
         endDate: endDate,
+        initalSprintPoints: sprint["initialPoints"],
+        pointsHistory: sprint["pointsHistory"],
     }
 
 
@@ -984,24 +992,49 @@ router.post("/api/:id/removeWorkItems", middleware.isUserInProject, async functi
     if (_.isArray(workItemsId) && !_.isEmpty(workItemsId)){
         
         // removing work item from sprints
-        const removedFromSprint = await SprintCollection
-        .updateMany({projectId, tasks: {$in:  workItemsId} },
-            {$pull: {tasks: {$in : workItemsId}}}
-        ).catch(err => {
-            console.error(err);
-        });
 
-        console.log("sprint was removed: ", removedFromSprint);
+        // let workItemInSprint = await SprintCollection.find({projectId, tasks: {$in:  workItemsId}}).catch(err => {
+        //     console.error("Error getting the work items for the sprint to remove:", err);
+        // });
+
+        // if (!_.isEmpty(workItemInSprint)){
+        //     // updating with save in order to active the middleware pre 'save'
+        //     for (let sprintWithWorkItem of workItemInSprint){
+
+        //         for (let workItemId of workItemsId){
+        //             sprintWithWorkItem["tasks"].pull(workItemId);
+        //         }
+
+        //         await sprintWithWorkItem.save().catch(err => { 
+        //             console.error("Error removing work item from sprint:", err );
+        //         });
+        //     }
+        // }
         
-        // Add the comment to the DB
-        const result = await workItemCollection.deleteMany({projectId: projectId, _id: workItemsId}).catch(
-            err => console.error("Error removing work items: ", err)
-        );
+        // remove the work item from the proyect
+        let error_removing = false;
+        for (let workItemId of workItemsId){
+            
+            const result = await workItemCollection.findOneAndDelete({projectId: projectId, _id: workItemId}).catch(
+                err => console.error("Error removing work item: ", err)
+            );
+            
+            if (_.isNull(result) || _.isUndefined(result)){
+                error_removing = true;
+            }
 
-        if (!result){
+        }
+
+
+        // const result = await workItemCollection.deleteMany({projectId: projectId, _id: workItemsId}).catch(
+        //     err => console.error("Error removing work items: ", err)
+        // );
+
+        if (error_removing){
             res.status(400).send("Sorry, There was a problem removing work items. Please try later.");
             return;
         }
+        console.log("Work items removed...");
     }else{
         res.status(400).send("Sorry, We cannot find any work item to remove. Please try later.");
         return;

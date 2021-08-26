@@ -5,8 +5,10 @@
 // import DB
 const mongoose                  = require("mongoose");
 const moment                    = require("moment");
-const OrderSprintCollection     = require("./sprint-order");
 const _                         = require("lodash");
+const WorkItemCollection        = require("./workItem");
+const OrderSprintCollection     = require("./sprint-order");
+
 
 const {
     SPRINT_FORMAT_DATE,
@@ -67,6 +69,13 @@ let sprintSchema = new mongoose.Schema({
         enum: Object.values(SPRINT_STATUS),
         required: true, 
     },
+    pointsHistory: [
+        {
+            date: {type: String, required: true},
+            points: {type: Number, required: true},
+        }
+    ],
+    initialPoints: {type: Number, default: 0}
 }, {timestamps: true});
 
 /**
@@ -295,7 +304,7 @@ sprintSchema.statics.isValidSprintDate = function(sprints, newSprintStartDate, n
 sprintSchema.statics.removeWorkItemFromSprints = async function(projectId, workItemId) {
     
     let father = this;
-    
+
     return new Promise(async function (resolve, reject){
 
         if (!_.isString(projectId) || !_.isString(workItemId)){
@@ -304,21 +313,30 @@ sprintSchema.statics.removeWorkItemFromSprints = async function(projectId, workI
             return;
         }
 
-        let wasRemoved = await father.updateMany( 
-            { projectId: projectId, tasks: workItemId},
-            {$pull: {tasks: workItemId}})
-            .catch(err =>{
-                err_msg = err;
-                console.error(err);
-            }
-        )
+        let sprint = await father.findOne({ projectId: projectId, tasks: workItemId}).catch(err => {
+            console.error("Error getting the sprint: ", err);
+        });
 
-        if (_.isUndefined(wasRemoved) || _.isNull(wasRemoved) || !wasRemoved["ok"]){
-            reject(false);
-            return;
+        if (_.isUndefined(sprint) || _.isNull(sprint)){
+            return reject(false);
         }
 
-        console.log("Work item was removed from sprint");
+        // removing element from sprint
+        sprint["tasks"].pull(workItemId);
+
+        let error_msg = undefined;
+
+        // saving data
+        await sprint.save().catch(err => {
+            error_msg = err;
+        });
+
+        // check errors
+        if (error_msg){
+            return reject(false);
+        }
+
+        // console.log("Work item was removed from sprint");
         return resolve(true);
     });
 
@@ -382,7 +400,7 @@ sprintSchema.statics.getSprintForWorkItem = async function(projectId, workItemId
             { projectId: projectId, tasks: workItemId})
             .catch(err =>{
                 err_msg = err;
-                console.error(err);
+                console.error("Error getting sprint for work item: ", err);
             }
         )
         
@@ -393,6 +411,37 @@ sprintSchema.statics.getSprintForWorkItem = async function(projectId, workItemId
         return resolve(sprint);
     });
 };
+
+/**
+ * get the sprint where this work item belongs
+ * @param {String} projectId - id of the project
+ * @param {String} workItemId - if id the work item to remove 
+ * @returns {Promise} sprint for the work item
+ */
+ sprintSchema.statics.getWorkItemsForSprint = async function(projectId, tasks) {
+    
+    let father = this;
+
+    return new Promise(async function (resolve, reject){
+
+        if (!_.isString(projectId) || _.isEmpty(tasks)){
+            return reject("Invalid parameters were received.");
+        }
+
+        let err_msg = null;
+        let workItems = await WorkItemCollection.find({ projectId: projectId, _id: {$in: tasks}}).catch(err =>{
+            err_msg = err;
+            console.error(err);
+        });
+        
+        if (_.isUndefined(workItems) || _.isNull(workItems)){
+            return reject("Not work item found: " + err_msg);
+        }
+
+        return resolve(workItems);
+    });
+};
+
 
 /**
  * get the team information for the sprint
@@ -508,6 +557,27 @@ sprintSchema.methods.getSprintOrder = async function() {
     
     return this.getSprintOrder() != null;
 };
+
+
+// // CREATION OF THE WORK ITEM TRIGGER THIS
+// // deletion of the work item trigger this
+// sprintSchema.pre('find', async function() {
+
+//     const docToUpdate = await this.model.findOne(this.getQuery());
+    
+//     console.log(docToUpdate["tasks"].length);
+//     // console.log("Current document: ", this)
+//     // console.log(this["tasks"].length);
+//     this.$locals.currentDocument = docToUpdate;
+//     // console.log("PRE UPDATING");
+// });
+
+// sprintSchema.post('save', async function(doc) {
+//     // const docToUpdate = await this.model.findOne(this.getQuery());
+//     console.log("POST UPDATING");
+//     // console.log(doc["tasks"].length)
+//     console.log(this.$locals.currentDocument);
+// });
 
 
 

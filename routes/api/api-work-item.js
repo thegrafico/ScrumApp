@@ -267,15 +267,24 @@ router.post("/api/:id/createWorkItem", middleware.isUserInProject, async functio
     // Add the work item to the sprint if was selected by the user
     if (!_.isUndefined(sprint) && !_.isEmpty(sprint) && sprint != UNASSIGNED_SPRINT._id){
         let sprint_error_msg = null;
-        await SprintCollection.findByIdAndUpdate(sprint, {$push: {tasks: newWorkItem._id} }).catch( err => {
-            console.error(err);
-            sprint_error_msg = err;
+
+        let currentSprint = await SprintCollection.findById(sprint).catch(err => {
+            console.error("There was an error getting the sprint: ", err);
         });
 
-        if (sprint_error_msg){
-            console.log("Error adding work item to sprint");
-        }else{
-            console.log("sprint was added to work item");
+        if (!_.isUndefined(currentSprint) && !_.isNull(currentSprint)){
+            currentSprint["tasks"].push(newWorkItem._id);
+
+            await currentSprint.save().catch(err => {
+                sprint_error_msg = err;
+                console.error("Error saving the work item to the sprint: ", err);
+            });
+
+            if (sprint_error_msg){
+                console.log("Error adding work item to sprint");
+            }else{
+                console.log("sprint was added to work item");
+            }
         }
     }
 
@@ -786,6 +795,7 @@ router.post("/api/:id/updateWorkItemOrder/:workItemId/:sprintId", middleware.isU
 
     res.status(200).send(response);
 });
+
 
 /**
  * METHOD: POST - Move work item to a sprint

@@ -307,7 +307,7 @@ module.exports.getPointsForStatus = (data, filterValue = null, notIn=false) => {
     let sum = 0;
     for (let i = 0; i < arr.length; i++) {
         const element = arr[i];
-        sum += element["storyPoints"];
+        sum += parseInt(element["storyPoints"]);
     }
 
     return sum;

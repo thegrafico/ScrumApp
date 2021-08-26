@@ -112,10 +112,14 @@ router.get("/:id/sprint/review", middleware.isUserInProject, async function (req
 
     let numberOfDays = 0;
     let startDate = '', endDate = '';
+    let pointsHistory = [];
+    let initalSprintPoints = 0;
 
     if (activeSprint){
         startDate = activeSprint["startDate"];
         endDate = activeSprint["endDate"];
+        pointsHistory = activeSprint["pointsHistory"];
+        initalSprintPoints = activeSprint["initialPoints"];
         numberOfDays  = getNumberOfDays(startDate, endDate);
     }
 
@@ -123,7 +127,6 @@ router.get("/:id/sprint/review", middleware.isUserInProject, async function (req
         totalPoints: getPointsForStatus(workItems, null),
         completedPoints: getPointsForStatus(workItems, WORK_ITEM_STATUS["Completed"]),
         incompletedPoints: getPointsForStatus(workItems, WORK_ITEM_STATUS["Completed"], true),
-
         numberOfWorkItems: workItems.length, 
         numberOfWorkItemsCompleted: getNumberOfElements(workItems, WORK_ITEM_STATUS["Completed"]),
         numberOfWorkItemsIncompleted: getNumberOfElements(workItems, WORK_ITEM_STATUS["Completed"], true),
@@ -131,7 +134,9 @@ router.get("/:id/sprint/review", middleware.isUserInProject, async function (req
         numberOfDays: numberOfDays,
         startDate: startDate,
         endDate: endDate,
-    }
+        initalSprintPoints: initalSprintPoints,
+        pointsHistory: pointsHistory,
+    };
 
     sprints = sortByDate(sprints, "startDate");
     workItems = sortByDate(workItems, "updatedAt", null, "desc");
@@ -140,7 +145,6 @@ router.get("/:id/sprint/review", middleware.isUserInProject, async function (req
     teams.unshift(UNASSIGNED);
     users.unshift(UNASSIGNED);
     sprints.unshift(UNASSIGNED_SPRINT);
-
 
     // populating params
     let params = {
