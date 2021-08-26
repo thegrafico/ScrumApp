@@ -356,10 +356,10 @@ router.get("/:id/planing/sprint", middleware.isUserInProject, async function (re
     if (!_.isNull(userPreferedTeam) || sprintId){
 
         if (sprintId){
-            // 60fcf6679dd6b4759dbcbe43
             activeSprint = await SprintCollection.getSprintById(projectId, sprintId).catch(err =>{
                 console.error(err);
             }) || {};
+
         }
 
         userTeamId = activeSprint["teamId"] || userPreferedTeam["_id"];
@@ -424,7 +424,7 @@ router.get("/:id/planing/sprint", middleware.isUserInProject, async function (re
         "statusWorkItem": WORK_ITEM_STATUS_COLORS,
         "projectTeams": teams,
         "sprints": sprints,
-        "activeSprintId": activeSprintId,
+        "activeSprintId": activeSprintId || "",
         "addUserModal": true,
         "workItemType": WORK_ITEM_ICONS,
         "workItems": workItems,

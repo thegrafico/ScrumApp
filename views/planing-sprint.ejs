@@ -72,9 +72,14 @@
                                 id="filterBySprint" 
                                 aria-label="filter by sprint">
                                     <% for (let i = 1; i < sprints.length; i++) { %>
-    
-                                        <% if (sprints[i].status == "Active") { %>
+
+                                        <% if (sprints[i]["_id"].toString() == activeSprintId.toString()) { %>
                                             <option value="<%=sprints[i]['_id']%>" selected>
+                                                <%=sprints[i]['name']%> :
+                                                <%=sprints[i]['startDateFormated']%> - <%=sprints[i]['endDateFormated']%>
+                                            </option>
+                                        <%} else if (sprints[i].status == "Active") { %>
+                                            <option value="<%=sprints[i]['_id']%>">
                                                 <%=sprints[i]['name']%> :
                                                 <%=sprints[i]['startDateFormated']%> - <%=sprints[i]['endDateFormated']%>
                                                 (current)

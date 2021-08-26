@@ -21,7 +21,8 @@ const {
     WORK_ITEM_ICONS,
     capitalize,
     SPRINT_STATUS,
-    joinData
+    joinData,
+    sortByDate
 } = require('../../dbSchema/Constanst');
 
 
@@ -78,6 +79,9 @@ router.get("/api/:id/getWorkItem/:workItemId", middleware.isUserInProject, async
             activeSprintId = activeSprint["_id"];
         }
     }
+
+    // sorting sprint
+    sprints = sortByDate(sprints, "startDate");
 
     sprints.unshift(UNASSIGNED_SPRINT);
 

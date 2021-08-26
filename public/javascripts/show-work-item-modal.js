@@ -116,10 +116,16 @@ async function populateWorkItemModal(workItemId){
     for (const sprint of sprints) {
         let isSelected = (sprint["_id"].toString() === activeSprint.toString());
         
+        let isActive =  sprint["status"] === "Active";
+        
         let selectedText = sprint["name"];
         
         if (sprint["startDateFormated"] && sprint["endDateFormated"]){
             selectedText += `: ${sprint["startDateFormated"]} - ${sprint["endDateFormated"]}`;
+        }
+
+        if (isActive){
+            selectedText += " (current)";
         }
 
         updateSelectOption(

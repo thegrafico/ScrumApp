@@ -150,7 +150,7 @@
                                     <select class="custom-select my-custon-select " name="sprint" id="sprints">
                                         <% if(sprints.length > 1){ %>
                                             <% for (sprint of sprints){ %>
-                                                <% if (sprint["_id"] == activeSprintId){ %>
+                                                <% if (sprint["_id"].toString() == activeSprintId.toString()){ %>
 
                                                     <% if (sprint["startDateFormated"]) { %>
                                                         <option value="<%=sprint['_id']%>" selected>
