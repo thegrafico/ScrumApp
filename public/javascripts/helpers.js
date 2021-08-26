@@ -404,7 +404,7 @@ function appendToWotkItemTable(workItems, index=null, showIfSprint=true, removeT
         // TITLE
         let title = `
             <td class="openStory">
-                <a href="workitems/${workItem['_id']}" class="open-existing-work-item-modal" rel="${workItem['_id']}">
+                <a href="/dashboard/${workItem["projectId"]}/planing/workitems/${workItem['_id']}" class="open-existing-work-item-modal" target="_blank" rel="${workItem['_id']}">
                     <i class="fas  ${WORK_ITEM_ICONS[workItems[i]['type']].icon}"></i> 
                     ${workItem['title']} 
                 </a> 
