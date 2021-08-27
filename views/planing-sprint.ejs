@@ -77,6 +77,11 @@
                                             <option value="<%=sprints[i]['_id']%>" selected>
                                                 <%=sprints[i]['name']%> :
                                                 <%=sprints[i]['startDateFormated']%> - <%=sprints[i]['endDateFormated']%>
+
+                                                <% if (sprints[i].status == "Active") { %>
+                                                    (current)
+                                                <% } %>
+
                                             </option>
                                         <%} else if (sprints[i].status == "Active") { %>
                                             <option value="<%=sprints[i]['_id']%>">

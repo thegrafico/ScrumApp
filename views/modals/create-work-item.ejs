@@ -150,25 +150,28 @@
                                     <select class="custom-select my-custon-select " name="sprint" id="sprints">
                                         <% if(sprints.length > 1){ %>
                                             <% for (sprint of sprints){ %>
-                                                <% if (sprint["_id"].toString() == activeSprintId.toString()){ %>
-
-                                                    <% if (sprint["startDateFormated"]) { %>
-                                                        <option value="<%=sprint['_id']%>" selected>
-                                                            <%=sprint['name']%> : <%=sprint['startDateFormated']%> - <%=sprint['endDateFormated']%>
+                                                <% if (sprint["_id"].toString() == activeSprintId.toString()) { %>
+                                                    <option value="<%=sprint['_id']%>" selected>
+                                                        <%=sprint['name']%> :
+                                                        <%=sprint['startDateFormated']%> - <%=sprint['endDateFormated']%>
+        
+                                                        <% if (sprint.status == "Active") { %>
                                                             (current)
-                                                        </option>
-                                                    <%} else {%>
-                                                        <option value="<%=sprint['_id']%>" selected><%=sprint['name']%> (current)</option>
-                                                    <%}%>
-                                                    
-                                                <%}else {%>
-                                                    <% if( sprint["startDateFormated"]){ %>
-                                                        <option value="<%=sprint['_id']%>" ><%=sprint['name']%> : <%=sprint['startDateFormated']%> - <%=sprint['endDateFormated']%> </option>
-                                                    <%}else {%>
-                                                        <option value="<%=sprint['_id']%>" ><%=sprint['name']%></option>
-                                                    <%}%>
-                                                <%}%>
-
+                                                        <% } %>
+        
+                                                    </option>
+                                                <%} else if (sprint.status == "Active") { %>
+                                                    <option value="<%=sprint['_id']%>">
+                                                        <%=sprint['name']%> :
+                                                        <%=sprint['startDateFormated']%> - <%=sprint['endDateFormated']%>
+                                                        (current)
+                                                    </option>
+                                                <% }else{ %>
+                                                    <option value="<%=sprint['_id']%>">
+                                                        <%=sprint['name']%> :
+                                                        <%=sprint['startDateFormated']%> - <%=sprint['endDateFormated']%>
+                                                    </option>
+                                                <% } %>
                                             <%}%>
                                         <%}%>  
                                     </select>

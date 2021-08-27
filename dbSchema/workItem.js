@@ -182,6 +182,7 @@ workItemSchema.post('findOneAndDelete', async function(workItem) {
             console.error("error saving sprint");
         });
 
+        console.log("Work item removed from sprint");
         return;
     }
 
@@ -206,6 +207,7 @@ workItemSchema.post('findOneAndDelete', async function(workItem) {
         console.error("error saving sprint");
     });
 
+    console.log("Work item removed from sprint");
 });
 
 

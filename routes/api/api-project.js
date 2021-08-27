@@ -26,6 +26,7 @@ const {
     WORK_ITEM_STATUS_COLORS,
     WORK_ITEM_STATUS,
     WORK_ITEM_ICONS,
+    PAGES,
     capitalize,
     getSprintDateStatus,
     joinData,
@@ -33,6 +34,10 @@ const {
     getNumberOfElements,
     getNumberOfDays,
     getPointsForStatus,
+    setSprintOrder,
+    sortByOrder,
+    updateSprintOrderIndex,
+    filteByStatus,
 } = require('../../dbSchema/Constanst');
 
 // ================= GET REQUEST ==============
@@ -238,6 +243,9 @@ router.get("/api/:id/getSprintWorkItems/:teamId/:sprintId", middleware.isUserInP
     const sprintId = req.params.sprintId;
 
     let response = {};
+    
+    // if null, not order is apply
+    const { location } = req.query;
 
     // ========= GETTING PROJECT INFO ==========
     let project = await projectCollection.findById(projectId).catch(err => {
@@ -282,6 +290,50 @@ router.get("/api/:id/getSprintWorkItems/:teamId/:sprintId", middleware.isUserInP
         return;
     }
 
+    if (location == PAGES["SPRINT_BOARD"]){
+        workItems = {
+            New:  filteByStatus(workItems, WORK_ITEM_STATUS["New"]),
+            Active: filteByStatus(workItems, WORK_ITEM_STATUS["Active"]),
+            Review: filteByStatus(workItems, WORK_ITEM_STATUS["Review"]),
+            Completed: filteByStatus(workItems, WORK_ITEM_STATUS["Completed"]),
+            Block: filteByStatus(workItems, WORK_ITEM_STATUS["Block"]),
+            Abandoned: filteByStatus(workItems, WORK_ITEM_STATUS["Abandoned"]),
+        }
+    }
+
+    if (_.isString(location) && Object.values(PAGES).includes(location) ){
+        
+        // Order of the sprint
+        let sprintOrder = await SprintCollection.getSprintOrder(sprintId, projectId);
+        
+        // if the sprint board have never been set
+        if (_.isEmpty(sprintOrder["order"][location]["index"])){
+            sprintOrder = await setSprintOrder(sprintOrder, workItems, location, true);
+        }else{
+
+            switch(location){
+                case PAGES["SPRINT"]:               
+                    
+                    if (sprintOrder["order"][location]["index"].length != sprint["tasks"].length){
+                        console.log("Order from sprint does not match current order. Updating...");
+                        await updateSprintOrderIndex(sprint, sprintOrder);
+                    }
+                    
+                    // sort by the order
+                    workItems = sortByOrder(workItems, sprintOrder["order"][location]["index"], location);
+                    break;
+                case PAGES["SPRINT_BOARD"]:
+                    workItems = sortByOrder(workItems, sprintOrder["order"][location], location);
+                    break;
+                default:
+                    console.log("Location not found");
+                break;
+            }
+            
+        }
+    }
+
+  
     response["msg"] = "success";
     response["workItems"] = workItems;
 
@@ -293,7 +345,7 @@ router.get("/api/:id/getSprintWorkItems/:teamId/:sprintId", middleware.isUserInP
 /**
  * METHOD: GET - Get sprint review data by team
  */
- router.get("/api/:id/getSprintReview/:teamId", middleware.isUserInProject, async function (req, res) {
+router.get("/api/:id/getSprintReview/:teamId", middleware.isUserInProject, async function (req, res) {
     
     const projectId = req.params.id;
     const teamId = req.params.teamId;
@@ -354,7 +406,6 @@ router.get("/api/:id/getSprintWorkItems/:teamId/:sprintId", middleware.isUserInP
                 console.error("Error getting work items: ", err)
             }) || [];
         }
-        
     }
 
     let statusReport = {
@@ -998,30 +1049,11 @@ router.post("/api/:id/removeWorkItems", middleware.isUserInProject, async functi
     // is array and not empty
     if (_.isArray(workItemsId) && !_.isEmpty(workItemsId)){
         
-        // removing work item from sprints
-
-        // let workItemInSprint = await SprintCollection.find({projectId, tasks: {$in:  workItemsId}}).catch(err => {
-        //     console.error("Error getting the work items for the sprint to remove:", err);
-        // });
-
-        // if (!_.isEmpty(workItemInSprint)){
-        //     // updating with save in order to active the middleware pre 'save'
-        //     for (let sprintWithWorkItem of workItemInSprint){
-
-        //         for (let workItemId of workItemsId){
-        //             sprintWithWorkItem["tasks"].pull(workItemId);
-        //         }
-
-        //         await sprintWithWorkItem.save().catch(err => { 
-        //             console.error("Error removing work item from sprint:", err );
-        //         });
-        //     }
-        // }
-        
         // remove the work item from the proyect
         let error_removing = false;
         for (let workItemId of workItemsId){
             
+            // remove from db
             const result = await workItemCollection.findOneAndDelete({projectId: projectId, _id: workItemId}).catch(
                 err => console.error("Error removing work item: ", err)
             );
@@ -1029,13 +1061,7 @@ router.post("/api/:id/removeWorkItems", middleware.isUserInProject, async functi
             if (_.isNull(result) || _.isUndefined(result)){
                 error_removing = true;
             }
-
         }
-
-
-        // const result = await workItemCollection.deleteMany({projectId: projectId, _id: workItemsId}).catch(
-        //     err => console.error("Error removing work items: ", err)
-        // );
 
         if (error_removing){
             res.status(400).send("Sorry, There was a problem removing work items. Please try later.");

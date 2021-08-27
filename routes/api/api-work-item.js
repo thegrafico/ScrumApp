@@ -125,8 +125,10 @@ router.post("/api/:id/createWorkItem", middleware.isUserInProject, async functio
     let errors = undefined;
     let addUserToTeam = false;
 
+    const projectId = req.params.id;
+
     // getting project info
-    let projectInfo = await projectCollection.findOne({_id: req.params.id}).catch(err => {
+    let projectInfo = await projectCollection.findOne({_id: projectId}).catch(err => {
         errors = err.reason;
         console.log("Error is: ", err.reason);
     });
@@ -237,7 +239,7 @@ router.post("/api/:id/createWorkItem", middleware.isUserInProject, async functio
     newWorkItem["title"] = title;
     newWorkItem["status"] = workItemStatus;
     newWorkItem["description"] = workItemDescription;
-    newWorkItem["projectId"] = req.params.id;
+    newWorkItem["projectId"] = projectId;
     
     // TODO: Create new schema for comments
     // newWorkItem["comments"]
@@ -272,24 +274,9 @@ router.post("/api/:id/createWorkItem", middleware.isUserInProject, async functio
     if (!_.isUndefined(sprint) && !_.isEmpty(sprint) && sprint != UNASSIGNED_SPRINT._id){
         let sprint_error_msg = null;
 
-        let currentSprint = await SprintCollection.findById(sprint).catch(err => {
-            console.error("There was an error getting the sprint: ", err);
+        await SprintCollection.addWorkItemToSprint(projectId, newWorkItem["_id"], sprint).catch(err => {
+            console.error("Error adding work item to sprint: ", err);
         });
-
-        if (!_.isUndefined(currentSprint) && !_.isNull(currentSprint)){
-            currentSprint["tasks"].push(newWorkItem._id);
-
-            await currentSprint.save().catch(err => {
-                sprint_error_msg = err;
-                console.error("Error saving the work item to the sprint: ", err);
-            });
-
-            if (sprint_error_msg){
-                console.log("Error adding work item to sprint");
-            }else{
-                console.log("sprint was added to work item");
-            }
-        }
     }
 
     // get all the teams for this project
@@ -680,7 +667,7 @@ router.post("/api/:id/updateWorkItemOrder/:workItemId/:sprintId", middleware.isU
     }
 
     let sprintOrderError = undefined;
-    const sprintOrder = await SprintCollection.getSprintOrder(sprintId, projectId).catch ( err =>{
+    let sprintOrder = await SprintCollection.getSprintOrder(sprintId, projectId).catch ( err =>{
         console.error("Error getting work item: ", err);
         sprintOrderError = err;
     });
@@ -703,16 +690,20 @@ router.post("/api/:id/updateWorkItemOrder/:workItemId/:sprintId", middleware.isU
 
     if (_.isString(location) && !_.isUndefined(index) && !isNaN(index)){
         console.log("\nAdding work item to an order...\n");
+
+        index = parseInt(index);
         
-        if ( !(location in  sprintOrder["order"]) ){
+        // check if the location exists in the db
+        if ( !(location in sprintOrder["order"]) ){
             response["msg"] = "Oops, it seems there was a problem moving the work item to a different status. Please try later.";
             res.status(400).send(response);
             return;
         }
 
         let isWorkItemFound = false;
-
+        
         if ( _.isArray( sprintOrder["order"][location])){
+            console.log("Array order for: ", location);
 
             // try to find the previus location of the work item and remove it
             for (let sprintWorkItemPage of sprintOrder["order"][location]){
@@ -744,24 +735,23 @@ router.post("/api/:id/updateWorkItemOrder/:workItemId/:sprintId", middleware.isU
                 // add workItemId to index and remove 0 elements.
                 newStatusLocation["index"].splice(index, 0, workItemId);
         }else{
+            console.log("Order for: ", location);
+
             let workItemsIds = sprintOrder["order"][location]["index"];
             
             // check if the work items is in this location
             isWorkItemFound = workItemsIds.some(each => {return each == workItemId});
 
             if (isWorkItemFound){
-
                 // get the index of the work item - index is the order
                 let indexOfWorkItemFound = workItemsIds.indexOf(workItemId);
                 
                 // remove that element from the order
                 workItemsIds.splice(indexOfWorkItemFound, 1);
-                
             }
-
+            console.log("adding on index: ", index);
             // add element to the order
             workItemsIds.splice(index, 0, workItemId);
-
         }
 
         // update the order of the work item
@@ -858,35 +848,24 @@ router.post("/api/:id/moveWorkItemsToSprint/:teamId", middleware.isUserInProject
     
     // =========== UPDATE SPRINT =================
 
+    // remove work items from all sprints
+    await SprintCollection.removeMultipleWorkItemsFromSprints(projectId, workItemIds).catch(err => {
+        console.error("Error removing work item from sprints: ", err);
+    });
+
+    // if there is not id for the sprint, we end here
     if (sprintId == UNASSIGNED_SPRINT["_id"]){
-        let backlog_error = null;
-        await SprintCollection.updateMany(
-            {projectId, teamId},
-            {$pull: {tasks: {$in: workItemIds }}}
-        ).catch(err => {
-            backlog_error = err;
-            console.error(err);
-        });
-
-        if (backlog_error){
-            response["msg"] = "Sorry, There was a problem moving the work item/s to the backlog";
-            res.status(400).send(response);
-            return;
-        }
-
         response["msg"] = "Work items were moved to the backlog.";
         res.status(200).send(response);
         return;
-    } // if the 'if' above is true, the program ends there. 
+    }
 
-    let sprint = await SprintCollection.updateOne(
-        {"_id": sprintId, "projectId": projectId},
-        {$push: {"tasks": {$each: workItemIds}}}
-    ).catch(err => {
-        console.error(err);
+    // remove work items from all sprints
+    let wasAdded = await SprintCollection.addWorkItemToSprint(projectId, workItemIds, sprintId).catch(err => {
+        console.error("Error removing work item from sprints: ", err);
     });
 
-    if (_.isUndefined(sprint) || _.isNull(sprint)){
+    if (!wasAdded){
         response["msg"] = "Sorry, There was a problem moving Work item/s to the sprint. Try later.";
         res.status(400).send(response);
         return;

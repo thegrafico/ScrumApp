@@ -456,3 +456,8 @@ td.off{
 .ON{
     text-align: center;
 }
+
+.select2-selection__rendered, .select2-results__option select2-results__option--selectable{
+    font-size: 0.9em;
+}
+    

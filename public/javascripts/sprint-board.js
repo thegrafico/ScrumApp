@@ -35,7 +35,7 @@ $( function() {
             // update the status of the work item
             await updateWorkItemBoard(workItemId, updateData);
 
-            console.log("ITEM WAS MOVED TO: ", statusMoved);
+            // console.log("ITEM WAS MOVED TO: ", statusMoved);
         },
     });
  

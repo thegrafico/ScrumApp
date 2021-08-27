@@ -34,6 +34,8 @@ const {
     getPointsForStatus,
     filteByStatus,
     sortByOrder,
+    setSprintOrder,
+    updateSprintOrderIndex,
 } = require('../dbSchema/Constanst');
 
 // ===================================================
@@ -365,7 +367,7 @@ router.get("/:id/planing/sprint", middleware.isUserInProject, async function (re
         userTeamId = activeSprint["teamId"] || userPreferedTeam["_id"];
 
         // get the active sprint for this project
-        sprints = await SprintCollection.getSprintsForTeam(projectId,  userTeamId).catch(err => {
+        sprints = await SprintCollection.getSprintsForTeam(projectId,  userTeamId, false).catch(err => {
             console.error(err);
         }) || [];
  
@@ -396,11 +398,18 @@ router.get("/:id/planing/sprint", middleware.isUserInProject, async function (re
     // ORDER FOR SPRINT
     if (!_.isEmpty(activeSprint) && !_.isUndefined(activeSprintId)){
         let sprintOrder = await SprintCollection.getSprintOrder(activeSprintId, projectId);
-       
+
         // if the sprint board have never been set
         if (_.isEmpty(sprintOrder["order"]["sprintPlaning"]["index"])){
             sprintOrder = await setSprintOrder(sprintOrder, workItems, "sprintPlaning", true);
         }else{
+
+            // check if the sprint work items match the number of work items in order
+            if (sprintOrder["order"]["sprintPlaning"]["index"].length != activeSprint["tasks"].length){
+                console.log("Order from sprint does not match current order. Updating...");
+                await updateSprintOrderIndex(activeSprint, sprintOrder);
+            }
+
             // sort by the order
             workItems = sortByOrder(workItems, sprintOrder["order"]["sprintPlaning"]["index"], "sprintPlaning");
         }
@@ -439,44 +448,6 @@ router.get("/:id/planing/sprint", middleware.isUserInProject, async function (re
 
     res.render("planing-sprint", params);
 });
-
-// ======= FUNCTIONS ===========
-async function setSprintOrder(sprint, workItems, location){
-    let temp = [];
-
-    // if the sprint board have never been set
-
-    switch(location){
-        case "sprintPlaning":
-        case "sprintBacklog":
-            let workItemsIds = workItems.map(each => {return each["_id"]});
-            
-            sprint["order"][location]["index"] = workItemsIds;
-
-            await sprint.save().catch(err => {
-                console.error("Error saving the order: ", err);
-            });
-
-            break;
-        case "sprintBoard":
-            // adding first time
-            for (let status of Object.keys(workItems)){
-                const workItemsIds = workItems[status].map(each => {return each["_id"]});
-                temp.push({status: status, index: workItemsIds})
-            }
-
-            sprint["order"][location] = temp;
-
-            await sprint.save().catch(err => {
-                console.error("Error saving the order: ", err);
-            });
-            break;
-        default: 
-            break; 
-    }
-
-    return sprint;
-}
 
 
 module.exports = router;

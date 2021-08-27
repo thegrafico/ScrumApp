@@ -296,7 +296,7 @@ sprintSchema.statics.isValidSprintDate = function(sprints, newSprintStartDate, n
 
 
 /**
- * Remove the work item from the sprints
+ * Remove One work item from the sprints
  * @param {String} projectId - id of the project
  * @param {String} workItemId - if id the work item to remove 
  * @returns {Promise} true if the work item was remvoved
@@ -307,7 +307,7 @@ sprintSchema.statics.removeWorkItemFromSprints = async function(projectId, workI
 
     return new Promise(async function (resolve, reject){
 
-        if (!_.isString(projectId) || !_.isString(workItemId)){
+        if (_.isUndefined(projectId) || _.isUndefined(workItemId)){
             console.error("Invalid parameters were received.");
             reject(false);
             return;
@@ -336,11 +336,54 @@ sprintSchema.statics.removeWorkItemFromSprints = async function(projectId, workI
             return reject(false);
         }
 
-        // console.log("Work item was removed from sprint");
+        console.log("\n==Work item was removed from sprint==\n");
         return resolve(true);
     });
 
 };
+
+/**
+ * Remove one or more work item from the sprints
+ * @param {String} projectId - id of the project
+ * @param {Array} workItemIsd - if id the work item to remove 
+ * @returns {Promise}
+ */
+sprintSchema.statics.removeMultipleWorkItemsFromSprints = async function(projectId, workItemsId) {
+    
+    let father = this;
+
+    return new Promise(async function (resolve, reject){
+
+        if (_.isUndefined(projectId) || !_.isArray(workItemsId) || _.isEmpty(workItemsId)){
+            reject("Invalid parameters were received.");
+            return;
+        }
+
+        let error_msg = undefined;
+        let updateStatus = await father.updateMany(
+            {projectId: projectId, tasks: {$in: workItemsId}},
+            {$pull: {tasks: {$in: workItemsId}}}
+        ).catch(err => {
+            console.error("Error removing multiple work items from sprint");
+            error_msg = err;
+        });
+
+        // check errors
+        if (error_msg){
+            return reject(error_msg);
+        }
+
+        // TODO: REMOVE WORK ITEMS FROM ORDER
+
+        console.log(updateStatus);
+        console.log("\n==Work item was removed from sprint==\n");
+        return resolve(true);
+    });
+
+};
+
+
+
 
 /**
  * Remove the work item from the sprints
@@ -354,21 +397,38 @@ sprintSchema.statics.addWorkItemToSprint = async function(projectId, workItemId,
 
     return new Promise(async function (resolve, reject){
 
-        if (!_.isString(projectId) || !_.isString(workItemId) || !_.isString(sprintId)){
+        if (_.isUndefined(projectId) || _.isUndefined(workItemId) || _.isUndefined(sprintId)){
             console.error("Invalid parameters were received.");
+            console.log(projectId, workItemId ,sprintId);
             return reject(false);
         }
 
-        let wasAdded = await father.updateOne( 
-            { projectId: projectId, _id: sprintId},
-            {$push: {tasks: workItemId}})
-            .catch(err =>{
+        let wasAdded = undefined;
+
+        // in case of adding multiple work items
+        if (_.isArray(workItemId) && !_.isEmpty(workItemId)){
+
+            wasAdded = await father.updateOne(
+                {"_id": sprintId, "projectId": projectId},
+                {$push: {"tasks": {$each: workItemId}}}
+            ).catch(err => {
+                console.error(err);
+            });
+            console.log("Added multiple work items to the sprint")
+        }else{
+
+            // adding just an element
+            wasAdded = await father.updateOne( 
+                { projectId: projectId, _id: sprintId},
+                {$push: {tasks: workItemId}}
+            ).catch(err =>{
                 err_msg = err;
                 console.error(err);
-            }
-        )
+            });
+            console.log("Added ONE work item to the sprint")
+        }
 
-        if (_.isUndefined(wasAdded) || _.isNull(wasAdded) || !wasAdded["ok"]){
+        if (_.isUndefined(wasAdded) || _.isNull(wasAdded) || !wasAdded){
             reject(false);
             return;
         }
@@ -418,7 +478,7 @@ sprintSchema.statics.getSprintForWorkItem = async function(projectId, workItemId
  * @param {String} workItemId - if id the work item to remove 
  * @returns {Promise} sprint for the work item
  */
- sprintSchema.statics.getWorkItemsForSprint = async function(projectId, tasks) {
+sprintSchema.statics.getWorkItemsForSprint = async function(projectId, tasks) {
     
     let father = this;
 

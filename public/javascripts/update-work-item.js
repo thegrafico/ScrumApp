@@ -42,7 +42,7 @@ $(function () {
     // ================ SELECT option =============
     $(UPDATE_WORK_ITEM["user"]).select2();
     $(UPDATE_WORK_ITEM["team"]).select2();
-    $(UPDATE_WORK_ITEM["sprint"]).select2();
+    $(UPDATE_WORK_ITEM["sprint"]).select2({});
     $(UPDATE_WORK_ITEM["priority"]).select2();
     // ===========================================
 

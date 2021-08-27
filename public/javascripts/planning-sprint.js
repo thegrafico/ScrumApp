@@ -106,7 +106,7 @@ $(function () {
     });
 
     // FILTER BY SPRINT
-    $(FILTER_BY_SPRINT_INPUT).on("change", async function(updateAll){
+    $(FILTER_BY_SPRINT_INPUT).on("change", async function(){
 
         const projectId = $(PROJECT_ID).val();
         const teamId = $(FILTER_BY_TEAM_SPRINT).val();
@@ -130,7 +130,9 @@ $(function () {
             return;
         }
 
-        const API_LINK_GET_WORK_ITEMS_BY_TEAM_AND_SPRINT = `/dashboard/api/${projectId}/getSprintWorkItems/${teamId}/${sprintId}`;
+        const currentPage = $(CURRENT_PAGE_ID).val(); 
+
+        const API_LINK_GET_WORK_ITEMS_BY_TEAM_AND_SPRINT = `/dashboard/api/${projectId}/getSprintWorkItems/${teamId}/${sprintId}?location=${currentPage}`;
 
         let response_error = null;
         let response = await make_get_request(API_LINK_GET_WORK_ITEMS_BY_TEAM_AND_SPRINT).catch(err=> {
@@ -143,8 +145,22 @@ $(function () {
         if (response){
             
             // Check work items
-            if (_.isArray(response.workItems) && response.workItems.length > 0){
-                appendToWotkItemTable(response.workItems);
+            if (!_.isUndefined(response.workItems) && !_.isEmpty(response.workItems)){
+
+                switch(currentPage){
+                    case PAGES["SPRINT"]: 
+                        // sprint planning
+                        appendToWotkItemTable(response.workItems);
+                        break;
+                    case PAGES["SPRINT_BOARD"]:
+                        cleanSprintBoard();
+                        addWorkItemsToBoard(response.workItems);
+                        break;
+                    default:
+                        console.log("undefined pages");
+                        break;
+                }
+
             }else{
                 $.notify("This team does not have any work item yet.", "error");
             }
@@ -157,6 +173,22 @@ $(function () {
     });
 });
 
+/**
+ * Add work items to board
+ * @param {Object} workItems 
+ */
+function addWorkItemsToBoard(workItems){
+    
+    for (let status of Object.keys(workItems)){
+
+        // jump to other iteration
+        if (_.isEmpty(workItems[status])){ continue;}
+
+        for (let workItem of workItems[status]){
+            addWorkItemToBoard(workItem, null);
+        }
+    }
+}
 
 /**
  * Make the work item table dragable
@@ -183,7 +215,7 @@ function startDraggable(tableId){
             let workItemId = $(rowElement).attr("id");
             let newIndex = $(rowElement).index();
 
-            console.log()
+            console.log("Moving Work item to index: ", newIndex);
 
             let requestData = {
                 "index": newIndex,

@@ -224,5 +224,7 @@ module.exports = app;
 */
 
 /**
- * REPLICATE
+ * tree-table-component.js 
+ * line 582 - line 639
+ * context manu is where I get the click options
  */

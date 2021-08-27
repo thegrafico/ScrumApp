@@ -1,4 +1,3 @@
-
 /**
  * expected value of param is {id: .., type: ..., null: ...}
  * @param {String} formId - id of the form
@@ -587,6 +586,16 @@ function addWorkItemToBoard(workItem, index){
     }else{
         // Adding here;
         $(`div#${status}`).append(workItemBoardTemplate);
+    }
+}
+
+/**
+ * Clean sprint board
+ * @param {Array} workItemStatuses - array with the id inside the divs 
+ */
+function cleanSprintBoard(workItemStatuses=Object.keys(WORK_ITEM_STATUS)){
+    for (let divId of workItemStatuses){
+        $(`div#${divId}`).empty();
     }
 }
 

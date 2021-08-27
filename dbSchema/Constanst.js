@@ -384,6 +384,116 @@ module.exports.sortByOrder = (workItems, desiredOrder, location, revertOrder = f
     return sorted;
 }
 
+/**
+ * get the order of for the work items in the sprint
+ * @param {Object} sprint 
+ * @param {Array} workItems 
+ * @param {String} location 
+ * @returns 
+ */
+module.exports.setSprintOrder = async function(sprint, workItems, location){
+    let temp = [];
+
+    // if the sprint board have never been set
+
+    switch(location){
+        case "sprintPlaning":
+        case "sprintBacklog":
+            let workItemsIds = workItems.map(each => {return each["_id"]});
+            
+            sprint["order"][location]["index"] = workItemsIds;
+
+            await sprint.save().catch(err => {
+                console.error("Error saving the order: ", err);
+            });
+
+            break;
+        case "sprintBoard":
+            // adding first time
+            for (let status of Object.keys(workItems)){
+                const workItemsIds = workItems[status].map(each => {return each["_id"]});
+                temp.push({status: status, index: workItemsIds})
+            }
+
+            sprint["order"][location] = temp;
+
+            await sprint.save().catch(err => {
+                console.error("Error saving the order: ", err);
+            });
+            break;
+        default: 
+            break; 
+    }
+
+    return sprint;
+}
+
+/**
+ * Update the order of the sprint
+ * @param {Object} sprint 
+ * @param {Object} order 
+ * @returns 
+ */
+ module.exports.updateSprintOrderIndex = async function updateSprintOrderIndex(sprint, order, addNewToTheBeginning=false){
+
+    let sprintTasks = sprint["tasks"];
+    let orderWorkItems = order["order"]["sprintPlaning"]["index"];
+
+    // getting work items in order that only are in the sprint
+    let cleanOrder = orderWorkItems.filter( workItemId => {
+        return sprintTasks.includes(workItemId.toString());
+    });
+
+    // if the clean order is the same of the sprint, then we return the order
+    // couse we just remove elements and dont need to add. 
+    if (cleanOrder.length == sprintTasks.length){
+        order["order"]["sprintPlaning"]["index"] = cleanOrder;
+
+        await order.save().catch(err=> {
+            console.error("Error saving new order: ", err);
+        });
+
+        // saving sprint
+        sprint["tasks"] = cleanOrder;
+        await sprint.save().catch(err=> {
+            console.error("Error saving sprint: ", err);
+        });
+        return;
+    }
+
+    // getting new work items from the sprint that were not in the order
+    let newWorkItemsFromSprint = sprintTasks.filter((workItemId) => {
+        return !cleanOrder.includes(workItemId);
+    });
+
+    for (let workItemId of newWorkItemsFromSprint){
+
+        if (addNewToTheBeginning){
+            // add the work items to the beginning of the order
+            cleanOrder.unshift(workItemId);
+        }else{
+            // add the work items to the end of the order
+            cleanOrder.push(workItemId);
+        }
+    }
+
+    // update the order
+    order["order"]["sprintPlaning"]["index"] = cleanOrder;
+
+    // saving order
+    await order.save().catch(err=> {
+        console.error("Error saving new order: ", err);
+    });
+
+    // saving sprint
+    sprint["tasks"] = cleanOrder;
+    await sprint.save().catch(err=> {
+        console.error("Error saving sprint: ", err);
+    });
+}
+
+
+
 
 
 
