@@ -56,6 +56,8 @@ router.get("/:id", middleware.isUserInProject, async function (req, res) {
     let userPreferedTeam = projectInfo.getUserPreferedTeam();
     let sprintForPreferedTeam = [];
     let activeSprintId = null;
+    let userTeamId = undefined;
+ 
 
      // if the user have a team
      if (!_.isNull(userPreferedTeam)){
@@ -65,7 +67,9 @@ router.get("/:id", middleware.isUserInProject, async function (req, res) {
         }) || [];
 
         let activeSprint = SprintCollection.getActiveSprint(sprintForPreferedTeam);
-        
+
+        userTeamId = userPreferedTeam["_id"] || activeSprint["teamId"];
+
         // check we have an active sprint
         if (!_.isNull(activeSprint) || !_.isUndefined(activeSprint)){
             activeSprintId = activeSprint["_id"];
@@ -94,6 +98,7 @@ router.get("/:id", middleware.isUserInProject, async function (req, res) {
         "currentPage": PAGES.STATISTICS,
         "assignedUsers": users,
         "projectTeams": teams,
+        "userTeam": userTeamId,
         "activeSprintId": activeSprintId,
         "sprints": sprintForPreferedTeam,
         "addUserModal": true,

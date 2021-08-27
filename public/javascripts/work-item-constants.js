@@ -121,6 +121,7 @@ const WORK_ITEM_STATUS_COLORS = {
 
 const CREATE_WORK_ITEM_MODAL = "#create-work-item-modal";
 const CREATE_WORK_ITEM_CLOSE_BTN = "#close-create-work-item";
+const UPDATE_WORK_ITEM_MODAL = "#update-work-item-modal";
 // const createWorkItemModal = ".createNewItemModal";
 
 // Symbol to replaces

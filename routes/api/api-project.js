@@ -558,12 +558,19 @@ router.get("/api/:id/getTeamSprints/:teamId", middleware.isUserInProject, async 
             return;
         }
 
+        let activeSprint = SprintCollection.getActiveSprint(sprints);
+        let activeSprintId = undefined;
+        if (!_.isNull(activeSprint) || !_.isUndefined(activeSprint)){
+            activeSprintId = activeSprint["_id"];
+        }
+
         sprints = sprints.sort((a,b) => new moment(b["startDate"], SPRINT_FORMAT_DATE) - new moment(a["endDate"], SPRINT_FORMAT_DATE));
         sprints.unshift(UNASSIGNED_SPRINT);
 
         // send response to user
         response["msg"] = "Success";
         response["sprints"] = sprints;
+        response["activeSprintId"] = activeSprintId;
         res.status(200).send(response);
         return;
     }else{

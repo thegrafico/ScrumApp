@@ -1291,16 +1291,19 @@ function addWorkItemEvents(element){
                 for (const sprint of response.sprints) {
                     let optionText = "";
                     
+                    let isSelected = sprint["_id"].toString() == response["activeSprintId"].toString();
+                    
                     if (sprint["_id"] == "0"){
                         optionText = sprint["name"];
                     }else{
-                        optionText = `${sprint["name"]} : ${sprint["startDateFormated"]} - ${sprint["endDateFormated"]}`;
+                        optionText = formatSprintText(sprint, isSelected);
                     }
                     
                     updateSelectOption(
                         element["sprint"], 
                         UPDATE_TYPE.ADD,
-                        {"value": sprint["_id"], "text":optionText}
+                        {"value": sprint["_id"], "text":optionText},
+                        isSelected
                     );
                 }
             }else{

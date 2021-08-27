@@ -74,4 +74,13 @@ $(function () {
         $(CREATE_WORK_ITEM_CLOSE_BTN).click();
     });
 
+
+    // close select2 in case is still open
+    $(CREATE_WORK_ITEM_MODAL).on('hide.bs.modal', function (e) {
+        $(WORK_ITEM["user"]).select2('close');
+        $(WORK_ITEM["team"]).select2('close');
+        $(WORK_ITEM["sprint"]).select2('close');
+        $(WORK_ITEM["priority"]).select2('close');
+    });
+
 });

@@ -199,6 +199,14 @@ $(function () {
             setWorkItemState();
         }
     });
+
+    // close select2 in case is still open
+    $(UPDATE_WORK_ITEM_MODAL).on('hide.bs.modal', function (e) {
+        $(UPDATE_WORK_ITEM["user"]).select2();
+        $(UPDATE_WORK_ITEM["team"]).select2();
+        $(UPDATE_WORK_ITEM["sprint"]).select2();
+        $(UPDATE_WORK_ITEM["priority"]).select2();
+    });
 });
 
 /**
