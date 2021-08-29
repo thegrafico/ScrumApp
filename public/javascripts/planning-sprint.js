@@ -13,15 +13,23 @@ $(function () {
 
         const teamId = $(this).val();
 
-        const API_LINK_GET_WORK_ITEMS_BY_TEAM_AND_SPRINT = `/dashboard/api/${projectId}/getAllSprintWorkItems/${teamId}`;
+        const currentPage = $(CURRENT_PAGE_ID).val(); 
+
+        const API_LINK_GET_WORK_ITEMS_BY_TEAM_AND_SPRINT = `/dashboard/api/${projectId}/getAllSprintWorkItems/${teamId}?location=${currentPage}`;
 
         let response_error = null;
         let response = await make_get_request(API_LINK_GET_WORK_ITEMS_BY_TEAM_AND_SPRINT).catch(err=> {
             response_error = err;
         });
         
-        // Success message
-        cleanTable(WORK_ITEM_TABLE);
+        
+        if (currentPage == PAGES["SPRINT_BOARD"]){
+            cleanSprintBoard();
+        }else{
+            // Success message
+            cleanTable(WORK_ITEM_TABLE);
+        }
+
         removeAllOptionsFromSelect(FILTER_BY_SPRINT_INPUT, null);
         removeAllOptionsFromSelect(WORK_ITEM["sprint"]);
 
@@ -33,10 +41,24 @@ $(function () {
         );
 
         if (response){
-            
+
             // Check work items
-            if (_.isArray(response.workItems) && response.workItems.length > 0){
-                appendToWotkItemTable(response.workItems);
+            if (!_.isUndefined(response.workItems) && !_.isEmpty(response.workItems) && response["workItemsFound"]){
+
+                switch(currentPage){
+                    case PAGES["SPRINT"]: 
+                        // sprint planning
+                        appendToWotkItemTable(response.workItems);
+                        break;
+                    case PAGES["SPRINT_BOARD"]:
+                        cleanSprintBoard();
+                        addWorkItemsToBoard(response.workItems);
+                        break;
+                    default:
+                        console.log("undefined pages");
+                        break;
+                }
+
             }else{
                 removeAllOptionsFromSelect(
                     FILTER_BY_SPRINT_INPUT, 
@@ -139,13 +161,18 @@ $(function () {
             response_error = err;
         });
 
-        // Success message
-        cleanTable(WORK_ITEM_TABLE);
+
+        if (currentPage == PAGES["SPRINT_BOARD"]){
+            cleanSprintBoard();
+        }else{
+            // Success message
+            cleanTable(WORK_ITEM_TABLE);
+        }
 
         if (response){
             
             // Check work items
-            if (!_.isUndefined(response.workItems) && !_.isEmpty(response.workItems)){
+            if (!_.isUndefined(response.workItems) && !_.isEmpty(response.workItems) && response["workItemsFound"]){
 
                 switch(currentPage){
                     case PAGES["SPRINT"]: 

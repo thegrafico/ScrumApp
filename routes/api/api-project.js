@@ -168,6 +168,9 @@ router.get("/api/:id/getAllSprintWorkItems/:teamId", middleware.isUserInProject,
 
     let response = {};
 
+    // if null, not order is apply
+    const { location } = req.query;
+
     // ========= GETTING PROJECT INFO ==========
     let project = await projectCollection.findById(projectId).catch(err => {
         console.error(err);
@@ -186,7 +189,7 @@ router.get("/api/:id/getAllSprintWorkItems/:teamId", middleware.isUserInProject,
     }
 
     // ======== GETTING SPRINTS ============
-    let getJsObject = true; // false is default
+    const getJsObject = true; // false is default
     let teamSprints = await SprintCollection.getSprintsForTeam(projectId, teamId, getJsObject).catch(err => {
         console.error(err);
     });
@@ -220,6 +223,74 @@ router.get("/api/:id/getAllSprintWorkItems/:teamId", middleware.isUserInProject,
         return;
     }
 
+    const workItemsFound = !_.isEmpty(workItems);
+
+    // in case request was from sprint board
+    if (location == PAGES["SPRINT_BOARD"]){
+        workItems = {
+            New:  filteByStatus(workItems, WORK_ITEM_STATUS["New"]),
+            Active: filteByStatus(workItems, WORK_ITEM_STATUS["Active"]),
+            Review: filteByStatus(workItems, WORK_ITEM_STATUS["Review"]),
+            Completed: filteByStatus(workItems, WORK_ITEM_STATUS["Completed"]),
+            Block: filteByStatus(workItems, WORK_ITEM_STATUS["Block"]),
+            Abandoned: filteByStatus(workItems, WORK_ITEM_STATUS["Abandoned"]),
+        }
+    }
+
+    // ====== getting order for sprint ======
+    if (_.isString(location) && Object.values(PAGES).includes(location) ){
+        
+        // Order of the sprint
+        let sprintOrder = await SprintCollection.getSprintOrder(activeSprint["_id"], projectId);
+        
+        // if the sprint planning have never been set
+        // TODO: set a default order for sprint board
+        if (_.isEmpty(sprintOrder["order"]["sprintPlaning"]["index"])){
+            sprintOrder = await setSprintOrder(sprintOrder, workItems, location, true);
+        }else{
+
+            switch(location){
+                case PAGES["SPRINT"]:               
+                    
+                    // TODO: add check for sprint id instead of just length
+                    if (sprintOrder["order"][location]["index"].length != sprint["tasks"].length){
+                        console.log("Order from sprint does not match current order. Updating...");
+
+                        if (getJsObject){
+
+                            let sprint = await SprintCollection.findById(activeSprint["_id"]).catch (err => {
+                                console.error("Error getting sprint: ", err);
+                            });
+
+                            // check sprint information
+                            if (_.isUndefined(sprint) || _.isNull(sprint)){ 
+                                console.error("Cannot find the sprint information to add it to the order.");
+                                break;
+                            }
+
+                            // update the sprint order
+                            await updateSprintOrderIndex(sprint, sprintOrder);
+
+                        }else{
+                            await updateSprintOrderIndex(activeSprint, sprintOrder);
+                        }
+                    }
+                    
+                    // sort by the order
+                    workItems = sortByOrder(workItems, sprintOrder["order"][location]["index"], location);
+                    break;
+                case PAGES["SPRINT_BOARD"]:
+                    workItems = sortByOrder(workItems, sprintOrder["order"][location], location);
+                    break;
+                default:
+                    console.log("Location not found");
+                break;
+            }
+            
+        }
+    }
+    // ================================================
+
     teamSprints = teamSprints.sort((a,b) => new moment(b["startDate"], SPRINT_FORMAT_DATE) - new moment(a["endDate"], SPRINT_FORMAT_DATE));
     teamSprints.unshift(UNASSIGNED_SPRINT);
 
@@ -227,6 +298,7 @@ router.get("/api/:id/getAllSprintWorkItems/:teamId", middleware.isUserInProject,
     response["activeSprint"] = activeSprint._id;
     response["sprints"] = teamSprints;
     response["workItems"] = workItems;
+    response["workItemsFound"] = workItemsFound;
 
     res.status(200).send(response);
     return;
@@ -290,6 +362,8 @@ router.get("/api/:id/getSprintWorkItems/:teamId/:sprintId", middleware.isUserInP
         return;
     }
 
+    const workItemsFound = !_.isEmpty(workItems);
+
     if (location == PAGES["SPRINT_BOARD"]){
         workItems = {
             New:  filteByStatus(workItems, WORK_ITEM_STATUS["New"]),
@@ -336,6 +410,7 @@ router.get("/api/:id/getSprintWorkItems/:teamId/:sprintId", middleware.isUserInP
   
     response["msg"] = "success";
     response["workItems"] = workItems;
+    response["workItemsFound"] = workItemsFound;
 
     res.status(200).send(response);
     return;

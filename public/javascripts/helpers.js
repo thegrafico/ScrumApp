@@ -765,10 +765,10 @@ function updateSelectOption(selectId, updateType, valueToUpdate, selected=false)
  * @param {*} message - message to show
  * @param {*} style - style class ("success" | "error" | "warning")
  */
-function showPopupMessage(selector, message, style="error", position="top"){
+function showPopupMessage(selector, message, style="error", position="right"){
     $(selector).notify(
         message, 
-        { position:position, autoHide: false, clickToHide: true, className: style}
+        { position:position, autoHide: true, clickToHide: true, className: style}
     );
 }
 
