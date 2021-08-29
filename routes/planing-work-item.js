@@ -85,6 +85,9 @@ router.get("/:id/planing/workitems", middleware.isUserInProject, async function 
         }
 
     } 
+
+    sprintForPreferedTeam = sortByDate(sprintForPreferedTeam, "startDate");
+
     // === END
     // adding defaults
     teams.unshift(UNASSIGNED);

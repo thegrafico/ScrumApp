@@ -166,23 +166,19 @@ workItemSchema.post('findOneAndDelete', async function(workItem) {
     // exit if not found
     if (!sprint){return;}
 
-    // removing work item from sprint
-    sprint["tasks"].pull(workItemId);
- 
+    // remove the work item from the sprint  - and order
+    await sprint.removeWorkItemFromSprints(workItemId).catch(err => {
+        console.error("Error removing work item from sprint: ", err);
+    });
+
+    // getting all work items that belong to the sprint
     let sprintWorkItems = await this.model.find({"_id": {$in: sprint["tasks"]}}).catch(err => {
         console.error("Error getting work items: ", err);
     });
 
     // check work items
     if (!_.isArray(sprintWorkItems) || _.isEmpty(sprintWorkItems)){
-        console.log("Not work item found");
-
-        // saving before closing
-        await sprint.save().catch(err => {
-            console.error("error saving sprint");
-        });
-
-        console.log("Work item removed from sprint");
+        console.log("Not work items found");
         return;
     }
 

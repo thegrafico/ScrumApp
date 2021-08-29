@@ -333,9 +333,26 @@ sprintSchema.statics.removeWorkItemFromSprints = async function(projectId, workI
 
         // check errors
         if (error_msg){
-            return reject(false);
+            return reject(error_msg);
         }
 
+        // ======== REMOVING ORDER FOR WORK ITEM =============
+        let sprintOrder = await father.getSprintOrder(sprint["_id"], projectId).catch(err => {
+            console.error("Error getting the order for the sprint: ", err);
+        });
+
+        if (!_.isUndefined(sprintOrder) && !_.isNull(sprintOrder)){
+
+            console.log("Sprint order found. Updating...");
+            // remove the work item from the sprint order
+            let wasUpdated = await sprintOrder.removeWorkItem(workItemId).catch(err => {
+                console.error("Error removing work item: ", err);
+            });
+
+            console.log("Sprint order updated: ", wasUpdated);
+        }
+
+        // =====================
         console.log("\n==Work item was removed from sprint==\n");
         return resolve(true);
     });
@@ -343,28 +360,30 @@ sprintSchema.statics.removeWorkItemFromSprints = async function(projectId, workI
 };
 
 /**
- * Remove one or more work item from the sprints
- * @param {String} projectId - id of the project
- * @param {Array} workItemIsd - if id the work item to remove 
- * @returns {Promise}
+ * Remove One work item from the sprints
+ * @param {String} workItemId - if id the work item to remove 
+ * @returns {Promise} true if the work item was remvoved
  */
-sprintSchema.statics.removeMultipleWorkItemsFromSprints = async function(projectId, workItemsId) {
+ sprintSchema.methods.removeWorkItemFromSprints = async function(workItemId) {
     
-    let father = this;
+    let sprint = this;
 
     return new Promise(async function (resolve, reject){
 
-        if (_.isUndefined(projectId) || !_.isArray(workItemsId) || _.isEmpty(workItemsId)){
+        if (_.isUndefined(workItemId)){
             reject("Invalid parameters were received.");
             return;
         }
 
+        const projectId = sprint["projectId"];
+
+        // removing element from sprint
+        sprint["tasks"].pull(workItemId);
+
         let error_msg = undefined;
-        let updateStatus = await father.updateMany(
-            {projectId: projectId, tasks: {$in: workItemsId}},
-            {$pull: {tasks: {$in: workItemsId}}}
-        ).catch(err => {
-            console.error("Error removing multiple work items from sprint");
+
+        // saving data
+        await sprint.save().catch(err => {
             error_msg = err;
         });
 
@@ -373,16 +392,28 @@ sprintSchema.statics.removeMultipleWorkItemsFromSprints = async function(project
             return reject(error_msg);
         }
 
-        // TODO: REMOVE WORK ITEMS FROM ORDER
+        // ======== REMOVING ORDER FOR WORK ITEM =============
+        let sprintOrder = await sprint.getSprintOrder(sprint["_id"], projectId).catch(err => {
+            console.error("Error getting the order for the sprint: ", err);
+        });
 
-        console.log(updateStatus);
+        if (!_.isUndefined(sprintOrder) && !_.isNull(sprintOrder)){
+
+            console.log("Sprint order found. Updating...");
+            // remove the work item from the sprint order
+            let wasUpdated = await sprintOrder.removeWorkItem(workItemId).catch(err => {
+                console.error("Error removing work item: ", err);
+            });
+
+            console.log("Sprint order updated: ", wasUpdated);
+        }
+
+        // =====================
         console.log("\n==Work item was removed from sprint==\n");
         return resolve(true);
     });
 
 };
-
-
 
 
 /**
@@ -405,6 +436,11 @@ sprintSchema.statics.addWorkItemToSprint = async function(projectId, workItemId,
 
         let wasAdded = undefined;
 
+        // ======== ADDING ORDER FOR WORK ITEM =============
+        let sprintOrder = await father.getSprintOrder(sprintId, projectId).catch(err => {
+            console.error("Error getting the order for the sprint: ", err);
+        });
+
         // in case of adding multiple work items
         if (_.isArray(workItemId) && !_.isEmpty(workItemId)){
 
@@ -414,7 +450,26 @@ sprintSchema.statics.addWorkItemToSprint = async function(projectId, workItemId,
             ).catch(err => {
                 console.error(err);
             });
-            console.log("Added multiple work items to the sprint")
+
+            // ============= Adding work item to the sprint order =============
+            if (!_.isUndefined(sprintOrder) && !_.isNull(sprintOrder)){
+                console.log("Sprint order found. Adding work item/s to it...");
+
+                // getting work items to add to order
+                let workItems = await mongoose.model("WorkItem").find({_id: {$in: workItemId}}).catch(err => {
+                    console.error("error getting work items: ", err);
+                });
+
+                // add the work item from the sprint order
+                let wasUpdated = await sprintOrder.addWorkItems(workItems).catch(err => {
+                    console.error("Error removing work item: ", err);
+                });
+    
+                console.log("Sprint order updated: ", wasUpdated);
+            }
+            // ====================================================
+
+
         }else{
 
             // adding just an element
@@ -425,7 +480,28 @@ sprintSchema.statics.addWorkItemToSprint = async function(projectId, workItemId,
                 err_msg = err;
                 console.error(err);
             });
-            console.log("Added ONE work item to the sprint")
+            
+
+            // ============= Adding work item to the sprint order =============
+            if (!_.isUndefined(sprintOrder) && !_.isNull(sprintOrder)){
+                console.log("Sprint order found. Adding work item/s to it...");
+
+                // getting work items to add to order
+                let workItem = await mongoose.model("WorkItem").findOne({_id: workItemId}).catch(err => {
+                    console.error("error getting work items: ", err);
+                });
+
+                // add the work item from the sprint order
+                let wasUpdated = await sprintOrder.addWorkItems([workItem]).catch(err => {
+                    console.error("Error removing work item: ", err);
+                });
+    
+                console.log("Sprint order updated: ", wasUpdated);
+            }
+            // ====================================================
+
+            console.log("Added ONE work item to the sprint");
+
         }
 
         if (_.isUndefined(wasAdded) || _.isNull(wasAdded) || !wasAdded){
@@ -591,11 +667,6 @@ sprintSchema.methods.getSprintOrder = async function() {
         console.error("err: ", err);
     });
 
-    console.log(_.isUndefined(sprintOrder));
-    console.log(_.isNull(sprintOrder));
-    console.log(error);
-
-
     if (_.isUndefined(sprintOrder) || _.isNull(sprintOrder) || error != undefined){
     
         console.log("Creating new sprint order");
@@ -613,7 +684,7 @@ sprintSchema.methods.getSprintOrder = async function() {
  * check if the sprint has a order schema
  * @returns {Boolean} - return true if the the sprint have a order schema
  */
- sprintSchema.methods.haveOrderSchema = async function() {
+sprintSchema.methods.haveOrderSchema = async function() {
     
     return this.getSprintOrder() != null;
 };

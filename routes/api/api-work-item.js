@@ -445,13 +445,11 @@ router.post("/api/:id/updateWorkItem/:workItemId", middleware.isUserInProject, a
     // sprint was received
     if (!_.isUndefined(sprint)){
 
+        // remove work item in case it belongs to other sprint
+        await SprintCollection.removeWorkItemFromSprints(projectId, workItemId).catch(err =>{});
+
         // is unselected? 
-        if (sprint == UNASSIGNED.id){
-            await SprintCollection.removeWorkItemFromSprints(projectId, workItemId).catch(err =>{});
-        }else{
-            // remove work item in case it belongs to other sprint
-            await SprintCollection.removeWorkItemFromSprints(projectId, workItemId).catch(err =>{});;
-            
+        if (sprint != UNASSIGNED.id){
             // add the work item to the sprint selected by the user
             await SprintCollection.addWorkItemToSprint(projectId, workItemId, sprint).catch(err =>{});;
         }
@@ -844,14 +842,16 @@ router.post("/api/:id/moveWorkItemsToSprint/:teamId", middleware.isUserInProject
             res.status(400).send(response);
             return;
         }
+
+        // remove work items from all sprints
+        await SprintCollection.removeWorkItemFromSprints(projectId, workItem).catch(err => {
+            console.error("\nError removing work item from sprints: ", err);
+        });
     }
     
     // =========== UPDATE SPRINT =================
 
-    // remove work items from all sprints
-    await SprintCollection.removeMultipleWorkItemsFromSprints(projectId, workItemIds).catch(err => {
-        console.error("Error removing work item from sprints: ", err);
-    });
+
 
     // if there is not id for the sprint, we end here
     if (sprintId == UNASSIGNED_SPRINT["_id"]){

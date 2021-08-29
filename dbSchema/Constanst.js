@@ -123,6 +123,9 @@ module.exports.PAGES = {
     MANAGE_SPRINT: "manageSprint", 
 }
 
+module.exports.ADD_TO_THE_BEGINNING = true;
+
+
 /**
  * Capitalize a String
  * @param {String} s 
