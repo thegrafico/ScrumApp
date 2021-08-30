@@ -119,6 +119,7 @@ workItemSchema.post('save', async function(workItem) {
     // exit if not found
     if (!sprint){return;}
 
+    // getting all work items from sprint
     let sprintWorkItems = await this.constructor.find({_id: {$in: sprint["tasks"]}}).catch(err => {
         console.error("Error getting work items: ", err);
     });
@@ -129,25 +130,40 @@ workItemSchema.post('save', async function(workItem) {
         return;
     }
 
-    const today = moment(new Date).format(SPRINT_FORMAT_DATE);
-    let totalPoints = getPointsForStatus(sprintWorkItems);
-    let completedPoints = getPointsForStatus(sprintWorkItems, WORK_ITEM_STATUS['Completed']);
-    let currentAmountOfPoints = (totalPoints - completedPoints >= 0) ? totalPoints - completedPoints : 0;
-
+    const today = moment(new Date)
+    const totalPoints = getPointsForStatus(sprintWorkItems);
+    const completedPoints = getPointsForStatus(sprintWorkItems, WORK_ITEM_STATUS['Completed']);
+    const currentAmountOfActivePoints = (totalPoints - completedPoints >= 0) ? totalPoints - completedPoints : 0;
+    const formatedToday = today.format(SPRINT_FORMAT_DATE);
+    
     // if note empty, check 
     if (!_.isEmpty(sprint["pointsHistory"])){
-        let todaysPoints = sprint["pointsHistory"].filter(each => {return each["date"] == today});
+        let todaysPoints = sprint["pointsHistory"].filter(each => {return each["date"] == formatedToday});
 
         // there is not record for today
         if (_.isEmpty(todaysPoints)){
-            sprint["pointsHistory"].push( {date: today, points: currentAmountOfPoints} );
+            sprint["pointsHistory"].push( {date: today, points: currentAmountOfActivePoints} );
         }else{ // there is record for points changes for today's date
-            todaysPoints[0]["points"] = currentAmountOfPoints;
+            todaysPoints[0]["points"] = currentAmountOfActivePoints;
         }
+    }else{
+        sprint["pointsHistory"].push({date: formatedToday, points: currentAmountOfActivePoints});
+    }
+
+    const sprintStartDate = moment(sprint["startDate"], SPRINT_FORMAT_DATE);
+
+    // console.log("TODAY: ", formatedToday);
+    // console.log("Start Date: ", sprintStartDate);
+    // console.log(today.isSameOrBefore(sprintStartDate));
+
+    // UPDATING INITIAL POINTS FOR SPRINT
+    if (today.isSameOrBefore(sprintStartDate)){
+        console.log("Inital Sprint points updated.");
+        sprint["initialPoints"] = totalPoints;
     }
 
     await sprint.save().catch(err => {
-        console.error("error saving sprint");
+        console.error("error saving sprint: ", err);
     });
 });
 

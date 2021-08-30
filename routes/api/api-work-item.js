@@ -272,8 +272,6 @@ router.post("/api/:id/createWorkItem", middleware.isUserInProject, async functio
 
     // Add the work item to the sprint if was selected by the user
     if (!_.isUndefined(sprint) && !_.isEmpty(sprint) && sprint != UNASSIGNED_SPRINT._id){
-        let sprint_error_msg = null;
-
         await SprintCollection.addWorkItemToSprint(projectId, newWorkItem["_id"], sprint).catch(err => {
             console.error("Error adding work item to sprint: ", err);
         });
@@ -646,7 +644,7 @@ router.post("/api/:id/updateWorkItemOrder/:workItemId/:sprintId", middleware.isU
     
     // =========== Validate Work Item exist =================
     
-    const workItem = await workItemCollection.findById(workItemId).catch ( err =>{
+    let workItem = await workItemCollection.findById(workItemId).catch ( err =>{
         console.error("Error getting work item: ", err);
     });
 
@@ -686,6 +684,7 @@ router.post("/api/:id/updateWorkItemOrder/:workItemId/:sprintId", middleware.isU
         index,
     } = req.body;
 
+    // updating order for the work item
     if (_.isString(location) && !_.isUndefined(index) && !isNaN(index)){
         console.log("\nAdding work item to an order...\n");
 
@@ -759,7 +758,7 @@ router.post("/api/:id/updateWorkItemOrder/:workItemId/:sprintId", middleware.isU
 
     }   
 
-    // verify Status
+    // Updating status
     if (_.isString(status)){
         const STATUS = Object.keys(WORK_ITEM_STATUS);
         status = capitalize(status);

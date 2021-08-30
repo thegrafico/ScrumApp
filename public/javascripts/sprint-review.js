@@ -305,7 +305,6 @@ function updateBurnDownChart(burnDownChart, statusReport){
  */
 function getBurndownLineData(pointsHistory, totalPoints, labelDates, isTodayBetween){
     
-
     let today = moment(new Date()).format(DATE_LABEL_FORMAT);
 
     let burndownData = [];
@@ -352,12 +351,12 @@ function getBurndownLineData(pointsHistory, totalPoints, labelDates, isTodayBetw
                 
                 for (let j = i; j < labelDates.length; j++) {
                     date = labelDates[j];
+
+                    burndownData.push(currentPoints);
+
                     if (date === today){
                         break;
-                    }
-                    
-                    burndownData.push(currentPoints);
-                    
+                    }                    
                 }
             }
 
