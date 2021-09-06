@@ -6,7 +6,7 @@ module.exports.projectStatus = ["New", "Active", "Completed", "Deleted", "Block"
 
 module.exports.UNASSIGNED = {
     name: "unassigned",
-    id: "0",
+    _id: "0",
     selected: true
 };
 
@@ -120,10 +120,60 @@ module.exports.PAGES = {
     SPRINT_BOARD: "sprintBoard",
     MANAGE_TEAM: "manageTeam",
     MANAGE_USER: "manageUser",
-    MANAGE_SPRINT: "manageSprint", 
+    MANAGE_SPRINT: "manageSprint",
+    QUERIES: "queries"
 }
 
 module.exports.ADD_TO_THE_BEGINNING = true;
+
+// ========= QUERY ===================
+module.exports.QUERY_FIELD = {
+    
+    WORK_ITEM_TITLE: {text: "Work Item Title", dbField: "title"},
+    ASSIGNED_USER: {text: "Assigned User", dbField: "assignedUser"},
+    STORY_POINTS: {text: "Story Points", dbField: "storyPoints"},
+    PRIORITY_POINTS: {text: "Priority", dbField: "priorityPoints"},
+    WORK_ITEM_STATUS: {text: "Work Item Status", dbField: "status"},
+    TEAM: {text: "Team", dbField: "team"},
+    WORK_ITEM_TYPE: {text: "Work Item Type", dbField: "type"},
+    WORK_ITEM_DESCRIPTION: {text: "Work Item Description", dbField: "description"},
+    TAGS: {text: "Tags", dbField: "tags"},
+    Comments: {text: "Comments", dbField: "comments"},
+    WORK_ITEM_CREATION: {text: "Work Item Creation Date", dbField: "createdAt"},
+    SPRINT_NAME: {text: "Sprint Name", dbField: "name"},
+    SPRINT_START_DATE: {text: "Sprint Start Date", dbField: "startDate"},
+    SPRINT_END_DATE: {text: "Sprint End Date", dbField: "endDate"},
+    SPRINT_STATUS: {text: "Sprint Status", dbField: "status"},
+    SPRINT_POINTS: {text: "Sprint Points", dbField: "initialPoints"}
+}
+
+
+module.exports.QUERY_OPERATOR = {
+    EQUAL: "=",
+    NOT_EQUAL: "<>",
+    GREATER: ">",
+    LESS: "<",
+    GREATER_EQUAL: ">=",
+    LESS_EQUAL: "<=",
+    CONTAINS: "Contains",
+    DOES_NOT_CONTAINS: "Does Not Contain",
+    IN: "In",
+    NOT_IN: "Not In",
+    IS_EMPTY: "Is Empty",
+    NOT_IN: "Is Not Empty",
+    NOT_IN: "Not In",
+}
+
+const QUERY_LOGICAL_CONDITION = {
+    AND: "And",
+    OR: "Or"
+}
+module.exports.QUERY_LOGICAL_CONDITION = QUERY_LOGICAL_CONDITION;
+
+module.exports.QUERY_SPECIAL_VALUE = "[ANY]";
+
+// ===================================
+
 
 
 /**
@@ -437,7 +487,7 @@ module.exports.setSprintOrder = async function(sprint, workItems, location){
  * @param {Object} order 
  * @returns 
  */
- module.exports.updateSprintOrderIndex = async function updateSprintOrderIndex(sprint, order, addNewToTheBeginning=false){
+module.exports.updateSprintOrderIndex = async function updateSprintOrderIndex(sprint, order, addNewToTheBeginning=false){
 
     let sprintTasks = sprint["tasks"];
     let orderWorkItems = order["order"]["sprintPlaning"]["index"];
@@ -496,7 +546,45 @@ module.exports.setSprintOrder = async function(sprint, workItems, location){
 }
 
 
+/**
+ * Return an new array with the queries divided by logical condition the way the query should be done. 
+ * @param {Array} query - query array of object
+ * @returns 
+ */
+module.exports.cleanQuery = (query) => {
 
+    // early exit condition 
+    if (_.isEmpty(query)){ return [];}
 
+    let masterQuery = [];
+    let tempQuery = [];
+    for (let i = 0; i < query.length; i++) {
+        
+        // every row query by the user
+        const rowQuery = query[i];
 
+        // add the current query
+        tempQuery.push(rowQuery);
 
+        // check if the next element is and
+        if ( 
+            ( (i + 1) < query.length) &&  // there is a next element available
+            ( query[i + 1]["andOr"]) == QUERY_LOGICAL_CONDITION["AND"] ){ // next element is and AND condition
+            
+            // Since the next condition is an AND, then we add the prev. row queries
+            masterQuery.push(tempQuery);
+
+            // cleaning the previews querie array
+            tempQuery = [];
+
+        }
+
+    }
+
+    // in case we there is not more and and the masterQuery never gets updated. 
+    if (!_.isEmpty(tempQuery)){
+        masterQuery.push(tempQuery);
+    }
+
+    return masterQuery;
+}

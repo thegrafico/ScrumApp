@@ -1582,3 +1582,30 @@ async function updateWorkItemBoard(workItemId, updateData){
     }
 
 }
+
+
+/**
+ * Get an object form and array. every element is the key and the value
+ * @param {Array} arr 1D array
+ * @returns {Object} object with keys/values with the value of the each array element
+ */
+function arrayToObject(arr){
+    return arr.reduce((acc,curr)=> (acc[curr]=curr,acc),{});
+}
+
+
+/**
+ * Get a unique string
+ * @param {Number} length - Size of the unique string
+ * @returns 
+ */
+function getRandomString(length) {
+    let randomChars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    let id = '';
+    for ( let i = 0; i < length; i++ ) {
+        id += randomChars.charAt(Math.floor(Math.random() * randomChars.length));
+    }
+    return id;
+}
+
+

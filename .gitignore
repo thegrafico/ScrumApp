@@ -3,3 +3,4 @@ logs/
 config/config.env
 test-request/
 *.DS_Store
+test.js

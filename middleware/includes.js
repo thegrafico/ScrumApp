@@ -128,5 +128,26 @@ module.exports = {
             "/javascripts/modals/team-controller.js",
             "/javascripts/modals/sprint-controller.js",
         ]
-    }
+    },
+    queryPath: {
+        styles: ["/stylesheets/scrum-main.css", "/stylesheets/work-item.css", "/stylesheets/backlog.css", "/stylesheets/query.css"], 
+        scripts: [
+            "/javascripts/dependecies/jquery-ui.min.js",
+            "/javascripts/planning-work-item.js",
+            "/javascripts/planning-backlog.js",
+            "/javascripts/planning-sprint.js",
+            "/javascripts/dependecies/bootstrap.bundle.min.js",
+            "/javascripts/filter-and-search.js",
+            "/javascripts/create-work-item-modal.js",
+            "/javascripts/update-work-item.js",
+            "/javascripts/queries.js",
+            "/javascripts/show-work-item-modal.js",
+            "/javascripts/modals/user-controller.js",
+            "/javascripts/modals/team-controller.js",
+            "/javascripts/modals/sprint-controller.js",
+            "/javascripts/modals/sprint-points-graph.js",
+            "/javascripts/dependecies/col-resizable-min.js",
+
+        ]
+    },
 }

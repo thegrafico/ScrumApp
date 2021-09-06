@@ -214,7 +214,8 @@ const PAGES = {
     SPRINT_BOARD: "sprintBoard",
     MANAGE_TEAM: "manageTeam",
     MANAGE_USER: "manageUser",
-    MANAGE_SPRINT: "manageSprint", 
+    MANAGE_SPRINT: "manageSprint",
+    QUERIES: "queries",
 }
 
 //  ======= SPRINT
@@ -272,6 +273,58 @@ let IS_UPDATE_SELECT_OPTION = false;
 // =========== END
 
 const CURRENT_USER_ID = "#current-user-id";
+
+const PRIORITY_POINTS = {
+    "Low": 1,
+    "Median": 2,
+    "High": 3,
+    "Highest": 4,
+    "Critical": 5,
+};
+
+// =========== QUERY DATA ===========
+const QUERY_OPERATOR = {
+    EQUAL: "=",
+    NOT_EQUAL: "<>",
+    GREATER: ">",
+    LESS: "<",
+    GREATER_EQUAL: ">=",
+    LESS_EQUAL: "<=",
+    CONTAINS: "Contains",
+    DOES_NOT_CONTAINS: "Does Not Contain",
+    IN: "In",
+    NOT_IN: "Not In",
+    IS_EMPTY: "Is Empty",
+    NOT_IN: "Is Not Empty",
+    NOT_IN: "Not In",
+}
+
+const QUERY_FIELD = {
+    WORK_ITEM_TITLE: {text: "Work Item Title", dbField: "title"},
+    ASSIGNED_USER: {text: "Assigned User", dbField: "assignedUser"},
+    STORY_POINTS: {text: "Story Points", dbField: "storyPoints"},
+    PRIORITY_POINTS: {text: "Priority", dbField: "priorityPoints"},
+    WORK_ITEM_STATUS: {text: "Work Item Status", dbField: "status"},
+    TEAM: {text: "Team", dbField: "team"},
+    WORK_ITEM_TYPE: {text: "Work Item Type", dbField: "type"},
+    WORK_ITEM_DESCRIPTION: {text: "Work Item Description", dbField: "description"},
+    TAGS: {text: "Tags", dbField: "tags"},
+    Comments: {text: "Comments", dbField: "comments"},
+    WORK_ITEM_CREATION: {text: "Work Item Creation Date", dbField: "createdAt"},
+    SPRINT_NAME: {text: "Sprint Name", dbField: "name"},
+    SPRINT_START_DATE: {text: "Sprint Start Date", dbField: "startDate"},
+    SPRINT_END_DATE: {text: "Sprint End Date", dbField: "endDate"},
+    SPRINT_STATUS: {text: "Sprint Status", dbField: "status"},
+    SPRINT_POINTS: {text: "Sprint Points", dbField: "initialPoints"}
+}
+
+const QUERY_LOGICAL_CONDITION = {
+    AND: "And",
+    OR: "Or"
+}
+
+const QUERY_SPECIAL_VALUE = "[ANY]";
+// =========================
 
 const NOTIFY = {
 

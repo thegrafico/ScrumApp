@@ -52,7 +52,7 @@ let sprintSchema = new mongoose.Schema({
                 return moment(_startDate, SPRINT_FORMAT_DATE).isValid();
             },
             message: `Invalid date format. Format should be: ${SPRINT_FORMAT_DATE}`
-        }
+        }   
     },
     endDate: {
         type: String, 

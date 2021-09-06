@@ -26,6 +26,10 @@ const {
     WORK_ITEM_STATUS_COLORS,
     WORK_ITEM_STATUS,
     WORK_ITEM_ICONS,
+    QUERY_FIELD,
+    QUERY_OPERATOR,
+    QUERY_SPECIAL_VALUE,
+    QUERY_LOGICAL_CONDITION,
     PAGES,
     capitalize,
     getSprintDateStatus,
@@ -38,6 +42,7 @@ const {
     sortByOrder,
     updateSprintOrderIndex,
     filteByStatus,
+    cleanQuery,
 } = require('../../dbSchema/Constanst');
 
 // ================= GET REQUEST ==============
@@ -706,8 +711,88 @@ router.get("/api/:id/getTeamSprints/:teamId", middleware.isUserInProject, async 
     }
 });
 
-
 // ================= POST REQUEST ==============
+
+
+/**
+ * METHOD: GET - fetch all sprints for a team
+ */
+ router.post("/api/:id/getQuery", middleware.isUserInProject, async function (req, res) {
+    console.log("request to get work item by query...");
+
+    const projectId = req.params.id;
+
+    // getting query request
+    let { query } = req.body;
+
+    let response = {};
+
+    // getting project
+    const projectInfo = await projectCollection.findById(projectId).catch(err => {
+        console.error(err);
+    });
+    
+    // verify project
+    if (!projectInfo){
+        response["msg"] = "Sorry, Cannot get the information of the project.";
+        res.status(400).send(response);
+        return;
+    }
+
+    // check if we received data
+    if (!_.isArray(query) || _.isEmpty(query)){
+        response["msg"] = "Oops, it seems the data received is empty";
+        res.status(200).send(response);
+        return;
+    }
+
+    // clean the query object and divide it by condition
+    query = cleanQuery(query);
+
+    if (_.isEmpty(query)){
+        response["msg"] = "Oops, it seems there was an error processing the query. Please try later.";
+        res.status(200).send(response);
+        return;
+    }
+
+    // getting all work items from project
+    let workItems = await projectInfo.getWorkItems().catch(err => {
+        console.error("Error getting work items: ", err);
+    });
+
+    // getting the users from the project
+    let users = await projectInfo.getUsers().catch(err => console.log(err)) || [];
+
+    // getting work item teams 
+    let teams = [...projectInfo.teams];
+
+    // get all sprints for project
+    let sprints = await SprintCollection.find({projectId}).catch(err => console.error(err)) || [];
+
+    joinData(workItems, teams, "teamId", "equal", "_id", "team", UNASSIGNED);
+    joinData(workItems, sprints, "_id", "is in", "tasks", "sprint", UNASSIGNED_SPRINT);
+
+    let filteredWorkItems = [];
+
+    // 
+    for(let workItem of workItems){
+
+        // since the query is divided by logical condition
+        // here we get the bunch of queries for each condition
+        for (let rowsQuery of query){
+
+            for (eachRowQuery of rowsQuery){
+
+            }
+        }
+    }
+    // send response to user
+    response["msg"] = "Success";
+    res.status(200).send(response);
+    return;
+
+});
+
 
 // =========================== TEAM REQUEST =====================
 

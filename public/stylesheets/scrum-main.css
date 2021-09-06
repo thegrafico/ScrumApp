@@ -303,12 +303,12 @@ a:hover {
  }
  
  .select2-container--default .select2-selection--single{
-     border: none;
-     border-bottom: 1px solid white;
+    border: none;
+    border-bottom: 1px solid #444;
  }
  
  .select2-container--default:hover .select2-selection--single:hover{
-     border: 1px solid white;
+     border: 1px solid #444;
      border-radius:4px;
  }
  
@@ -460,4 +460,3 @@ td.off{
 .select2-selection__rendered, .select2-results__option select2-results__option--selectable{
     font-size: 0.9em;
 }
-    

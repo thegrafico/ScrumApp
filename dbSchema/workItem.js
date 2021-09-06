@@ -99,7 +99,6 @@ workItemSchema.plugin(AutoIncrement, {id: 'sequence', inc_field: 'itemId', refer
  * Function to validate the max number of tags can a work item has
  * @param {Array} tags 
  */
-// TODO: create a constans for this value
 function limitOfTags(tags){
     return tags.length <= MAX_NUMBER_OF_TAGS_PER_WORK_ITEM;
 }

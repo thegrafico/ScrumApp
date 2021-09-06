@@ -1,0 +1,226 @@
+<%- include('modals/header'); %>
+
+<body>
+
+    <%- include('modals/topNavbar'); %>
+
+    <div class="wrapper d-flex align-items-stretch">
+
+        <%- include('modals/sideNavbar'); %>
+
+        <!-- Page Content  -->
+        <div id="content" class="p-4 p-md-5">
+
+            <%- include('modals/titleOptionsMenu'); %>
+
+            <nav class="navbar m-2 navbar-expand-lg navbar-dark bg-dark navbarQueryContainer">
+                <div class="container-fluid" >
+
+                    <div class="collapse pt-1 pb-3 navbar-collapse" id="navbarColor02">
+
+                        <ul class="nav nav-tabs">
+                            <li class="nav-item">
+                                <a class="nav-link " data-bs-toggle="tab" href="#home">Results</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link active" data-bs-toggle="tab" href="#profile">Create Query</a>
+                            </li>
+                        </ul>
+
+                        <ul class="navbar-nav me-auto queryOptions">
+                            <li class="nav-item">
+                                <a class="nav-link" href="#" id="runQuery"> <i class="fas fa-play activeColor formatIcon"></i> Run query</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="#"><i class="fas fa-plus completedColor formatIcon"></i> New</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="#"><i class="far fa-save newColor formatIcon"></i> Save Query</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </nav>
+
+            <div id="myTabContent " class="p-4 tab-content">
+                <div class="tab-pane fade" id="home">
+                    <div class="telescopeImage">
+                        <div class="container">
+                            <div class="image-container">
+                                <img src="/images/telescope.ico" alt="Telescope Image">
+                                <p> 
+                                    "Equipped with his five senses, man explores the universe around him and calls the adventure Science."
+                                    <br>
+                                    - Edwin Hubble, Astronomer
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane active fade show" id="profile">
+                  
+                    <div class="container-fluid makeQueryContainer p-2">
+
+                        <!-- ROW TITLE -->
+                        <div class="row rowTitle">
+
+                            <div class="col col-1">
+                             </div>
+
+                            <div class="col col-1">
+                               <span>And/Or</span>
+                            </div>
+
+                            <div class="col col-3">
+                                <span>Field</span>
+                             </div>
+
+                             <div class="col col-2">
+                                <span>Operator</span>
+                             </div>
+
+                             <div class="col col-4">
+                                <span>Value</span>
+                             </div>
+                        </div>
+
+                        <!-- FIRST ROW DEFAULT -->
+                        <div class="row filterRow">
+
+                            <div class="col col-1">
+                            </div>
+
+                            <div class="col col-1">
+                            </div>
+
+                            <div class="col col-3">
+                                <div class="selectContainer">
+
+                                    <select class="custom-select my-custon-select selectField">
+                                        <option value="0" selected>Select Field</option>
+
+                                        <% for (const [key, value] of Object.entries(queryFields)) {%>
+                                            <option value="<%=key%>"><%=value["text"]%></option>
+                                        <% } %>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="col col-2">
+                                <div class="selectContainer">
+
+                                    <select class="custom-select my-custon-select selectOperator">
+                                        <option value="0" selected>Select Operator</option>
+
+                                        <% for (const [key, value] of Object.entries(queryOperator)) {%>
+                                            <option value="<%=key%>"><%=value%></option>
+                                        <% } %>
+                                    </select>
+                                </div>
+
+                            </div>
+
+                            <div class="col col-4">
+                                <div class="selectContainer">
+
+                                    <input 
+                                        type="text"
+                                        class="custom-select my-custon-select userValue" 
+                                        list="row-1-datalist" 
+                                        name="myListOne" 
+                                        id="row-1" 
+                                        placeholder="Insert Value" 
+                                        autocomplete="off"
+                                        disabled>
+                                    <datalist id="row-1-datalist">
+                                        <option value="Any">
+                                    </datalist>
+                                <i class="fas fa-chevron-down formatIcon"></i>
+
+                                </div>
+
+
+                            </div>
+                        </div>
+
+                        <!-- ADDED COLUMNS GOES HERE -->
+                        <div class="row filterRow">
+
+                            <div class="col col-1 my-auto">
+                                <div class="setupRowContainer">
+                                    <i class="fas fa-plus completedColor formatIcon addQueryRowIcon"></i>
+                                    <i class="fas fa-times blockColor formatIcon removeQueryRowIcon"></i>
+                                </div>
+                            </div>
+
+                            <div class="col col-1" >
+                                <div class="selectContainer">
+                                    <select class="custom-select my-custon-select selectAndOr">
+                                        <option value="And">And</option>
+                                        <option value="Or">Or</option>
+                                    </select>
+                                    
+                                </div>
+                            </div>
+
+                            <div class="col col-3">
+                                <div class="selectContainer">
+
+                                    <select class="custom-select my-custon-select selectField">
+                                        <option value="0" selected>Select Field</option>
+                                        <% for (const [key, value] of Object.entries(queryFields)) {%>
+                                            <option value="<%=key%>"><%=value["text"]%></option>
+                                        <% } %>
+                                    </select>
+                                    
+                                </div>
+                            </div>
+
+                            <div class="col col-2">
+                                <div class="selectContainer">
+
+                                    <select class="custom-select my-custon-select selectOperator">
+                                        <option value="0" selected>Select Operator</option>
+
+                                        <% for (const [key, value] of Object.entries(queryOperator)) {%>
+                                            <option value="<%=key%>"><%=value%></option>
+                                        <% } %>
+                                    </select>
+                                    
+
+                                </div>
+
+                            </div>
+
+                            <div class="col col-4">
+                                <div class="selectContainer">
+                                    <input 
+                                        class="custom-select my-custon-select userValue" 
+                                        list="row-2-datalist" 
+                                        name="myRow" id="row-2" 
+                                        placeholder="Insert Value"
+                                        autocomplete="off" 
+                                        disabled>
+                                    <datalist id="row-2-datalist">
+                                    </datalist>
+                                    <i class="fas fa-chevron-down formatIcon"></i>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>      
+        </div>
+        <input type="hidden" name="projectId" id="projectId" value="<%=projectId%>">
+        <input type="hidden" name="currentTab" id="currentTab" value="<%=activeTab%>">
+
+        <script>
+            const users = <%- JSON.stringify(assignedUsers) %>;
+            const teams = <%- JSON.stringify(projectTeams) %>; 
+        </script>
+    </div>
+
+    <%- include('./modals/sprints/show-points-graph'); %>
+
+<%- include('modals/footer'); %>

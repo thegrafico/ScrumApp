@@ -1,0 +1,192 @@
+
+.queryOptions li a{
+    color: white !important;
+}
+
+.queryOptions li:hover{
+    opacity: .5;
+}
+
+.makeQueryContainer select{
+    width: 100%;
+    color: white;
+    font-size: 1em;
+    border-color: gray;
+
+}
+
+.makeQueryContainer select::-ms-expand {
+    display:block;
+}
+
+.makeQueryContainer{
+    width: 90%;
+    border-radius: 5px;
+}
+
+.makeQueryContainer .row{
+    margin-bottom: 0;
+}
+
+.makeQueryContainer .rowTitle{
+    text-align: left;
+    opacity: 0.7;
+}
+
+.select2-container--default .select2-selection--single{
+    border: 1px solid #444;
+    border-radius:4px;
+}
+
+.userValue{
+    padding: 0.1rem 1rem;
+    height: initial;
+}
+
+
+.navbarQueryContainer .container-fluid{
+    padding:0 !important; 
+    margin: 0 !important;
+}
+
+.formatIcon{
+    font-size: 1em;
+}
+
+.image-container{
+    margin-top: 10vh;
+}
+
+.makeQueryContainer .filterRow{
+    margin-bottom: 1vh !important;
+}
+
+.image-container img{
+    margin: auto;
+    width: 30%;
+    margin-left: 33%;
+    opacity: .3;
+    transform: scaleX(-1);
+}
+
+.image-container p{
+    font-size: 1.1em;
+    opacity: 0.5;
+}
+
+.queryOptions{
+    padding-left: .5rem;
+    margin-left: .5rem;
+    border-left: 1px solid gray;
+}
+
+.nav-tabs{
+    border-bottom: none;
+}
+
+.nav-tabs .nav-item .active{
+    border-bottom: 1px solid #2c81ba;
+}
+
+.setupRowContainer{
+    margin-left: 50%;
+}
+
+.addQueryRowIcon, .removeQueryRowIcon{
+    font-size: 1.5em;
+    margin-left: 5%;
+}
+.addQueryRowIcon:hover, .removeQueryRowIcon:hover{
+    cursor: pointer;
+    opacity: .6;
+}
+
+.makeQueryContainer select{
+    -webkit-appearance:none;
+    margin: 0 !important;
+}
+
+.selectContainer input{
+    border: 1px solid #444;
+}
+
+
+.selectContainer i{
+    position: absolute;
+    right: 1vw;
+    top: 0.5vh;
+    opacity: .5;
+    transition: transform .3s ease-in-out;
+}
+
+.selectContainer:hover i {
+    transform: rotate(180deg);
+}
+
+.userValue:hover, .my-custon-select:hover, .select2-container--default:hover .select2-selection--single:hover{
+    color: rgba(255, 255, 255, 1);
+    box-shadow: 0 5px 15px rgba(74, 74, 75, 0.4);
+}
+
+
+.userValue:focus{
+    outline: none;
+}
+
+.custom-select:focus {
+    border-color: #444;
+}
+
+.userValue:disabled{
+    opacity: .2;
+    background-color: transparent;
+    color: unset;
+    box-shadow: unset;
+    cursor:unset;
+}
+
+.bounce {
+    outline: 0;
+    border-color: red;
+    animation-name: bounce;
+    animation-duration: .5s;
+    animation-delay: 0.25s;
+    box-shadow: 0 5px 10px rgba(146, 7, 7, 0.589);
+
+  }
+  
+  /* This approximates the ease-in-out-bounce animation from easings.net, which would require a plug-in to use*/
+  @keyframes bounce {
+    0% {
+      transform: translateX(0px);
+      timing-function: ease-in;
+    }
+    37% {
+      transform: translateX(5px);
+      timing-function: ease-out;
+    }
+    55% {
+      transform: translateX(-5px);
+      timing-function: ease-in;
+    }
+    73% {
+      transform: translateX(4px);
+      timing-function: ease-out;
+    }
+    82% {
+      transform: translateX(-4px);
+      timing-function: ease-in;
+    }
+    91% {
+      transform: translateX(2px);
+      timing-function: ease-out;
+    }
+    96% {
+      transform: translateX(-2px);
+      timing-function: ease-in;
+    }
+    100% {
+      transform: translateX(0px);
+      timing-function: ease-in;
+    }
+  }

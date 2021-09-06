@@ -31,6 +31,7 @@ const sprintRoutes          = require("./routes/sprint-route");
 const apiProjectRoute       = require("./routes/api/api-project"); 
 const apiWorkItemRoute      = require("./routes/api/api-work-item"); 
 const manageRoute           = require("./routes/manage-routes");
+const queriesRoute          = require("./routes/queries");
  
 
 // App object 
@@ -132,6 +133,7 @@ app.use('/dashboard/', middleware.isUserLogin, projectDetailRoute);   // Statist
 app.use('/dashboard/', middleware.isUserLogin, planingworkItemRoute); // Work Item
 app.use('/dashboard/', middleware.isUserLogin, planingBacklogRoute);  // backlog
 app.use('/dashboard/', middleware.isUserLogin, sprintRoutes);  // sprint
+app.use('/dashboard/', middleware.isUserLogin, queriesRoute);  // Queries
 
 
 // API - Route
