@@ -88,10 +88,14 @@ passport.use(new LocalStrategy({
         return done(err);
       }
       if (!user) {
-        return done(null, false, {message: "This user does not exist"});
+        return done(null, false, {
+          message: "This user does not exist"
+        });
       }
       if (!user.verifyPassword(password)) {
-        return done(null, false,  {message: "Invalid email/password"});
+        return done(null, false, {
+          message: "Invalid email/password"
+        });
       }
       return done(null, user);
     });
@@ -229,4 +233,6 @@ module.exports = app;
  * tree-table-component.js 
  * line 582 - line 639
  * context manu is where I get the click options
- */
+*/
+
+

@@ -295,8 +295,7 @@ const QUERY_OPERATOR = {
     IN: "In",
     NOT_IN: "Not In",
     IS_EMPTY: "Is Empty",
-    NOT_IN: "Is Not Empty",
-    NOT_IN: "Not In",
+    NOT_EMPTY: "Is Not Empty",
 }
 
 const QUERY_FIELD = {
@@ -309,7 +308,7 @@ const QUERY_FIELD = {
     WORK_ITEM_TYPE: {text: "Work Item Type", dbField: "type"},
     WORK_ITEM_DESCRIPTION: {text: "Work Item Description", dbField: "description"},
     TAGS: {text: "Tags", dbField: "tags"},
-    Comments: {text: "Comments", dbField: "comments"},
+    COMMENTS: {text: "Comments", dbField: "comments"},
     WORK_ITEM_CREATION: {text: "Work Item Creation Date", dbField: "createdAt"},
     SPRINT_NAME: {text: "Sprint Name", dbField: "name"},
     SPRINT_START_DATE: {text: "Sprint Start Date", dbField: "startDate"},

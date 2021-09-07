@@ -73,10 +73,23 @@ projectSchema.methods.getUsers = async function() {
  * Get all work items from the project 
  * @returns {Array} - array of object  -> []
  */
-projectSchema.methods.getWorkItems = async function() {
-
-    const workItems = await workItemCollection.find({"projectId": this._id})
-        .catch(err => console.error("Error getting work items: ", err)) || [];
+projectSchema.methods.getWorkItems = async function(toObject=false) {
+    
+    let workItems = undefined;
+    if (toObject){
+        workItems = await workItemCollection
+        .find({"projectId": this._id})
+        .lean()
+        .catch(err => {
+            console.error("Error getting work items: ", err);
+        }) || [];
+    }else{
+        workItems = await workItemCollection
+        .find({"projectId": this._id})
+        .catch(err => {
+            console.error("Error getting work items: ", err);
+        }) || [];
+    }
     
     // TODO: verify if workItems has something
     return workItems;

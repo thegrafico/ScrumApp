@@ -138,7 +138,7 @@ module.exports.QUERY_FIELD = {
     WORK_ITEM_TYPE: {text: "Work Item Type", dbField: "type"},
     WORK_ITEM_DESCRIPTION: {text: "Work Item Description", dbField: "description"},
     TAGS: {text: "Tags", dbField: "tags"},
-    Comments: {text: "Comments", dbField: "comments"},
+    COMMENTS: {text: "Comments", dbField: "comments"},
     WORK_ITEM_CREATION: {text: "Work Item Creation Date", dbField: "createdAt"},
     SPRINT_NAME: {text: "Sprint Name", dbField: "name"},
     SPRINT_START_DATE: {text: "Sprint Start Date", dbField: "startDate"},
@@ -161,7 +161,7 @@ module.exports.QUERY_OPERATOR = {
     NOT_IN: "Not In",
     IS_EMPTY: "Is Empty",
     NOT_IN: "Is Not Empty",
-    NOT_IN: "Not In",
+    NOT_EMPTY: "Is Not Empty",
 }
 
 const QUERY_LOGICAL_CONDITION = {
@@ -588,3 +588,13 @@ module.exports.cleanQuery = (query) => {
 
     return masterQuery;
 }
+
+/**
+ * Get an object form and array. every element is the key and the value
+ * @param {Array} arr 1D array
+ * @returns {Object} object with keys/values with the value of the each array element
+ */
+module.exports.arrayToObject = function arrayToObject(arr){
+    return arr.reduce((acc,curr)=> (acc[curr]=curr,acc),{});
+}
+

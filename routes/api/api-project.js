@@ -43,7 +43,9 @@ const {
     updateSprintOrderIndex,
     filteByStatus,
     cleanQuery,
+    arrayToObject,
 } = require('../../dbSchema/Constanst');
+const { isNaN } = require("lodash");
 
 // ================= GET REQUEST ==============
 
@@ -756,9 +758,16 @@ router.get("/api/:id/getTeamSprints/:teamId", middleware.isUserInProject, async 
     }
 
     // getting all work items from project
-    let workItems = await projectInfo.getWorkItems().catch(err => {
+    let workItems = await projectInfo.getWorkItems(true).catch(err => {
         console.error("Error getting work items: ", err);
     });
+
+    // check if we have work items
+    if (!_.isArray(workItems) || _.isEmpty(workItems) ){
+        response["msg"] = "Sorry, it seems there is not work items for this project.";
+        res.status(200).send(response);
+        return;
+    }
 
     // getting the users from the project
     let users = await projectInfo.getUsers().catch(err => console.log(err)) || [];
@@ -774,24 +783,147 @@ router.get("/api/:id/getTeamSprints/:teamId", middleware.isUserInProject, async 
 
     let filteredWorkItems = [];
 
-    // 
+    const FIELDS = arrayToObject(Object.keys(QUERY_FIELD));
+    console.log(query);
+
     for(let workItem of workItems){
 
         // since the query is divided by logical condition
         // here we get the bunch of queries for each condition
         for (let rowsQuery of query){
 
+            let logicalOr = false;
+
             for (eachRowQuery of rowsQuery){
 
+                // user query request.
+                const field = eachRowQuery["field"];
+                const dbField = QUERY_FIELD[field]["dbField"];
+                const operator = eachRowQuery["operator"];
+                let value = eachRowQuery["value"];
+
+                // there are two status field
+                
+                switch (field) {
+                    case FIELDS["WORK_ITEM_TITLE"]:
+                        logicalOr = doesQueryValueMatch(workItem[dbField], operator, value);
+                        break;
+                    case FIELDS["ASSIGNED_USER"]:
+                        logicalOr = (doesQueryValueMatch(workItem[dbField]["name"], operator, value) );
+                        break;
+                    case FIELDS["STORY_POINTS"]:
+                        logicalOr = (doesQueryValueMatch(workItem[dbField], operator, value) );
+                        break;
+                    case FIELDS["PRIORITY_POINTS"]:
+                        logicalOr = (doesQueryValueMatch(workItem[dbField], operator, value) );
+                        break;
+                    case FIELDS["WORK_ITEM_STATUS"]:
+                        logicalOr = (doesQueryValueMatch(workItem[dbField], operator, value) );
+                        break;
+                    case FIELDS["TEAM"]:
+                        logicalOr = (doesQueryValueMatch(workItem[dbField]["name"], operator, value) );
+                        break;
+                    case FIELDS["WORK_ITEM_TYPE"]:
+                        logicalOr = (doesQueryValueMatch(workItem[dbField], operator, value));
+                        break;
+                    case FIELDS["WORK_ITEM_DESCRIPTION"]:
+                        logicalOr = (doesQueryValueMatch(workItem[dbField], operator, value));
+                        break;
+                    case FIELDS["TAGS"]:
+                        for (let tags of workItem[dbField]){
+                            logicalOr = (doesQueryValueMatch(tags, operator, value) || logicalOr);
+                        }
+                        break;
+                    case FIELDS["COMMENTS"]:
+                        for (let comment of workItem[dbField]){
+                            logicalOr = (doesQueryValueMatch(comment, operator, value) || logicalOr);
+                        }
+                        break;
+                    case FIELDS["SPRINT_NAME"]:
+                        logicalOr = (doesQueryValueMatch(workItem[dbField], operator, value));
+                        break;
+                    // TODO: add this to the work item
+                    case FIELDS["SPRINT_STATUS"]:
+                        logicalOr = (doesQueryValueMatch(workItem[dbField], operator, value));
+                        break;
+                    case FIELDS["SPRINT_START_DATE"]:
+                        logicalOr = (doesQueryValueMatch(workItem[dbField], operator, value, true));
+                        break;
+                    case FIELDS["SPRINT_END_DATE"]:
+                        logicalOr = (doesQueryValueMatch(workItem[dbField], operator, value, true));
+                        break;
+                    case FIELDS["SPRINT_POINTS"]:
+                        logicalOr = (doesQueryValueMatch(workItem[dbField], operator, value, true));
+                        break;
+                    default:
+                        break;
+                }
+            }
+
+            if (logicalOr){
+                filteredWorkItems.push(workItem);
             }
         }
     }
+
+    console.log("ELEMENTS FOUND: ", filteredWorkItems.length);
+
     // send response to user
     response["msg"] = "Success";
     res.status(200).send(response);
     return;
 
 });
+
+function doesQueryValueMatch(workItemValue, operator, userValue, isDate = false){
+
+    let valueMatch = false;
+
+    const OPERATOR = arrayToObject(Object.keys(QUERY_OPERATOR));
+    //TODO: add moment date validation
+
+    switch (operator) {
+        case OPERATOR["EQUAL"]:
+            valueMatch = (workItemValue.toString().toLowerCase() === userValue.toString().toLowerCase());
+            break;
+        case OPERATOR["NOT_EQUAL"]:
+            valueMatch = (workItemValue.toString().toLowerCase() != userValue.toString().toLowerCase());
+            break;
+        case OPERATOR["GREATER"]:
+            valueMatch = workItemValue > userValue;
+            break;
+        case OPERATOR["LESS"]:
+            valueMatch = workItemValue < userValue;
+            break;
+        case OPERATOR["GREATER_EQUAL"]:
+            valueMatch = workItemValue >= userValue;
+            break;
+        case OPERATOR["LESS_EQUAL"]:
+            valueMatch = workItemValue <= userValue;
+            break;
+        case OPERATOR["CONTAINS"]:
+            console.log("WORK ITEM VALUE: ", workItemValue.toString().toLowerCase());
+            console.log();
+            valueMatch = workItemValue.toString().toLowerCase().includes(userValue.toString().toLowerCase());
+            break;
+        case OPERATOR["DOES_NOT_CONTAINS"]:
+            valueMatch = !(workItemValue.toString().toLowerCase().includes(userValue.toString().toLowerCase()));
+            break;
+        // TODO: finish here
+        case OPERATOR["IN"]:
+            break;
+        case OPERATOR["NOT_IN"]:
+            break;
+        case OPERATOR["IS_EMPTY"]:
+            break;
+        case OPERATOR["NOT_EMPTY"]:
+            break;
+        default:
+            break;
+    }
+
+    return valueMatch;
+}
 
 
 // =========================== TEAM REQUEST =====================
@@ -1727,3 +1859,5 @@ router.post("/api/:id/updateSprint/:teamId/:sprintId", middleware.isUserInProjec
 // ================================ END ======================================
 
 module.exports = router;
+
+
