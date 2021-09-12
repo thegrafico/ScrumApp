@@ -781,20 +781,28 @@ router.get("/api/:id/getTeamSprints/:teamId", middleware.isUserInProject, async 
     joinData(workItems, teams, "teamId", "equal", "_id", "team", UNASSIGNED);
     joinData(workItems, sprints, "_id", "is in", "tasks", "sprint", UNASSIGNED_SPRINT);
 
-    let filteredWorkItems = [];
-
     const FIELDS = arrayToObject(Object.keys(QUERY_FIELD));
-    console.log(query);
 
-    for(let workItem of workItems){
+    // init filtered work items to be all work items at the beginning. 
+    let filteredWorkItems = workItems;
+    let currentWorkItems = filteredWorkItems;
 
-        // since the query is divided by logical condition
-        // here we get the bunch of queries for each condition
-        for (let rowsQuery of query){
+    // since the query is divided by logical condition
+    // here we get the bunch of queries for each condition
+    for (let rowsQuery of query){
 
-            let logicalOr = false;
+        // if at this point, there is not work items, just break the program. 
+        if (_.isEmpty(filteredWorkItems)){ break;}
 
+        // reset the value in order to keep just the filtered elements
+        filteredWorkItems = [];
+
+        // check all work items available 
+        for(let workItem of currentWorkItems){
+    
             for (eachRowQuery of rowsQuery){
+
+                let logicalOr = false;
 
                 // user query request.
                 const field = eachRowQuery["field"];
@@ -858,15 +866,19 @@ router.get("/api/:id/getTeamSprints/:teamId", middleware.isUserInProject, async 
                     default:
                         break;
                 }
+                if (logicalOr){
+                    filteredWorkItems.push(workItem);
+                }
             }
 
-            if (logicalOr){
-                filteredWorkItems.push(workItem);
-            }
+            // every time we run a query, we just use the current amound of work items already filtered. 
+            currentWorkItems = filteredWorkItems;
+
+
         }
     }
 
-    console.log("ELEMENTS FOUND: ", filteredWorkItems.length);
+    console.log("ELEMENTS FOUND: ", currentWorkItems.length);
 
     // send response to user
     response["msg"] = "Success";
@@ -902,8 +914,8 @@ function doesQueryValueMatch(workItemValue, operator, userValue, isDate = false)
             valueMatch = workItemValue <= userValue;
             break;
         case OPERATOR["CONTAINS"]:
-            console.log("WORK ITEM VALUE: ", workItemValue.toString().toLowerCase());
-            console.log();
+            // console.log("WORK ITEM VALUE: ", workItemValue.toString().toLowerCase());
+            // console.log();
             valueMatch = workItemValue.toString().toLowerCase().includes(userValue.toString().toLowerCase());
             break;
         case OPERATOR["DOES_NOT_CONTAINS"]:
