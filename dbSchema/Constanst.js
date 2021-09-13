@@ -160,7 +160,6 @@ module.exports.QUERY_OPERATOR = {
     IN: "In",
     NOT_IN: "Not In",
     IS_EMPTY: "Is Empty",
-    NOT_IN: "Is Not Empty",
     NOT_EMPTY: "Is Not Empty",
 }
 
@@ -212,11 +211,18 @@ module.exports.getSprintDateStatus = function(startDate, endDate, currentDate = 
 }
 
 /**
- * Create a new key joining the data
- * @param {String} s 
- * @returns {String} capizalize string
+ * Join data B into A. 
+ * @param {Array} dataA Main data
+ * @param {Array} dataB - Data to be copied into A
+ * @param {String} keyA Key value for A
+ * @param {String} action - action
+ * @param {String} keyB - key value for b
+ * @param {String} newKey - new key to be added to dataA
+ * @param {Object} defaultValue - default cases
+ * @param {Boolean} addFullValue - instead of adding some values, is this is true, the full dataB will be added to the new key
+ * @returns 
  */
-module.exports.joinData = (dataA, dataB, keyA, action, keyB, newKey, defaultValue) => {
+module.exports.joinData = (dataA, dataB, keyA, action, keyB, newKey, defaultValue, addFullValue = false) => {
 
     // early exit condition
     // SINCE WE'RE JOINING DATA B INTO A, WE DON"T NEED TO CHECK IF DATA B IS EMPTY 
@@ -233,14 +239,23 @@ module.exports.joinData = (dataA, dataB, keyA, action, keyB, newKey, defaultValu
             if (action == "is in"){
 
                 if (b && b[keyB] && b[keyB].includes(dataA[i][keyA].toString())){
-                    dataA[i][newKey] = {_id: b["_id"], name: b["name"]};
+                    if (addFullValue){
+                        dataA[i][newKey] = b
+                    }else{
+                        dataA[i][newKey] = {_id: b["_id"], name: b["name"]};
+                    }
                     break;
                 }
 
             }else if(action == "equal"){
 
                 if (b && b[keyB].toString() == dataA[i][keyA]){
-                    dataA[i][newKey] = {_id: b["_id"], name: b["name"]};
+                    if (addFullValue){
+                        dataA[i][newKey] = b
+
+                    }else{
+                        dataA[i][newKey] = {_id: b["_id"], name: b["name"]};
+                    }
                     break;
                 }
 

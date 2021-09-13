@@ -777,9 +777,8 @@ router.get("/api/:id/getTeamSprints/:teamId", middleware.isUserInProject, async 
 
     // get all sprints for project
     let sprints = await SprintCollection.find({projectId}).catch(err => console.error(err)) || [];
-
     joinData(workItems, teams, "teamId", "equal", "_id", "team", UNASSIGNED);
-    joinData(workItems, sprints, "_id", "is in", "tasks", "sprint", UNASSIGNED_SPRINT);
+    joinData(workItems, sprints, "_id", "is in", "tasks", "sprint", UNASSIGNED_SPRINT, true);
 
     const FIELDS = arrayToObject(Object.keys(QUERY_FIELD));
 
@@ -808,13 +807,13 @@ router.get("/api/:id/getTeamSprints/:teamId", middleware.isUserInProject, async 
                 const field = eachRowQuery["field"];
                 const dbField = QUERY_FIELD[field]["dbField"];
                 const operator = eachRowQuery["operator"];
-                let value = eachRowQuery["value"];
+                let value = (eachRowQuery["value"] || "").trim();
 
                 // there are two status field
                 
                 switch (field) {
                     case FIELDS["WORK_ITEM_TITLE"]:
-                        logicalOr = doesQueryValueMatch(workItem[dbField], operator, value);
+                        logicalOr = doesQueryValueMatch(workItem[dbField], operator, value.trim());
                         break;
                     case FIELDS["ASSIGNED_USER"]:
                         logicalOr = (doesQueryValueMatch(workItem[dbField]["name"], operator, value) );
@@ -848,20 +847,21 @@ router.get("/api/:id/getTeamSprints/:teamId", middleware.isUserInProject, async 
                         }
                         break;
                     case FIELDS["SPRINT_NAME"]:
-                        logicalOr = (doesQueryValueMatch(workItem[dbField], operator, value));
+                        logicalOr = (doesQueryValueMatch(workItem["sprint"][dbField], operator, value));
                         break;
                     // TODO: add this to the work item
                     case FIELDS["SPRINT_STATUS"]:
                         logicalOr = (doesQueryValueMatch(workItem[dbField], operator, value));
                         break;
                     case FIELDS["SPRINT_START_DATE"]:
-                        logicalOr = (doesQueryValueMatch(workItem[dbField], operator, value, true));
+                        logicalOr = (doesQueryValueMatch(workItem["sprint"][dbField], operator, value, true));
                         break;
                     case FIELDS["SPRINT_END_DATE"]:
-                        logicalOr = (doesQueryValueMatch(workItem[dbField], operator, value, true));
+                        console.log(`Evaluating: ${workItem["sprint"][dbField]} = ${value}`)
+                        logicalOr = (doesQueryValueMatch(workItem["sprint"][dbField], operator, value, true));
                         break;
                     case FIELDS["SPRINT_POINTS"]:
-                        logicalOr = (doesQueryValueMatch(workItem[dbField], operator, value, true));
+                        logicalOr = (doesQueryValueMatch(workItem["sprint"][dbField], operator, value, true));
                         break;
                     default:
                         break;
@@ -879,9 +879,9 @@ router.get("/api/:id/getTeamSprints/:teamId", middleware.isUserInProject, async 
     }
 
     console.log("ELEMENTS FOUND: ", currentWorkItems.length);
-
     // send response to user
     response["msg"] = "Success";
+    response["workItems"] = currentWorkItems;
     res.status(200).send(response);
     return;
 
@@ -892,26 +892,104 @@ function doesQueryValueMatch(workItemValue, operator, userValue, isDate = false)
     let valueMatch = false;
 
     const OPERATOR = arrayToObject(Object.keys(QUERY_OPERATOR));
+
+    if (isDate){
+        userValue = moment(userValue, SPRINT_FORMAT_DATE); 
+    }
+
     //TODO: add moment date validation
 
     switch (operator) {
         case OPERATOR["EQUAL"]:
-            valueMatch = (workItemValue.toString().toLowerCase() === userValue.toString().toLowerCase());
+
+            if (isDate){
+                valueMatch =  moment(workItemValue, SPRINT_FORMAT_DATE).isSame(userValue);
+            }else{
+                valueMatch = (workItemValue.toString().toLowerCase() === userValue.toString().toLowerCase());
+            }
+
             break;
         case OPERATOR["NOT_EQUAL"]:
-            valueMatch = (workItemValue.toString().toLowerCase() != userValue.toString().toLowerCase());
+            if (isDate){
+                valueMatch =  moment(workItemValue, SPRINT_FORMAT_DATE).isSame(userValue);
+            }else{
+                valueMatch = (workItemValue.toString().toLowerCase() != userValue.toString().toLowerCase());
+            }
+            
             break;
         case OPERATOR["GREATER"]:
-            valueMatch = workItemValue > userValue;
+            console.log("WORK ITEM VALUE: ", workItemValue.toString().toLowerCase());
+
+            if (isDate){
+                // check is a valid date
+                if (moment(userValue, SPRINT_FORMAT_DATE).isValid()){
+                    valueMatch = moment(workItemValue, SPRINT_FORMAT_DATE).isAfter(userValue);
+                }else{
+                    valueMatch = false;
+                }
+            }else{ // assume is number
+                // is not empty and is a number and 
+                if (!_.isEmpty(userValue) && !isNaN(userValue) && !isNaN(workItemValue)){
+                    valueMatch = workItemValue > userValue;
+                }else{ // is string at this point
+                    valueMatch = false;
+                }
+            }
             break;
         case OPERATOR["LESS"]:
-            valueMatch = workItemValue < userValue;
+            if (isDate){
+                // check is a valid date
+                if (moment(userValue, SPRINT_FORMAT_DATE).isValid()){
+                    valueMatch = moment(workItemValue, SPRINT_FORMAT_DATE).isBefore(userValue);
+                }else{
+                    valueMatch = false;
+                }
+            }else{ // assume is number
+
+                // is not empty and is a number and 
+                if (!_.isEmpty(userValue) && !isNaN(userValue) && !isNaN(workItemValue)){
+                    valueMatch = workItemValue < userValue;
+                }else{ // is string at this point
+                    valueMatch = false;
+                }
+            }
             break;
         case OPERATOR["GREATER_EQUAL"]:
-            valueMatch = workItemValue >= userValue;
+
+            if (isDate){
+                // check is a valid date
+                if (moment(userValue, SPRINT_FORMAT_DATE).isValid()){
+                    valueMatch = moment(workItemValue, SPRINT_FORMAT_DATE).isSameOrAfter(userValue);
+                }else{
+                    valueMatch = false;
+                }
+            }else{ // assume is number
+
+                // is not empty and is a number and 
+                if (!_.isEmpty(userValue) && !isNaN(userValue) && !isNaN(workItemValue)){
+                    valueMatch = workItemValue >= userValue;
+                }else{ // is string at this point
+                    valueMatch = false;
+                }
+            }
             break;
         case OPERATOR["LESS_EQUAL"]:
-            valueMatch = workItemValue <= userValue;
+            if (isDate){
+                // check is a valid date
+                if (moment(userValue, SPRINT_FORMAT_DATE).isValid()){
+                    valueMatch = moment(workItemValue, SPRINT_FORMAT_DATE).isSameOrBefore(userValue);
+                }else{
+                    valueMatch = false;
+                }
+            }else{ // assume is number
+
+                // is not empty and is a number and 
+                if (!_.isEmpty(userValue) && !isNaN(userValue) && !isNaN(workItemValue)){
+                    valueMatch = workItemValue <= userValue;
+                }else{ // is string at this point
+                    valueMatch = false;
+                }
+            }
             break;
         case OPERATOR["CONTAINS"]:
             // console.log("WORK ITEM VALUE: ", workItemValue.toString().toLowerCase());
@@ -936,6 +1014,7 @@ function doesQueryValueMatch(workItemValue, operator, userValue, isDate = false)
 
     return valueMatch;
 }
+
 
 
 // =========================== TEAM REQUEST =====================

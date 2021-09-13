@@ -247,7 +247,7 @@ function addQueryRow(selector){
     let queryFields = '<option value="0" selected>Select Field</option>';
 
     for (const [key, value] of Object.entries(QUERY_FIELD)) {
-        queryFields += `\n<option value="${key}">${value}</option>`;
+        queryFields += `\n<option value="${key}">${value["text"]}</option>`;
     }
     let fieldDiv = `
     <div class="col col-3">
