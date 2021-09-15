@@ -130,7 +130,8 @@ module.exports = {
         ]
     },
     queryPath: {
-        styles: ["/stylesheets/scrum-main.css", "/stylesheets/work-item.css", "/stylesheets/backlog.css", "/stylesheets/query.css"], 
+
+        styles: ["/stylesheets/scrum-main.css", "/stylesheets/backlog.css", "/stylesheets/work-item.css",  "/stylesheets/query.css"], 
         scripts: [
             "/javascripts/dependecies/jquery-ui.min.js",
             "/javascripts/planning-work-item.js",

@@ -17,10 +17,8 @@ const {
     MAX_STORY_POINTS,
     UNASSIGNED_SPRINT,
     WORK_ITEM_STATUS,
-    WORK_ITEM_STATUS_COLORS,
     WORK_ITEM_ICONS,
     capitalize,
-    SPRINT_STATUS,
     joinData,
     sortByDate
 } = require('../../dbSchema/Constanst');
@@ -615,6 +613,7 @@ router.post("/api/:id/updateWorkItem/:workItemId", middleware.isUserInProject, a
     response["workItem"] = updatedWorkItem;
     res.status(200).send(response);
 });
+
 
 /**
  * METHOD: POST - Update work item order & status

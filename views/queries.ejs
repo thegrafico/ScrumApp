@@ -20,10 +20,11 @@
 
                         <ul class="nav nav-tabs">
                             <li class="nav-item">
-                                <a class="nav-link " data-bs-toggle="tab" href="#home">Results</a>
+                                <span id="numberOfQueryResult" class="d-none">50</span>
+                                <a class="nav-link " id="queryResultsTab" data-bs-toggle="tab" href="#showQuery">Results</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link active" data-bs-toggle="tab" href="#profile">Create Query</a>
+                                <a class="nav-link active" data-bs-toggle="tab" href="#createQuery">Queries</a>
                             </li>
                         </ul>
 
@@ -32,18 +33,63 @@
                                 <a class="nav-link" href="#" id="runQuery"> <i class="fas fa-play activeColor formatIcon"></i> Run query</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="#"><i class="fas fa-plus completedColor formatIcon"></i> New</a>
+                                <a class="nav-link" href="#" id="newQuery"><i class="fas fa-plus completedColor formatIcon"></i> New</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="#"><i class="far fa-save newColor formatIcon"></i> Save Query</a>
+                                <a class="nav-link" id="saveQueryOpenModal" data-toggle="modal" data-target="#saveQueryModal" href="#"><i class="far fa-save newColor formatIcon"></i> Save Query</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" id="myQueries" data-toggle="modal" data-target="#showQueries" href="#"><i class="fas fa-list formatIcon"></i> My Queries</a>
                             </li>
                         </ul>
                     </div>
                 </div>
             </nav>
 
-            <div id="myTabContent " class="p-4 tab-content">
-                <div class="tab-pane fade" id="home">
+            <div id="myTabContent" class="p-4 tab-content">
+                
+                <!-- SHOW QUERY -->
+                <div class="tab-pane fade" id="showQuery">
+                    <div class="telescopeImage showQueryTelscopeImage">
+                        <div class="container">
+                            <div class="image-container">
+                                <img src="/images/telescope.ico" alt="Telescope Image">
+                                <p> 
+                                    "Equipped with his five senses, man explores the universe around him and calls the adventure Science."
+                                    <br>
+                                    - Edwin Hubble, Astronomer
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- WORK ITEM TABLE -->
+                    <div class="pt-2 pl-4 pr-4 d-none" id="table-container">
+                        <table class="table table-hover" id="workItemTable">
+                            <thead >
+                                <tr class="tableHeader">
+                                    <th scope="col" class="tableColumnID">ID</th>
+                                    <th class="d-none" scope="col">Type</th>
+                                    <th class="col-title" scope="col">Title</th>
+                                    <th scope="col">Assigned</th>
+                                    <th scope="col">State</th>
+                                    <th scope="col">Team</th>
+                                    <th scope="col">Iteration</th>
+                                    <th scope="col">Tags</th>
+                                    <th scope="col">Points</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+
+
+                </div>
+                
+                <!-- CREATE QUERY -->
+                <div class="tab-pane active fade show" id="createQuery">
+
                     <div class="telescopeImage">
                         <div class="container">
                             <div class="image-container">
@@ -56,8 +102,6 @@
                             </div>
                         </div>
                     </div>
-                </div>
-                <div class="tab-pane active fade show" id="profile">
                   
                     <div class="container-fluid makeQueryContainer p-2">
 
@@ -65,7 +109,7 @@
                         <div class="row rowTitle">
 
                             <div class="col col-1">
-                             </div>
+                            </div>
 
                             <div class="col col-1">
                                <span>And/Or</span>
@@ -85,7 +129,7 @@
                         </div>
 
                         <!-- FIRST ROW DEFAULT -->
-                        <div class="row filterRow">
+                        <div class="row filterRow" id="mainRow">
 
                             <div class="col col-1">
                             </div>
@@ -144,7 +188,7 @@
                         </div>
 
                         <!-- ADDED COLUMNS GOES HERE -->
-                        <div class="row filterRow">
+                        <div class="row filterRow dynamicRow">
 
                             <div class="col col-1 my-auto">
                                 <div class="setupRowContainer">
@@ -207,8 +251,8 @@
                                 </div>
                             </div>
                         </div>
-
                     </div>
+                    
                 </div>
             </div>      
         </div>
@@ -220,6 +264,9 @@
             const teams = <%- JSON.stringify(projectTeams) %>; 
         </script>
     </div>
+
+    <%- include('./modals/saveQuery'); %>
+    <%- include('./modals/showQueries'); %>
 
     <%- include('./modals/sprints/show-points-graph'); %>
 

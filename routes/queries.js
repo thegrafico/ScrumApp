@@ -12,6 +12,7 @@ const projectCollection         = require("../dbSchema/projects");
 const SprintCollection          = require("../dbSchema/sprint");
 const OrderSprintCollection     = require("../dbSchema/sprint-order");
 const workItemCollection        = require("../dbSchema/workItem");
+const UserQueriesCollection     = require("../dbSchema/userQueries");
 const middleware                = require("../middleware/auth");
 let router                      = express.Router();
 const { queryPath }            = require("../middleware/includes");
@@ -55,19 +56,23 @@ router.get("/:id/queries", middleware.isUserInProject, async function (req, res)
         return res.redirect('/');
     }
 
+    // getting user queries
+    const userQueries = await UserQueriesCollection.findOne({user: req.user["_id"]}).catch(err => {
+        console.error("Error getting the queries for the user: ", err);
+    }) || {};
+
+
     // get all users for this project -> expected an array
     let users = await projectInfo.getUsers().catch(err => console.log(err)) || [];
 
-    // TODO: Verify which project is the user in, and set that to be the selected in the frontend
     // get all the teams for this project
     let teams = [...projectInfo.teams];    
 
-    let sprints = [];
-    let workItems = [];
+    let sprints = [UNASSIGNED_SPRINT];
+
     // add default values
     teams.unshift(UNASSIGNED);
     users.unshift(UNASSIGNED);
-    sprints.unshift(UNASSIGNED_SPRINT);
 
     // populating params
     let params = {
@@ -83,7 +88,6 @@ router.get("/:id/queries", middleware.isUserInProject, async function (req, res)
         "activeSprintId": "",
         "addUserModal": true,
         "workItemType": WORK_ITEM_ICONS,
-        "workItems": [],
         "currentPage": PAGES.QUERIES,
         "userTeam": undefined,
         "sprintDefaultTimePeriod": SPRINT_DEFAULT_PERIOD_TIME, // Here the user can selet the time, but defualt is two weeks
@@ -92,6 +96,7 @@ router.get("/:id/queries", middleware.isUserInProject, async function (req, res)
         "scriptsPath": queryPath["scripts"],
         "queryOperator": QUERY_OPERATOR,
         "queryFields": QUERY_FIELD,
+        "userQueries": userQueries["queries"] || [],
 
     };
 

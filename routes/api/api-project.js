@@ -6,6 +6,7 @@ const projectCollection         = require("../../dbSchema/projects");
 const userCollection            = require("../../dbSchema/user");
 const SprintCollection          = require("../../dbSchema/sprint");
 const OrderSprintCollection     = require("../../dbSchema/sprint-order");
+const UserQueriesCollection     = require("../../dbSchema/userQueries");
 const moment                    = require("moment");
 const _                         = require("lodash");
 let router                      = express.Router();
@@ -713,13 +714,193 @@ router.get("/api/:id/getTeamSprints/:teamId", middleware.isUserInProject, async 
     }
 });
 
+/**
+ * METHOD: GET - get a query by id
+ */
+router.get("/api/:id/getQuery", middleware.isUserInProject, async function (req, res) {
+    
+    const projectId = req.params.id;
+    const userId = req.user["_id"];
+
+    // in case the user wants just one query
+    let { queryId } = req.query;
+
+    let response = {};
+
+    let userQueries = await UserQueriesCollection.findOne({user: userId}).catch(err => {
+        console.log("Error getting user queries: ", err);
+    });
+
+    // check user queries
+    if (_.isUndefined(userQueries) || _.isNull(userQueries)){
+        response["msg"] = "Sorry, Cannot find any user queries. Try later.";
+        res.status(400).send(response);
+        return;
+    }
+
+    let requestedQuery = null;
+    for (let query of userQueries["queries"]){
+        
+        // check if query match
+        if  (query["_id"] == queryId){
+            console.log(query);
+            requestedQuery = query;
+            break;
+        }
+    }
+
+    // check if the query was NOT found
+    if (_.isNull(requestedQuery)){
+        response["msg"] = "Sorry, Cannot find the information for this query.";
+        res.status(400).send(response);
+        return;
+    }
+
+    response["msg"] = "Query found.";
+    response["query"] = requestedQuery["query"];
+    res.status(200).send(response);
+});
+
+
 // ================= POST REQUEST ==============
 
+/**
+ * METHOD: POST - remove query by id
+ */
+ router.post("/api/:id/removeMyQuery", middleware.isUserInProject, async function (req, res) {
+    
+    const userId = req.user["_id"];
+
+    // in case the user wants just one query
+    let { queryId } = req.body;
+
+    let response = {};
+
+    let query_error = null;
+    let queryWasRemoved = await UserQueriesCollection.findOneAndUpdate(
+        {user: userId}, 
+        {$pull: {queries: {_id: queryId}} }
+    ).catch(err => {
+        query_error = err;
+        console.log("Error removing user queries: ", err);
+    });
+
+    // check object
+    if (query_error){
+        response["msg"] = "Sorry, there was a error removing the query";
+        res.status(400).send(response);
+    }
+
+    response["msg"] = "Query Removed successfully.";
+    res.status(200).send(response);
+});
 
 /**
- * METHOD: GET - fetch all sprints for a team
+ * METHOD: POST - Add a comment to the work item
  */
- router.post("/api/:id/getQuery", middleware.isUserInProject, async function (req, res) {
+router.post("/api/:id/saveQuery", middleware.isUserInProject, async function (req, res) {
+    
+    console.log("Getting request to save query for user...");
+
+    const projectId = req.params.id;
+
+    // getting query request
+    let {
+        query,
+        name,
+    } = req.body;
+
+    let response = {};
+
+    // check data received
+    if (!_.isArray(query) || _.isEmpty(query) || !_.isString(name) || _.isEmpty(name)){
+        response["msg"] = "Sorry, The Data received is invalid.";
+        res.status(400).send(response);
+        return;
+    }
+
+    // getting project
+    const projectInfo = await projectCollection.findById(projectId).catch(err => {
+        console.error(err);
+    });
+
+    // verify project
+    if (!projectInfo) {
+        response["msg"] = "Sorry, Cannot get the information of the project.";
+        res.status(400).send(response);
+        return;
+    }
+    const userId = req.user["_id"];
+
+    // get the user queries
+    let err_user_query = null;
+    let userQueries = await UserQueriesCollection.findOne({user: userId}).catch(err => {
+        console.error("Error finding the user queries: ", err);
+        err_user_query = err;
+    });
+
+
+    // check if there was an error with the query
+    if (err_user_query){
+        response["msg"] = "Sorry, There was an problem getting yours queries. Please try to save it later.";
+        res.status(400).send(response);
+        return;
+    }else if(_.isUndefined(userQueries) || _.isNull(userQueries)){
+        // That means the user does not have any query yet.
+
+        let newQueryData = {
+            user: req.user["id"],
+            queries: [{
+                "name": name,
+                "query": query,
+            }],
+        }
+
+        // create the user query
+        userQueries = await UserQueriesCollection.create(newQueryData).catch(err => {
+            console.error("Error saving the query for the user: ", err);
+        });
+
+        // success. Send the new query back
+        if (!_.isUndefined(userQueries) && !_.isNull(userQueries)){
+            response["msg"] = "Query saved successfully!";
+            response["query"] = userQueries;
+            res.status(200).send(response);
+            return;
+        }
+
+        response["msg"] = "Oops, There was a problem saving the query. Please try later.";
+        res.status(400).send(response);
+        return;
+    }
+    // at this point, we know the user have a query record available
+
+    // check if the name for the query already is in the queries for the user
+    if (userQueries.isNameInQueries(name)){
+        response["msg"] = "Sorry, The name for the query already exist. Please select another name.";
+        res.status(400).send(response);
+        return;
+    }
+
+    // adding the new query to the user
+    userQueries.queries.push({"name": name, "query": query});
+
+    await userQueries.save().catch(err => {
+        console.log("Error saving the query: ", err);
+    });
+
+    response["query"] = userQueries;
+    response["msg"] = "Query Saved successfully!";
+    res.status(200).send(response);
+});
+
+
+
+// TODO: change this to a GET Method
+/**
+ * METHOD: POST - fetch all sprints for a team
+ */
+router.post("/api/:id/getWorkItemsByQuery", middleware.isUserInProject, async function (req, res) {
     console.log("request to get work item by query...");
 
     const projectId = req.params.id;
@@ -918,82 +1099,12 @@ function doesQueryValueMatch(workItemValue, operator, userValue, isDate = false)
             
             break;
         case OPERATOR["GREATER"]:
-            console.log("WORK ITEM VALUE: ", workItemValue.toString().toLowerCase());
-
-            if (isDate){
-                // check is a valid date
-                if (moment(userValue, SPRINT_FORMAT_DATE).isValid()){
-                    valueMatch = moment(workItemValue, SPRINT_FORMAT_DATE).isAfter(userValue);
-                }else{
-                    valueMatch = false;
-                }
-            }else{ // assume is number
-                // is not empty and is a number and 
-                if (!_.isEmpty(userValue) && !isNaN(userValue) && !isNaN(workItemValue)){
-                    valueMatch = workItemValue > userValue;
-                }else{ // is string at this point
-                    valueMatch = false;
-                }
-            }
-            break;
         case OPERATOR["LESS"]:
-            if (isDate){
-                // check is a valid date
-                if (moment(userValue, SPRINT_FORMAT_DATE).isValid()){
-                    valueMatch = moment(workItemValue, SPRINT_FORMAT_DATE).isBefore(userValue);
-                }else{
-                    valueMatch = false;
-                }
-            }else{ // assume is number
-
-                // is not empty and is a number and 
-                if (!_.isEmpty(userValue) && !isNaN(userValue) && !isNaN(workItemValue)){
-                    valueMatch = workItemValue < userValue;
-                }else{ // is string at this point
-                    valueMatch = false;
-                }
-            }
-            break;
         case OPERATOR["GREATER_EQUAL"]:
-
-            if (isDate){
-                // check is a valid date
-                if (moment(userValue, SPRINT_FORMAT_DATE).isValid()){
-                    valueMatch = moment(workItemValue, SPRINT_FORMAT_DATE).isSameOrAfter(userValue);
-                }else{
-                    valueMatch = false;
-                }
-            }else{ // assume is number
-
-                // is not empty and is a number and 
-                if (!_.isEmpty(userValue) && !isNaN(userValue) && !isNaN(workItemValue)){
-                    valueMatch = workItemValue >= userValue;
-                }else{ // is string at this point
-                    valueMatch = false;
-                }
-            }
-            break;
         case OPERATOR["LESS_EQUAL"]:
-            if (isDate){
-                // check is a valid date
-                if (moment(userValue, SPRINT_FORMAT_DATE).isValid()){
-                    valueMatch = moment(workItemValue, SPRINT_FORMAT_DATE).isSameOrBefore(userValue);
-                }else{
-                    valueMatch = false;
-                }
-            }else{ // assume is number
-
-                // is not empty and is a number and 
-                if (!_.isEmpty(userValue) && !isNaN(userValue) && !isNaN(workItemValue)){
-                    valueMatch = workItemValue <= userValue;
-                }else{ // is string at this point
-                    valueMatch = false;
-                }
-            }
+            valueMatch = checkEqualityOperators(workItemValue, userValue, operator, isDate);
             break;
         case OPERATOR["CONTAINS"]:
-            // console.log("WORK ITEM VALUE: ", workItemValue.toString().toLowerCase());
-            // console.log();
             valueMatch = workItemValue.toString().toLowerCase().includes(userValue.toString().toLowerCase());
             break;
         case OPERATOR["DOES_NOT_CONTAINS"]:
@@ -1015,6 +1126,64 @@ function doesQueryValueMatch(workItemValue, operator, userValue, isDate = false)
     return valueMatch;
 }
 
+function checkEqualityOperators(workItemValue, userValue, operator, isDate){
+
+    const OPERATOR = arrayToObject(Object.keys(QUERY_OPERATOR));
+
+    let valueMatch = false;
+    if (isDate){
+        // check is a valid date
+        if (moment(userValue, SPRINT_FORMAT_DATE).isValid()){
+
+            switch (operator) {
+                case OPERATOR["GREATER"]:
+                    valueMatch = moment(workItemValue, SPRINT_FORMAT_DATE).isAfter(userValue);
+                    break;
+                case OPERATOR["LESS"]:
+                    valueMatch = moment(workItemValue, SPRINT_FORMAT_DATE).isBefore(userValue);
+                    break;
+                case OPERATOR["GREATER_EQUAL"]:
+                    valueMatch = moment(workItemValue, SPRINT_FORMAT_DATE).isSameOrAfter(userValue);
+                    break;
+                case OPERATOR["LESS_EQUAL"]:
+                    valueMatch = moment(workItemValue, SPRINT_FORMAT_DATE).isSameOrBefore(userValue);
+                    break;
+                default:
+                    valueMatch = false;
+                    break;
+            }
+        }else{
+            valueMatch = false;
+        }
+    }else{ // assume is number
+
+        // is not empty and is a number and 
+        if (!_.isEmpty(userValue) && !isNaN(userValue) && !isNaN(workItemValue)){
+            switch (operator) {
+                case OPERATOR["GREATER"]:
+                    valueMatch = workItemValue > userValue;
+                    break;
+                case OPERATOR["LESS"]:
+                    valueMatch = workItemValue < userValue;
+                    break;
+                case OPERATOR["GREATER_EQUAL"]:
+                    valueMatch = workItemValue >= userValue;
+                    break;
+                case OPERATOR["LESS_EQUAL"]:
+                    valueMatch = workItemValue <= userValue;
+                    break;
+                default:
+                    valueMatch = false;
+                    break;
+            }
+        }else{ // is string at this point
+            valueMatch = false;
+        }
+    }
+
+    return valueMatch;
+
+}
 
 
 // =========================== TEAM REQUEST =====================

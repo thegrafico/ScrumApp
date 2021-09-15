@@ -1,4 +1,8 @@
 
+html, body{
+    max-height: 100%;
+}
+
 .queryOptions li a{
     color: white !important;
 }
@@ -189,4 +193,76 @@
       transform: translateX(0px);
       timing-function: ease-in;
     }
-  }
+}
+
+#numberOfQueryResult{
+    position: absolute;
+    font-size: .7em;
+    padding: .2rem;
+    border: .8px solid red;
+    border-radius: 20%;
+}
+
+.telescopeImage{
+    position: fixed;
+    left: 0;
+  width: 100%;
+  text-align: center;
+    z-index: -1;
+}
+
+#myTabContent{
+    max-height: 80vh;
+    overflow-y: scroll;
+}
+
+.nav-link:focus{
+    outline: none;
+}
+
+#queryNameInput{
+    width: 100%;
+    padding: .2rem .5rem;
+    border-radius: .2rem;
+    color: white;
+    background-color: transparent;
+    border: 2px solid #444;
+}
+
+#queryNameInput:focus{
+    outline: none;
+}
+
+/* SHOW QUERIES */
+
+#showQueries .modal-content{
+    /* border: 1px solid red; */
+    max-height: 50vh !important;
+}
+
+#showQueries .modal-body{
+    max-height: 40vh;
+    overflow-y: scroll;
+}
+
+.colMyQuery{
+    padding: .5rem;
+    border: 1px solid #444;
+    margin-bottom: .2rem;
+    border-radius: .2rem;
+}
+
+.colMyQuery:hover{
+    background-color: #444;
+    cursor: pointer;
+}
+
+.trashIconMyQueries{
+    font-size: 1.5em;
+    vertical-align: middle;
+}
+
+.trashIconMyQueries:hover{
+    opacity: .7;
+    cursor: pointer;
+}
