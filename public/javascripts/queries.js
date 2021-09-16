@@ -100,7 +100,10 @@ $(function () {
         let {query, isValidQuery} = getQuery();
 
         // if the query is  not valid and the query request is empty
-        if (!isValidQuery || _.isEmpty(query)){ return; }
+        if (!isValidQuery || _.isEmpty(query)){ 
+            $.notify("Invalid the query.", "error");
+            return;
+        }
 
         // making the request to the API
         const projectId = $(PROJECT_ID).val();
