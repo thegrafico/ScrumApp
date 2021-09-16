@@ -113,7 +113,8 @@ router.get("/:id/planing/workitems", middleware.isUserInProject, async function 
         "workItems": workItems,
         "priorityPoints": PRIORITY_POINTS,
         "stylesPath": planigWorkItemPath["styles"],
-        "scriptsPath": planigWorkItemPath["scripts"]
+        "scriptsPath": planigWorkItemPath["scripts"],
+        "showCreateWorkItemModal": true,
     };
 
     res.render("planing-work-item", params);
@@ -204,7 +205,7 @@ router.get("/:id/planing/workitems/:workItemId", middleware.isUserInProject, asy
         "workItem": workItem,
         "priorityPoints": PRIORITY_POINTS,
         "stylesPath": planigWorkItemPath["styles"],
-        "scriptsPath": planigWorkItemPath["scripts"]
+        "scriptsPath": planigWorkItemPath["scripts"],
     };
 
     res.render("work-item", params);

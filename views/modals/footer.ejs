@@ -4,6 +4,9 @@
 <% if (addUserModal) { %>
     <%- include('user/add-user-project'); %>
     <%- include('user/remove-user-project'); %>
+<% } %>
+
+<% if (showCreateWorkItemModal) { %>
     <!-- Modal for creating work item -->
     <%- include('./create-work-item'); %>
     <%- include('./show-work-item-modal'); %>

@@ -51,36 +51,9 @@ router.get("/:id", middleware.isUserInProject, async function (req, res) {
     // getting the teams
     let teams = [...projectInfo.teams];
 
-    //  ===== Data for create work item ====
-    // get the team for the user in order to filter by it.
-    let userPreferedTeam = projectInfo.getUserPreferedTeam();
-    let sprintForPreferedTeam = [];
-    let activeSprintId = null;
-    let userTeamId = undefined;
- 
-
-     // if the user have a team
-     if (!_.isNull(userPreferedTeam)){
-        // getting all sprints for team
-        sprintForPreferedTeam = await SprintCollection.getSprintsForTeam(projectId, userPreferedTeam["_id"]).catch(err => {
-            console.log(err);
-        }) || [];
-
-        let activeSprint = SprintCollection.getActiveSprint(sprintForPreferedTeam);
-
-        userTeamId = userPreferedTeam["_id"] || activeSprint["teamId"];
-
-        // check we have an active sprint
-        if (!_.isNull(activeSprint) || !_.isUndefined(activeSprint)){
-            activeSprintId = activeSprint["_id"];
-        }
-
-    } 
-
     // adding defaults
     users.unshift(UNASSIGNED);
     teams.unshift(UNASSIGNED);
-    sprintForPreferedTeam.unshift(UNASSIGNED_SPRINT);
 
     // populating params
     let params = {
@@ -98,9 +71,7 @@ router.get("/:id", middleware.isUserInProject, async function (req, res) {
         "currentPage": PAGES.STATISTICS,
         "assignedUsers": users,
         "projectTeams": teams,
-        "userTeam": userTeamId,
-        "activeSprintId": activeSprintId,
-        "sprints": sprintForPreferedTeam,
+        "sprints": [],
         "addUserModal": true,
         "stylesPath": statisticsPath["styles"],
         "scriptsPath": statisticsPath["scripts"],

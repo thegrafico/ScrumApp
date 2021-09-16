@@ -120,7 +120,8 @@ router.get("/:id/planing/backlog", middleware.isUserInProject, async function (r
         "userTeam": userPreferedTeam["_id"],
         "priorityPoints":PRIORITY_POINTS,
         "stylesPath": backlogPath["styles"],
-        "scriptsPath": backlogPath["scripts"]
+        "scriptsPath": backlogPath["scripts"],
+        "showCreateWorkItemModal": true,
     };
 
     res.render("planing-backlog", params);

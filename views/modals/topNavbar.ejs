@@ -54,15 +54,18 @@
                         </div>
                     </li>
 
-                    <li class="nav-item">
-                        <a class="nav-link"
-                        href="#" role="button" 
-                        aria-haspopup="true"
-                        id="createWorkItem"
-                        data-toggle="modal"
-                        data-target=".createNewItemModal"
-                        aria-expanded="false"><i class="fas fa-plus addIcon"></i> Work Item</a>
-                    </li>
+                    <% if (showCreateWorkItemModal){ %>
+                        <li class="nav-item">
+                            <a class="nav-link"
+                            href="#" role="button" 
+                            aria-haspopup="true"
+                            id="createWorkItem"
+                            data-toggle="modal"
+                            data-target=".createNewItemModal"
+                            aria-expanded="false"><i class="fas fa-plus addIcon"></i> Work Item</a>
+                        </li>
+                    <% } %>
+
                     
                 </div>
            </li >

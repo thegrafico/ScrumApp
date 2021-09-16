@@ -125,6 +125,7 @@ app.use(function (req, res, next) {
   res.locals.sprintDefaultTimePeriod = SPRINT_TIME_PERIOD["Two Weeks"];
   res.locals.userTeam = null;
   res.locals.showCompletedWorkItems = false;
+  res.locals.showCreateWorkItemModal = false;
 
   next();
 });

@@ -50,31 +50,9 @@ router.get("/:id/manageUsers", middleware.isUserInProject, async function (req, 
     let users = await projectInfo.getUsers().catch(err => console.log(err)) || [];
     let teams = [...projectInfo.teams];
 
-    //  ===== Data for create work item ====
-    // get the team for the user in order to filter by it.
-    let userPreferedTeam = projectInfo.getUserPreferedTeam();
-    let sprintForPreferedTeam = [];
-    let activeSprintId = null;
-
-     // if the user have a team
-     if (!_.isNull(userPreferedTeam)){
-        // getting all sprints for team
-        sprintForPreferedTeam = await SprintCollection.getSprintsForTeam(projectId, userPreferedTeam["_id"]).catch(err => {
-            console.log(err);
-        }) || [];
-
-        let activeSprint = SprintCollection.getActiveSprint(sprintForPreferedTeam);
-        
-        // check we have an active sprint
-        if (!_.isNull(activeSprint) || !_.isUndefined(activeSprint)){
-            activeSprintId = activeSprint["_id"];
-        }
-
-    } 
 
     users.unshift(UNASSIGNED);
     teams.unshift(UNASSIGNED);
-    sprintForPreferedTeam.unshift(UNASSIGNED_SPRINT);
 
     // populating params
     let params = {
@@ -90,8 +68,7 @@ router.get("/:id/manageUsers", middleware.isUserInProject, async function (req, 
         "currentPage": PAGES.MANAGE_USER,
         "stylesPath": managePath["styles"],
         "scriptsPath": managePath["scripts"],
-        "sprints": sprintForPreferedTeam,
-        "activeSprintId": activeSprintId,
+        "sprints": [],
         "statusWorkItem": WORK_ITEM_STATUS_COLORS,
         "priorityPoints":PRIORITY_POINTS,
         "workItemType": WORK_ITEM_ICONS,
@@ -181,7 +158,7 @@ router.get("/:id/manageTeam", middleware.isUserInProject, async function (req, r
 /**
  * METHOD: GET - Show Sprint Manages
  */
- router.get("/:id/manageSprints", middleware.isUserInProject, async function (req, res) {
+router.get("/:id/manageSprints", middleware.isUserInProject, async function (req, res) {
 
     let projectId = req.params.id;
 

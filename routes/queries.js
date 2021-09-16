@@ -85,7 +85,6 @@ router.get("/:id/queries", middleware.isUserInProject, async function (req, res)
         "statusWorkItem": WORK_ITEM_STATUS_COLORS,
         "projectTeams": teams,
         "sprints": sprints,
-        "activeSprintId": "",
         "addUserModal": true,
         "workItemType": WORK_ITEM_ICONS,
         "currentPage": PAGES.QUERIES,
@@ -97,7 +96,6 @@ router.get("/:id/queries", middleware.isUserInProject, async function (req, res)
         "queryOperator": QUERY_OPERATOR,
         "queryFields": QUERY_FIELD,
         "userQueries": userQueries["queries"] || [],
-
     };
 
     res.render("queries", params);

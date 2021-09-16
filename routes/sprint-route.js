@@ -171,7 +171,7 @@ router.get("/:id/sprint/review", middleware.isUserInProject, async function (req
         "scriptsPath": sprintReview["scripts"],
         "showCompletedWorkItems": true,
         "statusReport": statusReport,
-
+        "showCompletedWorkItems": true,
     };
 
     res.render("sprint-review", params);
@@ -310,6 +310,7 @@ router.get("/:id/sprint/board", middleware.isUserInProject, async function (req,
         "stylesPath": sprintBoard["styles"],
         "scriptsPath": sprintBoard["scripts"],
         "showCompletedWorkItems": true,
+        "showCreateWorkItemModal": true,
     };
 
     res.render("sprint-board", params);
@@ -444,6 +445,7 @@ router.get("/:id/planing/sprint", middleware.isUserInProject, async function (re
         "stylesPath": sprintPath["styles"],
         "scriptsPath": sprintPath["scripts"],
         "showCompletedWorkItems": true,
+        "showCreateWorkItemModal": true,
     };
 
     res.render("planing-sprint", params);
