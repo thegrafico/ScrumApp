@@ -28,10 +28,15 @@ const projectDetailRoute    = require("./routes/statistics");
 const planingBacklogRoute   = require("./routes/planing-backlog");
 const planingworkItemRoute  = require("./routes/planing-work-item");
 const sprintRoutes          = require("./routes/sprint-route");
-const apiProjectRoute       = require("./routes/api/api-project"); 
-const apiWorkItemRoute      = require("./routes/api/api-work-item"); 
 const manageRoute           = require("./routes/manage-routes");
 const queriesRoute          = require("./routes/queries");
+
+// API ROUTES
+const apiProjectRoute       = require("./routes/api/api-project"); 
+const apiWorkItemRoute      = require("./routes/api/api-work-item"); 
+const apiUser               = require("./routes/api/api-user"); 
+const apiSprint             = require("./routes/api/api-sprint"); 
+const apiQuery              = require("./routes/api/api-query"); 
  
 
 // App object 
@@ -144,6 +149,10 @@ app.use('/dashboard/', middleware.isUserLogin, queriesRoute);  // Queries
 // API - Route
 app.use('/dashboard/', middleware.isUserLogin, apiProjectRoute); // dashboard to show project
 app.use('/dashboard/', middleware.isUserLogin, apiWorkItemRoute); // dashboard to show project
+app.use('/dashboard/', middleware.isUserLogin, apiUser); // User api routes
+app.use('/dashboard/', middleware.isUserLogin, apiSprint); // User api routes
+app.use('/dashboard/', middleware.isUserLogin, apiQuery); // User api routes
+
 
 // MANAGE - routes
 app.use('/dashboard/', middleware.isUserLogin, manageRoute);

@@ -364,7 +364,7 @@ sprintSchema.statics.removeWorkItemFromSprints = async function(projectId, workI
  * @param {String} workItemId - if id the work item to remove 
  * @returns {Promise} true if the work item was remvoved
  */
- sprintSchema.methods.removeWorkItemFromSprints = async function(workItemId) {
+sprintSchema.methods.removeWorkItemFromSprints = async function(workItemId) {
     
     let sprint = this;
 

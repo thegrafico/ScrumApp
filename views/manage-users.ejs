@@ -59,13 +59,14 @@
                     <thead>
                         <tr class="tableHeader">
                             <th class="tableCheckBoxRowHeader">Check</th>
-                            <th class="column-edit-team" scope="col">Edit</th>
                             <th scope="col">Name</th>
                             <th scope="col">Email</th>
+                            <th scope="col">Privilege</th>
+                            <th class="column-edit-team" scope="col">Edit</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <% for (let i = 0; i < projectUsers.length; ++i) {%>
+                        <% for (let i = 1; i < projectUsers.length; ++i) {%>
                             <tr class="rowValues">
                                 
                                 <td class="tableCheckBoxRowElement"> 
@@ -74,18 +75,22 @@
                                     </label> 
                                 </td>
 
-                                <td class="column-edit-team">
-                                    <button class="btn btn-warning edit-user-team-btn">
-                                        <i class="fas fa-user-edit"></i>
-                                    </button>
-                                </td>
-                                
                                 <td>
                                     <%=projectUsers[i]["name"]%>
                                 </td>
 
                                 <td>
                                     <%=projectUsers[i]["email"]%>
+                                </td>
+
+                                <td>
+                                    <%=projectUsers[i]["email"]%>
+                                </td>
+
+                                <td class="column-edit-team">
+                                    <button class="btn btn-warning edit-user-team-btn">
+                                        <i class="fas fa-user-edit"></i>
+                                    </button>
                                 </td>
                             </tr>
                         <%}%>

@@ -147,8 +147,7 @@ module.exports.QUERY_FIELD = {
     SPRINT_POINTS: {text: "Sprint Points", dbField: "initialPoints"}
 }
 
-
-module.exports.QUERY_OPERATOR = {
+const QUERY_OPERATOR = {
     EQUAL: "=",
     NOT_EQUAL: "<>",
     GREATER: ">",
@@ -162,6 +161,7 @@ module.exports.QUERY_OPERATOR = {
     IS_EMPTY: "Is Empty",
     NOT_EMPTY: "Is Not Empty",
 }
+module.exports.QUERY_OPERATOR = QUERY_OPERATOR;
 
 const QUERY_LOGICAL_CONDITION = {
     AND: "And",
@@ -170,6 +170,12 @@ const QUERY_LOGICAL_CONDITION = {
 module.exports.QUERY_LOGICAL_CONDITION = QUERY_LOGICAL_CONDITION;
 
 module.exports.QUERY_SPECIAL_VALUE = "[ANY]";
+
+module.exports.USER_PRIVILEGES = {
+    "MEMBER": "Member",
+    "SCRUM_MASTER": "Scrum Master",
+    "PRODUCT_OWNER": "Product Owner",
+};
 
 // ===================================
 
@@ -604,12 +610,154 @@ module.exports.cleanQuery = (query) => {
     return masterQuery;
 }
 
+
 /**
  * Get an object form and array. every element is the key and the value
  * @param {Array} arr 1D array
  * @returns {Object} object with keys/values with the value of the each array element
  */
-module.exports.arrayToObject = function arrayToObject(arr){
+function arrayToObject(arr){
     return arr.reduce((acc,curr)=> (acc[curr]=curr,acc),{});
 }
+module.exports.arrayToObject = arrayToObject;
+
+
+/**
+ * check if the work item value math the user value by operator
+ * @param {Any} workItemValue 
+ * @param {Any} userValue 
+ * @param {String} operator 
+ * @param {Boolean} isDate 
+ * @returns 
+ */
+function checkEqualityOperators(workItemValue, userValue, operator, isDate){
+
+    const OPERATOR = arrayToObject(Object.keys(QUERY_OPERATOR));
+
+    let valueMatch = false;
+    if (isDate){
+        // check is a valid date
+        if (moment(userValue, SPRINT_FORMAT_DATE).isValid()){
+
+            switch (operator) {
+                case OPERATOR["GREATER"]:
+                    valueMatch = moment(workItemValue, SPRINT_FORMAT_DATE).isAfter(userValue);
+                    break;
+                case OPERATOR["LESS"]:
+                    valueMatch = moment(workItemValue, SPRINT_FORMAT_DATE).isBefore(userValue);
+                    break;
+                case OPERATOR["GREATER_EQUAL"]:
+                    valueMatch = moment(workItemValue, SPRINT_FORMAT_DATE).isSameOrAfter(userValue);
+                    break;
+                case OPERATOR["LESS_EQUAL"]:
+                    valueMatch = moment(workItemValue, SPRINT_FORMAT_DATE).isSameOrBefore(userValue);
+                    break;
+                default:
+                    valueMatch = false;
+                    break;
+            }
+        }else{
+            valueMatch = false;
+        }
+    }else{ // assume is number
+
+        // is not empty and is a number and 
+        if (!_.isEmpty(userValue) && !isNaN(userValue) && !isNaN(workItemValue)){
+            switch (operator) {
+                case OPERATOR["GREATER"]:
+                    valueMatch = workItemValue > userValue;
+                    break;
+                case OPERATOR["LESS"]:
+                    valueMatch = workItemValue < userValue;
+                    break;
+                case OPERATOR["GREATER_EQUAL"]:
+                    valueMatch = workItemValue >= userValue;
+                    break;
+                case OPERATOR["LESS_EQUAL"]:
+                    valueMatch = workItemValue <= userValue;
+                    break;
+                default:
+                    valueMatch = false;
+                    break;
+            }
+        }else{ // is string at this point
+            valueMatch = false;
+        }
+    }
+
+    return valueMatch;
+
+}
+module.exports.checkEqualityOperators = checkEqualityOperators;
+
+
+/**
+ * 
+ * @param {Any} workItemValue 
+ * @param {String} operator 
+ * @param {Any} userValue 
+ * @param {Boolean} isDate 
+ * @returns 
+ */
+function doesQueryValueMatch(workItemValue, operator, userValue, isDate = false){
+
+    let valueMatch = false;
+
+    const OPERATOR = arrayToObject(Object.keys(QUERY_OPERATOR));
+
+    if (isDate){
+        userValue = moment(userValue, SPRINT_FORMAT_DATE); 
+    }
+
+    //TODO: add moment date validation
+
+    switch (operator) {
+        case OPERATOR["EQUAL"]:
+
+            if (isDate){
+                valueMatch =  moment(workItemValue, SPRINT_FORMAT_DATE).isSame(userValue);
+            }else{
+                valueMatch = (workItemValue.toString().toLowerCase() === userValue.toString().toLowerCase());
+            }
+
+            break;
+        case OPERATOR["NOT_EQUAL"]:
+            if (isDate){
+                valueMatch =  moment(workItemValue, SPRINT_FORMAT_DATE).isSame(userValue);
+            }else{
+                valueMatch = (workItemValue.toString().toLowerCase() != userValue.toString().toLowerCase());
+            }
+            
+            break;
+        case OPERATOR["GREATER"]:
+        case OPERATOR["LESS"]:
+        case OPERATOR["GREATER_EQUAL"]:
+        case OPERATOR["LESS_EQUAL"]:
+            valueMatch = checkEqualityOperators(workItemValue, userValue, operator, isDate);
+            break;
+        case OPERATOR["CONTAINS"]:
+            valueMatch = workItemValue.toString().toLowerCase().includes(userValue.toString().toLowerCase());
+            break;
+        case OPERATOR["DOES_NOT_CONTAINS"]:
+            valueMatch = !(workItemValue.toString().toLowerCase().includes(userValue.toString().toLowerCase()));
+            break;
+        // TODO: finish here
+        case OPERATOR["IN"]:
+            break;
+        case OPERATOR["NOT_IN"]:
+            break;
+        case OPERATOR["IS_EMPTY"]:
+            break;
+        case OPERATOR["NOT_EMPTY"]:
+            break;
+        default:
+            break;
+    }
+
+    return valueMatch;
+}
+module.exports.doesQueryValueMatch = doesQueryValueMatch;
+
+
+
 

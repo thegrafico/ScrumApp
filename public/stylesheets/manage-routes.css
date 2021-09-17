@@ -22,12 +22,9 @@
 
 
 .rowValues td:first-child{
-    width: 10%;
+    width: 5%;
 }
 
-.rowValues td:nth-child(2), .rowValues td:nth-child(3), .rowValues td:nth-child(4){
-    width: 33.3%;
-}
 
 .table{
     border: 1px solid #444;
