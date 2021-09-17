@@ -304,7 +304,7 @@ function updateBurnDownChart(burnDownChart, statusReport){
  * @param {Array} workItems - array of object with work items completed
  */
 function getBurndownLineData(pointsHistory, totalPoints, labelDates, isTodayBetween){
-    
+
     let today = moment(new Date()).format(DATE_LABEL_FORMAT);
 
     let burndownData = [];
@@ -342,26 +342,24 @@ function getBurndownLineData(pointsHistory, totalPoints, labelDates, isTodayBetw
             if (date === today){
                 break;
             }
-        }
-        
+        }        
         // Exit the loop if we already have all the data for the work items
-        if (currentPoints == 0){
+        // if (currentPoints == 0){
             
-            if (isTodayBetween){
+        //     if (isTodayBetween){
                 
-                for (let j = i; j < labelDates.length; j++) {
-                    date = labelDates[j];
+        //         for (let j = i; j < labelDates.length; j++) {
+        //             date = labelDates[j];
 
-                    burndownData.push(currentPoints);
+        //             burndownData.push(currentPoints);
 
-                    if (date === today){
-                        break;
-                    }                    
-                }
-            }
-
-            break;
-        };
+        //             if (date === today){
+        //                 break;
+        //             }                    
+        //         }
+        //     }
+        //     break;
+        // };
 
         // console.log(`At ${date} they were ${completePointsAtDatePoints} Story Points completed`);
     }

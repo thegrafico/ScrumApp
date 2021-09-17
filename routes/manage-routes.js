@@ -47,9 +47,9 @@ router.get("/:id/manageUsers", middleware.isUserInProject, async function (req, 
     }
 
     // get all users for this project -> expected an array
-    let users = await projectInfo.getUsers().catch(err => console.log(err)) || [];
+    let users = await projectInfo.getUsersWithPrivilege().catch(err => console.log(err)) || [];
     let teams = [...projectInfo.teams];
-
+    console.log(users);
 
     users.unshift(UNASSIGNED);
     teams.unshift(UNASSIGNED);

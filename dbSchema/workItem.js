@@ -141,7 +141,7 @@ workItemSchema.post('save', async function(workItem) {
 
         // there is not record for today
         if (_.isEmpty(todaysPoints)){
-            sprint["pointsHistory"].push( {date: today, points: currentAmountOfActivePoints} );
+            sprint["pointsHistory"].push( {date: formatedToday, points: currentAmountOfActivePoints} );
         }else{ // there is record for points changes for today's date
             todaysPoints[0]["points"] = currentAmountOfActivePoints;
         }
@@ -221,17 +221,4 @@ workItemSchema.post('findOneAndDelete', async function(workItem) {
     console.log("Work item removed from sprint");
 });
 
-
 module.exports = mongoose.model("WorkItem", workItemSchema);
-
-
-
-// sprint["pointsHistory"] = [
-//     {date: "08/16/2021", points: initialPoints},
-//     {date: "08/17/2021", points: 35},
-//     {date: "08/19/2021", points: 32},
-//     {date: "08/20/2021", points: 37},
-//     {date: "08/22/2021", points: 30},
-//     {date: "08/23/2021", points: 15},
-//     {date: "08/24/2021", points: 12},
-// ];

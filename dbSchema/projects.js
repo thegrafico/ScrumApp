@@ -70,6 +70,39 @@ projectSchema.methods.getUsers = async function() {
 };
 
 /**
+ * Get all users from a project with the user information
+ * @returns {Array} - array of object  -> [{name, id}]
+ */
+ projectSchema.methods.getUsersWithPrivilege = async function() {
+
+    // modal to get the user info ==> [{name, id}]
+    let usersArr = [];
+
+    const projectId = this["_id"];
+
+    // get all users that belong to this project
+    const all_users = this.users || [];
+    
+    // get basic info as the name and id -- Later we could get more info
+    for(let i = 0; i < all_users.length; ++i){
+        
+        // get the current userId
+        const userId = all_users[i];
+        
+        // get the info of that userId
+        const userInfo = await userCollection.getUserWithPrivilege(projectId, userId).catch(err => console.log(err));
+        
+        // sky only if there is not info of the user
+        if (!userInfo) continue
+        
+        // add that user to the array
+        usersArr.push({name: userInfo.fullName, id: userId, email: userInfo.email, privilege: userInfo.privilege});
+    }
+
+    return usersArr;
+};
+
+/**
  * Get all work items from the project 
  * @returns {Array} - array of object  -> []
  */

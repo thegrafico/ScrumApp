@@ -3,10 +3,13 @@ const express                   = require("express");
 const middleware                = require("../../middleware/auth");
 const projectCollection         = require("../../dbSchema/projects");
 const userCollection            = require("../../dbSchema/user");
+const userPrivilegeCollection   = require("../../dbSchema/userPrivilege");
+
 const moment                    = require("moment");
 const _                         = require("lodash");
 let router                      = express.Router();
 
+const {USER_PRIVILEGES} = require("../../dbSchema/Constanst");
 
 /**
  * METHOD: GET - fetch all users from project
@@ -26,7 +29,7 @@ router.get("/api/:id/getProjectUsers/", middleware.isUserInProject, async functi
         return;
     }
 
-    const users = projectInfo.getUsers();
+    const users = await projectInfo.getUsers();
 
     let response = {
         msg: "success",
@@ -80,6 +83,7 @@ router.get("/api/:id/getTeamUsers/:teamId", middleware.isUserInProject, async fu
     }
 });
 
+// ========================================== POST ==========================================
 
 /**
  * METHOD: POST - ADD USERS TO Project
@@ -144,6 +148,20 @@ router.post("/api/:id/addUserToProject", middleware.isUserInProject, async funct
         res.status(400).send(response);
         return;
     }
+    
+    // ============================== PRIVILEGE ==============================
+    // add privilege to user
+    const newUserPrivilege = {
+        userId: userInfo["_id"],
+        projectId: projectId,
+        privilege: USER_PRIVILEGES["MEMBER"] // Default
+    } 
+
+    await userPrivilegeCollection.create(newUserPrivilege).catch(err => {
+        console.error("Error saving the user privilege: ", err);
+    });
+
+    //======================================================================
 
     // adding user to response
     response = {
@@ -151,6 +169,7 @@ router.post("/api/:id/addUserToProject", middleware.isUserInProject, async funct
         user: {
             fullName: userInfo["fullName"],
             email: userInfo["email"],
+            privilege: USER_PRIVILEGES["MEMBER"],
             id: userInfo["_id"]
         }
     };

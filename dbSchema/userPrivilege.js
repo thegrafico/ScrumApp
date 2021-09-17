@@ -27,7 +27,7 @@ let userPrivilege = new mongoose.Schema({
     },
     privilege: {
         type: String,
-        enum: Object.keys(USER_PRIVILEGES),
+        enum: Object.values(USER_PRIVILEGES),
         required: true, 
     },
 }, {timestamps: true});
