@@ -3,8 +3,7 @@ const express                   = require("express");
 const middleware                = require("../../middleware/auth");
 const projectCollection         = require("../../dbSchema/projects");
 const userCollection            = require("../../dbSchema/user");
-const userPrivilegeCollection   = require("../../dbSchema/userPrivilege");
-
+const UserPrivilegeCollection   = require("../../dbSchema/userPrivilege");
 const moment                    = require("moment");
 const _                         = require("lodash");
 let router                      = express.Router();
@@ -157,7 +156,7 @@ router.post("/api/:id/addUserToProject", middleware.isUserInProject, async funct
         privilege: USER_PRIVILEGES["MEMBER"] // Default
     } 
 
-    await userPrivilegeCollection.create(newUserPrivilege).catch(err => {
+    await UserPrivilegeCollection.create(newUserPrivilege).catch(err => {
         console.error("Error saving the user privilege: ", err);
     });
 
@@ -409,6 +408,87 @@ router.post("/api/:id/removeUsersFromTeam", middleware.isUserInProject, async fu
 
     let item_str = userIds.length === 1 ? "user" : "users";
     response["msg"] = `Successfully removed ${item_str} from team`;
+    res.status(200).send(response);
+});
+
+/**
+ * METHOD: POST - ADD USERS TO TEAM
+ */
+router.post("/api/:id/updateUser", middleware.isUserInProject, async function (req, res) {
+    
+    console.log("Getting request to update user...");
+
+    const projectId = req.params.id;
+    
+    let  {userId, privilege } = req.body; 
+    let response = {};
+    
+    // check data
+    if (_.isUndefined(privilege) || _.isUndefined(userId)){
+        response["msg"] = "Invalid data received.";
+        res.status(400).send(response);
+        return;
+    }
+
+    // getting project
+    const projectInfo = await projectCollection.findById(projectId).catch(err => {
+        console.error(err);
+    });
+
+    if (!projectInfo){
+        response["msg"] = "Oops, There was a problem getting the project information. Please try later.";
+        res.status(400).send(response);
+        return;
+    }
+
+    // check if the user is in project
+    if (!projectInfo.isUserInProject(userId)){
+        response["msg"] = "Sorry, it seems this user does not belong to this project.";
+        res.status(400).send(response);
+        return;
+    }
+
+    // The owner of the project cannot change his privilege
+    if (projectInfo.isUserTheOwner(userId)){
+        response["msg"] = "Sorry, The owner of the project cannot change its privilege";
+        res.status(400).send(response);
+        return;
+    }
+
+    // get user privilege
+    let error = null;
+    let userPrivilege = await UserPrivilegeCollection.findOne({projectId, userId}).catch(err => {
+        console.error(err);
+    });
+
+    if (error){
+        response["msg"] = "Sorry, There was a problem updating the information of the user. ";
+        res.status(400).send(response);
+        return;
+    }else if(_.isUndefined(userPrivilege) || _.isNull(userPrivilege)){
+        await UserPrivilegeCollection.create({
+            userId: userId,
+            projectId: projectId,
+            privilege: USER_PRIVILEGES[privilege]
+        }).catch(err => {
+            console.error("ERROR Creating user privilege: ", err);
+            error = err;
+        });
+
+        // there was a problem creating user privilege
+        if (error){
+            response["msg"] = "Sorry, There was a problem updating the information of the user. ";
+            res.status(400).send(response);
+            return;
+        }
+    }else{
+        userPrivilege["privilege"] = USER_PRIVILEGES[privilege];
+        await userPrivilege.save().catch(err => {
+            console.error("Error saving user privilege: ", err);
+        });
+        response["msg"] = "User updated successfully.";
+    }
+
     res.status(200).send(response);
 });
 

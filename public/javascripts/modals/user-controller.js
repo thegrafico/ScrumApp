@@ -11,6 +11,16 @@ const MODAL_REMOVE_SUBMIT_BTN = "#modal-delete-user-submit-btn";
 
 const TRASH_BTN_REMOVE_USER_PROJECT = "#trashBtnManageUser";
 
+// UPDATE MODAL
+const UPDATE_USER_MODAL = "#update-user";
+const OPEN_UPDATE_USER_MODAL = ".btn-update-user-modal-open";
+const UPDATE_MODAL_USER_NAME = "#user-name-input";
+const UPDATE_MODAL_USER_EMAIL = "#user-email-input";
+const UPDATE_MODAL_USER_PRIVILEGE = "#user-privilege-input";
+const UPDATE_MODAL_USER_SUBMIT = "#update-user-btn-submit";
+
+const SELECTED_USER_ID = "#updateUserId";
+
 /**
  * This function is fire as soon as the DOM element is ready to process JS logic code
  * Same as $(document).ready()...
@@ -73,12 +83,12 @@ $(function (){
             return;
         }
 
-        const projectId = $(PROJECT_ID).val();
-
         if (!_.isString(projectId)){
             $.notify("Sorry, Cannot find the project at this moment.", "error");
             return;
         }
+
+        const projectId = $(PROJECT_ID).val();
 
         const API_LINK_REMOVE_USER_FROM_PROJECT = `/dashboard/api/${projectId}/deleteUserFromProject`;
         const data = {"userId": userId};
@@ -157,4 +167,90 @@ $(function (){
     $(MODAL_REMOVE_USER_ID).on('shown.bs.modal', function () {
         $(MODAL_REMOVE_USER_INPUT).val("0").trigger("change"); 
     });
+
+    // OPEN UPDATE USER MODAL
+    $(document).on("click", OPEN_UPDATE_USER_MODAL, function(){
+        let userId = $(this).attr("id");
+
+        // update this in case user is updated
+        $(SELECTED_USER_ID).val(userId);
+        
+        let name        = $(`tr#${userId} td.values span.name`).text();
+        let email       = $(`tr#${userId} td.values span.email`).text();
+        let privilege   = $(`tr#${userId} td.values span.privilege`).text();
+
+        let userPrivilege = getKeyByValue(USER_PRIVILEGES, privilege);
+
+        $(UPDATE_MODAL_USER_NAME).val(name);
+        $(UPDATE_MODAL_USER_EMAIL).val(email);
+        $(UPDATE_MODAL_USER_PRIVILEGE).val(userPrivilege).change();
+
+    });
+
+    // SUBMIT USER CHANGES
+    $(document).on("click", UPDATE_MODAL_USER_SUBMIT, async function(){
+        const userId = $(SELECTED_USER_ID).val();
+        
+        // inital value when the page is loaded
+        let privilege = $(`tr#${userId} td.values span.privilege`).text();
+        let userPrivilege = getKeyByValue(USER_PRIVILEGES, privilege);
+
+        // value that the user choose
+        let selectedPrivilege = $(UPDATE_MODAL_USER_PRIVILEGE).val();
+
+        if (userPrivilege === selectedPrivilege){
+            $.notify("Oops, Nothing was changed.", "error");
+            return;
+        }
+
+        const projectId = $(PROJECT_ID).val();
+
+        // API link
+        const API_LINK_UPDATE_USER = `/dashboard/api/${projectId}/updateUser`;
+
+        let response_error = null;
+        const response = await make_post_request(API_LINK_UPDATE_USER, {userId: userId, privilege: selectedPrivilege}).catch(err => {
+            response_error = err;
+        });
+
+        // Success message
+        if (response){
+            
+            $.notify(response["msg"], "success");
+
+            // $(CLOSE_MODAL_SPRINT_BTN).click();
+
+            // let sprintId = response["sprint"]["_id"];
+
+            // updateTableElement(sprintId, response["sprint"], addSprintToTable);
+            $(`${UPDATE_USER_MODAL} .close`).click();
+        }else{ // error messages            
+            $.notify(response_error.data.responseJSON.msg, "error");
+        }
+
+    });
 });
+
+
+// API link
+// const API_LINK_UPDATE_SPRINT = `/dashboard/api/${projectId}/updateSprint/${teamId}/${sprintId}`;
+
+// let response_error = null;
+// const response = await make_post_request(API_LINK_UPDATE_SPRINT, data).catch(err => {
+//     response_error = err;
+// });
+
+// // Success message
+// if (response){
+    
+//     $.notify("Sprint Updated", "success");
+
+//     $(CLOSE_MODAL_SPRINT_BTN).click();
+
+//     let sprintId = response["sprint"]["_id"];
+
+//     updateTableElement(sprintId, response["sprint"], addSprintToTable);
+
+// }else{ // error messages
+//     $.notify(response_error.data.responseJSON.msg, "error");
+// }

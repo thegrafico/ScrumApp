@@ -1090,9 +1090,18 @@ function addUserToTable(userInfo){
         </label> 
     </td>`;
 
+    let td_privilege = `
+    <td>
+        ${userInfo['privilege']}
+    </td>`;
+
     let td_edit = `
     <td class="column-edit-team">
-        <button value="${userInfo['id']}" class="btn btn-warning edit-user-team-btn">
+        <button 
+            class="btn btn-warning edit-user-team-btn btn-update-user-modal-open"  
+            data-toggle="modal" 
+            id="${userInfo['id']}"
+            data-target=".update-user-modal">
             <i class="fas fa-user-edit"></i>
         </button>
     </td>`;
@@ -1108,11 +1117,12 @@ function addUserToTable(userInfo){
     </td>`;
 
     let table_row = `
-    <tr class="rowValues">
+    <tr class="rowValues" id="${userInfo['id']}">
         ${td_checkbox}
-        ${td_edit}
         ${td_name}
         ${td_email}
+        ${td_privilege}
+        ${td_edit}
     </tr>`;
 
     $(`${MANAGE_TABLE_ID} > tbody:last-child`).append(table_row);
@@ -1609,3 +1619,12 @@ function getRandomString(length) {
 }
 
 
+/**
+ * Get the element key by value (Just one)
+ * @param {Object} element 
+ * @param {Any} value 
+ * @return {String} key of the element 
+ */
+function getKeyByValue(element, value){
+    return _.findKey(element, val => val === value);
+}

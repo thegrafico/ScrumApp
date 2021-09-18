@@ -3,14 +3,14 @@
  */
 
 // import DB
-const userCollection        = require("./user");
-const projectStatus         = require("./Constanst").projectStatus;
-const workItemCollection    = require("./workItem");
-const _                     = require("lodash");
-const mongoose              = require("mongoose");
+const userCollection            = require("./user");
+const projectStatus             = require("./Constanst").projectStatus;
+const workItemCollection        = require("./workItem");
+const UserPrivilegeCollection   = require("./userPrivilege");
+const _                         = require("lodash");
+const mongoose                  = require("mongoose");
 
-const ObjectId = mongoose.Schema.ObjectId;
-const OBJECT_ID = mongoose.Types.ObjectId;
+const ObjectId = mongoose.Types.ObjectId;
 
 const { UNASSIGNED } = require('./Constanst');
 
@@ -68,6 +68,16 @@ projectSchema.methods.getUsers = async function() {
 
     return usersArr;
 };
+
+/**
+ * Get all users from a project with the user information
+ * @returns {Boolean} - array of object  -> [{name, id}]
+ */
+projectSchema.methods.isUserTheOwner = function(userId) {
+
+    return this.author == userId;
+};
+
 
 /**
  * Get all users from a project with the user information
@@ -318,6 +328,7 @@ projectSchema.methods.getUsersForTeam = async function(teamId) {
 projectSchema.methods.removeUser = async function(userId) {
     
     const father = this;
+    const projectId = this["_id"];
     return new Promise( async function (resolve, reject){
 
         if (!father.isUserInProject(userId)){
@@ -329,7 +340,7 @@ projectSchema.methods.removeUser = async function(userId) {
         // getting work items since user information is stored here
         let err_msg = null;
         const wasUpdatedWorkItems = await workItemCollection.updateMany( 
-            { projectId: father._id, "assignedUser.id": OBJECT_ID(userId) },
+            { projectId: projectId, "assignedUser.id": ObjectId(userId) },
             {$set: {"assignedUser.name": UNASSIGNED.name, "assignedUser.id": null}})
             .catch(err =>{
                 err_msg = err;
@@ -345,7 +356,15 @@ projectSchema.methods.removeUser = async function(userId) {
         // remove the user
         father.users.pull(userId);
 
-        father.save().then( (doc) => {
+        father.save().then( async (doc) => {
+
+            await UserPrivilegeCollection.deleteOne({
+                projectId: projectId,
+                userId: userId
+            }).catch(err => {
+                console.error("Error removing user from privilege: ", err);
+            });
+
             return resolve({msg: "User was removed successfully!", userId: userId});
         }).catch( err =>{
             response["msg"] = "Sorry, There was an error removing the user from project. Please try later"
@@ -363,6 +382,7 @@ projectSchema.methods.removeUser = async function(userId) {
 projectSchema.methods.removeUsers = async function(userIds) {
     
     const father = this;
+    const projectId = this["_id"];
     return new Promise( async function (resolve, reject){
 
         let response = {userIds: userIds};
@@ -381,7 +401,7 @@ projectSchema.methods.removeUsers = async function(userIds) {
         // getting work items since user information is stored here
         let err_msg = null;
         const wasUpdatedWorkItems = await workItemCollection.updateMany( 
-            { projectId: father._id, "assignedUser.id":  { $in: userIds } },
+            { projectId: projectId, "assignedUser.id":  { $in: userIds } },
             {$set: {"assignedUser.name": UNASSIGNED.name, "assignedUser.id": null}})
             .catch(err =>{
                 console.error(err);
@@ -400,7 +420,15 @@ projectSchema.methods.removeUsers = async function(userIds) {
             father.users.pull(userIds[i]);
         }
 
-        father.save().then( (doc) => {
+        father.save().then(async (doc) => {
+
+            await UserPrivilegeCollection.deleteMany({
+                projectId: projectId,
+                userId: {$in: userIds}
+            }).catch(err => {
+                console.error("Error removing user from privilege: ", err);
+            });
+
             return resolve({msg: "Users were removed successfully!", userIds: userIds});
         }).catch( err =>{
             console.error(err);
@@ -433,7 +461,7 @@ projectSchema.methods.removeTeam = async function(teamId) {
         let err_msg = null;
         const wasUpdatedWorkItems = await workItemCollection
         .updateMany( 
-            { projectId: father._id, teamId: OBJECT_ID(teamId) },
+            { projectId: father._id, teamId: ObjectId(teamId) },
             {$set: {teamId: null}}
         ).catch(err => {
             err_msg = err;

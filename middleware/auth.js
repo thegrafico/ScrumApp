@@ -2,6 +2,8 @@
  * Main auth middleware
  */
 const projectCollection = require("../dbSchema/projects");
+const _ = require("lodash");
+const mongoose = require("mongoose");
 
 /**
  * Verify if the user is login 
@@ -19,8 +21,11 @@ module.exports.isUserLogin = (req, res, next) => {
  * Verify if the user has access to a project so we can show it 
  */
 module.exports.isUserInProject = async (req, res, next) => {
+    
+    const projectId = req.params.id;
+    // TODO: check a way to check projectId if instance of mongoose type;
 
-    const userProjects = await projectCollection.find({_id: req.params.id, users: req.user._id}).catch(err => {
+    const userProjects = await projectCollection.find({_id: projectId, users: req.user._id}).catch(err => {
         console.error("Error finding the user: ", err);
     });
 

@@ -50,6 +50,9 @@
     width: 5% !important;
 }
 
+.fa-user-edit{
+    font-size: 1.2em;
+}
 .fa-running{
     color: green;
     font-size: 1.2em;

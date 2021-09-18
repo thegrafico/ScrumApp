@@ -118,12 +118,6 @@
                                         <%=sprints[i]["startDateFormated"]%> - <%=sprints[i]["endDateFormated"]%> 
                                     <% } %>
                                 </td>
-
-                                <td class="d-none sprintValues"> 
-                                    <span class="title"><%=sprints[i]["name"]%></span>
-                                    <span class="startDate"><%=sprints[i]["startDate"]%></span>
-                                    <span class="endDate"><%=sprints[i]["endDate"]%></span>
-                                </td>
                                 
                                 <td>
                                     <%=sprints[i]["tasks"].length%> 
@@ -139,6 +133,12 @@
                                     </button>
                                 </td>
 
+                                <!-- Sprint information -->
+                                <td class="d-none values"> 
+                                    <span class="title"><%=sprints[i]["name"]%></span>
+                                    <span class="startDate"><%=sprints[i]["startDate"]%></span>
+                                    <span class="endDate"><%=sprints[i]["endDate"]%></span>
+                                </td>
                             </tr>
                         <%}%>
                     </tbody>

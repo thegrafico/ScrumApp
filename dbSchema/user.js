@@ -52,7 +52,7 @@ userSchema.statics.getUserByEmail = async function(email) {
  * @param {String} userId - user id
  * @returns {Promise}
  */
- userSchema.statics.getUserWithPrivilege = async function(projectId, userId) {
+userSchema.statics.getUserWithPrivilege = async function(projectId, userId) {
 
     let father = this;
     let error = undefined;
@@ -97,7 +97,7 @@ userSchema.statics.getUserByEmail = async function(email) {
             if (!userPrivilegeWasCreated){
                 console.log("Error creating user privilege.");
             }
-            
+
             userInfo["privilege"] = USER_PRIVILEGES["MEMBER"]; // Default
         }else{
             userInfo["privilege"] = userPrivilege["privilege"];

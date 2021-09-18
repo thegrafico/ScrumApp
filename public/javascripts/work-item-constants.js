@@ -323,6 +323,13 @@ const QUERY_LOGICAL_CONDITION = {
 }
 
 const QUERY_SPECIAL_VALUE = "[ANY]";
+
+// EDIT USER IN MANAGE
+const USER_PRIVILEGES = {
+    "MEMBER": "Member",
+    "SCRUM_MASTER": "Scrum Master",
+    "PRODUCT_OWNER": "Product Owner",
+};
 // =========================
 
 const NOTIFY = {

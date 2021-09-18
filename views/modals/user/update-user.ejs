@@ -1,0 +1,52 @@
+<!-- MODAL TO CREATE USER -->
+<div class="modal fade update-user-modal" id="update-user" tabindex="-1" role="dialog" aria-labelledby="modal-update-user"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+
+        <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="createUserTitle" style="width: 60%;">
+                        Update User   <i class="fas fa-user-edit formatIcon"></i>
+                    </h5>
+                    <button type="button" id="close-update-user-modal" class="close close-user-modal" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+
+                <div class="modal-body">
+
+                    <fieldset>
+                        
+                        <div class="form-group">
+                            <label for="userName"> Name </label>
+                            <input type="text" value="hola" disabled class="form-control" name="userName" id="user-name-input" aria-describedby="nameHelp" placeholder="Sprint name">
+                        </div>
+
+
+                        <div class="form-group update-container-date">
+                            <label for="userEmail"> Email </label>
+                            <input type="text" class="form-control" value="sdas"  disabled name="userEmail"  id="user-email-input" aria-describedby="nameHelp" placeholder="User Email">
+                        </div>
+
+                        <div class="form-group update-container-date">
+                            <label for="userPrivilege"> Privilege </label>
+                            <select class="custom-select user-privilege-input" name="userPrivilege" id="user-privilege-input">
+                                <% for (let key of Object.keys(userPrivilege)) { %>
+                                    <option value="<%=key%>"><%=userPrivilege[key]%></option>
+                                <% } %>
+                            </select>                        
+                        </div>
+
+                    </fieldset>
+
+                </div>
+
+                <div class="modal-footer">
+                    <button type="cancel-update-user-btn" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    <button id="update-user-btn-submit" class="btn btn-success">Update</button>
+                </div>
+                <!-- This value is loaded when modal is opened -->
+                <input type="hidden" id="update-sprint-id" name="sprintId" value="0">
+        </div>
+    </div>
+</div>

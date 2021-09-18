@@ -249,9 +249,9 @@ $(function () {
         // udpate the hidden input
         $(UPDATE_SPRINT_ID).val(sprintId);
         
-        let name        = $(`tr#${sprintId} td.sprintValues span.title`).text();
-        let startDate   = $(`tr#${sprintId} td.sprintValues span.startDate`).text();
-        let endDate     = $(`tr#${sprintId} td.sprintValues span.endDate`).text();
+        let name        = $(`tr#${sprintId} td.values span.title`).text();
+        let startDate   = $(`tr#${sprintId} td.values span.startDate`).text();
+        let endDate     = $(`tr#${sprintId} td.values span.endDate`).text();
 
         //console.log(name, startDate, endDate);
 
@@ -267,9 +267,9 @@ $(function () {
         let sprintId = $(UPDATE_SPRINT_ID).val();
 
         // current values
-        let currentName         = $(`tr#${sprintId} td.sprintValues span.title`).text();
-        let currentStartDate    = $(`tr#${sprintId} td.sprintValues span.startDate`).text();
-        let currentEndDate      = $(`tr#${sprintId} td.sprintValues span.endDate`).text();
+        let currentName         = $(`tr#${sprintId} td.values span.title`).text();
+        let currentStartDate    = $(`tr#${sprintId} td.values span.startDate`).text();
+        let currentEndDate      = $(`tr#${sprintId} td.values span.endDate`).text();
 
         // new values
         let newName              = $(UPDATE_SPRINT_NAME).val();
@@ -513,7 +513,7 @@ function addSprintToTable(sprint, index=null){
     }
 
     let td_hidden = `
-    <td class="d-none sprintValues"> 
+    <td class="d-none values"> 
         <span class="title">${sprint["name"]}</span>
         <span class="startDate">${sprint["startDate"]}</span>
         <span class="endDate">${sprint["endDate"]}</span>
