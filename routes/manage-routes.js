@@ -99,35 +99,7 @@ router.get("/:id/manageTeam", middleware.isUserInProject, async function (req, r
     let users = await projectInfo.getUsers().catch(err => console.log(err)) || [];
     let teams = [...projectInfo.teams];
 
-    //  ===== Data for create work item ====
-    // get the team for the user in order to filter by it.
-    let userPreferedTeam = projectInfo.getUserPreferedTeam();
-    let sprintForPreferedTeam = [];
-    let activeSprintId = null;
-    let userTeams = [];
-    let userIds = [];
-
-    // if the user have a team
-    if (!_.isNull(userPreferedTeam)){
-        // getting all sprints for team
-        sprintForPreferedTeam = await SprintCollection.getSprintsForTeam(projectId, userPreferedTeam["_id"]).catch(err => {
-            console.log(err);
-        }) || [];
-
-        userTeams = await projectInfo.getUsersForTeam(userPreferedTeam["_id"].toString()).catch(err => {
-            console.error(err);
-        }) || [];
-
-
-        userIds = userTeams.map( each => each._id.toString());
-
-        let activeSprint = SprintCollection.getActiveSprint(sprintForPreferedTeam);
-        
-        // check we have an active sprint
-        if (!_.isNull(activeSprint) || !_.isUndefined(activeSprint)){
-            activeSprintId = activeSprint["_id"];
-        }
-    } 
+    console.log(teams);
 
     // populating params
     let params = {
@@ -137,15 +109,11 @@ router.get("/:id/manageTeam", middleware.isUserInProject, async function (req, r
         "activeTab": "Statistics",
         "tabTitle": "Manage Teams",
         "projectTeams": teams,
-        "teamUsers": userTeams,
         "projectUsers": users,
         "assignedUsers": users,
         "addUserModal": true,
-        "sprints": sprintForPreferedTeam,
-        "activeSprintId": activeSprintId,
+        "sprints": [],
         "currentPage": PAGES.MANAGE_TEAM,
-        "userIds": userIds,
-        "userTeam": userPreferedTeam,
         "stylesPath": managePath["styles"],
         "scriptsPath": managePath["scripts"],
         "statusWorkItem": WORK_ITEM_STATUS_COLORS,

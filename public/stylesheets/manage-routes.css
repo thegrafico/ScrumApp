@@ -50,10 +50,26 @@
     width: 5% !important;
 }
 
+.formatIcon{
+    font-size: 1.2em;
+}
 .fa-user-edit{
     font-size: 1.2em;
 }
 .fa-running{
     color: green;
     font-size: 1.2em;
+}
+
+
+.team-table th:first-child{
+    width: 5% !important;
+}
+
+.team-table th{
+    width: 33% !important;
+}
+
+.nav-link:focus, select:focus, .form-group:focus, button:focus, .column-edit-team, .btn-warning:focus{
+    outline: none !important;
 }

@@ -243,47 +243,112 @@ router.post("/api/:id/deleteTeam", middleware.isUserInProject, async function (r
     }
 });
 
-
 /**
- * METHOD: POST - REMOVE WORK ITEMS FROM PROJECT
+ * METHOD: POST - Create team
  */
-router.post("/api/:id/removeWorkItems", middleware.isUserInProject, async function (req, res) {
-    
-    console.log("Getting request to remove work items...");
-    
+ router.post("/api/:id/editTeam/:teamid", middleware.isUserInProject, async function (req, res) {
+
     const projectId = req.params.id;
-    
-    let  { workItemsId } = req.body; // expected array
+    const teamId = req.params.teamid;
 
-    // is array and not empty
-    if (_.isArray(workItemsId) && !_.isEmpty(workItemsId)){
-        
-        // remove the work item from the proyect
-        let error_removing = false;
-        for (let workItemId of workItemsId){
-            
-            // remove from db
-            const result = await workItemCollection.findOneAndDelete({projectId: projectId, _id: workItemId}).catch(
-                err => console.error("Error removing work item: ", err)
-            );
-            
-            if (_.isNull(result) || _.isUndefined(result)){
-                error_removing = true;
-            }
-        }
+    // validate project
+    let project = await projectCollection.findById(projectId).catch(err => {
+        console.error("Error getting the project: ", err);
+    });
 
-        if (error_removing){
-            res.status(400).send("Sorry, There was a problem removing work items. Please try later.");
-            return;
-        }
-        console.log("Work items removed...");
-    }else{
-        res.status(400).send("Sorry, We cannot find any work item to remove. Please try later.");
+    if (_.isUndefined(project) || _.isEmpty(project)){
+        response["msg"] = "Error getting the project information. Please refresh the page and try again.";
+        res.status(400).send(response);
         return;
     }
-    let item_str = workItemsId.length === 1 ? "item" : "items";
-    res.status(200).send(`Successfully removed work ${item_str}`);
+
+    if (!project.isTeamInProject){
+        response["msg"] = "Oops, it seems this team does not belong to the project";
+        res.status(400).send(response);
+        return;
+    }
+
+    // Getting data from user
+    let { name } = req.body;
+
+    let response = {};
+    let error_message = null;
+
+    // first verify that team Name is string || not undefined or null
+    if (_.isUndefined(name)) {
+        response["msg"] = "The name of the team cannot be empty.";
+        res.status(400).send(response);
+        return;
+    }
+    
+    // clean the name
+    name = name.trim()
+
+    // Validating team name
+    if (_.isEmpty(name)){
+        error_message = "Team name cannot be empty.";
+    }else if( !(/^[a-zA-Z\s]+$/.test(name)) ){
+        error_message = "Team name cannot include symbols and numbers.";
+    }else if(name.length < TEAM_NAME_LENGHT_MIN_LIMIT){
+        error_message = "Team name to short.";
+    }else if(name.length > TEAM_NAME_LENGHT_MAX_LIMIT){
+        error_message = "Team name is to long.";
+    }
+
+    if (error_message){
+        response["msg"] = error_message;
+        res.status(400).send(response);
+        return;
+    }
+
+    let nameIsInProject = false;
+
+    for(let i =  0; i < project.teams.length; i ++){
+        const pTeam = project.teams[i];
+
+        if (pTeam["name"].toLowerCase() === name.toLowerCase()){
+            nameIsInProject = true;
+            break;
+        }
+    }
+
+    // check if the name already exist in project
+    if (nameIsInProject){
+        response["msg"] = "A team with the same name already exist. (Case sensitive is ignored).";
+        res.status(400).send(response);
+        return;
+    }
+
+    // updating name of the team
+    for(let i =  0; i < project.teams.length; i ++){
+        const pTeam = project.teams[i];
+
+        if (pTeam["_id"] == teamId){
+            project.teams[i]["name"] = name;
+            console.log("Team name updated");
+            break;
+        }
+    }
+    
+    await project.save().catch(err => {
+        error_message = err;
+        console.log("Error adding the team to the project: ", err);
+    });
+
+    if (error_message){
+        response["msg"] = `Error updating team name: ${error_message}`;
+        res.status(400).send(response);
+        return;
+    }
+
+    response["msg"] = "Successfully updated team name";
+    response["team"] = { name: name, id: teamId};
+
+    res.status(200).send(response);
 });
+
+
+
 
 
 module.exports = router;

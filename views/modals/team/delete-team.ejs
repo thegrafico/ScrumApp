@@ -20,7 +20,11 @@
 
                         <select class="custom-select my-custon-select" name="teamName" id="listOfTeams">
                             <option value='0' selected>Please select a team.</option>
-                            <% for(let i = 1; i < projectTeams.length; i++){%>
+                            <% for(let i = 0; i < projectTeams.length; i++){%>
+
+                                <% if (projectTeams[i]["_id"] == "0"){%>
+                                    <%continue;%>
+                                <%}%>
                                 <option value="<%=projectTeams[i]['_id']%>"><%=projectTeams[i]['name']%></option>
                             <%}%>
                         </select>

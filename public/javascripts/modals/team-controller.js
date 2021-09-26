@@ -20,6 +20,17 @@ const ADD_USER_TO_TEAM_BTN = "#btnAddUserToTeam";
 
 const SELECT_USERS_PROJECT_INPUT = "#project-user-select";
 
+// Selected team for modals
+const CURRENT_SELECTED_TEAM = "#currentSelectedTeam";
+
+// TEAM TABLE
+const ROW_TEAM_NAME = ".row-team-name";
+
+// EDIT TEAM
+const OPEN_EDIT_TEAM_MODAL = ".btn-update-team-modal-open";
+const EDIT_TEAM_NAME_INPUT = "#team-name-input";
+const BTN_SUBMIT_EDIT_TEAM = "#edit-team-btn-submit";
+
 /**
  * This function is fire as soon as the DOM element is ready to process JS logic code
  * Same as $(document).ready()...
@@ -27,7 +38,7 @@ const SELECT_USERS_PROJECT_INPUT = "#project-user-select";
 $(function (){
 
     // make the select opction for deleting a team a select2 element
-    $(TEAM_SELECT_INPUT_ID).select2();
+    $(DELETE_TEAM_SELECT_INPUT).select2();
     $(SELECT_USERS_PROJECT_INPUT).select2();
     $(FILTER_BY_TEAM_MANAGE_INPUT).select2();
 
@@ -78,9 +89,7 @@ $(function (){
     // ================= DELETE TEAM EVENTS ================
     $(DELETE_TEAM_SUBMIT_BTN).on("click", async function(){
     
-        let selectedTeamId = $("#listOfTeams").val();
-
-        console.log(selectedTeamId);
+        let selectedTeamId = $(DELETE_TEAM_SELECT_INPUT).val();
 
         if (selectedTeamId == "0" || !_.isString(selectedTeamId) || _.isEmpty(selectedTeamId)){
             $.notify("Invalid team.", "error");
@@ -217,48 +226,92 @@ $(function (){
         }
     });
 
-    // TEAM Selection
-    $(FILTER_BY_TEAM_MANAGE_INPUT).change(async function(){
-        
-        const teamId = $(this).val();    
-        const projectId = $(PROJECT_ID).val();
+    // ============= EDIT TEAM ===========
 
-        if (!_.isString(teamId) || teamId == '0'){
-            $.notify("Invalid Team", "error");
+    // Submit the team changes - until now is just updating the name
+    $(BTN_SUBMIT_EDIT_TEAM).on("click", async function(){
+
+        const newTeamName = $(EDIT_TEAM_NAME_INPUT).val().trim();
+
+        // check name
+        if (_.isUndefined(newTeamName) || _.isEmpty(newTeamName)){
+            $.notify("Sorry, The name for the team cannot be empty");
+            return;
         }
-        const API_LINK_GET_TEAM_USERS = `/dashboard/api/${projectId}/getTeamUsers/${teamId}`;
 
-        let response_error = null;
-        const response = await make_get_request(API_LINK_GET_TEAM_USERS).catch(err => {
+        error_message = null;
+        if (_.isEmpty(newTeamName)){
+            error_message = "Team name cannot be empty.";
+        }else if( !(/^[a-zA-Z\s]+$/.test(newTeamName)) ){
+            error_message = "Team name cannot include symbols and numbers.";
+        }else if(newTeamName.length < TEAM_NAME_LENGHT_MIN_LIMIT){
+            error_message = "Team name to short.";
+        }else if(newTeamName.length > TEAM_NAME_LENGHT_MAX_LIMIT){
+            error_message = "Team name is to long.";
+        }
+
+        if (error_message){
+            $.notify(error_message);
+            showErrorBounceAnimation(EDIT_TEAM_NAME_INPUT);
+            return;
+        }
+
+        // check len
+        if(newTeamName.length < TEAM_NAME_LENGHT_MIN_LIMIT){
+            $.notify("Sorry, The name for the team is to short");
+            return;
+        }else if (newTeamName.length > TEAM_NAME_LENGHT_MAX_LIMIT){
+            $.notify("Sorry, The name for the team is to long");
+            return;
+        }
+
+        // getting project id and team id in order to make the request
+        const projectId = $(PROJECT_ID).val();
+        const teamId =  $(CURRENT_SELECTED_TEAM).val();
+
+        // check data
+        if (_.isUndefined(projectId) || _.isEmpty(projectId) || _.isUndefined(teamId) || _.isEmpty(teamId)){
+            $.notify("Sorry, There was a problem getting information for the team. Please later");
+            return;
+        }
+
+        const API_LINK_EDIT_TEAM = `/dashboard/api/${projectId}/editTeam/${teamId}`
+
+        let response_error = undefined;
+        const response = await make_post_request(API_LINK_EDIT_TEAM, {name: newTeamName}).catch(err => {
             response_error = err;
         });
 
-        // Success message
         if (response){
 
-            // by default, remove all disable elements
-            removeAllDisableAttr(SELECT_USERS_PROJECT_INPUT);
+            // update row with team name
+            $(`tr#${teamId} .row-team-name`).text(newTeamName);
 
-            // clean the table
-            $(`${MANAGE_TABLE_ID} > tbody`).empty();
-            
-            // in case response.users is empty
-            if (_.isEmpty(response.users)){
-                $.notify("It looks like this team does not have any user assigned yet", "error");
-                return;
-            }
+            // update modal for delete team 
+            $(`${DELETE_TEAM_SELECT_INPUT} option[value="${teamId}"]`).text(newTeamName);
 
-            // add the users to the table
-            for (let index = 0; index < response.users.length; index++) {
-                const user = response.users[index];
-                addUserToTable(user);
-                // add a disable since this user is already in the team
-                addDisableAttr(SELECT_USERS_PROJECT_INPUT,  user.id);
-            }
-        }else{ // error messages
-            $.notify(response_error.data.responseText, "error");
+            $.notify(response.msg, "success");
+
+        }else{
+            $.notify(response_error.data.responseJSON.msg, "error");
         }
 
+    });
+
+    // when the modal is open, populate the name of the team in the input field. 
+    $(document).on("click", OPEN_EDIT_TEAM_MODAL, function(){
+
+        let tableRow = $(this).parent().parent();
+
+        const teamId = $(tableRow).attr("id");
+
+        // getting team name
+        let teamName = $(tableRow).find(ROW_TEAM_NAME).text().trim() || "";
+
+        $(EDIT_TEAM_NAME_INPUT).val(teamName);
+
+        // since this is to open the modal. update the hidden input in order to get the team id
+        $(CURRENT_SELECTED_TEAM).val(teamId);
     });
 
 });

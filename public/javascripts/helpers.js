@@ -883,7 +883,7 @@ function update_html(currentPage, updateType, valueToUpdate, inputType, others=n
             if (inputType === UPDATE_INPUTS.TEAM){
                 // work item
                 updateSelectOption(WORK_ITEM["team"], updateType, valueToUpdate);
-                updateSelectOption(TEAM_SELECT_INPUT_ID, updateType, valueToUpdate);
+                updateSelectOption(DELETE_TEAM_SELECT_INPUT, updateType, valueToUpdate);
 
                 // sprint modal
                 updateSelectOption(SPRINT_CREATE_MODAL_TEAM_INPUT, updateType, valueToUpdate);
@@ -916,7 +916,7 @@ function update_html(currentPage, updateType, valueToUpdate, inputType, others=n
             }
 
             if (inputType === UPDATE_INPUTS.TEAM){
-                updateSelectOption(TEAM_SELECT_INPUT_ID, updateType, valueToUpdate);
+                updateSelectOption(DELETE_TEAM_SELECT_INPUT, updateType, valueToUpdate);
             } 
             
             if (inputType === UPDATE_INPUTS.SPRINT){
@@ -942,7 +942,7 @@ function update_html(currentPage, updateType, valueToUpdate, inputType, others=n
             updateSelectOption(MODAL_REMOVE_USER_INPUT, updateType, valueToUpdate);
 
             updateSelectOption(WORK_ITEM["team"], updateType, valueToUpdate);
-            updateSelectOption(TEAM_SELECT_INPUT_ID, updateType, valueToUpdate);
+            updateSelectOption(DELETE_TEAM_SELECT_INPUT, updateType, valueToUpdate);
 
             // sprint modal
             updateSelectOption(SPRINT_CREATE_MODAL_TEAM_INPUT, updateType, valueToUpdate);
@@ -996,7 +996,7 @@ function update_html(currentPage, updateType, valueToUpdate, inputType, others=n
                 updateSelectOption(SPRINT_DELETE_MODAL_SELECT_TEAM, updateType, valueToUpdate);               
                 updateSelectOption(SPRINT_CREATE_MODAL_TEAM_INPUT, updateType, valueToUpdate);
                 updateSelectOption(WORK_ITEM["team"], updateType, valueToUpdate);
-                updateSelectOption(TEAM_SELECT_INPUT_ID, updateType, valueToUpdate);
+                updateSelectOption(DELETE_TEAM_SELECT_INPUT, updateType, valueToUpdate);
             }   
             break;
         default:
@@ -1627,4 +1627,24 @@ function getRandomString(length) {
  */
 function getKeyByValue(element, value){
     return _.findKey(element, val => val === value);
+}
+
+/**
+ * Show a bounce error animation in a input element
+ * @param {Object} selector - Element container
+ * @param {Number} seconds - number of seconds to show the animation. Default is one second
+ */
+ function showErrorBounceAnimation(selector, seconds=1){
+
+    // since setTimeOut works on miliseconds
+    seconds = seconds * 1000;
+
+    // change the css for the operator 
+    $(selector).addClass("bounce");
+
+    setTimeout(function() {
+        //remove the class so animation can occur as many times as user triggers event, delay must be longer than the animation duration and any delay.
+        $(selector).removeClass("bounce");
+    }, seconds); 
+
 }

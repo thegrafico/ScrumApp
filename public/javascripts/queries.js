@@ -557,24 +557,3 @@ function addQueryRow(){
     $(SELECT_CHANGE_ARROW).select2();
 }
 
-
-/**
- * Show a bounce error animation in a input element
- * @param {Object} selector - Element container
- * @param {Number} seconds - number of seconds to show the animation. Default is one second
- */
-function showErrorBounceAnimation(selector, seconds=1){
-
-    // since setTimeOut works on miliseconds
-    seconds = seconds * 1000;
-
-    // change the css for the operator 
-    $(selector).addClass("bounce");
-
-    setTimeout(function() {
-        //remove the class so animation can occur as many times as user triggers event, delay must be longer than the animation duration and any delay.
-        $(selector).removeClass("bounce");
-    }, seconds); 
-
-}
-

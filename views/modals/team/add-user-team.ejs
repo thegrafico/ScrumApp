@@ -15,6 +15,21 @@
                 <div class="modal-body">
 
                     <fieldset>
+
+                        <div class="form-group">
+                            <label for="userEmail">Team:</label>
+                            <select 
+                                class="custom-select my-custon-select input-border"
+                                name="projectUsers" 
+                                id="project-user-select" 
+                                aria-label="project-user">
+                                <option value="0" selected disabled>Select Team</option>
+                                <% for (let team of projectTeams) { %>
+                                    <option value="<%=team['_id']%>"><%=team['name']%></option>
+                                <% } %>
+                            </select>
+                        </div>
+
                         <div class="form-group">
                             <label for="userEmail">User:</label>
                             <select 
@@ -24,16 +39,6 @@
                                 aria-label="project-user">
                                 <option value="0" selected disabled>Select an user</option>
                                 
-                                <% for (let i = 0; i < projectUsers.length; i++) { %>
-
-                                    <% if (userIds.includes(projectUsers[i].id.toString())){ %>
-                                        <option value="<%=projectUsers[i]['id']%>" disabled><%=projectUsers[i]['name']%></option>
-
-                                    <% }else{ %>    
-                                        <option value="<%=projectUsers[i]['id']%>"><%=projectUsers[i]['name']%></option>
-                                    <% } %>
-
-                                <% } %>
                             </select>
                         </div>
                         <span class="text-danger" id="createUserErrorMessage"></span>

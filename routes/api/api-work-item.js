@@ -873,4 +873,45 @@ router.post("/api/:id/moveWorkItemsToSprint/:teamId", middleware.isUserInProject
     res.status(200).send(response);
 });
 
+/**
+ * METHOD: POST - REMOVE WORK ITEMS FROM PROJECT
+ */
+router.post("/api/:id/removeWorkItems", middleware.isUserInProject, async function (req, res) {
+    
+    console.log("Getting request to remove work items...");
+    
+    const projectId = req.params.id;
+    
+    let  { workItemsId } = req.body; // expected array
+
+    // is array and not empty
+    if (_.isArray(workItemsId) && !_.isEmpty(workItemsId)){
+        
+        // remove the work item from the proyect
+        let error_removing = false;
+        for (let workItemId of workItemsId){
+            
+            // remove from db
+            const result = await workItemCollection.findOneAndDelete({projectId: projectId, _id: workItemId}).catch(
+                err => console.error("Error removing work item: ", err)
+            );
+            
+            if (_.isNull(result) || _.isUndefined(result)){
+                error_removing = true;
+            }
+        }
+
+        if (error_removing){
+            res.status(400).send("Sorry, There was a problem removing work items. Please try later.");
+            return;
+        }
+        console.log("Work items removed...");
+    }else{
+        res.status(400).send("Sorry, We cannot find any work item to remove. Please try later.");
+        return;
+    }
+    let item_str = workItemsId.length === 1 ? "item" : "items";
+    res.status(200).send(`Successfully removed work ${item_str}`);
+});
+
 module.exports = router;
