@@ -31,6 +31,15 @@ const OPEN_EDIT_TEAM_MODAL = ".btn-update-team-modal-open";
 const EDIT_TEAM_NAME_INPUT = "#team-name-input";
 const BTN_SUBMIT_EDIT_TEAM = "#edit-team-btn-submit";
 
+// VIEW USER TEAMS
+const VIEW_TEAM_USERS_MODAL = "#view-team-users-modal";
+const VIEW_TEAM_USERS_OPEN_MODAL = ".btn-view-user-modal-open";
+const CONTAINER_SHOW_USERS = "#containerTeamUsers";
+const FILTER_TEAM_USERS_INPUT = "#filter-team-users";
+const ROW_TEAM_USER_NAME = ".team-user-name-row";
+const ROW_TEAM_USER_CONTAINER = ".show-team-users-row-modal";
+const REMOVE_USER_FROM_TEAM_TRASH_BTN = ".trashIconRemoveUserFromTeam"
+
 /**
  * This function is fire as soon as the DOM element is ready to process JS logic code
  * Same as $(document).ready()...
@@ -298,7 +307,7 @@ $(function (){
 
     });
 
-    // when the modal is open, populate the name of the team in the input field. 
+    // Edit team name
     $(document).on("click", OPEN_EDIT_TEAM_MODAL, function(){
 
         let tableRow = $(this).parent().parent();
@@ -314,7 +323,139 @@ $(function (){
         $(CURRENT_SELECTED_TEAM).val(teamId);
     });
 
+    // ============== VIEW USERS ==============
+
+    // before the modal is open
+    $(document).on("click", VIEW_TEAM_USERS_OPEN_MODAL, async function(){
+
+        let tableRow = $(this).parent().parent();
+
+        const teamId = $(tableRow).attr("id");
+
+        // send the request to get all users by the team
+        const projectId = $(PROJECT_ID).val();
+
+        // check data
+        if (_.isUndefined(projectId) || _.isEmpty(projectId) || _.isUndefined(teamId) || _.isEmpty(teamId)){
+            $.notify("Sorry, There was a problem getting information for the team. Please later");
+            return;
+        }
+
+        // update the current team selected
+        $(CURRENT_SELECTED_TEAM).val(teamId);
+
+        const API_LINK_GET_TEAM_USERS = `/dashboard/api/${projectId}/getTeamUsers/${teamId}`
+
+        let response_error = undefined;
+        const response = await make_get_request(API_LINK_GET_TEAM_USERS,).catch(err => {
+            response_error = err;
+        });
+
+        if (!response_error){
+
+            if (response["users"].length > 0){
+                addUserToModal(response["users"]);
+            }else{
+                $.notify("Sorry, it seems this team does not have any user yet", "error");
+                return;
+            }
+
+        }else{
+            $.notify(response_error.data.responseJSON.msg, "error");
+        }
+
+    });
+
+    // -- Search user in modal
+    // When the modal is visible to the user
+    $(VIEW_TEAM_USERS_MODAL).on("shown.bs.modal", function(){
+        $(FILTER_TEAM_USERS_INPUT).focus();
+    });
+
+    // when the user type something in the search
+    $(FILTER_TEAM_USERS_INPUT).on("keyup", function(){
+        let searchInput = $(this).val().toLowerCase();
+
+        $(ROW_TEAM_USER_NAME).each(function(){
+            let rowText = $(this).text().trim().toLowerCase();
+
+            let parentElement = $(this).parent();
+
+            let isTextInRow = rowText.includes(searchInput);
+
+            if (isTextInRow){
+                $(parentElement).removeClass("d-none");
+            }else{
+                $(parentElement).addClass("d-none");
+            }
+        });
+    });
+
+    // remove user from team
+    $(document).on("click", REMOVE_USER_FROM_TEAM_TRASH_BTN, async function(){
+        let userId = $(this).parent().parent().attr("id");
+
+        // getting project id and team id in order to make the request
+        const projectId = $(PROJECT_ID).val();
+        const teamId =  $(CURRENT_SELECTED_TEAM).val();
+
+        // check data
+        if (_.isUndefined(projectId) || _.isEmpty(projectId) || _.isUndefined(teamId) || _.isEmpty(teamId)){
+            $.notify("Sorry, There was a problem getting information for the team. Please later");
+            return;
+        }
+
+        let request_data = {
+            userIds: [userId],
+            teamId: teamId,
+        };
+
+        const API_LINK_DELETE_USER_FROM_TEAM = `/dashboard/api/${projectId}/removeUsersFromTeam`;
+
+        let response_error = undefined;
+        const response = await make_post_request(API_LINK_DELETE_USER_FROM_TEAM, request_data).catch(err => {
+            response_error = err;
+        });
+
+        if (response){
+
+            $.notify(response.msg, "success");
+
+            // change current number of user in UI
+            $(`tr#${teamId} .column-view-team-users button`).text(response["numberOfUsers"]);
+
+        }else{
+            $.notify(response_error.data.responseJSON.msg, "error");
+        }
+ 
+    });
+
+    
+
 });
+
+function addUserToModal(users){
+
+    // clan the container
+    $(CONTAINER_SHOW_USERS).empty();
+
+    for (let user of users){
+        let divRow = `
+        <div class="row show-team-users-row-modal" id="${user['id']}">
+        
+            <div class="col-10 colUserName team-user-name-row">
+                <span>- ${user["fullName"]}</span>
+            </div>
+
+            <div class="col-2 my-auto">
+                <i class="fas fa-trash trashIconRemoveUserFromTeam blockColor"></i>
+            </div>
+        </div>`;
+
+        // add to the div
+        $(CONTAINER_SHOW_USERS).append(divRow);
+    }
+}
 
 
 /**

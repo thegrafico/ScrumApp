@@ -81,7 +81,7 @@
                                     <button 
                                         class="btn btn-warning edit-user-team-btn btn-view-user-modal-open"  
                                         data-toggle="modal"
-                                        data-target="">
+                                        data-target="#view-team-users-modal">
                                         <%=team["users"].length%>
                                     </button>
                                 </td>
@@ -110,6 +110,8 @@
 
     <%- include('modals/team/add-user-team'); %>
     <%- include('modals/team/edit-team'); %>
+    <%- include('modals/team/view-team-users'); %>
+
 
 
 <%- include('modals/footer'); %>

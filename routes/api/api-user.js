@@ -8,7 +8,10 @@ const moment                    = require("moment");
 const _                         = require("lodash");
 let router                      = express.Router();
 
-const {USER_PRIVILEGES} = require("../../dbSchema/Constanst");
+const {    
+    USER_PRIVILEGES,
+    sortByKey,
+} = require("../../dbSchema/Constanst");
 
 /**
  * METHOD: GET - fetch all users from project
@@ -45,6 +48,7 @@ router.get("/api/:id/getTeamUsers/:teamId", middleware.isUserInProject, async fu
     
     const projectId = req.params.id;
     const teamId = req.params.teamId;
+    let response = {};
 
     // is a string
     if (_.isString(projectId) && _.isString(teamId)){
@@ -55,7 +59,8 @@ router.get("/api/:id/getTeamUsers/:teamId", middleware.isUserInProject, async fu
         });
 
         if (!project){
-            res.status(400).send("Sorry, There was a problem getting Project information. Please try later.");
+            response["msg"] = "Sorry, There was a problem getting Project information. Please try later.";
+            res.status(400).send(response);
             return;
         }
 
@@ -63,21 +68,27 @@ router.get("/api/:id/getTeamUsers/:teamId", middleware.isUserInProject, async fu
             console.error("Error getting the users from project: ", err);
         });
 
-        if (_.isUndefined(users)){
-            res.status(400).send("Oops, There was a problem getting the users from the project.");
+        if (_.isUndefined(users) || _.isNull(users)){
+            response["msg"] = "Oops, There was a problem getting the users from the project.";
+            res.status(400).send(response);
             return;
         }
-
 
         // just sent the needed information to the frontend
         users = users.map( function (each) {
             return {"fullName": each["fullName"], "email": each["email"], "id": each["_id"]};
         });
 
+        // sort users
+        users = sortByKey(users, "fullName");
+
+        console.log(users);
+
         res.status(200).send({msg: "Success", users: users});
         return;
     }else{
-        res.status(400).send("Oops, it looks like this is an invalid team.");
+        response["msg"] = "Oops, it looks like this is an invalid team.";
+        res.status(400).send(response);
         return;
     }
 });
@@ -408,6 +419,8 @@ router.post("/api/:id/removeUsersFromTeam", middleware.isUserInProject, async fu
 
     let item_str = userIds.length === 1 ? "user" : "users";
     response["msg"] = `Successfully removed ${item_str} from team`;
+    response["numberOfUsers"] = team.users.length;
+
     res.status(200).send(response);
 });
 

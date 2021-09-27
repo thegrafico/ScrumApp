@@ -299,6 +299,34 @@ module.exports.sortByDate = (elements, dateKey, dateFormat=SPRINT_FORMAT_DATE, h
 }
 
 /**
+ * 
+ * @param {Array} elements - array of objects 
+ * @param {String} key - key to sort
+ * @param {String} how  - asc, desc
+ * @param {String} valueType  - string || number
+ * @returns 
+ */
+module.exports.sortByKey = (elements, key, how="asc", valueType = "string") => {
+
+    if (how === "asc"){
+
+        if (valueType === "string"){
+            return elements.sort((a, b) => a[key].toLowerCase() > b[key].toLowerCase() ? 1 : -1);
+        }
+
+        return elements.sort((a, b) => a[key] > b[key] ? 1 : -1);
+    }
+
+
+    if (valueType === "string"){
+        return elements.sort((a, b) => a[key].toLowerCase() < b[key].toLowerCase() ? 1 : -1);
+    }
+
+    return elements.sort((a, b) => a[key] < b[key] ? 1 : -1);
+
+}
+
+/**
  * Get number of elements in the array equal to the value
  * @param {Array} data - array with the elements
  * @param {Any} value - Value to look on the array
