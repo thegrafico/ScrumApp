@@ -279,9 +279,10 @@ projectSchema.methods.addUserToTeam = async function(userId, teamId) {
 /**
  * get all users for the team
  * @param {String} teamId - id of the team to add the user
+ * @param {Boolean} getUsersNotInTeam - if true, get all users not in the team
  * @returns 
  */
-projectSchema.methods.getUsersForTeam = async function(teamId) {
+projectSchema.methods.getUsersForTeam = async function(teamId, getUsersNotInTeam=false) {
 
     if (!this.isTeamInProject(teamId)){
         return null;
@@ -296,11 +297,21 @@ projectSchema.methods.getUsersForTeam = async function(teamId) {
     if (_.isUndefined(team) || team.users.length == 0){ return [];}
 
     // getting the users in the team
-    const UserInfo = await userCollection.find({"_id": {$in: team.users}}).catch(err => {
-        console.error(err);
-    }) || [];
+    let usersInfo = [];
 
-    return UserInfo;
+    if (getUsersNotInTeam){
+
+        usersInfo = await userCollection.find({"_id": {$nin: team.users}}).catch(err => {
+            console.error(err);
+        }) || [];
+    }else{
+        usersInfo = await userCollection.find({"_id": {$in: team.users}}).catch(err => {
+            console.error(err);
+        }) || [];
+    }
+    
+
+    return usersInfo;
 };
 
 

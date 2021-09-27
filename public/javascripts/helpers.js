@@ -1634,7 +1634,7 @@ function getKeyByValue(element, value){
  * @param {Object} selector - Element container
  * @param {Number} seconds - number of seconds to show the animation. Default is one second
  */
- function showErrorBounceAnimation(selector, seconds=1){
+function showErrorBounceAnimation(selector, seconds=1){
 
     // since setTimeOut works on miliseconds
     seconds = seconds * 1000;
@@ -1647,4 +1647,15 @@ function getKeyByValue(element, value){
         $(selector).removeClass("bounce");
     }, seconds); 
 
+}
+
+
+/**
+ * Add default value to select option
+ * @param {String} selectId - id of the select
+ * @param {String} text - Default text 
+ */
+function cleanAndaddDefaultToSelect(selectId, text){
+    $(selectId).empty();
+    updateSelectOption(selectId, UPDATE_TYPE.ADD, {"text": text, value: UNNASIGNED_VALUE}, true);
 }

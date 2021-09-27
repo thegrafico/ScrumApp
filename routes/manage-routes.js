@@ -87,7 +87,7 @@ router.get("/:id/manageTeam", middleware.isUserInProject, async function (req, r
 
     // verify is the project exists
     let projectInfo = await projectCollection.findById(projectId).catch(err => {
-        console.log("Error is: ", err.reason);
+        console.error("Error is: ", err.reason);
     });
 
     if (_.isUndefined(projectInfo) || _.isEmpty(projectInfo)) {
@@ -98,8 +98,6 @@ router.get("/:id/manageTeam", middleware.isUserInProject, async function (req, r
     // get all users for this project -> expected an array
     let users = await projectInfo.getUsers().catch(err => console.log(err)) || [];
     let teams = [...projectInfo.teams];
-
-    console.log(teams);
 
     // populating params
     let params = {

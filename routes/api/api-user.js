@@ -48,7 +48,11 @@ router.get("/api/:id/getTeamUsers/:teamId", middleware.isUserInProject, async fu
     
     const projectId = req.params.id;
     const teamId = req.params.teamId;
+    let { notInTeam } = req.query;
     let response = {};
+
+    // make variable a boolean
+    notInTeam = (notInTeam == "true");
 
     // is a string
     if (_.isString(projectId) && _.isString(teamId)){
@@ -64,7 +68,7 @@ router.get("/api/:id/getTeamUsers/:teamId", middleware.isUserInProject, async fu
             return;
         }
 
-        let users = await project.getUsersForTeam(teamId).catch(err => {
+        let users = await project.getUsersForTeam(teamId, notInTeam).catch(err => {
             console.error("Error getting the users from project: ", err);
         });
 
@@ -82,8 +86,6 @@ router.get("/api/:id/getTeamUsers/:teamId", middleware.isUserInProject, async fu
         // sort users
         users = sortByKey(users, "fullName");
 
-        console.log(users);
-
         res.status(200).send({msg: "Success", users: users});
         return;
     }else{
@@ -92,6 +94,8 @@ router.get("/api/:id/getTeamUsers/:teamId", middleware.isUserInProject, async fu
         return;
     }
 });
+
+
 
 // ========================================== POST ==========================================
 
@@ -295,16 +299,18 @@ router.post("/api/:id/deleteUsersFromProject", middleware.isUserInProject, async
 /**
  * METHOD: POST - ADD USERS TO TEAM
  */
- router.post("/api/:id/addUserToTeam", middleware.isUserInProject, async function (req, res) {
+router.post("/api/:id/addUserToTeam", middleware.isUserInProject, async function (req, res) {
     
     console.log("Getting request to add user to team...");
 
     const projectId = req.params.id;
     
     let  { teamId, userId } = req.body; 
+    let response = {};
 
     if (!_.isString(teamId) || _.isUndefined(userId) || !_.isString(userId) || _.isEmpty(userId)){
-        res.status(400).send("Sorry, there was an error with the request. Either cannot find the team or users to remove. ");
+        response["msg"] = "Sorry, there was an error with the request. Either cannot find the team or users to remove.";
+        res.status(400).send(response);
         return;
     }
 
@@ -313,14 +319,16 @@ router.post("/api/:id/deleteUsersFromProject", middleware.isUserInProject, async
     });
 
     if (!projectInfo){
-        res.status(400).send("Oops, There was a problem adding the user to the team. Please try later");
+        response["msg"] = "Oops, There was a problem adding the user to the team. Please try later";
+        res.status(400).send(response);
         return;
     }
 
     let team = projectInfo.teams.filter( tm => {return tm._id.toString() == teamId} )[0];
     
     if (team.users.includes(userId)){
-        res.status(200).send("User is already in project");
+        response["msg"] = "The user is already member of the team.";
+        res.status(200).send(response);
         return;
     }
 
@@ -332,25 +340,12 @@ router.post("/api/:id/deleteUsersFromProject", middleware.isUserInProject, async
     });
 
     if (!projectResponse){
-        res.status(400).send("Sorry, There was a problem adding the user to the team.");
+        response["msg"] = "Sorry, There was a problem adding the user to the team.";
+        res.status(400).send(response);
         return;
     }
-
-    let addedUser = await projectInfo.getUserName(userId).catch(err => {
-        console.error("Error getting the user: ", err);
-    });
-
-
-    let response = {msg: "Successfully added user to the team"};
-
-    // send the user in ordet to udate the html table
-    if (addedUser){
-        response["user"] = {
-            fullName: addedUser["fullName"], 
-            email: addedUser["email"], 
-            id: addedUser["_id"]
-        }
-    }
+    response["msg"] = "User was added to the team";
+    response["numberOfUsers"] = team.users.length;
 
     res.status(200).send(response);
 });

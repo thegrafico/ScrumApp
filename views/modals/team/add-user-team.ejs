@@ -1,12 +1,12 @@
 <!-- MODAL TO CREATE USER -->
-<div class="modal fade" id="create-user" tabindex="-1" role="dialog" aria-labelledby="create-user-title"
+<div class="modal fade" id="add-user-to-team-modal" tabindex="-1" role="dialog" aria-labelledby="create-user-title"
     aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
 
         <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="createUserTitle" style="width: 60%;">
-                        Add New Member <i class="fas fa-user-plus addUserIcon"></i> </h5> &nbsp; &nbsp;
+                        Add Team user <i class="fas fa-user-plus addUserIcon"></i> </h5> &nbsp; &nbsp;
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -17,13 +17,13 @@
                     <fieldset>
 
                         <div class="form-group">
-                            <label for="userEmail">Team:</label>
+                            <label for="addTeamUser">Team:</label>
                             <select 
                                 class="custom-select my-custon-select input-border"
-                                name="projectUsers" 
-                                id="project-user-select" 
-                                aria-label="project-user">
-                                <option value="0" selected disabled>Select Team</option>
+                                name="addTeamUser" 
+                                id="select-team-to-add-user" 
+                                aria-label="Team User">
+                                <option value="0" selected>Select Team</option>
                                 <% for (let team of projectTeams) { %>
                                     <option value="<%=team['_id']%>"><%=team['name']%></option>
                                 <% } %>
@@ -31,12 +31,13 @@
                         </div>
 
                         <div class="form-group">
-                            <label for="userEmail">User:</label>
+                            <label for="projectUsers">User:</label>
                             <select 
                                 class="custom-select my-custon-select input-border"
                                 name="projectUsers" 
-                                id="project-user-select" 
-                                aria-label="project-user">
+                                id="select-user-to-add-to-team" 
+                                aria-label="Users from project"
+                                disabled>
                                 <option value="0" selected disabled>Select an user</option>
                                 
                             </select>
@@ -47,8 +48,8 @@
                 </div>
 
                 <div class="modal-footer">
-                    <button type="btnCancelUser" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                    <button id="btnAddUserToTeam" class="btn btn-success">Add User</button>
+                    <button type="btnCancelUser" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button id="btnAddUserToTeam" class="btn btn-success">Add</button>
                 </div>
         </div>
 

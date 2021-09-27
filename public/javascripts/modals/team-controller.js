@@ -1,3 +1,4 @@
+
 // id of the form 
 const FORM_ID_CREATE_TEAM = "#createTeamForm";
 const CREATE_TEAM_MODAL_ID = ".create-team-modal";
@@ -16,7 +17,6 @@ const CLOSE_BTN_DELETE_TEAM = "#closeRemoveTeamBtn";
 const TEAM_NAME_LENGHT_MAX_LIMIT = 20;
 const TEAM_NAME_LENGHT_MIN_LIMIT = 3;
 
-const ADD_USER_TO_TEAM_BTN = "#btnAddUserToTeam";
 
 const SELECT_USERS_PROJECT_INPUT = "#project-user-select";
 
@@ -38,7 +38,14 @@ const CONTAINER_SHOW_USERS = "#containerTeamUsers";
 const FILTER_TEAM_USERS_INPUT = "#filter-team-users";
 const ROW_TEAM_USER_NAME = ".team-user-name-row";
 const ROW_TEAM_USER_CONTAINER = ".show-team-users-row-modal";
-const REMOVE_USER_FROM_TEAM_TRASH_BTN = ".trashIconRemoveUserFromTeam"
+const REMOVE_USER_FROM_TEAM_TRASH_BTN = ".trashIconRemoveUserFromTeam";
+
+// ADD USER TO TEAM
+const ADD_USER_TO_TEAM_MODAL = "#add-user-to-team-modal";
+const ADD_USER_TO_TEAM_BTN = "#btnAddUserToTeam";
+const SELECT_TEAM_TO_ADD_USER_INPUT = "#select-team-to-add-user";
+const SELECT_USER_TO_ADD_TO_TEAM_INPUT = "#select-user-to-add-to-team";
+
 
 /**
  * This function is fire as soon as the DOM element is ready to process JS logic code
@@ -50,6 +57,8 @@ $(function (){
     $(DELETE_TEAM_SELECT_INPUT).select2();
     $(SELECT_USERS_PROJECT_INPUT).select2();
     $(FILTER_BY_TEAM_MANAGE_INPUT).select2();
+    $(SELECT_TEAM_TO_ADD_USER_INPUT).select2();
+    $(SELECT_USER_TO_ADD_TO_TEAM_INPUT).select2();
 
     // BTN when the user submit the form information to create a new user
     $(CREATE_TEAM_SUBMIT_BTN).on("click", async function(event){
@@ -200,38 +209,6 @@ $(function (){
         }else{
             // TODO: response_error.data.responseJSON.msg?
             $.notify(response_error.data.responseJSON.msg, "error");
-        }
-    });
-
-    // ADD User to Team
-    $(ADD_USER_TO_TEAM_BTN).on("click", async function(){
-        const projectId = $(PROJECT_ID).val();
-        const teamId = $(FILTER_BY_TEAM_MANAGE_INPUT).val();
-
-        const userId = $(SELECT_USERS_PROJECT_INPUT).val();
-
-        if (_.isEmpty(userId) || !_.isString(userId)){
-            $.notify("Error getting user information", "error");
-            return;
-        }
-
-        const data = {"userId": userId, "teamId": teamId};
-
-        const API_LINK_ADD_USER_TO_TEAM = `/dashboard/api/${projectId}/addUserToTeam/`
-
-        let response_error = null;
-        const response = await make_post_request(API_LINK_ADD_USER_TO_TEAM, data).catch(err => {
-            response_error = err;
-        });
-
-        if (response){
-            $.notify(response.msg, "success");
-            
-            addDisableAttr(SELECT_USERS_PROJECT_INPUT,  userId);
-           
-            addUserToTable(response.user);
-        }else{
-            $.notify(response_error.data.responseText, "error");
         }
     });
 
@@ -420,9 +397,11 @@ $(function (){
         if (response){
 
             $.notify(response.msg, "success");
-
+            
             // change current number of user in UI
             $(`tr#${teamId} .column-view-team-users button`).text(response["numberOfUsers"]);
+
+            $(`div${ROW_TEAM_USER_CONTAINER}#${userId}`).remove();
 
         }else{
             $.notify(response_error.data.responseJSON.msg, "error");
@@ -430,6 +409,106 @@ $(function (){
  
     });
 
+
+    // ============== ADD USERS TO TEAM ==============
+
+    $(SELECT_TEAM_TO_ADD_USER_INPUT).on("change", async function(){
+        let teamId = $(this).val();
+
+        if (_.isUndefined(teamId) || _.isNull(teamId)){
+            $.notify("Sorry, There is a problem getting the team information");
+            return;
+        }
+
+        // just in case the team is the unnasiged
+        if (teamId == UNNASIGNED_VALUE){
+            return;
+        }
+
+        // every time the user changes the team, clean and add default
+        cleanAndaddDefaultToSelect(SELECT_USER_TO_ADD_TO_TEAM_INPUT, "Select an user");
+
+        // Remove the disabled attribute
+        $(SELECT_USER_TO_ADD_TO_TEAM_INPUT).attr("disabled", true);
+
+        const projectId = $(PROJECT_ID).val();
+
+        const API_LINK_GET_USERS_NOT_IN_TEAM = `/dashboard/api/${projectId}/getTeamUsers/${teamId}?notInTeam=true`;
+        let response_error = undefined;
+        const response = await make_get_request(API_LINK_GET_USERS_NOT_IN_TEAM).catch(err => {
+            response_error = err;
+        });
+
+        if (!response_error){
+        
+            // check if empty
+            if (_.isEmpty(response["users"])){
+                $.notify("Oops, it seems there are not users to add to this team.");
+                return;
+            }
+
+            // Remove the disabled attribute
+            $(SELECT_USER_TO_ADD_TO_TEAM_INPUT).attr("disabled", false);
+
+            // add the team to the current select option
+            for (let user of response["users"]){
+                let optionValue = {text: user["fullName"], value: user["id"]};
+                updateSelectOption(SELECT_USER_TO_ADD_TO_TEAM_INPUT, UPDATE_TYPE.ADD, optionValue);
+            }
+        }else{
+            $.notify(response_error.data.responseJSON.msg, "error");
+        }
+
+    });
+
+    // SUBMIT TO ADD THE USER 
+    $(ADD_USER_TO_TEAM_BTN).on("click", async function(){
+        const teamId = $(SELECT_TEAM_TO_ADD_USER_INPUT).val();
+        const userId = $(SELECT_USER_TO_ADD_TO_TEAM_INPUT).val();
+
+        // check data
+        if (!_.isString(teamId) || _.isEmpty(teamId) || !_.isString(userId) || _.isEmpty(userId)){
+            $.notify("Oops, There was a problem getting the information to add the user to the team. Please try again.");
+            return;
+        }
+
+        const projectId = $(PROJECT_ID).val();
+        const API_LINK_ADD_USER_TO_TEAM = `/dashboard/api/${projectId}/addUserToTeam/`
+
+        const data = {"userId": userId, "teamId": teamId};
+
+        let response_error = null;
+        const response = await make_post_request(API_LINK_ADD_USER_TO_TEAM, data).catch(err => {
+            response_error = err;
+        });
+
+
+        if (!response_error){
+
+            $.notify(response["msg"], "success");
+
+            // update number of users for the team
+            $(`tr#${teamId} .column-view-team-users button`).text(response["numberOfUsers"]);
+
+            // remove user from the select option
+            updateSelectOption(SELECT_USER_TO_ADD_TO_TEAM_INPUT, UPDATE_TYPE["DELETE"], userId);
+        }else{
+            $.notify(response_error.data.responseJSON.msg, "error");
+        }
+    }); 
+
+    // on open modal to add the user to the team
+    $(ADD_USER_TO_TEAM_MODAL).on("shown.bs.modal", function(){
+
+        // change the team to the default
+        updateSelectOption(SELECT_TEAM_TO_ADD_USER_INPUT, UPDATE_TYPE["CHANGE"], "0");
+
+        // every time the modal is open, clean and add default
+        cleanAndaddDefaultToSelect(SELECT_USER_TO_ADD_TO_TEAM_INPUT, "Select an user");
+
+        // Remove the disabled attribute
+        $(SELECT_USER_TO_ADD_TO_TEAM_INPUT).attr("disabled", true);
+    });
     
 
 });
