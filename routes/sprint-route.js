@@ -27,7 +27,6 @@ const {
     PRIORITY_POINTS,
     WORK_ITEM_STATUS,
     PAGES,
-    SPRINT_FORMAT_DATE,
     sortByDate,
     getNumberOfElements,
     getNumberOfDays,
@@ -36,6 +35,7 @@ const {
     sortByOrder,
     setSprintOrder,
     updateSprintOrderIndex,
+    getSprintDateStatus
 } = require('../dbSchema/Constanst');
 
 // ===================================================
@@ -72,6 +72,7 @@ router.get("/:id/sprint/review", middleware.isUserInProject, async function (req
     let workItems = [];
     let activeSprint = undefined;
     let activeSprintId = undefined;
+    let sprintStatus = undefined;
 
     // if there is a least one team.
     if (!_.isNull(userPreferedTeam)){
@@ -82,12 +83,11 @@ router.get("/:id/sprint/review", middleware.isUserInProject, async function (req
         }) || [];
 
         // check sprint
-        if (!_.isEmpty(sprints) || !_.isUndefined(sprints) || !_.isNull(sprints)){
+        if (_.isArray(sprints) && !_.isEmpty(sprints)){
             
-            let currentDate = moment(new Date()); // now
-
+            // let currentDate = moment(new Date()); // now
             // TODO: look a better place for this
-            SprintCollection.updateSprintsStatus(projectId, currentDate);
+            // SprintCollection.updateSprintsStatus(projectId, currentDate);
 
             // activeSprint = await SprintCollection.getSprintById(projectId, "60fcf6679dd6b4759dbcbe43").catch(err =>{
             //     console.error(err);
@@ -96,19 +96,19 @@ router.get("/:id/sprint/review", middleware.isUserInProject, async function (req
             activeSprint = SprintCollection.getActiveSprint(sprints);
 
             // check we have an active sprint
-            if (!_.isNull(activeSprint) || !_.isUndefined(activeSprint)){
+            if (!_.isNull(activeSprint) && !_.isUndefined(activeSprint)){
                 activeSprintId = activeSprint["_id"];
             }
 
             if (activeSprintId){
 
+                sprintStatus = getSprintDateStatus(activeSprint["startDate"], activeSprint["endDate"]);
+
                 // get the work items by the sprint
                 workItems = await workItemCollection.find({projectId: projectId, _id: {$in: activeSprint.tasks}}).catch(err => {
                     console.error("Error getting work items: ", err)
                 }) || [];
-
             }
-
         }
     }
 
@@ -116,6 +116,7 @@ router.get("/:id/sprint/review", middleware.isUserInProject, async function (req
     let startDate = '', endDate = '';
     let pointsHistory = [];
     let initalSprintPoints = 0;
+    let capacity = 0;
 
     if (activeSprint){
         startDate = activeSprint["startDate"];
@@ -123,6 +124,7 @@ router.get("/:id/sprint/review", middleware.isUserInProject, async function (req
         pointsHistory = activeSprint["pointsHistory"];
         initalSprintPoints = activeSprint["initialPoints"];
         numberOfDays  = getNumberOfDays(startDate, endDate);
+        capacity = activeSprint["capacity"];
     }
 
     let statusReport = {
@@ -132,7 +134,7 @@ router.get("/:id/sprint/review", middleware.isUserInProject, async function (req
         numberOfWorkItems: workItems.length, 
         numberOfWorkItemsCompleted: getNumberOfElements(workItems, WORK_ITEM_STATUS["Completed"]),
         numberOfWorkItemsIncompleted: getNumberOfElements(workItems, WORK_ITEM_STATUS["Completed"], true),
-        capacity: users.length,
+        capacity: capacity,
         numberOfDays: numberOfDays,
         startDate: startDate,
         endDate: endDate,
@@ -160,6 +162,8 @@ router.get("/:id/sprint/review", middleware.isUserInProject, async function (req
         "projectTeams": teams,
         "sprints": sprints,
         "activeSprintId": activeSprintId,
+        "isActiveSprint": (activeSprintId != undefined),
+        "isFutureSprint": (sprintStatus === SPRINT_STATUS["Coming"]),
         "addUserModal": true,
         "workItemType": WORK_ITEM_ICONS,
         "workItems": workItems,
@@ -239,7 +243,7 @@ router.get("/:id/sprint/board", middleware.isUserInProject, async function (req,
             let currentDate = moment(new Date()); // now
 
             // TODO: look a better place for this
-            SprintCollection.updateSprintsStatus(projectId, currentDate);
+            // SprintCollection.updateSprintsStatus(projectId, currentDate);
             
             if (!sprintId){
                 activeSprint = SprintCollection.getActiveSprint(sprints);
@@ -378,7 +382,7 @@ router.get("/:id/planing/sprint", middleware.isUserInProject, async function (re
             let currentDate = moment(new Date()); // now
 
             // TODO: look a better place for this
-            SprintCollection.updateSprintsStatus(projectId, currentDate);
+            // SprintCollection.updateSprintsStatus(projectId, currentDate);
             
             if (!sprintId){
                 activeSprint = SprintCollection.getActiveSprint(sprints);

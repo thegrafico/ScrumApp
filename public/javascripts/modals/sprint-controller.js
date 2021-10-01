@@ -30,6 +30,8 @@ const CLOSE_MODAL_SPRINT_BTN = ".close-sprint-modal";
 
 const MODAL_DELETE_SPRINT_SUBMIT_BTN = "#modal-delete-sprint-submit-btn";
 
+
+
 $(function () {
 
     // getting the amount of days of the sprint - default

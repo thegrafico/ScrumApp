@@ -103,5 +103,27 @@
     overflow-y: scroll !important;
 } */
 
+.disabledInputColor:disabled{
+    color: black !important;
+    font-weight: bold;
+}
 
+#active-sprint-capacity:disabled:hover, .disabledInputColor:hover{
+    cursor:not-allowed;
+}
+
+#select2-new-active-sprint-container{
+    background-color: white !important;
+    color: #444 !important;
+    font-weight: bold;
+    padding-top: .1rem;
+    padding-bottom: .1rem;
+    border-radius: .2rem;
+}
+
+#select2-new-active-sprint-container:hover{
+    border: none;
+    border-radius: .2rem;
+
+}
 

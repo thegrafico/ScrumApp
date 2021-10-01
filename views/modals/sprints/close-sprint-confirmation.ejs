@@ -1,0 +1,57 @@
+<div class="modal fade" id="close-sprint-confirmation-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Closing Sprint</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <fieldset>
+
+                    <div class="form-group">
+
+                        <div class="form-group">
+                            <label for="currentActiveSprint">Closing Sprint:</label>
+                            <input type="text" id="current-active-sprint-input" disabled class="form-control disabledInputColor" name="currentActiveSprint" aria-describedby="Active Sprint" placeholder="Current Sprint">
+                        </div>
+
+
+                        <div class="form-group">
+
+                            <label for="teamUsers">Select New Active Sprint:</label><br>
+                            <select class="custom-select my-custon-select" name="newACtiveSprint" id="new-active-sprint">
+                                <option value='0' selected>Select a sprint.</option>
+                                <% for (let sprint of sprints) { %>
+
+                                    <% if (sprint["_id"] == "0"){ continue;} %>
+
+                                    <option
+                                        class="selectedSprint"
+                                        data-name="<%=sprint['name']%>"
+                                        data-sdate="<%=sprint['startDate']%>"
+                                        data-edate="<%=sprint['endDate']%>"
+                                        value="<%=sprint['_id']%>"> <%=sprint['name']%> : <%=sprint['startDateFormated']%> - <%=sprint['endDateFormated']%>
+                                    </option>
+                                <%}%>
+                            </select>
+                        </div>
+
+
+                        <div class="form-group">
+                            <label for="currentActiveSprint">Active Sprint Capacity Points:</label>
+                            <input type="text" id="active-sprint-capacity" disabled class="form-control" name="activeSprintCapacity" aria-describedby="Sprint Capacity" placeholder="0">
+                        </div>
+                    </div>
+
+                </fieldset>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                <button type="button" id="close-sprint-submit-btn" class="btn btn-primary">Submit</button>
+            </div>
+        </div>
+    </div>
+</div>

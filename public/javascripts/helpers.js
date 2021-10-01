@@ -746,11 +746,23 @@ function cleanSelect(selectId){
  * @param updateType.DELETE remove the value from the select
  * @param valueToUpdate.value - value to add or remove
  * @param valueToUpdate.text - text value for select
+ * @param {Object} addDataAttribute Add attributes to the select option
+ * 
  */
-function updateSelectOption(selectId, updateType, valueToUpdate, selected=false){
+function updateSelectOption(selectId, updateType, valueToUpdate, selected=false, addDataAttribute=null){
     
     if (updateType == UPDATE_TYPE.ADD){
         $(selectId).append(new Option(valueToUpdate.text, valueToUpdate.value, false, selected));
+
+        // in case the select option has a data attribute
+        if (addDataAttribute){
+
+            // adding attribute to the select option just created
+            for (let key of Object.keys(addDataAttribute)){
+                $(`${selectId} option[value=${valueToUpdate.value}]`).attr(`data-${key}`, addDataAttribute[key]);
+            }
+        }
+
     }else if(updateType == UPDATE_TYPE.DELETE){
         $(`${selectId} option[value=${valueToUpdate}]`).remove();
     }else if(updateType == UPDATE_TYPE.CHANGE){
@@ -762,14 +774,24 @@ function updateSelectOption(selectId, updateType, valueToUpdate, selected=false)
 /**
  * Show a popup message at the top of the element
  * @param {String} selector id or class of the element
- * @param {*} message - message to show
- * @param {*} style - style class ("success" | "error" | "warning")
+ * @param {String} message - message to show
+ * @param {String} style - style class ("success" | "error" | "warning")
+ * @param {Number} duration - duration in seconds
  */
-function showPopupMessage(selector, message, style="error", position="right"){
-    $(selector).notify(
-        message, 
-        { position:position, autoHide: true, clickToHide: true, className: style}
-    );
+function showPopupMessage(selector, message, style="error", position="right", duration=null){
+
+    let params = { 
+        position:position, 
+        autoHide: true, 
+        clickToHide: true, 
+        className: style
+    };
+
+    if (duration){
+        params["autoHideDelay"] = duration * 1000;
+    }
+
+    $(selector).notify(message, params);
 }
 
 
@@ -1658,4 +1680,25 @@ function showErrorBounceAnimation(selector, seconds=1){
 function cleanAndaddDefaultToSelect(selectId, text){
     $(selectId).empty();
     updateSelectOption(selectId, UPDATE_TYPE.ADD, {"text": text, value: UNNASIGNED_VALUE}, true);
+}
+
+/**
+ * Remove the disabled attribute from the select option
+ * @param {String} selector - Selector element
+ */
+function removeDisabledFromSelectOption(selector){
+    // in case there is a previus disabled option, remove the disabled attr
+    $(`${selector} option`).each(function(){
+        $(this).attr("disabled", false);
+    });
+}
+
+/**
+ * 
+ * @param {String} selector - select id or class
+ * @param {String} value - value of the option
+ * @param {Boolean} disabled - true if element should be disabled
+ */
+function setDisableAttrToSelectOption(selector, value, disabled){
+    $(`${selector} option[value=${value}]`).attr("disabled", disabled);
 }

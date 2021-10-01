@@ -24,6 +24,7 @@ const INCOMPLETED_STORY_POINTS = "#incompletedStoryPoitns";
 const CAPACITY_FOR_SPRINT = "#sprintCapacity";
 const DURATION_SPRINT = "#sprintDuration";
 const INITAL_POINTS = "#initalPoints";
+const IS_FUTURE_SPRINT = "#isFutureSprint";
 
 const REVIEW_CONTAINER = "#plots-container";
 const DATE_LABEL_FORMAT = "DD MMM";
@@ -41,11 +42,29 @@ const MODAL_REVIEW_WORK_ITEMS = "#review-work-items";
 const BTN_CLOSE_REVIEW_MODAL = ".close-review-modal";
 const MODAL_TITLE_REVIEW_WORK_ITEMS = "#title-review-work-items";
 
+// CLOSE ACTIVE SPRINT
+const OPEN_CLOSE_SPRINT_BTN = "#close-sprint-btn";
+const CLOSE_SPRINT_CONFIRMATION_MODAL = "#close-sprint-confirmation-modal";
+const CURRENT_ACTIVE_SPRINT = "#current-active-sprint-input";
+const NEW_ACTIVE_SPRINT_SELECT = "#new-active-sprint";
+const NEW_ACTIVE_SPRINT_CAPACITY_INPUT = "#active-sprint-capacity";
+const CLOSE_SPRINT_SUBMIT_BTN = "#close-sprint-submit-btn";
+const CLOSE_SPRINT_CONTAINER_BTN = "#close-sprint-button-container";
+
+// STARTING A SPRINT
+const START_SPRINT_MODAL = "#start-sprint-confirmation-modal"; 
+const OPEN_START_SPRINT_MODAL_BTN = "#start-sprint-btn";
+const START_SPRINT_MODAL_INPUT = "#start-sprint-modal-input";
+const START_SPRINT_CAPACITY_INPUT = "#start-sprint-capacity";
+const START_SPRINT_BTN_CONTAINER = "#start-sprint-button-container";
+const START_SPRINT_SUBMIT_BTN = "#start-sprint-submit-btn";
+
 $(function () {
 
     // ======= DEFAULTS =======
     $(FILTE_BY_TEAM_SPRINT_REVIEW).select2();
     $(FILTE_BY_SPRINT_REVIEW).select2();
+    $(NEW_ACTIVE_SPRINT_SELECT).select2();
 
     // default color of the text
     Chart.defaults.color = "white";
@@ -58,9 +77,10 @@ $(function () {
     // ====== PLOTS ======
     let burnChart = burndownChart(pointsHistory, DATE_LABEL_FORMAT);
     let barchart = breakDownChart(workItems);
-    // console.log(getBreakdownTypeData(workItems));
 
-
+    // ======== Run when page is loaded ========
+    checkIsFutureSprint();
+    
     // ============= FILTERS ============================
 
     // FILTER BY TEAM
@@ -75,26 +95,22 @@ $(function () {
         let response = await make_get_request(API_LINK_GET_SPRINT_REVIEW_BY_TEAM).catch(err=> {
             response_error = err;
         });
-        
-        // Success message
+    
+        // clean the sprint options for the new team
         removeAllOptionsFromSelect(FILTE_BY_SPRINT_REVIEW, null);
         cleanTable(WORK_ITEM_TABLE);
 
         // change the select on the work item
-        updateSelectOption(WORK_ITEM["team"], UPDATE_TYPE.CHANGE,teamId);
-        removeAllOptionsFromSelect(WORK_ITEM["sprint"], {"text": "Not sprint found", "value": "0"},true);
+        updateSelectOption(WORK_ITEM["team"], UPDATE_TYPE.CHANGE, teamId);
+        removeAllOptionsFromSelect(WORK_ITEM["sprint"], {"text": "Not sprint found", "value": UNNASIGNED_VALUE});
 
-        if (response){
+        // remove all sprints options for the select to close the sprint
+        removeAllOptionsFromSelect(NEW_ACTIVE_SPRINT_SELECT, {"text": "Select a sprint.", "value": UNNASIGNED_VALUE});
+
+        if (!response_error){
             
             // Check work items
-            if (_.isArray(response.workItems) && response.workItems.length > 0){
-                updateReviewPage(response.workItems, response["statusReport"], burnChart, barchart);
-            }else{
-                // hiding elements
-                $(GO_TO_SPRINT_LINK).addClass("d-none");
-                $(REVIEW_CONTAINER).addClass("d-none");
-                $.notify("This team does not have any work item yet.", "error");
-            }
+            updateReviewPage(response.workItems, response["statusReport"], burnChart, barchart);
 
             // Check sprint
             if (response.sprints.length > 0){
@@ -105,31 +121,38 @@ $(function () {
                     
                     let optionText = formatSprintText(sprint, isSelected);
 
-                    // add the options to the sprint
+                    // add the options to the sprint (Filter)
                     updateSelectOption(
                         FILTE_BY_SPRINT_REVIEW, 
                         UPDATE_TYPE.ADD,
                         {"value": sprint["_id"], "text":optionText},
-                        isSelected
+                        isSelected,
+                        {"name": sprint["name"], "sdate": sprint["startDate"], "edate": sprint["endDate"]}
                     );
 
-                    // updating create work item
+                    // add the options to the sprint (For Closing sprint)
                     updateSelectOption(
-                        WORK_ITEM["sprint"], 
+                        NEW_ACTIVE_SPRINT_SELECT, 
                         UPDATE_TYPE.ADD,
                         {"value": sprint["_id"], "text":optionText},
-                        isSelected
+                        false // make it default so the user needs to select a new sprint to be active
                     );
 
                     // feedback message in case the active sprint is a past sprint
                     if (isSelected && sprint["status"] != SPRINT_STATUS["Active"]){
                         let message = `This is a ${sprint["status"]} sprint.`;
-                        showPopupMessage(FILTE_BY_SPRINT_REVIEW, message);
+                        showPopupMessage(FILTE_BY_SPRINT_REVIEW, message, "error", "top");
                     }
                 }
             }else{ 
                 showPopupMessage(FILTE_BY_SPRINT_REVIEW, "Not Sprint found");
             }
+
+            // show the close sprint button if the sprint is the active sprint at the moment
+            showCloseSprintButton(response["statusReport"]["isActiveSprint"]);
+
+            // show the start sprint button is the current sprint is a future sprint and is not active yet.
+            showStartSprintButton(response["statusReport"]["isFutureSprint"],response["statusReport"]["isActiveSprint"]);
 
         }else{ // error messages
             $.notify(response_error.data.responseJSON.msg, "error");
@@ -144,28 +167,21 @@ $(function () {
         const sprintId = $(this).val();
 
         const {response, response_error} = await getSprintReview(sprintId, FILTE_BY_TEAM_SPRINT_REVIEW);
+        
+        if (!response_error){
 
-        if (response){
-            
-            // Check work items
-            if (_.isArray(response.workItems) && response.workItems.length > 0){
-                updateReviewPage(response.workItems, response["statusReport"], burnChart, barchart);
-            }else{
+            // show the close sprint button if the sprint is the active sprint at the moment
+            showCloseSprintButton(response["statusReport"]["isActiveSprint"]);
 
-                $(GO_TO_SPRINT_LINK).addClass("d-none");
+            // show the start sprint button is the current sprint is a future sprint and is not active yet.
+            showStartSprintButton(response["statusReport"]["isFutureSprint"],response["statusReport"]["isActiveSprint"]);
 
-                // hiding elements
-                $(REVIEW_CONTAINER).addClass("d-none");
-
-                $.notify("This sprint does not have any work item yet.", "error");
-            }
-
+            updateReviewPage(response.workItems, response["statusReport"], burnChart, barchart);
         }else{ // error messages
             $.notify(response_error.data.responseJSON.msg, "error");
         }
 
     });
-
 
     // ============= REVIEW BUTTONS ================ 
 
@@ -188,7 +204,205 @@ $(function () {
         $(MODAL_REVIEW_WORK_ITEMS).modal("hide");
     });
 
-    // ==============================================
+    // =================== START SPRINT ========================
+    $(OPEN_START_SPRINT_MODAL_BTN).on("click", function(){
+
+        // update the name of the sprint to be close
+        let sprintName = $(`${FILTE_BY_SPRINT_REVIEW} option:selected`).attr("data-name");
+        $(START_SPRINT_MODAL_INPUT).val(sprintName);
+
+        let capacity = $(CAPACITY_FOR_SPRINT).text().trim();
+
+        $(START_SPRINT_CAPACITY_INPUT).val(capacity);
+    });
+
+    // When the user submit the start sprint
+    $(START_SPRINT_SUBMIT_BTN).on("click", async function(){
+
+        // Getting the closing sprint id
+        const startSprint = $(FILTE_BY_SPRINT_REVIEW).val();
+        const newCapacity = $(START_SPRINT_CAPACITY_INPUT).val().trim();
+        const teamId = $(FILTE_BY_TEAM_SPRINT_REVIEW).val();
+
+        // check the sprint is not empty
+        if (!_.isString(startSprint) || _.isEmpty(startSprint)){
+            $.notify("Oops, There was a problem, please refresh the page.", "error");
+            return;
+        }
+
+        // check capacity is a number
+        if (!_.isString(newCapacity) || _.isEmpty(newCapacity) || isNaN(newCapacity)){
+            $.notify("Sorry, Only numbers are allowed for the sprint capacity", "error");
+            return;
+        }
+
+        // check is sprint is UNNASIGNED_VALUE 
+        if (startSprint == UNNASIGNED_VALUE){
+            $.notify("Sprint is not selected", "error");
+            return;
+        }
+
+        // check team
+        if (!_.isString(teamId) || teamId == UNNASIGNED_VALUE){
+            $.notify("Invalid Team is selected", "error");
+            return;    
+        }
+
+
+        // make the request
+        const projectId = $(PROJECT_ID).val()
+        const API_LINK_START_NEW_SPRINT = `/dashboard/api/${projectId}/startSprint/${teamId}`;
+        let data = {"sprint": startSprint, "capacity": newCapacity};
+
+        let response_error = null;
+        let response = await make_post_request(API_LINK_START_NEW_SPRINT, data).catch(err=> {
+            response_error = err;
+        });
+
+        // check the request
+        if (!response_error){
+            $.notify(response["msg"], "success");
+
+            // hide the start sprint button
+            showStartSprintButton(false, false);
+
+            // show the close sprint button
+            showCloseSprintButton(true);
+
+        }else{
+            $.notify(response_error.data.responseJSON.msg, "error");
+        }
+
+    });
+
+    // =================== CLOSE SPRINT ========================
+
+    // when modal is click to be open
+    $(OPEN_CLOSE_SPRINT_BTN).on("click", function(){
+
+        let sprintId = $(FILTE_BY_SPRINT_REVIEW).val();
+
+        // update the name of the sprint to be close
+        let sprintName = $(`${FILTE_BY_SPRINT_REVIEW} option:selected`).attr("data-name");
+        $(CURRENT_ACTIVE_SPRINT).val(sprintName);
+
+        // remove previus disabled elements if any
+        removeDisabledFromSelectOption(NEW_ACTIVE_SPRINT_SELECT);
+
+        // from the sprints available, disabled the sprint to be close
+        setDisableAttrToSelectOption(NEW_ACTIVE_SPRINT_SELECT, sprintId, true);
+    });
+
+    // When user changes the sprint to be active
+    $(NEW_ACTIVE_SPRINT_SELECT).on("change", async function(){
+
+        let selectedSprintStartDate = $(`${NEW_ACTIVE_SPRINT_SELECT} option:selected`).attr("data-sdate");
+        let closingSprintStartDate = $(`${FILTE_BY_SPRINT_REVIEW} option:selected`).attr("data-sdate");
+
+        selectedSprintStartDate = moment(selectedSprintStartDate, SPRINT_FORMAT_DATE);
+        closingSprintStartDate = moment(closingSprintStartDate, SPRINT_FORMAT_DATE);
+
+        // if the start date of the selected sprint is before than the date of the closing sprint, show a message to the user
+        if (selectedSprintStartDate.isBefore(closingSprintStartDate)){
+            let msg = "This sprint start date is before than the current sprint.";
+            showPopupMessage(NEW_ACTIVE_SPRINT_SELECT, msg, "error", "top-left", 5);
+        }
+
+        // get sprint current capacity if any
+        const sprintId = $(this).val();
+        const teamId = $(FILTE_BY_TEAM_SPRINT_REVIEW).val();
+        const projectId = $(PROJECT_ID).val()
+
+        if (sprintId == UNNASIGNED_VALUE){
+            // active the disabled attr. 
+            $(NEW_ACTIVE_SPRINT_CAPACITY_INPUT).attr("disabled", true);
+            $(NEW_ACTIVE_SPRINT_CAPACITY_INPUT).val(0);
+            return;
+        }
+
+        // remove disable atrr
+        $(NEW_ACTIVE_SPRINT_CAPACITY_INPUT).attr("disabled", false);
+
+        if (!_.isString(sprintId) || !_.isString(teamId) || !_.isString(projectId)){
+            $.notify("Sorry, There is a problem getting information to make the request. Please refresh the page.");
+            return;
+        }
+
+        const API_LINK_GET_SPRINT_CAPACITY = `/dashboard/api/${projectId}/getSprintReview/${teamId}/${sprintId}`;
+
+        let response_error = null;
+        let response = await make_get_request(API_LINK_GET_SPRINT_CAPACITY).catch(err=> {
+            response_error = err;
+        });
+
+        if (!response_error){
+            let capacityOfSprintToBeActive = response["statusReport"]["capacity"];
+
+            // update capacity points
+            $(NEW_ACTIVE_SPRINT_CAPACITY_INPUT).val(capacityOfSprintToBeActive);
+        }else{
+            $(NEW_ACTIVE_SPRINT_CAPACITY_INPUT).val(0);
+        }
+    });
+
+    // CLOSE SPRINT SUBMIT BTN
+    $(CLOSE_SPRINT_SUBMIT_BTN).on("click", async function(){
+
+        // Getting the closing sprint id
+        const closingSprintId = $(FILTE_BY_SPRINT_REVIEW).val();
+        const newActiveSprintId = $(NEW_ACTIVE_SPRINT_SELECT).val();
+        const newActiveSprintCapacity = $(NEW_ACTIVE_SPRINT_CAPACITY_INPUT).val();
+
+
+        if (_.isUndefined(closingSprintId) || _.isEmpty(closingSprintId)){
+            $.notify("Sorry, there is not closing sprint selected", "error");
+            return;
+        }
+
+        if (_.isUndefined(newActiveSprintId) || _.isEmpty(newActiveSprintId)){
+            $.notify("Sorry, there was a problem getting the new active sprint information", "error");
+            return;
+        }
+
+        if (newActiveSprintId == UNNASIGNED_VALUE){
+            $.notify("Active Sprint not selected", "error");
+            return;
+        }
+
+        if (_.isEmpty(newActiveSprintCapacity) || isNaN(newActiveSprintCapacity)){
+            $.notify("Please make sure the sprint capacity is a number and not empty.", "error");
+            return;
+        }
+
+        const projectId = $(PROJECT_ID).val()
+        const API_LINK_CLOSE_SPRINT = `/dashboard/api/${projectId}/closeSprint/`;
+        let data = {"closingSprint": closingSprintId, "activeSprint": newActiveSprintId, "sprintCapacity": newActiveSprintCapacity};
+
+        let response_error = null;
+        let response = await make_post_request(API_LINK_CLOSE_SPRINT, data).catch(err=> {
+            response_error = err;
+        });
+
+        if (!response_error){
+            $.notify(response["msg"], "success");
+
+            // since we closed this sprint, hide the close sprint button
+            showCloseSprintButton(false, false);
+
+            // check if this sprint that we closed is a possible future sprint
+            // false by default because we know this is not an active sprint. 
+            showStartSprintButton(response["isFutureSprint"], false);
+
+            // remove previus disabled elements if any
+            removeDisabledFromSelectOption(NEW_ACTIVE_SPRINT_SELECT);
+
+            // from the sprints available, disabled the sprint to be close
+            setDisableAttrToSelectOption(NEW_ACTIVE_SPRINT_SELECT, newActiveSprintId, true);
+        }else{
+            $.notify(response_error.data.responseJSON.msg, "error");
+        }
+
+    });
 
 });
 
@@ -315,6 +529,7 @@ function getBurndownLineData(pointsHistory, totalPoints, labelDates, isTodayBetw
 
         let date = labelDates[i];
 
+
         let pointsCompletedAtDate = pointsHistory.filter(each => {
             return moment(each["date"], SPRINT_FORMAT_DATE).format(DATE_LABEL_FORMAT) == date;
         });
@@ -343,27 +558,7 @@ function getBurndownLineData(pointsHistory, totalPoints, labelDates, isTodayBetw
                 break;
             }
         }        
-        // Exit the loop if we already have all the data for the work items
-        // if (currentPoints == 0){
-            
-        //     if (isTodayBetween){
-                
-        //         for (let j = i; j < labelDates.length; j++) {
-        //             date = labelDates[j];
-
-        //             burndownData.push(currentPoints);
-
-        //             if (date === today){
-        //                 break;
-        //             }                    
-        //         }
-        //     }
-        //     break;
-        // };
-
-        // console.log(`At ${date} they were ${completePointsAtDatePoints} Story Points completed`);
     }
-
     return burndownData;
 }
 
@@ -797,3 +992,45 @@ function isDateBetween(startDate, endDate, date = new Date(), formatDateBetween=
     return (moment(date, formatDateBetween).isBetween( startDateMoment, endDateMoment, undefined, '[]')  );
 }
 
+/**
+ * Show a message to the user is the active sprint is a future sprint
+ */
+function checkIsFutureSprint(){
+
+    // check is future sprint
+    let isFutureSprint = ($(IS_FUTURE_SPRINT).val() == "true");
+
+    if (isFutureSprint){
+        let msg = "This is a future sprint.";
+        showPopupMessage(FILTE_BY_SPRINT_REVIEW, msg, style="error", position="top", 4);
+    }
+}
+
+/**
+ * Show the button into the UI if the sprint is the current active sprint at the moment
+ * @param {Boolean} isActiveSprint 
+ */
+function showCloseSprintButton(isActiveSprint){
+
+    // check if this sprint is the current active sprint
+    if (isActiveSprint){
+        $(CLOSE_SPRINT_CONTAINER_BTN).removeClass("d-none");
+    }else{
+        $(CLOSE_SPRINT_CONTAINER_BTN).addClass("d-none");
+    }   
+}
+
+/**
+ * Show the button to start the new sprint into the UI
+ * @param {Boolean} isFutureSprint 
+ * @param {Boolean} isActiveSprint 
+ */
+function showStartSprintButton(isFutureSprint, isActiveSprint){
+
+    // check if this is a future sprint and not the current active sprint
+    if (isFutureSprint && !isActiveSprint){
+        $(START_SPRINT_BTN_CONTAINER).removeClass("d-none");
+    }else{
+        $(START_SPRINT_BTN_CONTAINER).addClass("d-none");
+    }
+}

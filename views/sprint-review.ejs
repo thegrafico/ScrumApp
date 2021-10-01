@@ -45,6 +45,32 @@
                         <% } %>
                     </div>
 
+                    <% if (isActiveSprint) { %>
+                        <div id="close-sprint-button-container" >
+                    <% } else {%>
+                        <div id="close-sprint-button-container" class="d-none">
+                    <%}%> 
+                            <button 
+                            type="button" 
+                            class="btn btn-outline-warning ml-5" 
+                            id="close-sprint-btn"
+                            data-toggle="modal"
+                            data-target="#close-sprint-confirmation-modal">
+                                Close Sprint
+                            </button>
+                        </div>
+
+                    <div id="start-sprint-button-container" class="d-none">
+                        <button 
+                        type="button" 
+                        class="btn btn-outline-success ml-5" 
+                        id="start-sprint-btn"
+                        data-toggle="modal"
+                        data-target="#start-sprint-confirmation-modal">
+                            Start Sprint
+                        </button>
+                    </div>
+
                     <div class="collapse navbar-collapse" id="navbarColor02">
                         <ul class="navbar-nav mr-auto">
                             <li class="nav-item active">
@@ -66,16 +92,22 @@
 
                                     <% if (sprints[i].status == "Active") { %>
                                         <option
-                                            class="selectedSprint" 
+                                            class="selectedSprint"
+                                            data-name="<%=sprints[i]['name']%>"
+                                            data-sdate="<%=sprints[i]['startDate']%>"
+                                            data-edate="<%=sprints[i]['endDate']%>"
                                             value="<%=sprints[i]['_id']%>" selected>
-                                            <%=sprints[i]['name']%> :
-                                            <%=sprints[i]['startDateFormated']%> - <%=sprints[i]['endDateFormated']%>
-                                            (current)
+                                            <%=sprints[i]['name']%> 
+                                            : <%=sprints[i]['startDateFormated']%> - <%=sprints[i]['endDateFormated']%> (current)
                                         </option>
                                     <% }else{ %>
-                                        <option value="<%=sprints[i]['_id']%>">
-                                            <%=sprints[i]['name']%> :
-                                            <%=sprints[i]['startDateFormated']%> - <%=sprints[i]['endDateFormated']%>
+                                        <option 
+                                        value="<%=sprints[i]['_id']%>" 
+                                        data-name="<%=sprints[i]['name']%>" 
+                                        data-sdate="<%=sprints[i]['startDate']%>"
+                                        data-edate="<%=sprints[i]['endDate']%>">
+                                            <%=sprints[i]['name']%> 
+                                            : <%=sprints[i]['startDateFormated']%> - <%=sprints[i]['endDateFormated']%>
                                         </option>
                                     <% } %>
 
@@ -200,8 +232,8 @@
                 <input type="hidden" name="durationDays" id="durationDays" value="<%=statusReport['numberOfDays']%>">
                 <input type="hidden" name="startDate" id="sprintStartDate" value="<%=statusReport['startDate']%>">
                 <input type="hidden" name="endDate" id="sprintEndDate" value="<%=statusReport['endDate']%>">
-                <input type="hidden" name="initalPoints" id="initalPoints" value="<%=statusReport['initalSprintPoints']%>">    
-
+                <input type="hidden" name="initalPoints" id="initalPoints" value="<%=statusReport['initalSprintPoints']%>">  
+                <input type="hidden" name="isFutureSprint" id="isFutureSprint" value="<%=isFutureSprint%>">    
             </div>
             
 
@@ -214,6 +246,8 @@
     </div>
 
     <%- include('modals/sprints/review-work-items'); %>
+    <%- include('modals/sprints/close-sprint-confirmation'); %>
+    <%- include('modals/sprints/start-sprint-confirmation'); %>
 
 
     <input type="hidden" name="projectId" id="projectId" value="<%=projectId%>">

@@ -1,0 +1,39 @@
+<div class="modal fade" id="start-sprint-confirmation-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Starting a Sprint</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <fieldset>
+
+                    <div class="form-group">
+
+                        <div class="form-group">
+                            <label for="currentActiveSprint">Sprint:</label>
+                            <input type="text" id="start-sprint-modal-input" disabled class="form-control disabledInputColor" name="currentActiveSprint" aria-describedby="Active Sprint" placeholder="Current Sprint">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="currentActiveSprint">Capacity Points:</label>
+                            <input type="text" id="start-sprint-capacity" class="form-control" name="startSprintCapacity" aria-describedby="Sprint Capacity" placeholder="0">
+                        </div>
+
+                        <div class="form-group">
+                            <p class="text-danger">* If there is any active sprint, it will be closed</p>
+                        </div>
+                    </div>
+
+                </fieldset>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                <button type="button" id="start-sprint-submit-btn" class="btn btn-success">Start</button>
+            </div>
+        </div>
+    </div>
+</div>

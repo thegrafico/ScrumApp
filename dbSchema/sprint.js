@@ -75,7 +75,8 @@ let sprintSchema = new mongoose.Schema({
             points: {type: Number, required: true},
         }
     ],
-    initialPoints: {type: Number, default: 0}
+    initialPoints: {type: Number, default: 0},
+    capacity: {type: Number, default: 0},
 }, {timestamps: true});
 
 /**
@@ -556,8 +557,6 @@ sprintSchema.statics.getSprintForWorkItem = async function(projectId, workItemId
  */
 sprintSchema.statics.getWorkItemsForSprint = async function(projectId, tasks) {
     
-    let father = this;
-
     return new Promise(async function (resolve, reject){
 
         if (!_.isString(projectId) || _.isEmpty(tasks)){
@@ -565,7 +564,32 @@ sprintSchema.statics.getWorkItemsForSprint = async function(projectId, tasks) {
         }
 
         let err_msg = null;
-        let workItems = await WorkItemCollection.find({ projectId: projectId, _id: {$in: tasks}}).catch(err =>{
+        let workItems = await WorkItemCollection.find({projectId, _id: {$in: tasks}}).catch(err =>{
+            err_msg = err;
+            console.error(err);
+        });
+        
+        if (_.isUndefined(workItems) || _.isNull(workItems)){
+            return reject("Not work item found: " + err_msg);
+        }
+
+        return resolve(workItems);
+    });
+};
+
+/**
+ * get the sprint where this work item belongs
+ * @returns {Promise} sprint for the work item
+ */
+sprintSchema.methods.getWorkItemsForSprint = async function() {
+    
+    const projectId = this["projectId"];
+    const tasks = this["tasks"];
+
+    return new Promise(async function (resolve, reject){
+
+        let err_msg = null;
+        let workItems = await mongoose.model("WorkItem").find({"projectId": projectId, _id: {$in: tasks}}).catch(err =>{
             err_msg = err;
             console.error(err);
         });
@@ -621,7 +645,7 @@ sprintSchema.statics.getSprintById = async function(projectId, sprintId) {
  * @param {String} projectId - id of the project
  * @returns {Mongoose} object
  */
- sprintSchema.statics.getSprintOrder = async function(sprintId, projectId) {
+sprintSchema.statics.getSprintOrder = async function(sprintId, projectId) {
     
     let error = undefined;
 

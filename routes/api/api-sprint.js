@@ -2,7 +2,7 @@
 const express                   = require("express");
 const middleware                = require("../../middleware/auth");
 const workItemCollection        = require("../../dbSchema/workItem");
-const projectCollection         = require("../../dbSchema/projects");
+const ProjectCollection         = require("../../dbSchema/projects");
 const SprintCollection          = require("../../dbSchema/sprint");
 const OrderSprintCollection     = require("../../dbSchema/sprint-order");
 const moment                    = require("moment");
@@ -14,16 +14,17 @@ const {
     ADD_SPRINT_TO_ALL_TEAM_ID,
     UNASSIGNED_SPRINT,
     WORK_ITEM_STATUS,
+    SPRINT_STATUS,
     PAGES,
     getSprintDateStatus,
     sortByDate,
     getNumberOfElements,
     getNumberOfDays,
-    getPointsForStatus,
     setSprintOrder,
     sortByOrder,
     updateSprintOrderIndex,
     filteByStatus,
+    getPointsForStatus,
 } = require('../../dbSchema/Constanst');
 
 
@@ -42,7 +43,7 @@ router.get("/api/:id/getAllSprintWorkItems/:teamId", middleware.isUserInProject,
     const { location } = req.query;
 
     // ========= GETTING PROJECT INFO ==========
-    let project = await projectCollection.findById(projectId).catch(err => {
+    let project = await ProjectCollection.findById(projectId).catch(err => {
         console.error(err);
     });
 
@@ -191,7 +192,7 @@ router.get("/api/:id/getSprintWorkItems/:teamId/:sprintId", middleware.isUserInP
     const { location } = req.query;
 
     // ========= GETTING PROJECT INFO ==========
-    let project = await projectCollection.findById(projectId).catch(err => {
+    let project = await ProjectCollection.findById(projectId).catch(err => {
         console.error(err);
     });
 
@@ -300,7 +301,7 @@ router.get("/api/:id/getSprintReview/:teamId", middleware.isUserInProject, async
     let response = {};
 
     // ========= GETTING PROJECT INFO ==========
-    let project = await projectCollection.findById(projectId).catch(err => {
+    let project = await ProjectCollection.findById(projectId).catch(err => {
         console.error(err);
     });
 
@@ -326,6 +327,7 @@ router.get("/api/:id/getSprintReview/:teamId", middleware.isUserInProject, async
     let startDate = '', endDate = '';
     let pointsHistory = [];
     let initalSprintPoints = 0;
+    let sprintStatus = undefined;
 
     // getting sprints for team
     let sprints = await SprintCollection.getSprintsForTeam(projectId, teamId).catch(err => {
@@ -347,6 +349,7 @@ router.get("/api/:id/getSprintReview/:teamId", middleware.isUserInProject, async
             numberOfDays = getNumberOfDays(startDate, endDate);
             pointsHistory = activeSprint["pointsHistory"];
             initalSprintPoints = activeSprint["initialPoints"];
+            sprintStatus = getSprintDateStatus(activeSprint["startDate"], activeSprint["endDate"]);
 
             // get the work items by the sprint
             workItems = await workItemCollection.find({projectId: projectId, _id: {$in: activeSprint.tasks}}).catch(err => {
@@ -359,16 +362,17 @@ router.get("/api/:id/getSprintReview/:teamId", middleware.isUserInProject, async
         totalPoints: getPointsForStatus(workItems, null),
         completedPoints: getPointsForStatus(workItems, WORK_ITEM_STATUS["Completed"]),
         incompletedPoints: getPointsForStatus(workItems, WORK_ITEM_STATUS["Completed"], true),
-
         numberOfWorkItems: workItems.length, 
         numberOfWorkItemsCompleted: getNumberOfElements(workItems, WORK_ITEM_STATUS["Completed"]),
         numberOfWorkItemsIncompleted: getNumberOfElements(workItems, WORK_ITEM_STATUS["Completed"], true),
-        capacity: users.length,
+        capacity: activeSprint["capacity"],
         numberOfDays: numberOfDays,
         startDate: startDate,
         endDate: endDate,
         initalSprintPoints: initalSprintPoints,
         pointsHistory: pointsHistory,
+        isActiveSprint: (activeSprintId != undefined),
+        isFutureSprint: (sprintStatus === SPRINT_STATUS["Coming"])
     }
 
     // sorting data
@@ -399,7 +403,7 @@ router.get("/api/:id/getSprintReview/:teamId/:sprintId", middleware.isUserInProj
     let response = {};
 
     // ========= GETTING PROJECT INFO ==========
-    let project = await projectCollection.findById(projectId).catch(err => {
+    let project = await ProjectCollection.findById(projectId).catch(err => {
         console.error(err);
     });
 
@@ -443,6 +447,9 @@ router.get("/api/:id/getSprintReview/:teamId/:sprintId", middleware.isUserInProj
     let startDate = sprint["startDate"];
     let endDate = sprint["endDate"];
     let numberOfDays  = getNumberOfDays(startDate, endDate);
+    let sprintStatus = getSprintDateStatus(startDate, endDate);
+    let isActiveSprint = (sprint["status"] === SPRINT_STATUS["Active"]);
+
 
     let statusReport = {
         totalPoints: getPointsForStatus(workItems, null),
@@ -453,15 +460,18 @@ router.get("/api/:id/getSprintReview/:teamId/:sprintId", middleware.isUserInProj
         numberOfWorkItemsCompleted: getNumberOfElements(workItems, WORK_ITEM_STATUS["Completed"]),
         numberOfWorkItemsIncompleted: getNumberOfElements(workItems, WORK_ITEM_STATUS["Completed"], true),
         
-        capacity: project["users"].length,
+        capacity: sprint["capacity"],
         numberOfDays: numberOfDays,
         startDate: startDate,
         endDate: endDate,
         initalSprintPoints: sprint["initialPoints"],
         pointsHistory: sprint["pointsHistory"],
+
+        isActiveSprint: isActiveSprint,
+        isFutureSprint: (sprintStatus === SPRINT_STATUS["Coming"] || (sprintStatus === SPRINT_STATUS["Active"] && !isActiveSprint))
     }
 
-
+    // response for user
     response["msg"] = "success";
     response["workItems"] = workItems;
     response["statusReport"] = statusReport;
@@ -484,7 +494,7 @@ router.get("/api/:id/getTeamSprints/:teamId", middleware.isUserInProject, async 
     // is a string
     if (_.isString(projectId) && _.isString(teamId)){
 
-        let project = await projectCollection.findById(projectId).catch(err => {
+        let project = await ProjectCollection.findById(projectId).catch(err => {
             console.error(err);
         });
 
@@ -543,7 +553,7 @@ router.post("/api/:id/createSprint", middleware.isUserInProject, async function 
     let projectId = req.params.id;
 
     // validate project
-    let project = await projectCollection.findById(projectId).catch(err => {
+    let project = await ProjectCollection.findById(projectId).catch(err => {
         console.error("Error getting the project: ", err);
     });
 
@@ -600,8 +610,11 @@ router.post("/api/:id/createSprint", middleware.isUserInProject, async function 
         return;
     }
 
-    // TODO: check if this is working
-    let sprintStatus = getSprintDateStatus(startDate, endDate); // default?
+    let sprintStatus = getSprintDateStatus(startDate, endDate);
+
+    // since we're creating a new sprint, They may be another sprint with the status active already
+    // So this sprint status will be coming, and the user needs to change it to active in case he wants to. 
+    sprintStatus = (sprintStatus == SPRINT_STATUS["Active"]) ? SPRINT_STATUS["Coming"] : sprintStatus;
 
     // sprint data - team Id is added below
     let sprintData = {
@@ -755,7 +768,7 @@ router.post("/api/:id/removeSprintForTeam/:teamId", middleware.isUserInProject, 
         return;
     }
 
-    const project = await projectCollection.findById(projectId).catch(err => {
+    const project = await ProjectCollection.findById(projectId).catch(err => {
         console.error(err);
     });
 
@@ -969,8 +982,168 @@ router.post("/api/:id/updateSprint/:teamId/:sprintId", middleware.isUserInProjec
     console.log("Success updated sprint");
     res.status(200).send(response);
 });
+
+/**
+ * METHOD: POST - CLOSE SPRINT AND ACTIVE A NEW SPRINT
+ */
+router.post("/api/:id/closeSprint", middleware.isUserInProject, async function (req, res) {
+    
+    console.log("Getting request to close sprint...");
+    
+    const projectId = req.params.id;
+
+    // expected data
+    let { closingSprint, activeSprint, sprintCapacity } = req.body;
+    let response = {};
+
+    // check data received
+    if (!_.isString(closingSprint) || !_.isString(activeSprint) || _.isEmpty(sprintCapacity) || isNaN(sprintCapacity)){
+        response["msg"] = "Invalid data was received.";
+        res.status(400).send(response);
+        return;
+    }
+
+    // get closing sprint
+    let sprintToBeClose = await SprintCollection.findOne({projectId, _id: closingSprint}).catch(err =>{
+        console.error("Error getting closing sprint: ", err);
+    });
+    // check closing sprint
+    if (_.isUndefined(sprintToBeClose) || _.isNull(sprintToBeClose)){
+        response["msg"] = "Sorry, There was a problem getting the closing sprint information. Please try later.";
+        res.status(400).send(response);
+        return;
+    }
+
+    // getting newActiveSprint
+    let sprintToBeActive = await SprintCollection.findOne({projectId, _id: activeSprint}).catch(err =>{
+        console.error("Error: ", err);
+    });
+    if (_.isUndefined(sprintToBeActive) || _.isNull(sprintToBeActive)){
+        response["msg"] = "Sorry, there was a problem getting the information of the sprint to be active";
+        res.status(400).send(response);
+        return;
+    }
+
+    // check the closing sprint is the current active sprint
+    if (sprintToBeClose["status"] != SPRINT_STATUS["Active"]){
+        response["msg"] = "The Sprint you're trying to close is not the current active sprint.";
+        res.status(400).send(response);
+        return;    
+    }
+
+    // update sprint to be close
+    sprintToBeClose["status"] = SPRINT_STATUS["Past"];
+
+    // Update new active sprint
+    sprintToBeActive["status"] = SPRINT_STATUS["Active"];
+    sprintToBeActive["capacity"] = parseInt(sprintCapacity) || 0;
+
+    // inital points are not set yet
+    if (sprintToBeActive["initialPoints"] == 0){
+
+        let workItemsForActiveSprint = await sprintToBeActive.getWorkItemsForSprint().catch(err => {
+            console.error("Error getting work items for sprint to be active");
+        }) || [];
+
+        let amountOfPoints = getPointsForStatus(workItemsForActiveSprint);
+
+        // set initial points for the sprint
+        sprintToBeActive["initialPoints"] = amountOfPoints;
+    }
+
+    // save data into the database
+    sprintToBeClose.save().then( async () => {
+        console.log("A sprint was closed.");
+
+        let error_saving_active_sprint = null;
+        // save active sprint
+        await sprintToBeActive.save().catch(err => {
+           console.error("Error saving new active sprint: ", err); 
+            erro_saving_active_sprint = err;
+        });
+
+        if (error_saving_active_sprint){
+            response["msg"] = "Sorry, The current sprint was closed, but there was a problem activating the new sprint.";
+            res.status(400).send(response);
+            return;
+        }
+
+        let sprintToBeActiveStartDate = moment(sprintToBeActive["startDate"], SPRINT_FORMAT_DATE);
+        let sprintToBeCloseStartDate = moment(sprintToBeClose["startDate"], SPRINT_FORMAT_DATE);
+
+        // save boolean just to know if the active sprint button should be active
+        response["isFutureSprint"] = sprintToBeActiveStartDate.isSameOrBefore(sprintToBeCloseStartDate);
+
+        response["msg"] = "Sprint was closed successfully!";
+        res.status(200).send(response);
+    }).catch(err => {
+        console.error("Error saving updating the sprint to be close: ", err);
+        response["msg"] = "Oops, there was a problem closing the sprint. Try later.";
+        res.status(400).send(response);
+        return;
+    });
+});
+
+/**
+ * METHOD: POST - START SPRINT
+ */
+ router.post("/api/:id/startSprint/:teamId", middleware.isUserInProject, async function (req, res) {
+    
+    console.log("Getting request to start sprint...");
+    
+    const projectId = req.params.id;
+    const teamId = req.params.teamId;
+
+    // expected data
+    let { sprint, capacity} = req.body;
+    let response = {};
+
+    // check data received
+    if (!_.isString(sprint) || _.isEmpty(capacity) || isNaN(capacity)){
+        response["msg"] = "Invalid data was received.";
+        res.status(400).send(response);
+        return;
+    }
+
+    // update all sprint status for this project and team that are active
+    let error_update_sprints = null;
+    await SprintCollection.updateMany(
+        {projectId, teamId, status: SPRINT_STATUS["Active"]},
+        {$set: {status: SPRINT_STATUS["Past"]}}
+    ).catch(err =>{
+        error_update_sprints = err;
+        console.error("Error updating status for others sprint: ", err);
+    });
+
+    // check query was successfull
+    if (error_update_sprints){
+        response["msg"] = "Sorry, There was a problem updating the status of the current active sprint.";
+        res.status(400).send(response);
+        return;
+    }
+
+
+    // updating new sprint to be active
+    let error_update_new_active_sprint = null;
+    await SprintCollection.updateOne(
+        {projectId, teamId, _id: sprint},
+        {$set: {status: SPRINT_STATUS["Active"], capacity: capacity}}
+    ).catch(err =>{
+        error_update_new_active_sprint = err;
+        console.error("Error updating status for new active sprint: ", err);
+    });
+
+    // check query was successfull
+    if (error_update_new_active_sprint){
+        response["msg"] = "Sorry, There was a problem updating the status of the new active sprint.";
+        res.status(400).send(response);
+        return;
+    }
+
+    response["msg"] = "Sprint was started!";
+    res.status(200).send(response);
+});
 // ================================ END ======================================
 
 module.exports = router;
-
 

@@ -149,18 +149,6 @@ workItemSchema.post('save', async function(workItem) {
         sprint["pointsHistory"].push({date: formatedToday, points: currentAmountOfActivePoints});
     }
 
-    const sprintStartDate = moment(sprint["startDate"], SPRINT_FORMAT_DATE);
-
-    // console.log("TODAY: ", formatedToday);
-    // console.log("Start Date: ", sprintStartDate);
-    // console.log(today.isSameOrBefore(sprintStartDate));
-
-    // UPDATING INITIAL POINTS FOR SPRINT
-    if (today.isSameOrBefore(sprintStartDate)){
-        console.log("Inital Sprint points updated.");
-        sprint["initialPoints"] = totalPoints;
-    }
-
     await sprint.save().catch(err => {
         console.error("error saving sprint: ", err);
     });
