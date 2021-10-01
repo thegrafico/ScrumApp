@@ -20,7 +20,7 @@ const { statisticsPath }    = require("../middleware/includes");
 const {
     UNASSIGNED,
     PAGES,
-    UNASSIGNED_SPRINT,
+    UNASSIGNED_USER,
     WORK_ITEM_STATUS_COLORS,
     WORK_ITEM_ICONS,
     PRIORITY_POINTS,
@@ -52,7 +52,7 @@ router.get("/:id", middleware.isUserInProject, async function (req, res) {
     let teams = [...projectInfo.teams];
 
     // adding defaults
-    users.unshift(UNASSIGNED);
+    users.unshift(UNASSIGNED_USER);
     teams.unshift(UNASSIGNED);
 
     // populating params

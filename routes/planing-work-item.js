@@ -18,6 +18,7 @@ const { planigWorkItemPath }    = require("../middleware/includes");
 const {
     UNASSIGNED, 
     UNASSIGNED_SPRINT,
+    UNASSIGNED_USER,
     WORK_ITEM_ICONS,
     WORK_ITEM_STATUS_COLORS,
     MAIN_WORK_ITEMS_TO_SHOW,
@@ -91,7 +92,7 @@ router.get("/:id/planing/workitems", middleware.isUserInProject, async function 
     // === END
     // adding defaults
     teams.unshift(UNASSIGNED);
-    users.unshift(UNASSIGNED);
+    users.unshift(UNASSIGNED_USER);
     sprintForPreferedTeam.unshift(UNASSIGNED_SPRINT);
 
     // populating params
@@ -185,7 +186,7 @@ router.get("/:id/planing/workitems/:workItemId", middleware.isUserInProject, asy
     // adding defaults
     teams.unshift(UNASSIGNED);
     sprints.unshift(UNASSIGNED_SPRINT);
-    users.unshift(UNASSIGNED);
+    users.unshift(UNASSIGNED_USER);
 
     // populating params
     let params = {

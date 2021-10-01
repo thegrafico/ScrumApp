@@ -15,6 +15,11 @@ module.exports.UNASSIGNED_SPRINT = {
     _id: "0",
 };
 
+module.exports.UNASSIGNED_USER = {
+    name: "unassigned",
+    id: "0",
+};
+
 module.exports.userStatus = ["Active", "Inactive"];
 
 // SPRINTS CONSTANTS

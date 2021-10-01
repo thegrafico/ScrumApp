@@ -19,6 +19,7 @@ const { backlogPath }    = require("../middleware/includes");
 const {
     UNASSIGNED, 
     UNASSIGNED_SPRINT,
+    UNASSIGNED_USER,
     WORK_ITEM_ICONS,
     WORK_ITEM_STATUS_COLORS,
     PRIORITY_POINTS,
@@ -98,7 +99,7 @@ router.get("/:id/planing/backlog", middleware.isUserInProject, async function (r
 
     // adding defaults
     teams.unshift(UNASSIGNED);
-    users.unshift(UNASSIGNED);
+    users.unshift(UNASSIGNED_USER);
     sprints.unshift(UNASSIGNED_SPRINT);
 
     // populating params

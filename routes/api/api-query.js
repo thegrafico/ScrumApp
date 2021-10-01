@@ -120,9 +120,6 @@ router.post("/api/:id/getWorkItemsByQuery", middleware.isUserInProject, async fu
         return;
     }
 
-    // getting the users from the project
-    let users = await projectInfo.getUsers().catch(err => console.log(err)) || [];
-
     // getting work item teams 
     let teams = [...projectInfo.teams];
 
@@ -224,8 +221,6 @@ router.post("/api/:id/getWorkItemsByQuery", middleware.isUserInProject, async fu
 
             // every time we run a query, we just use the current amound of work items already filtered. 
             currentWorkItems = filteredWorkItems;
-
-
         }
     }
 
@@ -274,6 +269,8 @@ router.post("/api/:id/saveQuery", middleware.isUserInProject, async function (re
         res.status(400).send(response);
         return;
     }
+
+    // getting the current user id
     const userId = req.user["_id"];
 
     // get the user queries

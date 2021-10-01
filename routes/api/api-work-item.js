@@ -112,8 +112,8 @@ router.post("/api/:id/createWorkItem", middleware.isUserInProject, async functio
     } = req.body;
 
     // Fixing variables 
-    userAssigned = userAssigned                 || UNASSIGNED.id;
-    teamAssigned = teamAssigned                 || UNASSIGNED.id;
+    userAssigned = userAssigned                 || UNASSIGNED._id;
+    teamAssigned = teamAssigned                 || UNASSIGNED._id;
     workItemStatus = capitalize(workItemStatus) || WORK_ITEM_STATUS["New"]; // default
     workItemType = capitalize(workItemType)     || Object.keys(WORK_ITEM_ICONS)[0]; // Story is the default value
     storyPoints = parseInt(storyPoints)         || 0;
@@ -156,14 +156,14 @@ router.post("/api/:id/createWorkItem", middleware.isUserInProject, async functio
     
     // =========== USER ID ================
     // Verify the user is in the project 
-    if (userAssigned != UNASSIGNED.id && !users.includes(userAssigned)){
+    if (userAssigned != UNASSIGNED._id && !users.includes(userAssigned)){
         console.error("Cannot find the user for the work item: ", userAssigned);
         response["msg"] = "Cannot find the user assigned for this work item.";
         res.status(400).send(response);
         return;
     }
 
-    if (userAssigned != UNASSIGNED.id) {
+    if (userAssigned != UNASSIGNED._id) {
         const _user = await userCollection
             .findOne({_id: userAssigned})
             .catch(err => {
@@ -201,7 +201,7 @@ router.post("/api/:id/createWorkItem", middleware.isUserInProject, async functio
     }
 
     // =============== TEAMS =============
-    if (teamAssigned != UNASSIGNED.id && !teams.includes(teamAssigned)){
+    if (teamAssigned != UNASSIGNED._id && !teams.includes(teamAssigned)){
         console.error("Error getting the team assigned for the work item");
         response["msg"] = "Sorry, We Cannot find the team assigned for this work item.";
         res.status(400).send(response);
@@ -210,7 +210,7 @@ router.post("/api/:id/createWorkItem", middleware.isUserInProject, async functio
 
     // add the user if not default
     // TODO: if a user was assigned to this work item, then we should add that user to the team if the user is not in the team already. 
-    if (teamAssigned != UNASSIGNED.id) 
+    if (teamAssigned != UNASSIGNED._id) 
         newWorkItem["teamId"] = teamAssigned;
 
     //  ================= TYPE ================
@@ -414,7 +414,7 @@ router.post("/api/:id/updateWorkItem/:workItemId", middleware.isUserInProject, a
     if (_.isString(assignedUser)){
         
         // verify if the user was selected to unnasigned
-        if (assignedUser == UNASSIGNED.id){
+        if (assignedUser == UNASSIGNED._id){
 
             // check if there is any user, if not, return error;
             if (workItem["status"] === WORK_ITEM_STATUS["Completed"]){
@@ -445,7 +445,7 @@ router.post("/api/:id/updateWorkItem/:workItemId", middleware.isUserInProject, a
         await SprintCollection.removeWorkItemFromSprints(projectId, workItemId).catch(err =>{});
 
         // is unselected? 
-        if (sprint != UNASSIGNED.id){
+        if (sprint != UNASSIGNED._id){
             // add the work item to the sprint selected by the user
             await SprintCollection.addWorkItemToSprint(projectId, workItemId, sprint).catch(err =>{});;
         }
@@ -507,7 +507,7 @@ router.post("/api/:id/updateWorkItem/:workItemId", middleware.isUserInProject, a
     if (_.isString(teamId)){
     
         // verify if the user was selected to unnasigned
-        if (teamId == UNASSIGNED.id){
+        if (teamId == UNASSIGNED._id){
             updateValues["teamId"] = null;
         }else if(project.isTeamInProject(teamId)){
             // verify is the user is in the project

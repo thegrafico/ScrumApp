@@ -27,6 +27,7 @@ const {
     WORK_ITEM_STATUS_COLORS,
     PRIORITY_POINTS,
     WORK_ITEM_STATUS,
+    UNASSIGNED_USER,
     PAGES,
     SPRINT_FORMAT_DATE,
     sortByDate,
@@ -72,7 +73,7 @@ router.get("/:id/queries", middleware.isUserInProject, async function (req, res)
 
     // add default values
     teams.unshift(UNASSIGNED);
-    users.unshift(UNASSIGNED);
+    users.unshift(UNASSIGNED_USER);
 
     // populating params
     let params = {

@@ -22,6 +22,7 @@ const {
     SPRINT_STATUS,
     UNASSIGNED, 
     UNASSIGNED_SPRINT,
+    UNASSIGNED_USER,
     WORK_ITEM_ICONS,
     WORK_ITEM_STATUS_COLORS,
     PRIORITY_POINTS,
@@ -85,14 +86,6 @@ router.get("/:id/sprint/review", middleware.isUserInProject, async function (req
         // check sprint
         if (_.isArray(sprints) && !_.isEmpty(sprints)){
             
-            // let currentDate = moment(new Date()); // now
-            // TODO: look a better place for this
-            // SprintCollection.updateSprintsStatus(projectId, currentDate);
-
-            // activeSprint = await SprintCollection.getSprintById(projectId, "60fcf6679dd6b4759dbcbe43").catch(err =>{
-            //     console.error(err);
-            // }) || [];
-            
             activeSprint = SprintCollection.getActiveSprint(sprints);
 
             // check we have an active sprint
@@ -147,7 +140,7 @@ router.get("/:id/sprint/review", middleware.isUserInProject, async function (req
 
     // add default values
     teams.unshift(UNASSIGNED);
-    users.unshift(UNASSIGNED);
+    users.unshift(UNASSIGNED_USER);
     sprints.unshift(UNASSIGNED_SPRINT);
 
     // populating params
@@ -288,7 +281,7 @@ router.get("/:id/sprint/board", middleware.isUserInProject, async function (req,
 
     // add default values
     teams.unshift(UNASSIGNED);
-    users.unshift(UNASSIGNED);
+    users.unshift(UNASSIGNED_USER);
     sprints.unshift(UNASSIGNED_SPRINT);
 
     // populating params
@@ -424,7 +417,7 @@ router.get("/:id/planing/sprint", middleware.isUserInProject, async function (re
 
     // add default values
     teams.unshift(UNASSIGNED);
-    users.unshift(UNASSIGNED);
+    users.unshift(UNASSIGNED_USER);
     sprints.unshift(UNASSIGNED_SPRINT);
 
     // populating params

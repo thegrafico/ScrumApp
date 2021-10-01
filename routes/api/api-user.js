@@ -31,7 +31,9 @@ router.get("/api/:id/getProjectUsers/", middleware.isUserInProject, async functi
         return;
     }
 
-    const users = await projectInfo.getUsers();
+    const users = await projectInfo.getUsers().catch(err => {
+        console.log("There was a error getting the users for the project: ", err);
+    }) || [];
 
     let response = {
         msg: "success",

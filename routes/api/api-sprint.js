@@ -317,9 +317,6 @@ router.get("/api/:id/getSprintReview/:teamId", middleware.isUserInProject, async
         return;    
     }
 
-    // get all users for this project -> expected an array
-    let users = await project.getUsers().catch(err => console.log(err)) || [];
-
     let workItems = [];
     let activeSprint = undefined;
     let activeSprintId = undefined;
@@ -487,7 +484,7 @@ router.get("/api/:id/getSprintReview/:teamId/:sprintId", middleware.isUserInProj
  */
 router.get("/api/:id/getTeamSprints/:teamId", middleware.isUserInProject, async function (req, res) {
     console.log("Getting request to get sprints for a team...");
-    
+
     const projectId = req.params.id;
     const teamId = req.params.teamId;
 
