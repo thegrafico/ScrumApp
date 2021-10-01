@@ -359,13 +359,13 @@ $(function () {
         if (response){
 
 
-            if (response.sprints.length > 1){
+            if (response.sprints.length > 0){
                 for (const sprint of response.sprints) {
                     
                     // ignore unnasigned sprint
                     if (sprint["_id"] == "0"){ continue;}
 
-                    addSprintToTable(response.sprints);
+                    addSprintToTable(sprint);
                 }
             }else{
                 $.notify("It seems this team does not have any sprint yet.", "error");
@@ -560,7 +560,6 @@ function addSprintToTable(sprint, index=null){
         }
         index = null;
     }else{
-        $(`${MANAGE_TABLE_ID} > tbody`).prepend(table_row);
+        $(`${MANAGE_TABLE_ID} > tbody`).append(table_row);
     }
 }
-

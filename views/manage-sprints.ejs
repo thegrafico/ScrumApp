@@ -26,6 +26,10 @@
                             aria-label="select-team-options">
                                 <% for (let i = 0; i < projectTeams.length; i++) { %>
 
+                                    <!-- Ignore unnassigned team -->
+                                    <% if (projectTeams[i]["_id"] == "0"){ continue;} %>
+
+
                                     <% if (projectTeams[i]['id'] == userTeam.id) { %>
                                         <option value="<%=projectTeams[i]['id']%>" selected><%=projectTeams[i]['name']%></option>
                                     <% }else{ %>
@@ -97,37 +101,41 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <% for (let i = 1; i < sprints.length; ++i) {%>
-                            <tr class="rowValues" id="<%=sprints[i]['_id']%>">
+                        <% for (let sprint of sprints) {%>
+
+                            <!-- Ignore unnasigned sprint -->
+                            <% if (sprint["_id"] == "0"){ continue;} %>
+
+                            <tr class="rowValues" id="<%=sprint['_id']%>">
                                 
                                 <td class="tableCheckBoxRowElement"> 
                                     <label class="invisible labelcheckbox"> 
-                                        <input type="checkbox" aria-label="table-row-checkbox" name="checkboxWorkItem[]" value="<%=sprints[i]['_id']%>" class="checkboxRowElement" />
+                                        <input type="checkbox" aria-label="table-row-checkbox" name="checkboxWorkItem[]" value="<%=sprint['_id']%>" class="checkboxRowElement" />
                                     </label> 
                                 </td>
 
                                 <td>
-                                    <%=sprints[i]["name"]%> 
+                                    <%=sprint["name"]%> 
                                 </td>
 
                                 <td>
-                                    <% if (sprints[i]["status"] == "Active") { %>
-                                        <%=sprints[i]["startDateFormated"]%> - <%=sprints[i]["endDateFormated"]%> <br>
-                                        <span class="small text-danger"><%=sprints[i]["status"]%></span>
+                                    <% if (sprint["status"] == "Active") { %>
+                                        <%=sprint["startDateFormated"]%> - <%=sprint["endDateFormated"]%> <br>
+                                        <span class="small text-danger"><%=sprint["status"]%></span>
                                     <% } else { %>
-                                        <%=sprints[i]["startDateFormated"]%> - <%=sprints[i]["endDateFormated"]%> 
+                                        <%=sprint["startDateFormated"]%> - <%=sprint["endDateFormated"]%> 
                                     <% } %>
                                 </td>
                                 
                                 <td>
-                                    <%=sprints[i]["tasks"].length%> 
+                                    <%=sprint["tasks"].length%> 
                                 </td>
 
                                 <td class="column-edit-team">
                                     <button 
                                         class="btn btn-warning edit-user-team-btn btn-update-sprint-modal-open"  
                                         data-toggle="modal" 
-                                        id="<%=sprints[i]['_id']%>"
+                                        id="<%=sprint['_id']%>"
                                         data-target=".update-sprint-modal">
                                         <i class="fas fa-user-edit"></i>
                                     </button>
@@ -135,9 +143,9 @@
 
                                 <!-- Sprint information -->
                                 <td class="d-none values"> 
-                                    <span class="title"><%=sprints[i]["name"]%></span>
-                                    <span class="startDate"><%=sprints[i]["startDate"]%></span>
-                                    <span class="endDate"><%=sprints[i]["endDate"]%></span>
+                                    <span class="title"><%=sprint["name"]%></span>
+                                    <span class="startDate"><%=sprint["startDate"]%></span>
+                                    <span class="endDate"><%=sprint["endDate"]%></span>
                                 </td>
                             </tr>
                         <%}%>

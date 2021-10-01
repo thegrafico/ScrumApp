@@ -175,9 +175,6 @@ router.get("/:id/manageSprints", middleware.isUserInProject, async function (req
     // sorting by date
     sprintForPreferedTeam = sortByDate(sprintForPreferedTeam, "startDate");
 
-    teams.unshift(UNASSIGNED);
-    sprintForPreferedTeam.unshift(UNASSIGNED_SPRINT);
-
     // populating params
     let params = {
         "title": projectInfo["title"],

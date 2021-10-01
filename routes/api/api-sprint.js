@@ -486,6 +486,7 @@ router.get("/api/:id/getSprintReview/:teamId/:sprintId", middleware.isUserInProj
  * METHOD: GET - fetch all sprints for a team
  */
 router.get("/api/:id/getTeamSprints/:teamId", middleware.isUserInProject, async function (req, res) {
+    console.log("Getting request to get sprints for a team...");
     
     const projectId = req.params.id;
     const teamId = req.params.teamId;
@@ -528,7 +529,7 @@ router.get("/api/:id/getTeamSprints/:teamId", middleware.isUserInProject, async 
             activeSprintId = activeSprint["_id"];
         }
 
-        sprints = sprints.sort((a,b) => new moment(b["startDate"], SPRINT_FORMAT_DATE) - new moment(a["endDate"], SPRINT_FORMAT_DATE));
+        sprints = sortByDate(sprints, "startDate");
         sprints.unshift(UNASSIGNED_SPRINT);
 
         // send response to user
