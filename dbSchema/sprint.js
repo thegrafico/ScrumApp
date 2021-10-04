@@ -88,7 +88,6 @@ let sprintSchema = new mongoose.Schema({
 */
 sprintSchema.statics.getSprintsForTeam = async function(projectId, teamId, getJsObject=true) {
     
-
     let father = this;
     return new Promise( async function (resolve, reject){
 

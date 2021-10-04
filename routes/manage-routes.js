@@ -52,7 +52,7 @@ router.get("/:id/manageUsers", middleware.isUserInProject, async function (req, 
     let users = await projectInfo.getUsersWithPrivilege().catch(err => console.log(err)) || [];
     let teams = [...projectInfo.teams];
 
-    users.unshift(UNASSIGNED);
+    users.unshift(UNASSIGNED_USER);
     teams.unshift(UNASSIGNED);
 
     // populating params

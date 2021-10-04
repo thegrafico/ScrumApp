@@ -159,28 +159,31 @@ router.get("/:id/planing/workitems/:workItemId", middleware.isUserInProject, asy
 
     // get all the teams for this project
     let teams = [...projectInfo.teams];
-    
-    // ============ GETTING SPRINTS AND ACTIVE SPRINTS
-    // get the team for the user in order to filter by it.
-    let userPreferedTeam = projectInfo.getUserPreferedTeam();
-    let sprints = null;
+
+    // getting work item team
+    let workItemTeam = teams.filter( each => {return each["_id"].toString() == workItem["teamId"].toString()})[0];
+
+    let sprints = [];
     let workItemSprintId = UNASSIGNED["id"];
 
     // if the user have a team
-    if (!_.isNull(userPreferedTeam)){
+    if (_.isObject(workItemTeam) && !_.isEmpty(workItemTeam)){
 
         // getting all sprints for team
-        sprints = await sprintCollection.getSprintsForTeam(projectId, userPreferedTeam["id"]).catch(err => {
+        sprints = await sprintCollection.getSprintsForTeam(projectId, workItemTeam["_id"]).catch(err => {
             console.error("Error getting sprints for team: ", err)
         }) || [];  
-        
-        let workItemSprint = await sprintCollection.getSprintForWorkItem(projectId, workItemId).catch(err => {
-            console.error("Error getting work items: ", err);
-        });
 
-        if (!_.isUndefined(workItemSprint) && !_.isNull(workItemSprint)){
+        // getting the sprint this work item belongs 
+        let workItemSprint = sprints.filter( each => {
+            return each.tasks.includes(workItem["_id"].toString());
+        })[0];
+
+        if (_.isObject(workItemSprint) && !_.isEmpty(workItemSprint)){
             workItemSprintId = workItemSprint["_id"];
         }
+
+        sprints = sortByDate(sprints, "startDate");
     }
 
     // adding defaults
