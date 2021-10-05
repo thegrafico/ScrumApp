@@ -97,6 +97,7 @@
                             <th scope="col">Name</th>
                             <th scope="col">Dates</th>
                             <th scope="col">Work Items</th>
+                            <th scope="col">Capacity</th>
                             <th class="column-edit-team" scope="col">Edit</th>
                         </tr>
                     </thead>
@@ -129,6 +130,10 @@
                                 
                                 <td>
                                     <%=sprint["tasks"].length%> 
+                                </td>
+
+                                <td class="sprintCapacityColumn">
+                                    <%=sprint["capacity"]%> 
                                 </td>
 
                                 <td class="column-edit-team">

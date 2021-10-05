@@ -2,13 +2,15 @@
  * Control the logic for the date-picker
 */
 
+// UPDATE 
 const UPDATE_SPRINT_ID = "#update-sprint-id";
 const UPDATE_SPRINT_NAME = ".update-sprint-name";
 const UPDATE_SPRINT_BTN_SUBMIT = "#update-sprint-btn-submit";
 const UPDATE_DATE_RANGE_CONTAINER = ".update-container-date";
 const UPDATE_FILTER_BY_TEAM = "#update-sprint-filter-by-team";
 const TRASH_BTN_REMOVE_SPRINT = "#trashBtnManageSprint";
-
+const SPRINT_CAPACITY_COLUMN = ".sprintCapacityColumn";
+const UPDATE_SPRINT_CAPACITY_INPUT = "#update-sprint-capacity-input";
 
 const DATE_RANGE_INPUT_ID = ".sprint-start-date-input";
 
@@ -33,6 +35,8 @@ const MODAL_DELETE_SPRINT_SUBMIT_BTN = "#modal-delete-sprint-submit-btn";
 
 
 $(function () {
+
+    let GLOBAL_SPRINT_CAPACITY = undefined;
 
     // getting the amount of days of the sprint - default
     const SPRINT_TIME_PERIOD_DAYS = parseInt( $(SPRINT_TIME_PERIDO_INPUT_ID).val());
@@ -255,11 +259,19 @@ $(function () {
         let startDate   = $(`tr#${sprintId} td.values span.startDate`).text();
         let endDate     = $(`tr#${sprintId} td.values span.endDate`).text();
 
-        //console.log(name, startDate, endDate);
-
+        // update name in modal
         $(UPDATE_SPRINT_NAME).val(name);
+
+        // update start and end date in modal
         $(`${UPDATE_DATE_RANGE_CONTAINER} ${DATE_RANGE_INPUT_ID}`).data('daterangepicker').setStartDate(startDate);
         $(`${UPDATE_DATE_RANGE_CONTAINER} ${DATE_RANGE_INPUT_ID}`).data('daterangepicker').setEndDate(endDate);
+
+        // update capacity
+        let sprintCapacity = $(`tr#${sprintId} td${SPRINT_CAPACITY_COLUMN}`).text().trim();
+        $(UPDATE_SPRINT_CAPACITY_INPUT).val(sprintCapacity);
+
+        // updating capacity global variable in order to know if has changed
+        GLOBAL_SPRINT_CAPACITY = sprintCapacity;
     });
 
     // UPDATE SUBMIT
@@ -277,6 +289,8 @@ $(function () {
         let newName              = $(UPDATE_SPRINT_NAME).val();
         let {startDate, endDate} = formatDates( $(`${UPDATE_DATE_RANGE_CONTAINER} ${DATE_RANGE_INPUT_ID}`).val() );
 
+        // getting capacity
+        let capacity = $(UPDATE_SPRINT_CAPACITY_INPUT).val().trim();
 
         // console.log(currentName, currentStartDate, currentEndDate);
         // console.log(newName, startDate, endDate);
@@ -292,6 +306,11 @@ $(function () {
 
         if (newName.trim() != currentName){
             data["name"] = newName;
+        }
+
+        if (capacity != GLOBAL_SPRINT_CAPACITY){
+            data["capacity"] = capacity;
+            GLOBAL_SPRINT_CAPACITY = capacity;
         }
 
         // getting basic info for request
@@ -527,6 +546,11 @@ function addSprintToTable(sprint, index=null){
         ${sprint["tasks"].length}
     </td>`;
 
+    let td_capacity = `
+    <td class="sprintCapacityColumn">
+        ${sprint["capacity"]}
+    </td>`;
+
     let td_edit = `
     <td class="column-edit-team">
         <button 
@@ -546,6 +570,7 @@ function addSprintToTable(sprint, index=null){
         ${td_dates}
         ${td_hidden}
         ${td_number_workitems}
+        ${td_capacity}
         ${td_edit}
     </tr>`;
 
@@ -560,6 +585,6 @@ function addSprintToTable(sprint, index=null){
         }
         index = null;
     }else{
-        $(`${MANAGE_TABLE_ID} > tbody`).append(table_row);
+        $(`${MANAGE_TABLE_ID} > tbody`).prepend(table_row);
     }
 }

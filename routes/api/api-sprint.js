@@ -857,7 +857,7 @@ router.post("/api/:id/updateSprint/:teamId/:sprintId", middleware.isUserInProjec
     let response = {};
 
     // expected data
-    let  { name, startDate, endDate } = req.body;
+    let  { name, startDate, endDate, capacity } = req.body;
     let updateData = {};
 
     // getting the current sprint
@@ -882,6 +882,11 @@ router.post("/api/:id/updateSprint/:teamId/:sprintId", middleware.isUserInProjec
             res.status(400).send(response);
             return;
         }
+    }
+
+    // if capacity is received
+    if (!_.isUndefined(capacity) && !_.isEmpty(capacity) && !isNaN(capacity)){
+        updateData["capacity"] = parseInt(capacity.trim());
     }
 
     // to store the date with the udated values

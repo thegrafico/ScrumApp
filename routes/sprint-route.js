@@ -284,6 +284,8 @@ router.get("/:id/sprint/board", middleware.isUserInProject, async function (req,
     users.unshift(UNASSIGNED_USER);
     sprints.unshift(UNASSIGNED_SPRINT);
 
+    console.log(teams);
+
     // populating params
     let params = {
         "title": projectInfo["title"],

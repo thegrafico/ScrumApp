@@ -67,12 +67,14 @@
                                         <option value="ALL" selected>All Teams</option>
                                     <% } %>
 
-                                    <% for (let i = 1; i < projectTeams.length; i++) { %>     
+                                    <% for (let team of projectTeams) { %>     
+
+                                        <% if (team["_id"].toString() == "0") { continue;} %>
                                         
-                                        <% if (userTeam && userTeam._id.toString() == projectTeams[i]['id'].toString()) { %>
-                                            <option value="<%=projectTeams[i]['id']%>" selected><%=projectTeams[i]['name']%></option>
+                                        <% if (userTeam && userTeam.toString() == team['_id'].toString()) { %>
+                                            <option value="<%=team['_id']%>" selected><%=team['name']%></option>
                                         <% }else{  %>
-                                            <option value="<%=projectTeams[i]['id']%>"><%=projectTeams[i]['name']%></option>
+                                            <option value="<%=team['_id']%>"><%=team['name']%></option>
                                         <% } %>
                                     
                                     <% } %>
