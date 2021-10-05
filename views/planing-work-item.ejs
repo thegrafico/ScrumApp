@@ -63,6 +63,7 @@
                             <th scope="col" class="tableColumnID">ID</th>
                             <th class="d-none" scope="col">Type</th>
                             <th class="col-title" scope="col">Title</th>
+                            <th scope="col" class="thworkItemSubMenu"> <span class="d-none">submenu</span> </th>
                             <th scope="col">Assigned</th>
                             <th scope="col">State</th>
                             <th scope="col">Team</th>
@@ -94,6 +95,29 @@
                                     <a href="workitems/<%=workItems[i]['_id']%>" class="open-existing-work-item-modal" rel="<%=workItems[i]['_id']%>">
                                         <span class="table-icon"> <i class="fas <%=workItemType[workItems[i]['type']].icon%>"></i> </span>  <%=workItems[i]["title"]%> 
                                     </a> 
+                                </td>
+
+                                <!-- Sub MENU -->
+                                <td class="tdWorkItemSubMenu">
+                                    <span class="btn btn-outline-info workItemOpenSubMenu" data-bs-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                                        <i class="fas fa-ellipsis-v workItemSubMenuIcon"></i>
+                                    </span>
+                                    <div id="workItemSubMenu" class="dropdown-menu " data-bs-popper="none">
+
+                                        <a class="dropdown-item subMenuItem subMenuSprintItem" href="#" rel="<%=activeSprintId%>" id="<%=workItems[i]['_id']%>">
+                                            Assign to a team
+                                        </a>
+
+                                        <a class="dropdown-item subMenuItem subMenuSprintItem" href="#" rel="<%=activeSprintId%>" id="<%=workItems[i]['_id']%>">
+                                            Assign to a user <i class="fas fa-user"></i>
+                                        </a>
+
+                                        <%- include('modals/subMenuMoveToSprint', {i: i}); %>
+
+                                        
+                                        <div class="dropdown-divider"></div>
+                                        <a class="dropdown-item subMenuItem" href="#">Separated link</a>
+                                    </div>
                                 </td>
         
                                 <!-- ASSIGNED -->

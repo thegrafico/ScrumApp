@@ -97,7 +97,7 @@ router.get("/:id/planing/workitems", middleware.isUserInProject, async function 
 
     // populating params
     let params = {
-        "title": projectInfo["title"],
+        "title": (projectInfo["title"] + " - Work Items"),
         "project": projectInfo,
         "projectId": projectId,
         "activeTab": "WorkItem,Planing",
@@ -193,7 +193,7 @@ router.get("/:id/planing/workitems/:workItemId", middleware.isUserInProject, asy
 
     // populating params
     let params = {
-        "title": projectInfo["title"],
+        "title": (projectInfo["title"] + " - Work Item: " + workItem["itemId"]),
         "project": projectInfo,
         "projectId": projectId,
         "activeTab": "WorkItem,Planing",

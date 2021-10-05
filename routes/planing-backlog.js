@@ -104,7 +104,7 @@ router.get("/:id/planing/backlog", middleware.isUserInProject, async function (r
 
     // populating params
     let params = {
-        "title": projectInfo["title"],
+        "title": (projectInfo["title"] + " - Backlog"),
         "project": projectInfo,
         "projectId": projectId,
         "activeTab": "Backlog,Planing",

@@ -77,7 +77,7 @@ router.get("/:id/queries", middleware.isUserInProject, async function (req, res)
 
     // populating params
     let params = {
-        "title": projectInfo["title"],
+        "title": (projectInfo["title"] + " - Queries"),
         "project": projectInfo,
         "projectId": projectId,
         "activeTab": "ProjectQueries",

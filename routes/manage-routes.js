@@ -57,7 +57,7 @@ router.get("/:id/manageUsers", middleware.isUserInProject, async function (req, 
 
     // populating params
     let params = {
-        "title": projectInfo["title"],
+        "title": (projectInfo["title"] + " - Manage Users"),
         "project": projectInfo,
         "projectId": projectId,
         "activeTab": "Statistics",
@@ -102,7 +102,7 @@ router.get("/:id/manageTeam", middleware.isUserInProject, async function (req, r
 
     // populating params
     let params = {
-        "title": projectInfo["title"],
+        "title": (projectInfo["title"] + " - Manage Teams"),
         "project": projectInfo,
         "projectId": projectId,
         "activeTab": "Statistics",
@@ -178,7 +178,7 @@ router.get("/:id/manageSprints", middleware.isUserInProject, async function (req
 
     // populating params
     let params = {
-        "title": projectInfo["title"],
+        "title": (projectInfo["title"] + " - Manage Sprints"),
         "project": projectInfo,
         "projectId": projectId,
         "activeTab": "Statistics",

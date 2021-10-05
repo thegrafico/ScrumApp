@@ -145,7 +145,7 @@ router.get("/:id/sprint/review", middleware.isUserInProject, async function (req
 
     // populating params
     let params = {
-        "title": projectInfo["title"],
+        "title": (projectInfo["title"] + " - Sprint Review"),
         "project": projectInfo,
         "projectId": projectId,
         "activeTab": "SprintReview,Sprint",
@@ -288,7 +288,7 @@ router.get("/:id/sprint/board", middleware.isUserInProject, async function (req,
 
     // populating params
     let params = {
-        "title": projectInfo["title"],
+        "title": (projectInfo["title"] + " - Sprint Board"),
         "project": projectInfo,
         "projectId": projectId,
         "activeTab": "SprintBoard,Sprint",
@@ -424,7 +424,7 @@ router.get("/:id/planing/sprint", middleware.isUserInProject, async function (re
 
     // populating params
     let params = {
-        "title": projectInfo["title"],
+        "title": (projectInfo["title"] + " - Sprint Planning"),
         "project": projectInfo,
         "projectId": projectId,
         "activeTab": "SprintPlaning,Planing",
