@@ -164,7 +164,7 @@ router.get("/:id/planing/workitems/:workItemId", middleware.isUserInProject, asy
     let workItemTeam = teams.filter( each => {return each["_id"].toString() == workItem["teamId"].toString()})[0];
 
     let sprints = [];
-    let workItemSprintId = UNASSIGNED["id"];
+    let workItemSprintId = UNASSIGNED["_id"];
 
     // if the user have a team
     if (_.isObject(workItemTeam) && !_.isEmpty(workItemTeam)){
@@ -190,6 +190,8 @@ router.get("/:id/planing/workitems/:workItemId", middleware.isUserInProject, asy
     teams.unshift(UNASSIGNED);
     sprints.unshift(UNASSIGNED_SPRINT);
     users.unshift(UNASSIGNED_USER);
+
+    console.log(sprints);
 
     // populating params
     let params = {

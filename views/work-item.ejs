@@ -207,9 +207,9 @@
                                         <span class="aling-vertically align-self-center"> Iteration:</span>
                                         <select class="custom-select my-custon-select "
                                             name="sprint" id="update-work-item-sprints">
-                                            <% for (sprint of sprints){ %>
+                                            <% for (let sprint of sprints){ %>
 
-                                                <% if (sprint["_id"].toString() === "0") { %>
+                                                <% if (sprint["_id"] && sprint["_id"].toString() === "0") { %>
                                                     <option value="<%=sprint['_id']%>">
                                                         <%=sprint['name']%> 
                                                     </option>

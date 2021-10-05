@@ -92,7 +92,7 @@
                                 <!-- TITLE -->
                                 <!-- TODO: CHANGE TO A BETTER LINK -->
                                 <td class="openStory">
-                                    <a href="workitems/<%=workItems[i]['_id']%>" class="open-existing-work-item-modal" rel="<%=workItems[i]['_id']%>">
+                                    <a href="/dashboard/<%=projectId%>/planing/workitems/<%=workItems[i]['_id']%>" class="open-existing-work-item-modal" rel="<%=workItems[i]['_id']%>">
                                         <span class="table-icon"> <i class="fas <%=workItemType[workItems[i]['type']].icon%>"></i> </span>  <%=workItems[i]["title"]%> 
                                     </a> 
                                 </td>
@@ -104,19 +104,19 @@
                                     </span>
                                     <div id="workItemSubMenu" class="dropdown-menu " data-bs-popper="none">
 
-                                        <a class="dropdown-item subMenuItem subMenuSprintItem" href="#" rel="<%=activeSprintId%>" id="<%=workItems[i]['_id']%>">
-                                            Assign to a team
-                                        </a>
+
 
                                         <a class="dropdown-item subMenuItem subMenuSprintItem" href="#" rel="<%=activeSprintId%>" id="<%=workItems[i]['_id']%>">
-                                            Assign to a user <i class="fas fa-user"></i>
+                                            Assign to a user <i class="fas fa-user-astronaut"></i>
                                         </a>
-
-                                        <%- include('modals/subMenuMoveToSprint', {i: i}); %>
-
-                                        
                                         <div class="dropdown-divider"></div>
-                                        <a class="dropdown-item subMenuItem" href="#">Separated link</a>
+
+                                        <a class="dropdown-item subMenuItem subMenuSprintItem" href="#" rel="<%=activeSprintId%>" id="<%=workItems[i]['_id']%>">
+                                            Assign to a team <i class="fas fa-users"></i>
+                                        </a>
+
+                                        <div class="dropdown-divider"></div>
+                                        <a class="dropdown-item subMenuItem" href="#">Change Status</a>
                                     </div>
                                 </td>
         
