@@ -246,7 +246,7 @@ router.post("/api/:id/deleteTeam", middleware.isUserInProject, async function (r
 /**
  * METHOD: POST - Create team
  */
- router.post("/api/:id/editTeam/:teamid", middleware.isUserInProject, async function (req, res) {
+router.post("/api/:id/editTeam/:teamid", middleware.isUserInProject, async function (req, res) {
 
     const projectId = req.params.id;
     const teamId = req.params.teamid;

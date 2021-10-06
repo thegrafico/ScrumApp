@@ -915,9 +915,9 @@ router.post("/api/:id/removeWorkItems", middleware.isUserInProject, async functi
 });
 
 /**
- * METHOD: POST - REMOVE WORK ITEMS FROM PROJECT
+ * METHOD: POST - ASSIGN WORK ITEMS TO AN USER
  */
- router.post("/api/:id/assignWorkItemToUser", middleware.isUserInProject, async function (req, res) {
+router.post("/api/:id/assignWorkItemToUser", middleware.isUserInProject, async function (req, res) {
     
     console.log("Getting request to assign work items to user...");
     
@@ -983,6 +983,64 @@ router.post("/api/:id/removeWorkItems", middleware.isUserInProject, async functi
         console.log("Work Items were Updated");
         response["msg"] = (workItems.length > 1) ? "Work items were updated successfully.": "Work item was updated.";
         response["user"] = {name: newUserForWorkItem["name"], id: newUserForWorkItem["id"]}
+        return res.status(200).send(response);
+    }).catch(err => {
+        console.error("Error updating work items users: ", err);
+        response["msg"] = "Sorry, it seems there was an error updating the work items. Please try later or refresh the page.";
+        return res.status(200).send(response);
+    });
+});
+
+/**
+ * METHOD: POST - ASSIGN WORK ITEMS TO TEAM
+ */
+router.post("/api/:id/assignWorkItemToTeam", middleware.isUserInProject, async function (req, res) {
+    
+    console.log("Getting request to assign work items to a team...");
+    
+    const projectId = req.params.id;
+    
+    let  { workItems,  teamId} = req.body;
+    let response = {};
+
+    // getting project information
+    let project = await ProjectCollection.findById(projectId).catch(err => {
+        console.error("Error getting project: ", err);
+    });
+
+    if (!project){
+        response["msg"] = "Sorry, There was a problem getting the project information";
+        return res.status(400).send(response);
+    }
+    
+    // check work items
+    if (!_.isArray(workItems) || _.isEmpty(workItems)){
+        response["msg"] = "Invalid work items were received.";
+        return res.status(400).send(response);
+    }
+
+    // check teamid
+    if (_.isUndefined(teamId) || _.isNull(teamId)){
+        response["msg"] = "Invalid Team was received";
+        return res.status(400).send(response);
+    }
+
+    // check team is in project
+    if (!project.isTeamInProject(teamId)){
+        response["msg"] = "This team does not belong to the project.";
+        return res.status(400).send(response);
+    }
+
+    let teamName = project.getTeam(teamId);
+    console.log("TEAM ANME IS: ", teamName);
+    // updating work item
+    WorkItemCollection.updateMany(
+        {projectId, _id: {$in: workItems}},
+        {teamId: teamId}
+    ).then( (update) => {
+        console.log("Work Items were Updated");
+        response["msg"] = (workItems.length > 1) ? "Work items were updated successfully.": "Work item was updated.";
+        response["team"] = {name: teamName["name"], id: teamId}
         return res.status(200).send(response);
     }).catch(err => {
         console.error("Error updating work items users: ", err);

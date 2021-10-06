@@ -1,0 +1,35 @@
+<div class="modal fade" id="assign-to-team-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Assign to team</h5> <i class="ml-2 fas fa-users"></i>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+
+                <div class="form-group">
+                    <label for="assignToTeam"> Select Team: </label>
+                    <select class="custom-select" name="assignToTeam" id="assign-to-team-select">
+                        <option value="0" selected>Select team...</option>
+
+                        <% for (let team of projectTeams) { %>
+
+                            <% if (team['_id'] == "0") {continue;} %>
+
+                            <option value="<%=team['_id']%>"><%=team['name']%></option>
+                        <% } %>
+                    </select>                        
+                </div>
+                <span class="text-info small" id="span-msg-assign-to-team"></span>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="assign_to_team_submit_btn">Apply</button>
+            </div>
+        </div>
+    </div>
+</div>

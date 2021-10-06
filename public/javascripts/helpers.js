@@ -450,7 +450,7 @@ function appendToWotkItemTable(workItems, index=null, showIfSprint=true, removeT
         // TEAM
         if (workItem["team"] && workItem["team"]["name"]){
             let team = `
-                <td> ${workItem["team"]["name"]}</td>
+                <td class="teamColumnName"> ${workItem["team"]["name"]}</td>
             `;
             headers_object["team"] = team;
         }

@@ -108,7 +108,7 @@
                                         </a>
                                         <div class="dropdown-divider"></div>
 
-                                        <a class="dropdown-item subMenuItem subMenuAssignTeam" href="#" id="<%=workItems[i]['_id']%>">
+                                        <a class="dropdown-item subMenuItem subMenuAssignTeam" data-toggle="modal" data-target="#assign-to-team-modal" href="#" id="<%=workItems[i]['_id']%>">
                                             Assign to a team <i class="fas fa-users"></i>
                                         </a>
                                         <div class="dropdown-divider"></div>
@@ -125,7 +125,7 @@
                                 <td><i class="fa fa-circle <%=workItems[i]['status']%>Color" aria-hidden="true"></i> <%=workItems[i]["status"]%></td>
                              
                                 <!-- TEAM -->
-                                <td> <%=workItems[i]["team"]["name"]%></td>
+                                <td class="teamColumnName"> <%=workItems[i]["team"]["name"]%></td>
         
                                 <!-- SPRINT -->
                                 <td> <%=workItems[i]["sprint"]["name"]%></td>
@@ -154,6 +154,6 @@
     </div>
 
     <%- include('modals/workItemSubMenu/assign-to-user'); %>
-
+    <%- include('modals/workItemSubMenu/assign-to-team'); %>
 
 <%- include('modals/footer'); %>

@@ -70,6 +70,25 @@ projectSchema.methods.getUsers = async function() {
 };
 
 /**
+ * get team information by id
+ * @returns {Object} - get object 
+ */
+projectSchema.methods.getTeam = function(teamId) {
+
+    if (_.isUndefined(teamId) || _.isNull(teamId)){
+        return {};
+    }
+
+    let teams = this.teams;
+    
+    let desiredTeam = teams.filter( each => {
+        return each["_id"].toString() === teamId.toString();
+    });
+
+    return desiredTeam[0];
+};
+
+/**
  * Get all users from a project with the user information
  * @returns {Boolean} - array of object  -> [{name, id}]
  */
