@@ -64,7 +64,7 @@
                             <th class="d-none" scope="col">Type</th>
                             <th class="col-title" scope="col">Title</th>
                             <th scope="col" class="thworkItemSubMenu"> <span class="d-none">submenu</span> </th>
-                            <th scope="col">Assigned</th>
+                            <th class="col-assigned-user" scope="col">Assigned</th>
                             <th scope="col">State</th>
                             <th scope="col">Team</th>
                             <th scope="col">Iteration</th>
@@ -90,7 +90,6 @@
                                 <td class="d-none" > <i class="fas <%=workItemType[workItems[i]['type']].icon%>"></i> <%=workItems[i]["type"]%></td>
                                 
                                 <!-- TITLE -->
-                                <!-- TODO: CHANGE TO A BETTER LINK -->
                                 <td class="openStory">
                                     <a href="/dashboard/<%=projectId%>/planing/workitems/<%=workItems[i]['_id']%>" class="open-existing-work-item-modal" rel="<%=workItems[i]['_id']%>">
                                         <span class="table-icon"> <i class="fas <%=workItemType[workItems[i]['type']].icon%>"></i> </span>  <%=workItems[i]["title"]%> 
@@ -104,24 +103,23 @@
                                     </span>
                                     <div id="workItemSubMenu" class="dropdown-menu " data-bs-popper="none">
 
-
-
-                                        <a class="dropdown-item subMenuItem subMenuSprintItem" href="#" rel="<%=activeSprintId%>" id="<%=workItems[i]['_id']%>">
+                                        <a class="dropdown-item subMenuItem subMenuAssignUser"  data-toggle="modal" data-target="#assign-to-user-modal" href="#" id="<%=workItems[i]['_id']%>">
                                             Assign to a user <i class="fas fa-user-astronaut"></i>
                                         </a>
                                         <div class="dropdown-divider"></div>
 
-                                        <a class="dropdown-item subMenuItem subMenuSprintItem" href="#" rel="<%=activeSprintId%>" id="<%=workItems[i]['_id']%>">
+                                        <a class="dropdown-item subMenuItem subMenuAssignTeam" href="#" id="<%=workItems[i]['_id']%>">
                                             Assign to a team <i class="fas fa-users"></i>
                                         </a>
-
                                         <div class="dropdown-divider"></div>
-                                        <a class="dropdown-item subMenuItem" href="#">Change Status</a>
-                                    </div>
+                                        
+                                        <a class="dropdown-item subMenuItem subMenuChangeStatus" href="#" id="<%=workItems[i]['_id']%>">
+                                            Change status
+                                        </a>
                                 </td>
         
                                 <!-- ASSIGNED -->
-                                <td> <i class="fas fa-user-astronaut"></i> <%=workItems[i]["assignedUser"]["name"]%></td>
+                                <td> <i class="fas fa-user-astronaut"></i> <span class="userName"><%=workItems[i]["assignedUser"]["name"]%></span></td>
         
                                 <!-- STATUS -->
                                 <td><i class="fa fa-circle <%=workItems[i]['status']%>Color" aria-hidden="true"></i> <%=workItems[i]["status"]%></td>
@@ -155,6 +153,7 @@
         <input type="hidden" name="currentTab" id="currentTab" value="<%=activeTab%>">
     </div>
 
+    <%- include('modals/workItemSubMenu/assign-to-user'); %>
 
 
 <%- include('modals/footer'); %>

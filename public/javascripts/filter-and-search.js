@@ -52,7 +52,7 @@ $(function () {
     $(TYPE_CHECKBOX_CLASS).change(function() {
         filterTable();
         
-        if (anyCheckboxCheked(TYPE_CHECKBOX_CLASS)){
+        if (anyCheckboxChecked(TYPE_CHECKBOX_CLASS)){
             $(FILTER_TYPE_CONTAINER).addClass(opacityStyle);
             return;
         }
@@ -63,7 +63,7 @@ $(function () {
     $(STATE_CHECKBOX_CLASS).change(function() {
         filterTable();
 
-        if (anyCheckboxCheked(STATE_CHECKBOX_CLASS)){
+        if (anyCheckboxChecked(STATE_CHECKBOX_CLASS)){
             $(FILTER_STATE_CONTAINER).addClass(opacityStyle);
             return;
         }
@@ -74,7 +74,7 @@ $(function () {
     $(USER_CHECKBOX_CLASS).change(function() {
         filterTable();
 
-        if (anyCheckboxCheked(USER_CHECKBOX_CLASS)){
+        if (anyCheckboxChecked(USER_CHECKBOX_CLASS)){
             $(FILTER_USER_CONTAINER).addClass(opacityStyle);
             return;
         }
@@ -85,7 +85,7 @@ $(function () {
     $(TEAM_CHECKBOX_CLASS).change(function() {
         filterTable();
         
-        if (anyCheckboxCheked(TEAM_CHECKBOX_CLASS)){
+        if (anyCheckboxChecked(TEAM_CHECKBOX_CLASS)){
             $(FILTER_TEAM_CONTAINER).addClass(opacityStyle);
             return;
         }

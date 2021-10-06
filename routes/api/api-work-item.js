@@ -1,9 +1,9 @@
 
 const express                   = require("express");
 const middleware                = require("../../middleware/auth");
-const workItemCollection        = require("../../dbSchema/workItem");
-const projectCollection         = require("../../dbSchema/projects");
-const userCollection            = require("../../dbSchema/user");
+const WorkItemCollection        = require("../../dbSchema/workItem");
+const ProjectCollection         = require("../../dbSchema/projects");
+const UserCollection            = require("../../dbSchema/user");
 const SprintCollection          = require("../../dbSchema/sprint");
 
 const _                         = require("lodash");
@@ -36,7 +36,7 @@ router.get("/api/:id/getWorkItem/:workItemId", middleware.isUserInProject, async
     let response = {};
 
     // verify is the project exists
-    let projectInfo = await projectCollection.findOne({_id: projectId}).catch(err => {
+    let projectInfo = await ProjectCollection.findOne({_id: projectId}).catch(err => {
         console.log("Error is: ", err.reason);
     });
 
@@ -126,7 +126,7 @@ router.post("/api/:id/createWorkItem", middleware.isUserInProject, async functio
     const projectId = req.params.id;
 
     // getting project info
-    let projectInfo = await projectCollection.findOne({_id: projectId}).catch(err => {
+    let projectInfo = await ProjectCollection.findOne({_id: projectId}).catch(err => {
         errors = err.reason;
         console.log("Error is: ", err.reason);
     });
@@ -164,7 +164,7 @@ router.post("/api/:id/createWorkItem", middleware.isUserInProject, async functio
     }
 
     if (userAssigned != UNASSIGNED._id) {
-        const _user = await userCollection
+        const _user = await UserCollection
             .findOne({_id: userAssigned})
             .catch(err => {
                 errors = err.reason
@@ -254,7 +254,7 @@ router.post("/api/:id/createWorkItem", middleware.isUserInProject, async functio
         }
     }
 
-    newWorkItem = await workItemCollection.create(newWorkItem).catch(err =>{
+    newWorkItem = await WorkItemCollection.create(newWorkItem).catch(err =>{
         errors = err.reason;
         console.error("Error creating the work item: ", err)
     });
@@ -313,7 +313,7 @@ router.post("/api/:id/addCommentToWorkItem/:workItemId", middleware.isUserInProj
         comment = comment.trim();
 
         // Add the comment to the DB
-        const result = await workItemCollection.updateOne({_id: workItemId}, 
+        const result = await WorkItemCollection.updateOne({_id: workItemId}, 
             { 
                 $push: { "comments": comment }
             }
@@ -345,7 +345,7 @@ router.post("/api/:id/updateWorkItem/:workItemId", middleware.isUserInProject, a
 
     // =========== Validate project exist =================
     
-    const project = await projectCollection.findById(projectId).catch(err => {
+    const project = await ProjectCollection.findById(projectId).catch(err => {
         console.error("Error getting the project info: ", err);
     });
 
@@ -358,7 +358,7 @@ router.post("/api/:id/updateWorkItem/:workItemId", middleware.isUserInProject, a
     
     // =========== Validate Work Item exist =================
     
-    const workItem = await workItemCollection.findById(workItemId).catch ( err =>{
+    const workItem = await WorkItemCollection.findById(workItemId).catch ( err =>{
         console.error("Error getting work item: ", err);
     });
 
@@ -427,7 +427,7 @@ router.post("/api/:id/updateWorkItem/:workItemId", middleware.isUserInProject, a
 
         }else if(project.isUserInProject(assignedUser)){
 
-            const user = await project.getUserName(assignedUser).catch(err => 
+            const user = await project.getUser(assignedUser).catch(err => 
                 console.error("Error getting the user: ", err)
             );
 
@@ -630,7 +630,7 @@ router.post("/api/:id/updateWorkItemOrder/:workItemId/:sprintId", middleware.isU
 
     // =========== Validate project exist =================
     
-    const project = await projectCollection.findById(projectId).catch(err => {
+    const project = await ProjectCollection.findById(projectId).catch(err => {
         console.error("Error getting the project info: ", err);
     });
 
@@ -643,7 +643,7 @@ router.post("/api/:id/updateWorkItemOrder/:workItemId/:sprintId", middleware.isU
     
     // =========== Validate Work Item exist =================
     
-    let workItem = await workItemCollection.findById(workItemId).catch ( err =>{
+    let workItem = await WorkItemCollection.findById(workItemId).catch ( err =>{
         console.error("Error getting work item: ", err);
     });
 
@@ -814,7 +814,7 @@ router.post("/api/:id/moveWorkItemsToSprint/:teamId", middleware.isUserInProject
 
     // =========== Validate project exist =================
     
-    const project = await projectCollection.findById(projectId).catch(err => {
+    const project = await ProjectCollection.findById(projectId).catch(err => {
         console.error("Error getting the project info: ", err);
     });
 
@@ -892,7 +892,7 @@ router.post("/api/:id/removeWorkItems", middleware.isUserInProject, async functi
         for (let workItemId of workItemsId){
             
             // remove from db
-            const result = await workItemCollection.findOneAndDelete({projectId: projectId, _id: workItemId}).catch(
+            const result = await WorkItemCollection.findOneAndDelete({projectId: projectId, _id: workItemId}).catch(
                 err => console.error("Error removing work item: ", err)
             );
             
@@ -912,6 +912,83 @@ router.post("/api/:id/removeWorkItems", middleware.isUserInProject, async functi
     }
     let item_str = workItemsId.length === 1 ? "item" : "items";
     res.status(200).send(`Successfully removed work ${item_str}`);
+});
+
+/**
+ * METHOD: POST - REMOVE WORK ITEMS FROM PROJECT
+ */
+ router.post("/api/:id/assignWorkItemToUser", middleware.isUserInProject, async function (req, res) {
+    
+    console.log("Getting request to assign work items to user...");
+    
+    const projectId = req.params.id;
+    
+    let  { workItems,  userId} = req.body;
+    let response = {};
+
+    // getting project information
+    let project = await ProjectCollection.findById(projectId).catch(err => {
+        console.error("Error getting project: ", err);
+    });
+
+    if (!project){
+        response["msg"] = "Sorry, There was a problem getting the project information";
+        return res.status(400).send(response);
+    }
+    
+    // check work items
+    if (!_.isArray(workItems) || _.isEmpty(workItems)){
+        response["msg"] = "Invalid work items were received.";
+        return res.status(400).send(response);
+    }
+
+    // check userId
+    if (_.isUndefined(userId) || _.isNull(userId)){
+        response["msg"] = "Invalid User was received";
+        return res.status(400).send(response);
+    }
+
+    let newUserForWorkItem = {};
+
+    // check if unnasigned user
+    if (userId == UNASSIGNED["_id"]){
+        newUserForWorkItem["name"] = UNASSIGNED["name"];
+        newUserForWorkItem["id"] = null;
+    }else{
+        // check the user is in project
+        if (!project.isUserInProject(userId)){
+            response["msg"] = "Sorry, User received does not belong to the project";
+            return res.status(400).send(response);
+        }
+
+        // getting user name
+        let userInfo = await project.getUser(userId).catch(err => {
+            console.error(err);
+        });
+
+        if (!userInfo){
+            response["msg"] = "Sorry, We couldn't find the information of the user received";
+            return res.status(400).send(response);
+        }
+
+        newUserForWorkItem["name"] = userInfo["fullName"];
+        newUserForWorkItem["id"] = userId;
+    }
+
+    // updating work item
+    WorkItemCollection.updateMany(
+        {projectId, _id: {$in: workItems}},
+        {assignedUser: newUserForWorkItem}
+    ).then( (update) => {
+        console.log("Work Items were Updated");
+        response["msg"] = (workItems.length > 1) ? "Work items were updated successfully.": "Work item was updated.";
+        response["user"] = {name: newUserForWorkItem["name"], id: newUserForWorkItem["id"]}
+        return res.status(200).send(response);
+    }).catch(err => {
+        console.error("Error updating work items users: ", err);
+        response["msg"] = "Sorry, it seems there was an error updating the work items. Please try later or refresh the page.";
+        return res.status(200).send(response);
+    });
 });
 
 module.exports = router;

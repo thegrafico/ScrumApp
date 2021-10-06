@@ -225,7 +225,7 @@ projectSchema.methods.isWorkItemInProject = async function(workItemId) {
  * @param {String} userId- > Id of the team
  * @returns {Object} User Information
  */
-projectSchema.methods.getUserName = async function(userId) {
+projectSchema.methods.getUser = async function(userId) {
 
     // if empty and not string
     if (_.isEmpty(userId) || !_.isString(userId)){

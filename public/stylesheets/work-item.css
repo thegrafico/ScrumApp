@@ -151,8 +151,9 @@
 }
 
 .col-title{
-    width: 30%;
+    width: 25%;
 }
 
-
-
+.col-assigned-user{
+    width: 13% !important;
+}

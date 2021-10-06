@@ -436,7 +436,7 @@ function appendToWotkItemTable(workItems, index=null, showIfSprint=true, removeT
 
         // USER
         let assigned = `
-            <td> <i class="fas fa-user-astronaut"></i> ${workItem["assignedUser"]["name"]}</td>
+            <td> <i class="fas fa-user-astronaut"></i> <span class="userName">${workItem["assignedUser"]["name"]}</span> </td>
         `;
         headers_object["assigned"] = assigned;
 
@@ -619,6 +619,15 @@ function highliteWorkItemRow(checkedElement, checkElement){
     }
 }
 
+/**
+ * Get all checked elements
+ * @param {String} selector 
+ * @returns 
+ */
+function getCheckedElements(selector){
+    return $(`${selector}:checked`);
+}
+
 
 /**
  * Get all checked elements
@@ -635,6 +644,8 @@ function getVisibleElements(elementClassOrId){
 
     return row_checked;
 }
+
+
 
 /**
  * Remove the checkbox element from the table
@@ -678,7 +689,7 @@ function setDisabledAttr(selectId, enable){
  * @param {String} inputClassCheckbox - class that the input element has 
  * @returns {Boolean} True if there is at least one elemenet checked
  */
-function anyCheckboxCheked(inputClassCheckbox){
+function anyCheckboxChecked(inputClassCheckbox){
     return ($(`${inputClassCheckbox}:checked`).length > 0);
 }
 
@@ -1701,4 +1712,25 @@ function removeDisabledFromSelectOption(selector){
  */
 function setDisableAttrToSelectOption(selector, value, disabled){
     $(`${selector} option[value=${value}]`).attr("disabled", disabled);
+}
+
+/**
+ * Get the attribute from an array of selector
+ * @param {Array} arrayWithSelectors - Array of selector elements
+ */
+function getvalueFromArraySelector(arrayWithSelectors){
+
+
+    if (_.isEmpty(arrayWithSelectors)){
+        console.log("Not checked elements found");
+        return [];
+    }
+
+    let attr = [];
+
+    for (let selector of arrayWithSelectors){
+        attr.push($(selector).val());
+    }
+
+    return attr;
 }

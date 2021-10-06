@@ -191,8 +191,6 @@ router.get("/:id/planing/workitems/:workItemId", middleware.isUserInProject, asy
     sprints.unshift(UNASSIGNED_SPRINT);
     users.unshift(UNASSIGNED_USER);
 
-    console.log(sprints);
-
     // populating params
     let params = {
         "title": (projectInfo["title"] + " - Work Item: " + workItem["itemId"]),
