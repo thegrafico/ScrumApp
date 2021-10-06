@@ -362,8 +362,8 @@ router.post("/api/:id/updateWorkItem/:workItemId", middleware.isUserInProject, a
         console.error("Error getting work item: ", err);
     });
 
-     // verify project is good.
-     if (_.isUndefined(workItem) || _.isEmpty(workItem)){
+    // verify project is good.
+    if (_.isUndefined(workItem) || _.isEmpty(workItem)){
         response["msg"] = "Error getting the work Item information. Try later";
         res.status(400).send(response);
         return;
