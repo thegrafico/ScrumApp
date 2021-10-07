@@ -79,7 +79,7 @@ $(function (){
         }
 
         // Request var
-        const projectId = $(PROJECT_ID).val();
+        const projectId = getProjectId();
         const API_LINK_CREATE_TEAM = `/dashboard/api/${projectId}/newTeam`;
         const data = {"teamName": teamName};
 
@@ -114,7 +114,7 @@ $(function (){
             return;
         }
 
-        const projectId = $(PROJECT_ID).val();
+        const projectId = getProjectId();
 
         const API_LINK_DELETE_TEAM = `/dashboard/api/${projectId}/deleteTeam`;
 
@@ -186,7 +186,7 @@ $(function (){
         // check if not empty
         if (!_.isArray(checkedElements) || _.isEmpty(checkedElements) ){return;}
 
-        const projectId = $(PROJECT_ID).val();
+        const projectId = getProjectId();
         const teamId = $(FILTER_BY_TEAM_MANAGE_INPUT).val();
 
         const data = {"teamId": teamId, "userIds": checkedElements};
@@ -252,7 +252,7 @@ $(function (){
         }
 
         // getting project id and team id in order to make the request
-        const projectId = $(PROJECT_ID).val();
+        const projectId = getProjectId();
         const teamId =  $(CURRENT_SELECTED_TEAM).val();
 
         // check data
@@ -310,7 +310,7 @@ $(function (){
         const teamId = $(tableRow).attr("id");
 
         // send the request to get all users by the team
-        const projectId = $(PROJECT_ID).val();
+        const projectId = getProjectId();
 
         // check data
         if (_.isUndefined(projectId) || _.isEmpty(projectId) || _.isUndefined(teamId) || _.isEmpty(teamId)){
@@ -373,7 +373,7 @@ $(function (){
         let userId = $(this).parent().parent().attr("id");
 
         // getting project id and team id in order to make the request
-        const projectId = $(PROJECT_ID).val();
+        const projectId = getProjectId();
         const teamId =  $(CURRENT_SELECTED_TEAM).val();
 
         // check data
@@ -431,7 +431,7 @@ $(function (){
         // Remove the disabled attribute
         $(SELECT_USER_TO_ADD_TO_TEAM_INPUT).attr("disabled", true);
 
-        const projectId = $(PROJECT_ID).val();
+        const projectId = getProjectId();
 
         const API_LINK_GET_USERS_NOT_IN_TEAM = `/dashboard/api/${projectId}/getTeamUsers/${teamId}?notInTeam=true`;
         let response_error = undefined;
@@ -472,7 +472,7 @@ $(function (){
             return;
         }
 
-        const projectId = $(PROJECT_ID).val();
+        const projectId = getProjectId();
         const API_LINK_ADD_USER_TO_TEAM = `/dashboard/api/${projectId}/addUserToTeam/`
 
         const data = {"userId": userId, "teamId": teamId};

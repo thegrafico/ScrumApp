@@ -217,7 +217,7 @@ $(function () {
  */
 async function updateWorkItem(workItemId, values){
     
-    const projectId = $(PROJECT_ID).val();
+    const projectId = getProjectId();
     const API_LINK_UPDATE_WORK_ITEM = `/dashboard/api/${projectId}/updateWorkItem/${workItemId}`;
 
     let response_error = null;

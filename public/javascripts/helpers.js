@@ -350,7 +350,7 @@ function getTableHeadersArray(tableId){
  * 
  * 
  */
-function appendToWotkItemTable(workItems, index=null, showIfSprint=true, removeTable=true){
+function appendToWotkItemTable(workItems, index=null, showIfSprint=true, removeTable=true, activeSprintId="0"){
 
     if (!_.isArray(workItems) || _.isEmpty(workItems)){
         // console.log("Work items is empty");
@@ -412,7 +412,7 @@ function appendToWotkItemTable(workItems, index=null, showIfSprint=true, removeT
         headers_object["title"] = title;
 
         // SUB MENU
-        let submenu = getPageSubMenu($(CURRENT_PAGE_ID).val(), workItem['_id']);
+        let submenu = getPageSubMenu($(CURRENT_PAGE_ID).val(), workItem['_id'], activeSprintId);
         headers_object["submenu"] = submenu;
 
 
@@ -506,7 +506,7 @@ function appendToWotkItemTable(workItems, index=null, showIfSprint=true, removeT
  * Get the work item sub menu
  * @param {String} page 
  */
-function getPageSubMenu(page, workItemId){
+function getPageSubMenu(page, workItemId, activeSprintId){
 
     let subMenuHtml = "";
     switch (page) {
@@ -534,14 +534,8 @@ function getPageSubMenu(page, workItemId){
                 <span class="btn btn-outline-info workItemOpenSubMenu" data-bs-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
                     <i class="fas fa-ellipsis-v workItemSubMenuIcon"></i>
                 </span>
-                <div id="workItemSubMenu" class="dropdown-menu " data-bs-popper="none">
-
-                    <a class="dropdown-item subMenuItem subMenuSprintItem" href="#" rel="<%=activeSprintId%>" id="${workItemId}">
-                        Move to current sprint
-                    </a>
-
-                    <div class="dropdown-divider"></div>
-                    <a class="dropdown-item subMenuItem subMenuAssignTeam" data-toggle="modal" data-target="#move-to-sprint-modal" href="#" id="${workItemId}">
+                <div id="workItemSubMenu" class="dropdown-menu " data-bs-popper="none">                     
+                    <a class="dropdown-item subMenuItem subMenuAssignTeam subMenuMoveToSprint" data-toggle="modal" data-target="#move-to-sprint-modal" href="#" id="${workItemId}">
                         Move to sprint...
                     </a>
                 </div>
@@ -554,19 +548,11 @@ function getPageSubMenu(page, workItemId){
                     <i class="fas fa-ellipsis-v workItemSubMenuIcon"></i>
                 </span>
                 <div id="workItemSubMenu" class="dropdown-menu " data-bs-popper="none">
-                    
-                    <a class="dropdown-item subMenuItem subMenuSprintItem" href="#" rel="0" id="<%=workItems[i]['_id']%>">
+                    <a class="dropdown-item subMenuItem subMenuSprintItem moveToBacklog" href="#" rel="${UNNASIGNED_VALUE}" id="${workItemId}">
                         Move to Backlog
-                    </a>
-
-                    <div class="dropdown-divider"></div>
-                    <a class="dropdown-item subMenuItem subMenuAssignTeam" data-toggle="modal" data-target="#move-to-sprint-modal" href="#" id="${workItemId}">
-                        Move to sprint...
-                    </a>                                
-                    
+                    </a>                                        
                 </div>
             </td>`;
-        
             break;
         default:
             break;
@@ -583,7 +569,7 @@ function getPageSubMenu(page, workItemId){
  */
 function addWorkItemToBoard(workItem, index){
 
-    const projectId = $(PROJECT_ID).val();
+    const projectId = getProjectId();
     let id = workItem["_id"]
     let status = workItem["status"];
     let type = workItem["type"];
@@ -899,6 +885,7 @@ function unCheckAll(){
  * Move a work item to the next sprint
  * @param {Array} workItemId - Array with the Ids of the work items
  * @param {String} sprintId - id of the sprint. if null, then is sent to the backlog 
+ * @returns {Boolean} - true if work items were moved
  */
 async function moveWorkItemToSprint(workItemId, sprintId){
 
@@ -909,7 +896,7 @@ async function moveWorkItemToSprint(workItemId, sprintId){
     }
 
     // check project id information
-    const projectId = $(PROJECT_ID).val();
+    const projectId = getProjectId();
     if (_.isUndefined(projectId) || _.isEmpty(projectId)){
         $.notify("Sorry, we cannot find the project information. Try later", "error");
         return;
@@ -932,14 +919,18 @@ async function moveWorkItemToSprint(workItemId, sprintId){
         response_error = err;
     });
     
+    let workItemsWereMoved = false;
     if (response){
         $.notify(response.msg, "success");
         removeWorkItemsFromTable(workItemId);
+        workItemsWereMoved = true;
     }else{
         $.notify(response_error.data.responseJSON.msg, "error");
     }
 
     unCheckAll();
+
+    return workItemsWereMoved;
 }
 
 
@@ -1340,8 +1331,8 @@ function addWorkItemEvents(element){
         
         const comment = $(element["discussion"]).val();
         const workItemId = $(WORK_ITEM_ID).val();
-        const projectId = $(PROJECT_ID).val();
-    
+        const projectId = getProjectId();
+
         if (workItemId == undefined || projectId == undefined){
             $.notify("Sorry, We cannot find the information of this work item", "error")
             return;
@@ -1377,7 +1368,7 @@ function addWorkItemEvents(element){
             null,
         );
         const teamId = $(this).val();
-        const projectId = $(PROJECT_ID).val();
+        const projectId = getProjectId();
 
         if (!_.isString(teamId) || !_.isString(projectId) || teamId == "0"){
             // $.notify("Invalid team was selected.", "error");
@@ -1664,7 +1655,7 @@ function getTags(workItemSelector){
  */
 async function updateWorkItemBoard(workItemId, updateData){
 
-    const projectId = $(PROJECT_ID).val();
+    const projectId = getProjectId();
     const sprintId  = $(FILTER_BY_SPRINT_INPUT).val();
 
     const API_LINK_UPDATE_WORK_ITEM_BOARD = `/dashboard/api/${projectId}/updateWorkItemOrder/${workItemId}/${sprintId}`;
@@ -1788,4 +1779,12 @@ function getvalueFromArraySelector(arrayWithSelectors){
     }
 
     return attr;
+}
+
+/**
+ * get the project id
+ * @returns {String}
+ */
+function getProjectId(){
+    return $(PROJECT_ID).val();
 }

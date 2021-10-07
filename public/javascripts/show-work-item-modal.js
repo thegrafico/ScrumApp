@@ -182,7 +182,7 @@ function makeWorkItemUpdatable(makeItUpdatable){
 async function getWorkItemData(workItemId){
     
     let response = {error:null};
-    let projectId = $(PROJECT_ID).val();
+    let projectId = getProjectId();
 
     if (!_.isString(projectId) || _.isEmpty(projectId)){
         $.notify("Sorry, Cannot find the Project information at this moment. Try later.", "error");

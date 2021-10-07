@@ -126,8 +126,6 @@ router.get("/:id/planing/workitems", middleware.isUserInProject, async function 
  */
 router.get("/:id/planing/workitems/:workItemId", middleware.isUserInProject, async function (req, res) {
 
-    console.log("Getting request to show work item...");
-
     const projectId = req.params.id;
     const workItemId = req.params.workItemId;
 

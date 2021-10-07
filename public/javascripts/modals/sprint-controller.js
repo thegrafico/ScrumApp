@@ -109,7 +109,7 @@ $(function () {
             "teamId": teamId
         };
 
-        const projectId = $(PROJECT_ID).val();
+        const projectId = getProjectId();
         const API_LINK_CREATE_SPRINT = `/dashboard/api/${projectId}/createSprint`;
 
         let response_error = null;
@@ -167,7 +167,7 @@ $(function () {
         
         let request_data = {"sprintId": sprintId};
 
-        const projectId = $(PROJECT_ID).val();
+        const projectId = getProjectId();
         const API_LINK_REMOVE_SPRINT_FROM_TEAM = `/dashboard/api/${projectId}/removeSprintForTeam/${teamId}`;
 
         let response_error = null;
@@ -208,7 +208,7 @@ $(function () {
         // remove disable from sprints
         $(SPRINT_DELETE_MODAL_SELECT_SPRINT).attr("disabled", false);
 
-        const projectId = $(PROJECT_ID).val();
+        const projectId = getProjectId();
         const API_LINK_GET_SPRINTS_FOR_TEAM = `/dashboard/api/${projectId}/getTeamSprints/${teamId}`;
 
         let response_error = null;
@@ -314,8 +314,8 @@ $(function () {
         }
 
         // getting basic info for request
-        let teamId      = $(UPDATE_FILTER_BY_TEAM).val();
-        let projectId   = $(PROJECT_ID).val();
+        const teamId      = $(UPDATE_FILTER_BY_TEAM).val();
+        const projectId   = getProjectId();
 
         // check team Id
         if (_.isUndefined(teamId) || teamId === "0"){
@@ -358,7 +358,7 @@ $(function () {
     $(UPDATE_FILTER_BY_TEAM).change(async function(){
         
         const teamId = $(this).val();    
-        const projectId = $(PROJECT_ID).val();
+        const projectId = getProjectId();
 
         if (!_.isString(teamId) || teamId == '0'){
             $.notify("Invalid Team", "error");
@@ -408,7 +408,7 @@ $(function () {
             return;
         }
 
-        const projectId = $(PROJECT_ID).val();
+        const projectId = getProjectId();
 
         const data = {"sprintsIds": checkedElements};
         const API_LINK_REMOVE_SPRINTS_FROM_PROJECT = `/dashboard/api/${projectId}/deleteSprintsFromProject/`

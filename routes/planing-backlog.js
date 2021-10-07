@@ -39,7 +39,7 @@ router.get("/:id/planing/backlog", middleware.isUserInProject, async function (r
 
     // verify is the project exists
     let projectInfo = await projectCollection.findOne({_id: projectId}).catch(err => {
-        console.log("Error is: ", err.reason);
+        console.error("Error is: ", err.reason);
     });
 
     if (_.isUndefined(projectInfo) || _.isEmpty(projectInfo)) {
@@ -53,8 +53,7 @@ router.get("/:id/planing/backlog", middleware.isUserInProject, async function (r
     // get the team for the user in order to filter by it.
     let userPreferedTeam = projectInfo.getUserPreferedTeam();
 
-    let sprints = null;
-    let activeSprintId = null;
+    let sprints = [];
 
     // to get the work items
     let query_work_item = {};
@@ -65,18 +64,12 @@ router.get("/:id/planing/backlog", middleware.isUserInProject, async function (r
 
         // getting all sprints for team
         sprints = await sprintCollection.getSprintsForTeam(projectId, userPreferedTeam["id"]).catch(err => {
-            console.log(err)
+            console.error(err)
         }) || [];
-
-        let activeSprint = sprintCollection.getActiveSprint(sprints);
-        
-        if (!_.isNull(activeSprint) || !_.isUndefined(activeSprint)){
-            activeSprintId = activeSprint["_id"];
-        }
     }
 
     // get all users for this project -> expected an array
-    let users = await projectInfo.getUsers().catch(err => console.log(err)) || [];
+    let users = await projectInfo.getUsers().catch(err => console.error(err)) || [];
 
     // LOADING TABLE WORK ITEMS
     query_work_item["projectId"] = projectId;
@@ -113,7 +106,7 @@ router.get("/:id/planing/backlog", middleware.isUserInProject, async function (r
         "statusWorkItem": WORK_ITEM_STATUS_COLORS,
         "projectTeams": teams,
         "sprints": sprints,
-        "activeSprintId": activeSprintId,
+        "activeSprintId": UNASSIGNED["_id"],
         "addUserModal": true,
         "workItemType": WORK_ITEM_ICONS,
         "workItems": workItems,

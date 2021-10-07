@@ -8,7 +8,7 @@ const WORK_ITEM_SUB_MENU =  ".workItemOpenSubMenu";
 // SUB MENU BUTTONS
 const ASSIGN_TO_USER_BTN = ".subMenuAssignUser";
 const ASSIGN_TO_TEAM_BTN = ".subMenuAssignTeam";
-const CHANGE_STATUS_BTN = ".subMenuChangeStatus";
+const MOVE_TO_SPRINT_BTN = ".subMenuMoveToSprint";
 
 // ASSIGN TO USER
 const ASSIGN_TO_USER_SELECT = "#assign-to-user-select";
@@ -22,13 +22,18 @@ const ASSING_TO_TEAM_SUBMIT_BTN = "#assign_to_team_submit_btn";
 const SPAN_ASSIGN_TO_TEAM_MSG = "#span-msg-assign-to-team"; // span msg
 const ASSIGN_TO_TEAM_MODAL = "#assign-to-team-modal"; // modal
 
+// MOVE TO SPRINT
+const MOVE_TO_SPRINT_MODAL = "#move-to-sprint-modal";
+const MOVE_TO_SPRINT_SELECT = "#move-to-sprint-select";
+const MOVE_TO_SPRINT_SUBMIT_BTN = "#move-to-sprint-submit-btn";
+const SPAN_MOVE_TO_SPRINT = "#span-msg-move-to-sprint";
 
 // WHEN HTML IS LOADED
 $(function() {
 
     $(ASSIGN_TO_USER_SELECT).select2();
     $(ASSIGN_TO_TEAM_SELECT).select2();
-
+    $(MOVE_TO_SPRINT_SELECT).select2();
 
     // GLOABALS
     let GLOBAL_WORK_ITEM_SUBMENU_CLICKED = null;
@@ -59,14 +64,11 @@ $(function() {
 
         let data = {"userId": userId};
 
-        // get all checked elements if there are any
-        let workItemsToUpdate = getvalueFromArraySelector(getCheckedElements(TABLE_ROW_CHECKBOX_ELEMENT) || []);
-
         // add those work items to the request data
-        data["workItems"] = getWorkItemsForSubMenuModal(workItemsToUpdate, GLOBAL_WORK_ITEM_SUBMENU_CLICKED);
+        data["workItems"] = getCheckedWorkItemsId(GLOBAL_WORK_ITEM_SUBMENU_CLICKED);
         
         // getting project id
-        const projectId = $(PROJECT_ID).val();
+        const projectId = getProjectId();
         const API_LINK_ASSIGN_USER_TO_WORK_ITEM = `/dashboard/api/${projectId}/assignWorkItemToUser`;
 
         let response_error = null;
@@ -108,17 +110,11 @@ $(function() {
 
         let data = {"teamId": teamId};
 
-        // get all checked elements if there are any
-        let checkedWorkItems = getCheckedElements(TABLE_ROW_CHECKBOX_ELEMENT) || [];
-        
-        // from the checked elements, get just the value, which is the id of the work item
-        let workItemsToUpdate = getvalueFromArraySelector(checkedWorkItems);
-        
         // add those work items to the request data
-        data["workItems"] = getWorkItemsForSubMenuModal(workItemsToUpdate, GLOBAL_WORK_ITEM_SUBMENU_CLICKED);
+        data["workItems"] = getCheckedWorkItemsId(GLOBAL_WORK_ITEM_SUBMENU_CLICKED);
 
         // getting project id
-        const projectId = $(PROJECT_ID).val();
+        const projectId = getProjectId();
         const API_LINK_ASSIGN_TEAM_TO_WORK_ITEM = `/dashboard/api/${projectId}/assignWorkItemToTeam`;
 
         let response_error = null;
@@ -128,7 +124,7 @@ $(function() {
 
         if (!response_error){
             $.notify(response["msg"], "success");
-            console.log(response);
+
             // check response is success before updating UI
             if (response["team"]){
 
@@ -141,6 +137,52 @@ $(function() {
             $.notify(response_error.data.responseJSON.msg, "error");
         }
     });
+
+    //  ===== MOVE TO SPRINT =====
+
+    // when the modal is opening
+    $(document).on("click", MOVE_TO_SPRINT_BTN, function () {
+        setUpSubMenuModal(SPAN_MOVE_TO_SPRINT, MOVE_TO_SPRINT_SELECT);
+    });
+
+    // submit btn when assigning user
+    $(MOVE_TO_SPRINT_SUBMIT_BTN).on("click", async function(){
+
+        // get sprint
+        const sprintId = $(MOVE_TO_SPRINT_SELECT).val();
+        if (sprintId == UNNASIGNED_VALUE){
+            $.notify("Invalid sprint", "error");
+            return
+        }
+
+        // add those work items to the request data
+        let workItems = getCheckedWorkItemsId(GLOBAL_WORK_ITEM_SUBMENU_CLICKED);
+
+        let workItemsWereMoved = moveWorkItemToSprint(workItems, sprintId);
+
+        // close modal if success
+        if (workItemsWereMoved){
+            $(`${MOVE_TO_SPRINT_MODAL} .close`).click();
+        }
+
+    });
+
+    // ===== MOVE TO BACKLOG =====
+
+    // Move to backlog
+    $(document).on("click", MOVE_TO_BACKLOG_BTN, function(){
+        let workItemId = $(this).attr("id");
+
+        // get checked elements in table
+        const workItems = getVisibleElements(TABLE_ROW_CHECKBOX_ELEMENT_CHECKED);
+
+        if (_.isArray(workItems) && !_.isEmpty(workItems)){   
+            moveWorkItemToSprint(workItems, UNNASIGNED_VALUE);
+        }else{
+            moveWorkItemToSprint([workItemId], UNNASIGNED_VALUE);
+        }
+    }); 
+    
 });
 
 /**
@@ -192,4 +234,22 @@ function getWorkItemsForSubMenuModal(workItemsToUpdate, currentWorkItemIdClicked
     }
 
     return data;
+}
+
+/**
+ * Get the id of the work items checked
+ * @param {String} clickedWorkItemId - id of the work item when clicked submenu
+ * @returns {Array}
+ */
+function getCheckedWorkItemsId(clickedWorkItemId){
+    // get all checked elements if there are any
+    let checkedWorkItems = getCheckedElements(TABLE_ROW_CHECKBOX_ELEMENT) || [];
+
+    // from the checked elements, get just the value, which is the id of the work item
+    let workItemsToUpdate = getvalueFromArraySelector(checkedWorkItems);
+
+    // add those work items to the request data
+    let workItems = getWorkItemsForSubMenuModal(workItemsToUpdate, clickedWorkItemId);
+
+    return workItems;
 }

@@ -38,7 +38,7 @@ $(function (){
 
         hideErrSpanMessage(MODAL_SPAN_EMAIl_ERROR);
 
-        let projectId = $(PROJECT_ID).val();
+        const projectId = getProjectId();
 
         if (!_.isString(projectId)){
             $.notify("Sorry, Cannot find the project at this moment.", "error");
@@ -88,7 +88,7 @@ $(function (){
             return;
         }
 
-        const projectId = $(PROJECT_ID).val();
+        const projectId = getProjectId();
 
         const API_LINK_REMOVE_USER_FROM_PROJECT = `/dashboard/api/${projectId}/deleteUserFromProject`;
         const data = {"userId": userId};
@@ -124,7 +124,7 @@ $(function (){
             return;
         }
 
-        const projectId = $(PROJECT_ID).val();
+        const projectId = getProjectId();
 
         const data = {"userIds": checkedElements};
         const API_LINK_REMOVE_USERS_FROM_PROJECT = `/dashboard/api/${projectId}/deleteUsersFromProject/`
@@ -203,7 +203,7 @@ $(function (){
             return;
         }
 
-        const projectId = $(PROJECT_ID).val();
+        const projectId = getProjectId();
 
         // API link
         const API_LINK_UPDATE_USER = `/dashboard/api/${projectId}/updateUser`;

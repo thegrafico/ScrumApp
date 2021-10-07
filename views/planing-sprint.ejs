@@ -177,14 +177,10 @@
                                     <span class="btn btn-outline-info workItemOpenSubMenu" data-bs-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
                                         <i class="fas fa-ellipsis-v workItemSubMenuIcon"></i>
                                     </span>
-                                    <!-- <a class="nav-link dropdown-toggle show" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="true">Dropdown</a> -->
                                     <div id="workItemSubMenu" class="dropdown-menu " data-bs-popper="none">
-                                        
-                                        <a class="dropdown-item subMenuItem subMenuSprintItem" href="#" rel="0" id="<%=workItems[i]['_id']%>">
+                                        <a class="dropdown-item subMenuItem subMenuSprintItem moveToBacklog" href="#" rel="0" id="<%=workItems[i]['_id']%>">
                                             Move to Backlog
                                         </a>                                        
-                                        
-                                        <%- include('modals/subMenuMoveToSprint', {i: i}); %>
                                     </div>
                                 </td>
 

@@ -130,16 +130,10 @@
                                             <i class="fas fa-ellipsis-v workItemSubMenuIcon"></i>
                                         </span>
                                         <div id="workItemSubMenu" class="dropdown-menu " data-bs-popper="none">
-
-                                            <a class="dropdown-item subMenuItem subMenuSprintItem" href="#" rel="<%=activeSprintId%>" id="<%=workItems[i]['_id']%>">
-                                                Move to current sprint
-                                            </a>
-
-                                            <%- include('modals/subMenuMoveToSprint', {i: i}); %>
-
                                             
-                                            <div class="dropdown-divider"></div>
-                                            <a class="dropdown-item subMenuItem" href="#">Separated link</a>
+                                            <a class="dropdown-item subMenuItem subMenuAssignTeam subMenuMoveToSprint" data-toggle="modal" data-target="#move-to-sprint-modal" href="#" id="<%=workItems[i]['_id']%>">
+                                                Move to sprint...
+                                            </a>
                                         </div>
                                     </td>
                                     
@@ -172,5 +166,8 @@
         <input type="hidden" name="projectId" id="projectId" value="<%=projectId%>">
         <input type="hidden" name="currentTab" id="currentTab" value="<%=activeTab%>">
     </div>
+
+    <%- include('modals/workItemSubMenu/move-to-sprint'); %>
+
 
 <%- include('modals/footer'); %>

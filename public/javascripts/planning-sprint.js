@@ -9,7 +9,7 @@ $(function () {
 
     // FILTER BY TEAM
     $(FILTER_BY_TEAM_SPRINT).on("change", async function(){
-        const projectId = $(PROJECT_ID).val();
+        const projectId = getProjectId();
 
         const teamId = $(this).val();
 
@@ -130,7 +130,7 @@ $(function () {
     // FILTER BY SPRINT
     $(FILTER_BY_SPRINT_INPUT).on("change", async function(){
 
-        const projectId = $(PROJECT_ID).val();
+        const projectId = getProjectId();
         const teamId = $(FILTER_BY_TEAM_SPRINT).val();
         const sprintId = $(this).val();
 

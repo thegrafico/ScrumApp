@@ -1,14 +1,12 @@
 // =========== This function is fire as soon as the file is loaded after the HTML ===========
 $(function () {
     
-
-
     $(FILTER_BY_TEAM_INPUT).select2();
 
     // make the request when the user changes the filter to another team
     $(FILTER_BY_TEAM_INPUT).change(async function(){
 
-        const projectId = $(PROJECT_ID).val();
+        const projectId = getProjectId();
 
         const teamId = $(this).val();
 
@@ -71,5 +69,4 @@ $(function () {
             $.notify(response_error.data.responseJSON.msg, "error");
         } 
     });
-    
 });

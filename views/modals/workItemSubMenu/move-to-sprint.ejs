@@ -1,0 +1,40 @@
+<div class="modal fade" id="move-to-sprint-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Move to Sprint</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+
+                <div class="form-group">
+                    <label for="moveToSprint"> Select Sprint: </label>
+                    <select class="custom-select" name="moveToSprint" id="move-to-sprint-select">
+                        <option value="0" selected>Select sprint...</option>
+
+                        <% for (let sprint of sprints) { %>
+
+                            <% if (sprint['_id'] == "0") {continue;} %>
+
+                            <option value="<%=sprint['_id']%>">
+                                <%=sprint['name']%> : <%=sprint['startDateFormated']%> - <%=sprint['endDateFormated']%>
+                                <% if (sprint.status == "Active") { %>
+                                    (current)
+                                <% } %>
+                            </option>
+                        <% } %>
+                    </select>                        
+                </div>
+                <span class="text-info small" id="span-msg-move-to-sprint"></span>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="move-to-sprint-submit-btn">Apply</button>
+            </div>
+        </div>
+    </div>
+</div>

@@ -76,7 +76,7 @@ $(function () {
         // get checked elements in table
         const row_checked = getVisibleElements(TABLE_ROW_CHECKBOX_ELEMENT_CHECKED);
 
-        const projectId = $(PROJECT_ID).val();
+        const projectId = getProjectId();
         
         await removeWorkItems(projectId, row_checked);
 
@@ -88,58 +88,6 @@ $(function () {
     // TOGGLE THE FILTER
     $(FILTER_BTN).on("click", function() {
         toggleFilter()
-    });
-
-    // ==================== MOVE TO ======================
-    // BACKLOG
-    $(document).on("click", MOVE_TO_BACKLOG_BTN, function(){
-        let workItemId = $(this).attr("rel");
-
-        // get checked elements in table
-        const workItems = getVisibleElements(TABLE_ROW_CHECKBOX_ELEMENT_CHECKED);
-
-        if (_.isArray(workItems) && !_.isEmpty(workItems)){   
-            moveWorkItemToSprint(workItems, UNNASIGNED_VALUE);
-        }else{
-            moveWorkItemToSprint([workItemId], UNNASIGNED_VALUE);
-        }
-        
-    });
-
-    // MOVE WORK ITEM TO SPRINT
-    $(document).on("click", MOVE_TO_SUB_MENU_SPRINT_ITEM, function(){
-        
-        let sprintId = $(this).attr("rel");
-        let workItemId = $(this).attr("id");
-
-        console.log(`Moving ${workItemId} to: ${sprintId}`);
-        
-        // get checked elements in table
-        const workItems = getVisibleElements(TABLE_ROW_CHECKBOX_ELEMENT_CHECKED);
-
-        if (_.isArray(workItems) && !_.isEmpty(workItems)){   
-            moveWorkItemToSprint(workItems, sprintId);
-        }else{
-            moveWorkItemToSprint([workItemId], sprintId);
-        }
-
-    });
-
-
-    // TODO: REFACTOR THIS
-    $(document).on('mouseover', '.open-sub-menu-select-sprints-container', function(){
-        $(this).find('.dropdown-menu').show();
-
-        if (SCROLL_TO_CURRENT_SPRINT_ONCE){
-            $(this).find(".currentSubMenuSprint")[0].scrollIntoView({
-                behavior: 'smooth'
-            });
-            SCROLL_TO_CURRENT_SPRINT_ONCE = false;
-        }    
-    });
-
-    $(document).on('mouseover', '.subMenuItem', function(e){
-        $(".open-sub-menu-select-sprints-container").find('.dropdown-menu').hide();
     });
 
     updateWorkItemFeedback();

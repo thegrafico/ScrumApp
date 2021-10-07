@@ -48,7 +48,7 @@ $(function () {
             tags :getTags(WORK_ITEM),
         };
 
-        const projectId = $(PROJECT_ID).val();
+        const projectId = getProjectId();
 
         const API_LINK_CREATE_WORK_ITEM = `/dashboard/api/${projectId}/createWorkItem`;
 

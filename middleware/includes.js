@@ -55,7 +55,7 @@ module.exports = {
             "/javascripts/modals/team-controller.js",
             "/javascripts/modals/sprint-controller.js",
             "/javascripts/dependecies/col-resizable-min.js",
-
+            "/javascripts/work-item-sub-menu.js",
         ]
     },
     sprintPath: {
@@ -75,6 +75,7 @@ module.exports = {
             "/javascripts/modals/sprint-controller.js",
             "/javascripts/modals/sprint-points-graph.js",
             "/javascripts/dependecies/col-resizable-min.js",
+            "/javascripts/work-item-sub-menu.js",
         ]
     },
 

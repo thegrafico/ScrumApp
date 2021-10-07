@@ -106,7 +106,7 @@ $(function () {
         }
 
         // making the request to the API
-        const projectId = $(PROJECT_ID).val();
+        const projectId =getProjectId();
         const API_LINK_GET_QUERY = `/dashboard/api/${projectId}/getWorkItemsByQuery`;
 
         let response_error = null;
@@ -184,7 +184,7 @@ $(function () {
         }
 
         // making the request to the API
-        const projectId = $(PROJECT_ID).val();
+        const projectId = getProjectId();
         const API_LINK_SAVE_QUERY = `/dashboard/api/${projectId}/saveQuery`;
 
         let response_error = null;
@@ -214,7 +214,7 @@ $(function () {
         }
 
         // making the request to the API
-        const projectId = $(PROJECT_ID).val();
+        const projectId = getProjectId();
         const API_LINK_GET_QUERY = `/dashboard/api/${projectId}/getQuery?queryId=${queryId}`;
 
         let response_error = null;
@@ -298,7 +298,7 @@ $(function () {
         }
 
         // making the request to the API
-        const projectId = $(PROJECT_ID).val();
+        const projectId = getProjectId();
         const API_LINK_REMOVE_QUERY = `/dashboard/api/${projectId}/removeMyQuery`;
 
         let response_error = null;

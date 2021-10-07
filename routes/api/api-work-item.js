@@ -799,6 +799,8 @@ router.post("/api/:id/moveWorkItemsToSprint/:teamId", middleware.isUserInProject
     let response = {projectId, teamId};
 
     const {sprintId, workItemIds} = req.body;
+    console.log("SPRINT ID:", sprintId);
+    console.log("WORK ITEMS: ", workItemIds);
 
     if (_.isUndefined(sprintId) || _.isNull(sprintId)){
         response["msg"] = "Invalid sprint was received.";
@@ -835,7 +837,9 @@ router.post("/api/:id/moveWorkItemsToSprint/:teamId", middleware.isUserInProject
     // check work item
     for (const workItem of workItemIds){
 
-        if (!project.isWorkItemInProject(workItem)){
+        let isWorkItemInProject = await project.isWorkItemInProject(workItem);
+
+        if (!isWorkItemInProject){
             response["msg"] = "Sorry, A work item received does not belong to the current project.";
             res.status(400).send(response);
             return;
@@ -849,11 +853,9 @@ router.post("/api/:id/moveWorkItemsToSprint/:teamId", middleware.isUserInProject
     
     // =========== UPDATE SPRINT =================
 
-
-
     // if there is not id for the sprint, we end here
     if (sprintId == UNASSIGNED_SPRINT["_id"]){
-        response["msg"] = "Work items were moved to the backlog.";
+        response["msg"] = (workItemIds.length > 1) ? "Work Items were moved to the sprint.": "Work Item was moved to the sprint.";
         res.status(200).send(response);
         return;
     }
@@ -868,8 +870,8 @@ router.post("/api/:id/moveWorkItemsToSprint/:teamId", middleware.isUserInProject
         res.status(400).send(response);
         return;
     }
-    
-    response["msg"] = (workItemIds.length > 0) ? "Work Items were moved to the sprint.": "Work Item was moved to the sprint.";
+
+    response["msg"] = (workItemIds.length > 1) ? "Work Items were moved to the sprint.": "Work Item was moved to the sprint.";
     res.status(200).send(response);
 });
 

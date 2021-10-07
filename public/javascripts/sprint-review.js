@@ -85,7 +85,7 @@ $(function () {
 
     // FILTER BY TEAM
     $(FILTE_BY_TEAM_SPRINT_REVIEW).on("change", async function(){
-        const projectId = $(PROJECT_ID).val();
+        const projectId = getProjectId();
 
         const teamId = $(this).val();
 
@@ -250,7 +250,7 @@ $(function () {
 
 
         // make the request
-        const projectId = $(PROJECT_ID).val()
+        const projectId = getProjectId();
         const API_LINK_START_NEW_SPRINT = `/dashboard/api/${projectId}/startSprint/${teamId}`;
         let data = {"sprint": startSprint, "capacity": newCapacity};
 
@@ -311,7 +311,7 @@ $(function () {
         // get sprint current capacity if any
         const sprintId = $(this).val();
         const teamId = $(FILTE_BY_TEAM_SPRINT_REVIEW).val();
-        const projectId = $(PROJECT_ID).val()
+        const projectId = getProjectId();
 
         if (sprintId == UNNASIGNED_VALUE){
             // active the disabled attr. 
@@ -374,7 +374,7 @@ $(function () {
             return;
         }
 
-        const projectId = $(PROJECT_ID).val()
+        const projectId = getProjectId();
         const API_LINK_CLOSE_SPRINT = `/dashboard/api/${projectId}/closeSprint/`;
         let data = {"closingSprint": closingSprintId, "activeSprint": newActiveSprintId, "sprintCapacity": newActiveSprintCapacity};
 
@@ -939,7 +939,7 @@ function getLinearFunction(totalPoints, numberOfDays){
  */
 async function getSprintReview(sprintId, teamSelector){
     
-    const projectId = $(PROJECT_ID).val();
+    const projectId = getProjectId();
     const teamId = $(teamSelector).val();
 
     // update the "got to sprint" link
