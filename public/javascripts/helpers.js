@@ -412,25 +412,7 @@ function appendToWotkItemTable(workItems, index=null, showIfSprint=true, removeT
         headers_object["title"] = title;
 
         // SUB MENU
-        let submenu = `
-            <td class="tdWorkItemSubMenu">
-                <span class="btn btn-outline-info" data-bs-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-                    <i class="fas fa-ellipsis-v workItemSubMenuIcon"></i>
-                </span>
-
-                <div id="workItemSubMenu" class="dropdown-menu " data-bs-popper="none">
-                    
-                    <a class="dropdown-item moveToBacklog" href="#" role="button" rel="${workItem['_id']}">
-                        Move to Backlog
-                    </a>                                        
-                    
-                    <a class="dropdown-item moveToNextSprintBtn" href="#" rel="${workItem['_id']}">
-                        Move to next Sprint
-                    </a>
-
-                </div>
-            </td>
-        `;
+        let submenu = getPageSubMenu($(CURRENT_PAGE_ID).val(), workItem['_id']);
         headers_object["submenu"] = submenu;
 
 
@@ -518,6 +500,79 @@ function appendToWotkItemTable(workItems, index=null, showIfSprint=true, removeT
         }
     }
 
+}
+
+/**
+ * Get the work item sub menu
+ * @param {String} page 
+ */
+function getPageSubMenu(page, workItemId){
+
+    let subMenuHtml = "";
+    switch (page) {
+
+        case PAGES["WORK_ITEMS"]:
+            subMenuHtml = `
+            <td class="tdWorkItemSubMenu">
+                <span class="btn btn-outline-info workItemOpenSubMenu" data-bs-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                    <i class="fas fa-ellipsis-v workItemSubMenuIcon"></i>
+                </span>
+                <div id="workItemSubMenu" class="dropdown-menu " data-bs-popper="none">
+                    <a class="dropdown-item subMenuItem subMenuAssignUser"  data-toggle="modal" data-target="#assign-to-user-modal" href="#" id="${workItemId}">
+                        Assign to a user <i class="fas fa-user-astronaut"></i>
+                    </a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item subMenuItem subMenuAssignTeam" data-toggle="modal" data-target="#assign-to-team-modal" href="#" id="${workItemId}">
+                        Assign to a team <i class="fas fa-users"></i>
+                    </a>
+            </td>`;
+            break;
+
+        case PAGES["BACKLOG"]:
+            subMenuHtml = `
+            <td class="tdWorkItemSubMenu">
+                <span class="btn btn-outline-info workItemOpenSubMenu" data-bs-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                    <i class="fas fa-ellipsis-v workItemSubMenuIcon"></i>
+                </span>
+                <div id="workItemSubMenu" class="dropdown-menu " data-bs-popper="none">
+
+                    <a class="dropdown-item subMenuItem subMenuSprintItem" href="#" rel="<%=activeSprintId%>" id="${workItemId}">
+                        Move to current sprint
+                    </a>
+
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item subMenuItem subMenuAssignTeam" data-toggle="modal" data-target="#move-to-sprint-modal" href="#" id="${workItemId}">
+                        Move to sprint...
+                    </a>
+                </div>
+            </td>`;
+            break;
+        case PAGES["SPRINT"]:
+            subMenuHtml = `
+            <td class="tdWorkItemSubMenu">
+                <span class="btn btn-outline-info workItemOpenSubMenu" data-bs-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                    <i class="fas fa-ellipsis-v workItemSubMenuIcon"></i>
+                </span>
+                <div id="workItemSubMenu" class="dropdown-menu " data-bs-popper="none">
+                    
+                    <a class="dropdown-item subMenuItem subMenuSprintItem" href="#" rel="0" id="<%=workItems[i]['_id']%>">
+                        Move to Backlog
+                    </a>
+
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item subMenuItem subMenuAssignTeam" data-toggle="modal" data-target="#move-to-sprint-modal" href="#" id="${workItemId}">
+                        Move to sprint...
+                    </a>                                
+                    
+                </div>
+            </td>`;
+        
+            break;
+        default:
+            break;
+    }
+
+    return subMenuHtml;
 }
 
 /**
