@@ -252,6 +252,7 @@ const SPRINT_STATUS = {
 };
 
 const UNNASIGNED_VALUE = "0";
+const INVALID_OPTION_VALUE = "-1";
 
 const UNASSIGNED_SPRINT = {
     name: "unassigned",

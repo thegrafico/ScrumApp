@@ -996,13 +996,14 @@ router.post("/api/:id/assignWorkItemToUser", middleware.isUserInProject, async f
 /**
  * METHOD: POST - ASSIGN WORK ITEMS TO TEAM
  */
-router.post("/api/:id/assignWorkItemToTeam", middleware.isUserInProject, async function (req, res) {
+router.post("/api/:id/assignWorkItemToTeam/:teamId", middleware.isUserInProject, async function (req, res) {
     
     console.log("Getting request to assign work items to a team...");
     
     const projectId = req.params.id;
+    const teamId = req.params.teamId;
     
-    let  { workItems,  teamId} = req.body;
+    let  { workItems, sprintId} = req.body;
     let response = {};
 
     // getting project information
@@ -1033,21 +1034,60 @@ router.post("/api/:id/assignWorkItemToTeam", middleware.isUserInProject, async f
         return res.status(400).send(response);
     }
 
-    let teamName = project.getTeam(teamId);
-    console.log("TEAM ANME IS: ", teamName);
+    // store the name of the team to send it with the response
+    const teamName = project.getTeam(teamId); 
+
+    // remove work item from previus sprint if any
+    let error_removing_sprints_from_work_items = null;
+    await SprintCollection.updateMany(
+        {projectId, tasks: {$in: workItems}},
+        {$pull: {tasks: {$in: workItems}}}
+    ).catch(err => {
+        error_removing_sprints_from_work_items = err;
+        console.error("Error removing work items from previus sprints: ", err);
+    });
+
+    // check if there was any error removing sprints from work items
+    if (error_removing_sprints_from_work_items){
+        response["msg"] = "Sorry, There was a problem removing the work items from previus sprints";
+        return res.status(400).send(response);
+    }
+    
     // updating work item
     WorkItemCollection.updateMany(
         {projectId, _id: {$in: workItems}},
         {teamId: teamId}
-    ).then( (update) => {
+    ).then( async (update) => {
         console.log("Work Items were Updated");
+
+        let udpatedSprint = UNASSIGNED;
+        if (sprintId != UNASSIGNED["_id"]){
+
+            // add work item to sprint if was selected
+            let error_adding_work_item_to_sprint = null;
+            udpatedSprint = await SprintCollection.findOneAndUpdate(
+                {projectId, teamId, _id: sprintId},
+                {$push: {tasks: {$each: workItems}}}
+            ).catch(err =>{
+                error_adding_work_item_to_sprint = err;
+                console.error("Error adding work items to new sprint: ", err);
+            });
+
+            if (error_adding_work_item_to_sprint){
+                response["msg"] = "Sorry, team was updated, but there was a problem assigning the sprint.";
+                response["team"] = {name: teamName["name"], id: teamId}
+                return res.status(400).send(response);
+            }
+        }
+       
         response["msg"] = (workItems.length > 1) ? "Work items were updated successfully.": "Work item was updated.";
         response["team"] = {name: teamName["name"], id: teamId}
+        response["sprint"] = {name: udpatedSprint["name"], id: sprintId};
         return res.status(200).send(response);
     }).catch(err => {
         console.error("Error updating work items users: ", err);
         response["msg"] = "Sorry, it seems there was an error updating the work items. Please try later or refresh the page.";
-        return res.status(200).send(response);
+        return res.status(400).send(response);
     });
 });
 

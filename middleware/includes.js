@@ -38,6 +38,9 @@ module.exports = {
             "/javascripts/modals/sprint-controller.js",
             "/javascripts/dependecies/col-resizable-min.js",
             "/javascripts/work-item-sub-menu.js",
+            "/javascripts/api-calls/api-sprints.js",
+            "/javascripts/api-calls/api-work-items.js",
+
         ]
     },
     backlogPath: {

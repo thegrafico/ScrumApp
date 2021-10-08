@@ -437,10 +437,10 @@ function appendToWotkItemTable(workItems, index=null, showIfSprint=true, removeT
             headers_object["team"] = team;
         }
 
-        // ITERATION / SPRINT
+        // SPRINT
         if (workItem["sprint"] && workItem["sprint"]["name"]){
             let iteration = `
-                <td> ${workItem["sprint"]["name"]}</td>
+                <td class="sprintColumnName"> ${workItem["sprint"]["name"]}</td>
             `;
             headers_object["iteration"] = iteration;
         }
@@ -976,6 +976,7 @@ function update_html(currentPage, updateType, valueToUpdate, inputType, others=n
                 // sprint modal
                 updateSelectOption(SPRINT_CREATE_MODAL_TEAM_INPUT, updateType, valueToUpdate);
                 updateSelectOption(SPRINT_DELETE_MODAL_SELECT_TEAM, updateType, valueToUpdate);
+                updateSelectOption(SPRINT_DELETE_MODAL_SELECT_SPRINT,updateType, valueToUpdate);
             }
             break;
         case PAGES["BACKLOG"]:

@@ -11,18 +11,27 @@
             <div class="modal-body">
 
                 <div class="form-group">
-                    <label for="assignToTeam"> Select Team: </label>
+                    <label for="assignToTeam">Team: </label>
                     <select class="custom-select" name="assignToTeam" id="assign-to-team-select">
-                        <option value="0" selected>Select team...</option>
+                        <option value="-1" selected>Select team to assing.</option>
 
                         <% for (let team of projectTeams) { %>
 
                             <% if (team['_id'] == "0") {continue;} %>
-
+                            
                             <option value="<%=team['_id']%>"><%=team['name']%></option>
                         <% } %>
                     </select>                        
                 </div>
+
+                <div class="form-group mt-4">
+                    <label for="assignToTeamSprint">Sprint: </label>
+                    <select class="custom-select" name="assignToTeamSprint" id="assign-to-team-sprint-select">
+                        <option value="-1" selected>Select new sprint.</option>
+
+                    </select>                        
+                </div>
+
                 <span class="text-info small" id="span-msg-assign-to-team"></span>
 
             </div>

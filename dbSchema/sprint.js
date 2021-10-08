@@ -712,27 +712,4 @@ sprintSchema.methods.haveOrderSchema = async function() {
     return this.getSprintOrder() != null;
 };
 
-
-// // CREATION OF THE WORK ITEM TRIGGER THIS
-// // deletion of the work item trigger this
-// sprintSchema.pre('find', async function() {
-
-//     const docToUpdate = await this.model.findOne(this.getQuery());
-    
-//     console.log(docToUpdate["tasks"].length);
-//     // console.log("Current document: ", this)
-//     // console.log(this["tasks"].length);
-//     this.$locals.currentDocument = docToUpdate;
-//     // console.log("PRE UPDATING");
-// });
-
-// sprintSchema.post('save', async function(doc) {
-//     // const docToUpdate = await this.model.findOne(this.getQuery());
-//     console.log("POST UPDATING");
-//     // console.log(doc["tasks"].length)
-//     console.log(this.$locals.currentDocument);
-// });
-
-
-
 module.exports = mongoose.model("Sprint", sprintSchema);

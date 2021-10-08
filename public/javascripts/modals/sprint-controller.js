@@ -36,7 +36,8 @@ const MODAL_DELETE_SPRINT_SUBMIT_BTN = "#modal-delete-sprint-submit-btn";
 
 $(function () {
 
-    let GLOBAL_SPRINT_CAPACITY = undefined;
+    let LOCAL_SPRINT_CAPACITY = undefined;
+    let LOCAL_CANCEL_ON_CHANGE = false;
 
     // getting the amount of days of the sprint - default
     const SPRINT_TIME_PERIOD_DAYS = parseInt( $(SPRINT_TIME_PERIDO_INPUT_ID).val());
@@ -164,22 +165,14 @@ $(function () {
         }
         hideErrSpanMessage(SPRINT_SPRINT_SPAN_ERROR);
 
-        
         let request_data = {"sprintId": sprintId};
+        
+        let {response, response_error} = await removeSprintFromTeam(teamId, request_data);
 
-        const projectId = getProjectId();
-        const API_LINK_REMOVE_SPRINT_FROM_TEAM = `/dashboard/api/${projectId}/removeSprintForTeam/${teamId}`;
-
-        let response_error = null;
-        const response = await make_post_request(API_LINK_REMOVE_SPRINT_FROM_TEAM, request_data).catch(err => {
-            response_error = err;
-        });
-
-        if (response){
+        if (!response_error){
             $.notify(response.msg, "success");
             $(CLOSE_MODAL_SPRINT_BTN).click();           
             // get user best team or selected team is available
-
             update_html( 
                 $(CURRENT_PAGE_ID).val(), 
                 UPDATE_TYPE.DELETE, 
@@ -192,32 +185,38 @@ $(function () {
 
     });
 
+    // TODO: move from here
+    function resetSelectOptionAndDisabled(selector){
+       
+       
+    }
+
     // DELETE SPRINT TEAM SELECT
     $(SPRINT_DELETE_MODAL_SELECT_TEAM).on("change", async function(){
 
         let teamId = $(this).val();
 
+        // cancel the request in case on change is trigger by calling a resetSelectOption
+        if (LOCAL_CANCEL_ON_CHANGE) { 
+            LOCAL_CANCEL_ON_CHANGE = false;
+            return;
+        }
+
         if (teamId == 0){
-            $(SPRINT_DELETE_MODAL_SELECT_SPRINT).val("0");
-            $(SPRINT_DELETE_MODAL_SELECT_SPRINT).attr("disabled", true);
+            setDisabledAttr(SPRINT_DELETE_MODAL_SELECT_SPRINT, true);
+            $(SPRINT_DELETE_MODAL_SELECT_SPRINT).val("0").change();
+            LOCAL_CANCEL_ON_CHANGE = true;
             return;
         }
         hideErrSpanMessage(SPRINT_TEAM_SPAN_ERROR);
 
-
         // remove disable from sprints
-        $(SPRINT_DELETE_MODAL_SELECT_SPRINT).attr("disabled", false);
+        setDisabledAttr(SPRINT_DELETE_MODAL_SELECT_SPRINT, false);
 
-        const projectId = getProjectId();
-        const API_LINK_GET_SPRINTS_FOR_TEAM = `/dashboard/api/${projectId}/getTeamSprints/${teamId}`;
-
-        let response_error = null;
-        const response = await make_get_request(API_LINK_GET_SPRINTS_FOR_TEAM).catch(err => {
-            response_error = err;
-        });
+        let {response, response_error} = await getSprintsForTeam(teamId);
 
         // Success message
-        if (response){
+        if (!response_error){
 
             // clean select opction
             removeAllOptionsFromSelect(
@@ -271,7 +270,7 @@ $(function () {
         $(UPDATE_SPRINT_CAPACITY_INPUT).val(sprintCapacity);
 
         // updating capacity global variable in order to know if has changed
-        GLOBAL_SPRINT_CAPACITY = sprintCapacity;
+        LOCAL_SPRINT_CAPACITY = sprintCapacity;
     });
 
     // UPDATE SUBMIT
@@ -308,9 +307,9 @@ $(function () {
             data["name"] = newName;
         }
 
-        if (capacity != GLOBAL_SPRINT_CAPACITY){
+        if (capacity != LOCAL_SPRINT_CAPACITY){
             data["capacity"] = capacity;
-            GLOBAL_SPRINT_CAPACITY = capacity;
+            LOCAL_SPRINT_CAPACITY = capacity;
         }
 
         // getting basic info for request
