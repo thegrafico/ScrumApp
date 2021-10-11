@@ -59,7 +59,7 @@ $(function () {
 
         // Success message
         if (response){
-            update_html( 
+            updateHtml( 
                 $(CURRENT_PAGE_ID).val(), 
                 UPDATE_TYPE.ADD, 
                 response.workItem,

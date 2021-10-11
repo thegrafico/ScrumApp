@@ -59,14 +59,14 @@ $(function (){
             cleanInput(MODAL_USER_EMAIl_INPUT);
 
             if (response.user){
-                update_html( 
+                updateHtml( 
                     $(CURRENT_PAGE_ID).val(),
                     UPDATE_TYPE.ADD, 
                     {"value": response.user.id, "text": response.user.fullName}, 
                     UPDATE_INPUTS.USER
                 );
 
-                addUserToTable(response.user)
+                addUserToTable(response.user);
             }
         }else{ // error messages
             $.notify(response_error.data.responseJSON.msg, "error");
@@ -83,12 +83,12 @@ $(function (){
             return;
         }
 
+        const projectId = getProjectId();
+
         if (!_.isString(projectId)){
             $.notify("Sorry, Cannot find the project at this moment.", "error");
             return;
         }
-
-        const projectId = getProjectId();
 
         const API_LINK_REMOVE_USER_FROM_PROJECT = `/dashboard/api/${projectId}/deleteUserFromProject`;
         const data = {"userId": userId};
@@ -102,7 +102,7 @@ $(function (){
         if (response){
             $.notify(response.msg, "success");
             cleanSelect(MODAL_REMOVE_USER_INPUT);
-            update_html( 
+            updateHtml( 
                 $(CURRENT_PAGE_ID).val(), 
                 UPDATE_TYPE.DELETE, 
                 response.userId, 
@@ -146,7 +146,7 @@ $(function (){
 
             for (let i = 0; i < response.userIds.length; i++) {
                 let userId = response["userIds"][i];
-                update_html( 
+                updateHtml( 
                     $(CURRENT_PAGE_ID).val(), 
                     UPDATE_TYPE.DELETE, 
                     userId,

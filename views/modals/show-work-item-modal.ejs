@@ -135,11 +135,10 @@
                                     <span class="aling-vertically align-self-center"> Team: </span>
                                     <select class="custom-select my-custon-select "  name="teamAssigned" id="update-work-item-team">
                                         <% for (team of projectTeams){ %>
-                                            <option value="<%=team['id']%>"><%=team['name']%></option>
+                                            <option value="<%=team['_id']%>"><%=team['name']%></option>
                                         <%}%>   
                                     </select>
                                 </div>
-
 
                             </div>
 

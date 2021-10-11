@@ -129,7 +129,7 @@ $(function () {
 
             
             // get user best team or selected team is available
-            update_html( 
+            updateHtml( 
                 $(CURRENT_PAGE_ID).val(), 
                 UPDATE_TYPE.ADD, 
                 {"value": response.sprint._id, "text": response.sprint.name},
@@ -173,7 +173,7 @@ $(function () {
             $.notify(response.msg, "success");
             $(CLOSE_MODAL_SPRINT_BTN).click();           
             // get user best team or selected team is available
-            update_html( 
+            updateHtml( 
                 $(CURRENT_PAGE_ID).val(), 
                 UPDATE_TYPE.DELETE, 
                 sprintId,
@@ -427,7 +427,7 @@ $(function () {
 
             for (let i = 0; i < checkedElements.length; i++) {
                 let sprintId = checkedElements[i];
-                update_html( 
+                updateHtml( 
                     $(CURRENT_PAGE_ID).val(), 
                     UPDATE_TYPE.DELETE, 
                     sprintId,

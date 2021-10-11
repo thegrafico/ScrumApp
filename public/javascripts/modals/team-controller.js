@@ -92,7 +92,7 @@ $(function (){
         if (response){
             $.notify(response.msg, "success");
             $(CLOSE_BTN_CREATE_TEAM).click();
-            update_html( 
+            updateHtml( 
                 $(CURRENT_PAGE_ID).val(), 
                 UPDATE_TYPE.ADD, 
                 {"value": response.team.id, "text": response.team.name},
@@ -126,7 +126,7 @@ $(function (){
         if (response){
             $.notify(response.msg, "success");
             $(CLOSE_BTN_DELETE_TEAM).click();
-            update_html( 
+            updateHtml( 
                 $(CURRENT_PAGE_ID).val(), 
                 UPDATE_TYPE.DELETE, 
                 response.teamId,

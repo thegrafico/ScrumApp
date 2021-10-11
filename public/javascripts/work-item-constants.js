@@ -252,6 +252,7 @@ const SPRINT_STATUS = {
 };
 
 const UNNASIGNED_VALUE = "0";
+const UNNASIGNED_NAME = "unasigned";
 const INVALID_OPTION_VALUE = "-1";
 
 const UNASSIGNED_SPRINT = {
@@ -272,6 +273,18 @@ let SCROLL_TO_CURRENT_SPRINT_ONCE = false;
 // if the function "updateSelectOption" changes, then this variable becomes true
 let IS_UPDATE_SELECT_OPTION = false;
 // =========== END
+
+// ===== FILTERS ==========
+const FILTER_OPTIONS = {
+    user: "#filter-by-user",
+    type: "#filter-by-type",
+    status: "#filter-by-status",
+    team: "#filter-by-teams",
+};
+const FILTER_BY_USER_CONTAINER = "#filter-by-user";
+const FILTER_BY_TYPE_CONTAINER = "#filter-by-type";
+const FILTER_BY_STATUS_CONTAINER = "#filter-by-status";
+const FILTER_BY_TEAMS_CONTAINER = "#filter-by-teams";
 
 const CURRENT_USER_ID = "#current-user-id";
 

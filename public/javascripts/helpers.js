@@ -417,8 +417,14 @@ function appendToWotkItemTable(workItems, index=null, showIfSprint=true, removeT
 
 
         // USER
+        let userid = workItem["assignedUser"]["id"] || UNNASIGNED_VALUE;
         let assigned = `
-            <td> <i class="fas fa-user-astronaut"></i> <span class="userName">${workItem["assignedUser"]["name"]}</span> </td>
+            <td> 
+                <i class="fas fa-user-astronaut"></i> 
+                <span class="userName ${userid}">
+                    ${workItem["assignedUser"]["name"]}
+                </span> 
+            </td>
         `;
         headers_object["assigned"] = assigned;
 
@@ -432,7 +438,7 @@ function appendToWotkItemTable(workItems, index=null, showIfSprint=true, removeT
         // TEAM
         if (workItem["team"] && workItem["team"]["name"]){
             let team = `
-                <td class="teamColumnName"> ${workItem["team"]["name"]}</td>
+                <td class="teamColumnName ${workItem["team"]["_id"]}"> ${workItem["team"]["name"]}</td>
             `;
             headers_object["team"] = team;
         }
@@ -440,7 +446,9 @@ function appendToWotkItemTable(workItems, index=null, showIfSprint=true, removeT
         // SPRINT
         if (workItem["sprint"] && workItem["sprint"]["name"]){
             let iteration = `
-                <td class="sprintColumnName"> ${workItem["sprint"]["name"]}</td>
+                <td class="sprintColumnName ${workItem['sprint']['_id']}"> 
+                    ${workItem["sprint"]["name"]}
+                </td>
             `;
             headers_object["iteration"] = iteration;
         }
@@ -942,41 +950,87 @@ async function moveWorkItemToSprint(workItemId, sprintId){
  * @param {Object} inputType 
  * @param {Object} others 
  */
-function update_html(currentPage, updateType, valueToUpdate, inputType, others=null){
+function updateHtml(currentPage, updateType, valueToUpdate, inputType, others=null){
     switch (currentPage){
         case PAGES["STATISTICS"]:
             updateStatisticsHtml(updateType, valueToUpdate);
             break;
         case PAGES["WORK_ITEMS"]:
 
+            // update from create work item
             if (inputType === UPDATE_INPUTS.CREATE_WORK_ITEM){
                 appendToWotkItemTable([valueToUpdate], 0, true, false);
             }
 
-            // TODO: Remove user form table? or just leave it to update the page?
+            // update from top navbar menu
             if (inputType === UPDATE_INPUTS.USER){
+                
+                // update create work item modal 
                 updateSelectOption(WORK_ITEM["user"], updateType, valueToUpdate);
+                updateSelectOption(UPDATE_WORK_ITEM["user"], updateType, valueToUpdate);
+
+                
+                // update the remove user from project option
                 updateSelectOption(MODAL_REMOVE_USER_INPUT, updateType, valueToUpdate);
+
+                // update filter if user is removed from filter
+                updateOptionFromFilter(FILTER_OPTIONS["user"], updateType, valueToUpdate);
+
+                // remove user from table
+                if (updateType == UPDATE_TYPE["DELETE"]){
+                    // change the name for unnasigned in the UI
+                    $(`.rowValues span.userName.${valueToUpdate}`).text(UNNASIGNED_NAME);
+
+                    // remove any record of the user in this row
+                    $(`.rowValues span.userName.${valueToUpdate}`).removeClass(valueToUpdate);
+                }
             }
 
             if (inputType === UPDATE_INPUTS.TEAM){
                 // work item
                 updateSelectOption(WORK_ITEM["team"], updateType, valueToUpdate);
+                updateSelectOption(UPDATE_WORK_ITEM["team"], updateType, valueToUpdate);
+
                 updateSelectOption(DELETE_TEAM_SELECT_INPUT, updateType, valueToUpdate);
 
                 // sprint modal
                 updateSelectOption(SPRINT_CREATE_MODAL_TEAM_INPUT, updateType, valueToUpdate);
-                updateSelectOption(SPRINT_DELETE_MODAL_SELECT_TEAM, updateType, valueToUpdate);   
+                updateSelectOption(SPRINT_DELETE_MODAL_SELECT_TEAM, updateType, valueToUpdate);
+                
+                // updating filter by team
+                updateOptionFromFilter(FILTER_OPTIONS["team"], updateType, valueToUpdate);
+
+                // remove team from table
+                if (updateType == UPDATE_TYPE["DELETE"]){
+                    // change the name for unnasigned in the UI
+                    $(`.rowValues .teamColumnName.${valueToUpdate}`).text(UNNASIGNED_NAME);
+
+                    // if the team is deleted, then we should remove sprints reference in table
+                    $(`.rowValues .teamColumnName.${valueToUpdate}`).parent().find(".sprintColumnName").text(UNNASIGNED_NAME);
+
+                    // remove the team reference from the table
+                    $(`.rowValues .teamColumnName.${valueToUpdate}`).removeClass(valueToUpdate);
+
+                }
             }
             
             // TODO: verify userBestTeam
             if (inputType === UPDATE_INPUTS.SPRINT){
                 updateSelectOption(WORK_ITEM["sprint"], updateType, valueToUpdate);
+                updateSelectOption(UPDATE_WORK_ITEM["sprint"], updateType, valueToUpdate);
 
                 // sprint modal
                 updateSelectOption(SPRINT_CREATE_MODAL_TEAM_INPUT, updateType, valueToUpdate);
                 updateSelectOption(SPRINT_DELETE_MODAL_SELECT_TEAM, updateType, valueToUpdate);
                 updateSelectOption(SPRINT_DELETE_MODAL_SELECT_SPRINT,updateType, valueToUpdate);
+
+                // remove team from table
+                if (updateType == UPDATE_TYPE["DELETE"]){
+                    // change the name for unnasigned in the UI
+                    $(`.rowValues .sprintColumnName.${valueToUpdate}`).text(UNNASIGNED_NAME);
+
+                    $(`.rowValues .sprintColumnName.${valueToUpdate}`).removeClass(valueToUpdate);
+                }
             }
             break;
         case PAGES["BACKLOG"]:
@@ -1083,6 +1137,7 @@ function update_html(currentPage, updateType, valueToUpdate, inputType, others=n
             break;
     }
 }
+
 
 /**
  * 
@@ -1389,8 +1444,11 @@ function addWorkItemEvents(element){
             if (response.sprints && response.sprints.length > 0){
                 for (const sprint of response.sprints) {
                     let optionText = "";
+                    let isSelected = false;
                     
-                    let isSelected = sprint["_id"].toString() == response["activeSprintId"].toString();
+                    if (response["activeSprintId"]){
+                        isSelected = sprint["_id"].toString() == response["activeSprintId"].toString();
+                    }
                     
                     if (sprint["_id"] == "0"){
                         optionText = sprint["name"];
@@ -1788,4 +1846,28 @@ function getvalueFromArraySelector(arrayWithSelectors){
  */
 function getProjectId(){
     return $(PROJECT_ID).val();
+}
+
+/**
+ * 
+ * @param {String} selector 
+ * @param {String} idToRemove 
+ */
+function updateOptionFromFilter(selector, updateType, valueToUpdate){
+
+    if (updateType == UPDATE_TYPE.ADD){
+        let filterOption = `
+        <li id="${valueToUpdate["value"]}">
+            <label class="small checkbox-container">
+                <input type="checkbox" data-id="<%=user['id']%>" class="userCheckbox" value="${valueToUpdate["text"]}" />&nbsp;
+                ${valueToUpdate["text"]}
+            </label>
+        </li>`;
+
+        $(`.table-filter-container ${selector}`).prepend(filterOption);
+    }else if(updateType == UPDATE_TYPE.DELETE){
+        $(`.table-filter-container ${selector} li#${valueToUpdate}`).remove();
+    }else if(updateType == UPDATE_TYPE.CHANGE){
+        console.log("user has change in filter options?")
+    }
 }
