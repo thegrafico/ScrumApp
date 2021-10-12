@@ -3,6 +3,16 @@
 
 $( function() {
     
+    setupDragInBoard();
+} );
+
+
+/**
+ * Setup the drag and drop function in the sprint board page
+ */
+function setupDragInBoard(){
+
+    // moving card
     $( ".container-column" ).sortable({
         connectWith: ".container-column",
         handle: ".card-header",
@@ -34,20 +44,55 @@ $( function() {
 
             // update the status of the work item
             await updateWorkItemBoard(workItemId, updateData);
-
-            // console.log("ITEM WAS MOVED TO: ", statusMoved);
         },
     });
- 
+    
+    // setup of the card
     $(".card")
-        .addClass("ui-widget ui-widget-content ui-helper-clearfix ui-corner-all")
-        .find(".card-header")
-        .addClass("ui-widget-header ui-corner-all")
-        .prepend("<span class='ui-icon ui-icon-minusthick portlet-toggle'></span>");
+    .addClass("ui-widget ui-widget-content ui-helper-clearfix ui-corner-all")
+    .find(".card-header")
+    .addClass("ui-widget-header ui-corner-all")
+    .prepend("<span class='ui-icon ui-icon-minusthick portlet-toggle'></span>");
 
+    // style while moving
     $(".portlet-toggle").on("click", function () {
         var icon = $(this);
         icon.toggleClass("ui-icon-minusthick ui-icon-plusthick");
         icon.closest(".portlet").find(".portlet-content").toggle();
     });
-} );
+
+}
+
+/**
+ * Update the status of the work item
+ * @param {String} workItemId 
+ * @param {String} status 
+ */
+async function updateWorkItemBoard(workItemId, updateData) {
+
+    const projectId = getProjectId();
+    const sprintId = $(FILTER_BY_SPRINT_INPUT).val();
+
+    const API_LINK_UPDATE_WORK_ITEM_BOARD = `/dashboard/api/${projectId}/updateWorkItemOrder/${workItemId}/${sprintId}`;
+
+    let response_error = null;
+    const response = await make_post_request(API_LINK_UPDATE_WORK_ITEM_BOARD, updateData).catch(err => {
+        response_error = err;
+    });
+
+    // Success message
+    if (!response_error) {
+
+        if (response["userWasUpdated"]){
+
+            // update card information in the UI
+            let spanToUpdate = $(`.card#${workItemId}`).find("span.userName");
+            $(spanToUpdate).removeClass(UNNASIGNED_VALUE);
+            $(spanToUpdate).addClass(response["assignedUser"]["id"]);
+            $(spanToUpdate).text(response["assignedUser"]["name"]);
+        }
+    }else{
+        $.notify(response_error.data.responseJSON.msg, "error");
+    }
+
+}

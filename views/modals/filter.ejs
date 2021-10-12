@@ -52,7 +52,7 @@
 
                     <ul class="dropdown-menu filterOptions" id="filter-by-teams">
 
-                        <% for (let i = 1; i < projectTeams.length; i++) { %>
+                        <% for (let i = 0; i < projectTeams.length; i++) { %>
                             <li id="<%=projectTeams[i]['id']%>">
                                 <label class="small checkbox-container">
                                     <input class="teamCheckbox" type="checkbox" value="<%=projectTeams[i]['name']%>" />

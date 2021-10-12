@@ -19,7 +19,8 @@ const {
     MAX_NUMBER_OF_TAGS_PER_WORK_ITEM,
     SPRINT_FORMAT_DATE,
     WORK_ITEM_STATUS,
-    getPointsForStatus
+    getPointsForStatus,
+    UNASSIGNED_USER,
 } = require("./Constanst");
 
 // get just the name since that will be in the db
@@ -45,7 +46,7 @@ let workItemSchema = new mongoose.Schema({
         required: [true, 'Project ID is mandatory'],
     },
     assignedUser: {
-        name: {type: String, default: "unassigned"},
+        name: {type: String, default: UNASSIGNED_USER["name"]},
         id: {type: ObjectId, ref: "User", default: null}
     },
     storyPoints: {
@@ -94,6 +95,25 @@ let workItemSchema = new mongoose.Schema({
 });
 
 workItemSchema.plugin(AutoIncrement, {id: 'sequence', inc_field: 'itemId', reference_fields: ['projectId'] });
+
+
+/**
+ * Check if the work item has a user assigned
+ * @returns {Boolean}
+ */
+ workItemSchema.methods.hasUserAssigned = function() {
+
+    let workItem = this;
+    
+    // check if the user has a unnasigned user and then negate the condition
+    return !(
+        workItem["assignedUser"]["name"] == UNASSIGNED_USER["name"] || 
+        workItem["assignedUser"]["id"] == null ||
+        workItem["assignedUser"]["id"].toString() == UNASSIGNED_USER["id"]
+    );
+};
+
+
 
 /**
  * Function to validate the max number of tags can a work item has

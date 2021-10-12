@@ -599,11 +599,12 @@ function getPageSubMenu(page, workItemId, activeSprintId) {
 function addWorkItemToBoard(workItem, index) {
 
     const projectId = getProjectId();
-    let id = workItem["_id"];
+    const id = workItem["_id"];
+    const user = workItem["assignedUser"];
+    const userId = user["id"] || UNNASIGNED_VALUE;
     let status = workItem["status"];
     let type = workItem["type"];
     let icon = WORK_ITEM_ICONS[type].icon;
-    let user = workItem["assignedUser"];
 
     // TAGS
     let tags = null;
@@ -638,7 +639,7 @@ function addWorkItemToBoard(workItem, index) {
                 
             </h4>
             ${tags}
-            <h4 class="card-botton"> <i class="far fa-user"></i> <span class="userName ${user["id"]}"> ${user["name"]} </span></h4>
+            <h4 class="card-botton"> <i class="far fa-user"></i> <span class="userName ${userId}"> ${user["name"]} </span></h4>
         </div>
     </div>`;
 
@@ -1957,31 +1958,6 @@ function getTags(workItemSelector) {
     });
 
     return tags_available;
-}
-
-
-/**
- * Update the status of the work item
- * @param {String} workItemId 
- * @param {String} status 
- */
-async function updateWorkItemBoard(workItemId, updateData) {
-
-    const projectId = getProjectId();
-    const sprintId = $(FILTER_BY_SPRINT_INPUT).val();
-
-    const API_LINK_UPDATE_WORK_ITEM_BOARD = `/dashboard/api/${projectId}/updateWorkItemOrder/${workItemId}/${sprintId}`;
-
-    let response_error = null;
-    const response = await make_post_request(API_LINK_UPDATE_WORK_ITEM_BOARD, updateData).catch(err => {
-        response_error = err;
-    });
-
-    // Success message
-    if (response_error) {
-        $.notify(response_error.data.responseJSON.msg, "error");
-    }
-
 }
 
 

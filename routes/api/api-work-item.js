@@ -10,6 +10,7 @@ const _                         = require("lodash");
 let router                      = express.Router();
 
 const {
+    UNASSIGNED_USER,
     UNASSIGNED,
     MAX_LENGTH_TITLE,
     MAX_LENGTH_DESCRIPTION,
@@ -620,13 +621,14 @@ router.post("/api/:id/updateWorkItem/:workItemId", middleware.isUserInProject, a
  */
 router.post("/api/:id/updateWorkItemOrder/:workItemId/:sprintId", middleware.isUserInProject, async function (req, res) {
     
-    console.log("Getting request to update work item status...");
+    console.log("Getting request to update work item order and status...");
     
     const projectId = req.params.id;
     const workItemId = req.params.workItemId;
     const sprintId = req.params.sprintId;
     
     let response = {};
+    let workItemUserWasUpdated = false;
 
     // =========== Validate project exist =================
     
@@ -723,13 +725,13 @@ router.post("/api/:id/updateWorkItemOrder/:workItemId/:sprintId", middleware.isU
 
             }
 
-                // find new location for the work item and add it. 
-                let newStatusLocation = sprintOrder["order"][location].filter(each => {
-                    return each["status"] == status;
-                })[0];
+            // find new location for the work item and add it. 
+            let newStatusLocation = sprintOrder["order"][location].filter(each => {
+                return each["status"] == status;
+            })[0];
 
-                // add workItemId to index and remove 0 elements.
-                newStatusLocation["index"].splice(index, 0, workItemId);
+            // add workItemId to index and remove 0 elements.
+            newStatusLocation["index"].splice(index, 0, workItemId);
         }else{
             console.log("Order for: ", location);
 
@@ -772,6 +774,29 @@ router.post("/api/:id/updateWorkItemOrder/:workItemId/:sprintId", middleware.isU
             }
 
             workItem["status"] = status;
+            
+            // if the work item does not have any assigned user
+            if (!workItem.hasUserAssigned()){
+                let statusSelection = [WORK_ITEM_STATUS["Active"], WORK_ITEM_STATUS["Review"], WORK_ITEM_STATUS["Block"]];
+
+                // if the status is inside the status selection, and the user has not been assigned
+                // then we assign this work item to the current user making the changes
+                if (statusSelection.includes(status)){
+
+                    // user information
+                    const assignedUser = {name: req.user["fullName"], id: req.user["_id"]};
+
+                    // assign user information into work item
+                    workItem["assignedUser"] = assignedUser
+                    
+                    // update to record
+                    workItemUserWasUpdated = true;
+
+                    // add to send it to user
+                    response["assignedUser"] = assignedUser;
+                }
+            }
+
         }else{
             response["msg"] = "The status for the work item did not match any of the status available";
             res.status(400).send(response);
@@ -779,11 +804,15 @@ router.post("/api/:id/updateWorkItemOrder/:workItemId/:sprintId", middleware.isU
         }
     }
 
-    await workItem.save().catch(err => {
-        console.error("Error saving the status of the work item: ", err);
-    });
+    response["userWasUpdated"] = workItemUserWasUpdated;
 
-    res.status(200).send(response);
+    workItem.save().then( (update) => {
+        return res.status(200).send(response);
+    }).catch(err => {
+        console.error("Error saving the status of the work item: ", err);
+        response["msg"] = "Sorry, There was a problem saving the changes to the work item";
+        return res.status(400).send(response);
+    });
 });
 
 
