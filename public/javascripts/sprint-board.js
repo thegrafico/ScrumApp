@@ -94,5 +94,4 @@ async function updateWorkItemBoard(workItemId, updateData) {
     }else{
         $.notify(response_error.data.responseJSON.msg, "error");
     }
-
 }

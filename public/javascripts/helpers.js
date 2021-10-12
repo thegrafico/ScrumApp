@@ -644,11 +644,14 @@ function addWorkItemToBoard(workItem, index) {
     </div>`;
 
     // add at index if user wants to.
+    console.log("INDEX: ", index);
     if (index != null) {
 
         let numberOflements = $(`div#${status} > div`).length;
-
-        if (numberOflements != index) {
+        
+        if (index == 0 && numberOflements == 0){
+            $(`div#${status}`).append(workItemBoardTemplate);
+        }else if (numberOflements != index) {
             $(`div#${status} > div`).eq(index).before(workItemBoardTemplate);
         } else {
             $(`div#${status} > div`).eq(index - 1).after(workItemBoardTemplate);
@@ -1359,13 +1362,11 @@ function updateSprintBoardWorkItem(elementId, workItem) {
     const NOT_FOUND = 0;
     let index = $(`div#${status} div#${elementId}`).index();
 
-    console.log("index: ", index);
-
     // remove element from UI
     removeWorkItemFromBoard(elementId);
 
     // Check if index is not found
-    if (index <= NOT_FOUND) {
+    if (index < NOT_FOUND) {
         addWorkItemToBoard(workItem, null);
     } else {
         addWorkItemToBoard(workItem, index);
