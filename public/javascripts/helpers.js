@@ -983,26 +983,7 @@ async function moveWorkItemToSprint(workItemId, sprintId) {
 function updateHtml(currentPage, updateType, valueToUpdate, inputType, others = null) {
 
     // since most of the page share the same top navbar, we can update those values just once
-
-    // update from top navbar menu
-    if (inputType === UPDATE_INPUTS.USER) {
-        // if a user is added or removed from topnavar option (users)
-        updateSelectOption(MODAL_REMOVE_USER_INPUT, updateType, valueToUpdate);
-    }else if (inputType === UPDATE_INPUTS.TEAM) {
-
-        // update delete team modal when a team has been created
-        updateSelectOption(DELETE_TEAM_SELECT_INPUT, updateType, valueToUpdate);
-
-        // sprint modal
-        updateSelectOption(SPRINT_CREATE_MODAL_TEAM_INPUT, updateType, valueToUpdate);
-        updateSelectOption(SPRINT_DELETE_MODAL_SELECT_TEAM, updateType, valueToUpdate);
-    }else if (inputType === UPDATE_INPUTS.SPRINT) {
-        
-        // sprint modal
-        updateSelectOption(SPRINT_CREATE_MODAL_TEAM_INPUT, updateType, valueToUpdate);
-        updateSelectOption(SPRINT_DELETE_MODAL_SELECT_SPRINT, updateType, valueToUpdate);
-    }
-
+    updateUIFromTopNabvar(inputType, updateType, valueToUpdate);
 
     switch (currentPage) {
         case PAGES["STATISTICS"]:
@@ -1290,6 +1271,40 @@ function updateHtml(currentPage, updateType, valueToUpdate, inputType, others = 
         case PAGES["QUERIES"]:
 
             break;
+        default:
+            break;
+    }
+}
+
+/**
+ * Update User UI if there is any top nabvar update
+ * @param {Enum} inputType 
+ * @param {Enum} updateType 
+ * @param {Any} valueToUpdate 
+ */
+function updateUIFromTopNabvar(inputType, updateType, valueToUpdate){
+
+    switch (inputType) {
+        case UPDATE_INPUTS.USER:
+            // if a user is added or removed from topnavar option (users)
+            updateSelectOption(MODAL_REMOVE_USER_INPUT, updateType, valueToUpdate);
+            break;
+
+        case UPDATE_INPUTS.TEAM:
+            // update delete team modal when a team has been created
+            updateSelectOption(DELETE_TEAM_SELECT_INPUT, updateType, valueToUpdate);
+
+            // sprint modal
+            updateSelectOption(SPRINT_CREATE_MODAL_TEAM_INPUT, updateType, valueToUpdate);
+            updateSelectOption(SPRINT_DELETE_MODAL_SELECT_TEAM, updateType, valueToUpdate);
+            break;
+    
+        case UPDATE_INPUTS.SPRINT:
+            // sprint modal
+            updateSelectOption(SPRINT_CREATE_MODAL_TEAM_INPUT, updateType, valueToUpdate);
+            updateSelectOption(SPRINT_DELETE_MODAL_SELECT_SPRINT, updateType, valueToUpdate);
+            break;
+    
         default:
             break;
     }
