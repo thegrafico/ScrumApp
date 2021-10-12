@@ -231,6 +231,7 @@ const SPRINT_CREATE_MODAL_TEAM_INPUT = "#sprint-team-input";
 // DELETE MODAL
 const SPRINT_DELETE_MODAL_SELECT_TEAM = "#modal-remove-sprint-select-team";
 const SPRINT_DELETE_MODAL_SELECT_SPRINT = "#modal-remove-sprint-select-sprint";
+const SPRINT_DELETE_MODAL = "#remove-sprint-modal";
 
 const SPRINT_FILTER_BY_SPRINT_SELECT = "#filterBySprint";
 
@@ -252,7 +253,7 @@ const SPRINT_STATUS = {
 };
 
 const UNNASIGNED_VALUE = "0";
-const UNNASIGNED_NAME = "unasigned";
+const UNNASIGNED_NAME = "unassigned";
 const INVALID_OPTION_VALUE = "-1";
 
 const UNASSIGNED_SPRINT = {

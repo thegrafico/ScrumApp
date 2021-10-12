@@ -25,6 +25,7 @@ const SPRINT_DATE_SPAN_ERROR = "#sprint-date-span-error";
 // Delete sprints spans
 const SPRINT_TEAM_SPAN_ERROR = "#remove-sprint-team-span-error";
 const SPRINT_SPRINT_SPAN_ERROR = "#remove-sprint-sprint-span-error";
+const OPEN_REMOVE_SPRINT_MODAL = ".remove-sprint-modal";
 
 const OPEN_UPDATE_SPRINT_MODAL_BTN = ".btn-update-sprint-modal-open";
 
@@ -144,6 +145,14 @@ $(function () {
     });
 
     // =========== DELETE ============
+
+    // when the remove sprint modal is open
+    $(SPRINT_DELETE_MODAL).on("show.bs.modal", function(){
+        // reset to default
+        $(SPRINT_DELETE_MODAL_SELECT_TEAM).val(0).change();
+        $(SPRINT_DELETE_MODAL_SELECT_SPRINT).val(0).change();
+    });
+
     // SUBMIT REMOVE SPRINT
     $(MODAL_DELETE_SPRINT_SUBMIT_BTN).on("click", async function(){
         
@@ -184,12 +193,6 @@ $(function () {
         }
 
     });
-
-    // TODO: move from here
-    function resetSelectOptionAndDisabled(selector){
-       
-       
-    }
 
     // DELETE SPRINT TEAM SELECT
     $(SPRINT_DELETE_MODAL_SELECT_TEAM).on("change", async function(){
@@ -399,7 +402,7 @@ $(function () {
     // TRASH BTN EVENT 
     $(TRASH_BTN_REMOVE_SPRINT).on("click", async function(){
     
-        let checkedElements = getVisibleElements(TABLE_ROW_CHECKBOX_ELEMENT_CHECKED);
+        let checkedElements = getCheckedElementIds(TABLE_ROW_CHECKBOX_ELEMENT_CHECKED);
 
         // check if not empty
         if (!_.isArray(checkedElements) || _.isEmpty(checkedElements) ){

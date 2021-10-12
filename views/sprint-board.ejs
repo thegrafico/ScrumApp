@@ -40,9 +40,8 @@
                             <select 
                             class="custom-select my-custon-select input-border"
                             name="filterByTeam" 
-                            id="filterByTeam" 
-                            aria-label="Default select example"
-                            disabled>
+                            id="filter-by-team-sprint" 
+                            aria-label="Default select example">
                             <option value="0" selected>Not team found</option>
                             </select>
                         <% } %>
@@ -88,8 +87,7 @@
                                 class="custom-select my-custon-select input-border"
                                 name="sprintFilter" 
                                 id="filterBySprint" 
-                                aria-label="filter by sprint"
-                                disabled>
+                                aria-label="filter by sprint">
                                 <option value="0" selected>Not Sprint found</option>
                                 </select>
                             <% } %>
@@ -145,7 +143,7 @@
                                                 <% }); %>
                                             <% } %>
                                         </td>
-                                        <h4 class="card-botton"> <i class="far fa-user"></i> <%=workItem["assignedUser"]["name"]%></h4>
+                                        <h4 class="card-botton"> <i class="far fa-user"></i> <span class="userName <%=workItem['assignedUser']['id']%>"> <%=workItem["assignedUser"]["name"]%> </span></h4>
                                     </div>
                                 </div>
                             <% } %>
@@ -181,7 +179,7 @@
                                                 <% }); %>
                                             <% } %>
                                         </td>
-                                        <h4 class="card-botton"> <i class="far fa-user"></i> <%=workItem["assignedUser"]["name"]%></h4>
+                                        <h4 class="card-botton"> <i class="far fa-user"></i> <span class="userName <%=workItem['assignedUser']['id']%>"> <%=workItem["assignedUser"]["name"]%> </span></h4>
                                     </div>
                                 </div>
                             <% } %>
@@ -216,7 +214,7 @@
                                                 <% }); %>
                                             <% } %>
                                         </td>
-                                        <h4 class="card-botton"> <i class="far fa-user"></i> <%=workItem["assignedUser"]["name"]%></h4>
+                                        <h4 class="card-botton"> <i class="far fa-user"></i> <span class="userName <%=workItem['assignedUser']['id']%>"> <%=workItem["assignedUser"]["name"]%> </span></h4>
                                     </div>
                                 </div>
                             <% } %>
@@ -253,7 +251,7 @@
                                                 <% }); %>
                                             <% } %>
                                         </td>
-                                        <h4 class="card-botton"> <i class="far fa-user"></i> <%=workItem["assignedUser"]["name"]%></h4>
+                                        <h4 class="card-botton"> <i class="far fa-user"></i> <span class="userName <%=workItem['assignedUser']['id']%>"> <%=workItem["assignedUser"]["name"]%> </span></h4>
                                     </div>
                                 </div>
                             <% } %>
@@ -289,7 +287,7 @@
                                                 <% }); %>
                                             <% } %>
                                         </td>
-                                        <h4 class="card-botton"> <i class="far fa-user"></i> <%=workItem["assignedUser"]["name"]%></h4>
+                                        <h4 class="card-botton"> <i class="far fa-user"></i> <span class="userName <%=workItem['assignedUser']['id']%>"> <%=workItem["assignedUser"]["name"]%> </span></h4>
                                     </div>
                                 </div>
                             <% } %>
@@ -323,7 +321,7 @@
                                                 <% }); %>
                                             <% } %>
                                         </td>
-                                        <h4 class="card-botton"> <i class="far fa-user"></i> <%=workItem["assignedUser"]["name"]%></h4>
+                                        <h4 class="card-botton"> <i class="far fa-user"></i> <span class="userName <%=workItem['assignedUser']['id']%>"> <%=workItem["assignedUser"]["name"]%> </span></h4>
                                     </div>
                                 </div>
                             <% } %>

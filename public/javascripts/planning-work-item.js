@@ -74,7 +74,7 @@ $(function () {
     $(TRASH_BTN_WORK_ITEM).on("click", async function(){
         
         // get checked elements in table
-        const row_checked = getVisibleElements(TABLE_ROW_CHECKBOX_ELEMENT_CHECKED);
+        const row_checked = getCheckedElementIds(TABLE_ROW_CHECKBOX_ELEMENT_CHECKED);
 
         const projectId = getProjectId();
         

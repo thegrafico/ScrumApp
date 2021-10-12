@@ -54,7 +54,7 @@
                         <div class="form-group">
                             <label for="userEmail">Team:</label>
 
-                            <% if(projectTeams.length > 1){ %>
+                            <% if(projectTeams.length > 0){ %>
                                 <select 
                                     class="custom-select my-custon-select input-border"
                                     name="sprintTeam" 
@@ -82,10 +82,9 @@
                             <% }else{ %>
                                 <select 
                                     class="custom-select my-custon-select input-border"
-                                    name="filterByTeam" 
-                                    id="filterByTeam" 
-                                    aria-label="Default select example"
-                                    disabled>
+                                    name="sprintTeam" 
+                                    id="sprint-team-input" 
+                                    aria-label="Default select example">
                                     <option value="0" selected>Not team found</option>
                                 </select>
                             <% } %>

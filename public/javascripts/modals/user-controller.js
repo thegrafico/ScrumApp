@@ -38,20 +38,7 @@ $(function (){
 
         hideErrSpanMessage(MODAL_SPAN_EMAIl_ERROR);
 
-        const projectId = getProjectId();
-
-        if (!_.isString(projectId)){
-            $.notify("Sorry, Cannot find the project at this moment.", "error");
-            return;
-        }
-
-        const API_LINK_ADD_USER_TO_PROJECT = `/dashboard/api/${projectId}/addUserToProject`;
-        let data = {"userEmail": userEmail};
-
-        let response_error = null;
-        let response = await make_post_request(API_LINK_ADD_USER_TO_PROJECT, data).catch(err => {
-            response_error = err;
-        });
+        const {response, response_error} = await inviteUserToProject(userEmail);
 
         // Success message
         if (response){
@@ -63,10 +50,9 @@ $(function (){
                     $(CURRENT_PAGE_ID).val(),
                     UPDATE_TYPE.ADD, 
                     {"value": response.user.id, "text": response.user.fullName}, 
-                    UPDATE_INPUTS.USER
+                    UPDATE_INPUTS.USER,
+                    response.user
                 );
-
-                addUserToTable(response.user);
             }
         }else{ // error messages
             $.notify(response_error.data.responseJSON.msg, "error");
@@ -83,23 +69,10 @@ $(function (){
             return;
         }
 
-        const projectId = getProjectId();
+        const {response, response_error} = await removeUserFromProject(userId);
 
-        if (!_.isString(projectId)){
-            $.notify("Sorry, Cannot find the project at this moment.", "error");
-            return;
-        }
-
-        const API_LINK_REMOVE_USER_FROM_PROJECT = `/dashboard/api/${projectId}/deleteUserFromProject`;
-        const data = {"userId": userId};
-
-        let response_error = null;
-        const response = await make_post_request(API_LINK_REMOVE_USER_FROM_PROJECT, data).catch(err => {
-            response_error = err;
-        });
-        
         // Success message
-        if (response){
+        if (!response_error){
             $.notify(response.msg, "success");
             cleanSelect(MODAL_REMOVE_USER_INPUT);
             updateHtml( 
@@ -116,7 +89,7 @@ $(function (){
     // TRASH BTN EVENT 
     $(TRASH_BTN_REMOVE_USER_PROJECT).on("click", async function(){
     
-        let checkedElements = getVisibleElements(TABLE_ROW_CHECKBOX_ELEMENT_CHECKED);
+        let checkedElements = getCheckedElementIds(TABLE_ROW_CHECKBOX_ELEMENT_CHECKED);
         
         // check if not empty
         if (!_.isArray(checkedElements) || _.isEmpty(checkedElements) ){
@@ -203,18 +176,10 @@ $(function (){
             return;
         }
 
-        const projectId = getProjectId();
-
-        // API link
-        const API_LINK_UPDATE_USER = `/dashboard/api/${projectId}/updateUser`;
-
-        let response_error = null;
-        const response = await make_post_request(API_LINK_UPDATE_USER, {userId: userId, privilege: selectedPrivilege}).catch(err => {
-            response_error = err;
-        });
+        let {response, response_error} = await updateUser(userId, {"privilege": selectedPrivilege});
 
         // Success message
-        if (response){
+        if (!response_error){
             
             $.notify(response["msg"], "success");
 
@@ -230,27 +195,3 @@ $(function (){
 
     });
 });
-
-
-// API link
-// const API_LINK_UPDATE_SPRINT = `/dashboard/api/${projectId}/updateSprint/${teamId}/${sprintId}`;
-
-// let response_error = null;
-// const response = await make_post_request(API_LINK_UPDATE_SPRINT, data).catch(err => {
-//     response_error = err;
-// });
-
-// // Success message
-// if (response){
-    
-//     $.notify("Sprint Updated", "success");
-
-//     $(CLOSE_MODAL_SPRINT_BTN).click();
-
-//     let sprintId = response["sprint"]["_id"];
-
-//     updateTableElement(sprintId, response["sprint"], addSprintToTable);
-
-// }else{ // error messages
-//     $.notify(response_error.data.responseJSON.msg, "error");
-// }

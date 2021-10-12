@@ -78,30 +78,28 @@ $(function (){
             return;
         }
 
-        // Request var
-        const projectId = getProjectId();
-        const API_LINK_CREATE_TEAM = `/dashboard/api/${projectId}/newTeam`;
-        const data = {"teamName": teamName};
-
-        let response_error = null;
-        const response = await make_post_request(API_LINK_CREATE_TEAM, data).catch(err => {
-            response_error = err;
-        });
+        const {response, response_error} = await createTeam(teamName);
 
         // Success message
-        if (response){
+        if (!response_error){
+
+            // show message to user
             $.notify(response.msg, "success");
+
+            // close modal
             $(CLOSE_BTN_CREATE_TEAM).click();
+
+            // update UI
             updateHtml( 
                 $(CURRENT_PAGE_ID).val(), 
                 UPDATE_TYPE.ADD, 
                 {"value": response.team.id, "text": response.team.name},
-                UPDATE_INPUTS.TEAM
+                UPDATE_INPUTS.TEAM,
+                {team: response["team"]}
             );
         }else{ // error messages
             $.notify(response_error.data.responseJSON.msg, "error");
         }
-
     });
 
     // ================= DELETE TEAM EVENTS ================
@@ -114,16 +112,9 @@ $(function (){
             return;
         }
 
-        const projectId = getProjectId();
+        const {response, response_error} = await deleteTeamFromProject(selectedTeamId);
 
-        const API_LINK_DELETE_TEAM = `/dashboard/api/${projectId}/deleteTeam`;
-
-        let response_error = null;
-        const response = await make_post_request( API_LINK_DELETE_TEAM, {"teamId": selectedTeamId} ).catch(err => {
-            response_error = err;
-        });
-
-        if (response){
+        if (!response_error){
             $.notify(response.msg, "success");
             $(CLOSE_BTN_DELETE_TEAM).click();
             updateHtml( 
@@ -181,33 +172,24 @@ $(function (){
     // TRASH BTN EVENT 
     $(TRASH_BTN_MANAGE).on("click", async function(){
         
-        let checkedElements = getVisibleElements(TABLE_ROW_CHECKBOX_ELEMENT_CHECKED);
+        const getOnlyVisibleElements = false;
+        let teamIds = getCheckedElementIds(TABLE_ROW_CHECKBOX_ELEMENT_CHECKED, getOnlyVisibleElements);
        
         // check if not empty
-        if (!_.isArray(checkedElements) || _.isEmpty(checkedElements) ){return;}
+        if (!_.isArray(teamIds) || _.isEmpty(teamIds) ){return;}
 
-        const projectId = getProjectId();
-        const teamId = $(FILTER_BY_TEAM_MANAGE_INPUT).val();
+        const {response, response_error} = await deleteTeamsFromProject(teamIds);
 
-        const data = {"teamId": teamId, "userIds": checkedElements};
-        const API_LINK_REMOVE_USERS_FROM_TEAM = `/dashboard/api/${projectId}/removeUsersFromTeam/`
-
-        let response_error = undefined;
-        const response = await make_post_request(API_LINK_REMOVE_USERS_FROM_TEAM, data).catch(err => {
-            response_error = err;
-        });
-
-        if (response){
+        if (!response_error){
             removeCheckedElement();
 
             $.notify(response.msg, "success");
 
-            removeDisableAttr(SELECT_USERS_PROJECT_INPUT, checkedElements);
+            removeDisableAttr(SELECT_USERS_PROJECT_INPUT, teamIds);
             
             // disable the trash button again
             enableTrashButton(false);
         }else{
-            // TODO: response_error.data.responseJSON.msg?
             $.notify(response_error.data.responseJSON.msg, "error");
         }
     });
@@ -252,23 +234,17 @@ $(function (){
         }
 
         // getting project id and team id in order to make the request
-        const projectId = getProjectId();
         const teamId =  $(CURRENT_SELECTED_TEAM).val();
 
         // check data
-        if (_.isUndefined(projectId) || _.isEmpty(projectId) || _.isUndefined(teamId) || _.isEmpty(teamId)){
+        if (_.isUndefined(teamId) || _.isEmpty(teamId)){
             $.notify("Sorry, There was a problem getting information for the team. Please later");
             return;
         }
 
-        const API_LINK_EDIT_TEAM = `/dashboard/api/${projectId}/editTeam/${teamId}`
+        const {response, response_error} = await editTeam(teamId, {name: newTeamName});
 
-        let response_error = undefined;
-        const response = await make_post_request(API_LINK_EDIT_TEAM, {name: newTeamName}).catch(err => {
-            response_error = err;
-        });
-
-        if (response){
+        if (!response_error){
 
             // update row with team name
             $(`tr#${teamId} .row-team-name`).text(newTeamName);
@@ -309,11 +285,8 @@ $(function (){
 
         const teamId = $(tableRow).attr("id");
 
-        // send the request to get all users by the team
-        const projectId = getProjectId();
-
         // check data
-        if (_.isUndefined(projectId) || _.isEmpty(projectId) || _.isUndefined(teamId) || _.isEmpty(teamId)){
+        if (_.isUndefined(teamId) || _.isEmpty(teamId)){
             $.notify("Sorry, There was a problem getting information for the team. Please later");
             return;
         }
@@ -321,12 +294,7 @@ $(function (){
         // update the current team selected
         $(CURRENT_SELECTED_TEAM).val(teamId);
 
-        const API_LINK_GET_TEAM_USERS = `/dashboard/api/${projectId}/getTeamUsers/${teamId}`
-
-        let response_error = undefined;
-        const response = await make_get_request(API_LINK_GET_TEAM_USERS,).catch(err => {
-            response_error = err;
-        });
+        const {response, response_error} = await getTeamUsers(teamId);
 
         if (!response_error){
 
@@ -372,8 +340,6 @@ $(function (){
     $(document).on("click", REMOVE_USER_FROM_TEAM_TRASH_BTN, async function(){
         let userId = $(this).parent().parent().attr("id");
 
-        // getting project id and team id in order to make the request
-        const projectId = getProjectId();
         const teamId =  $(CURRENT_SELECTED_TEAM).val();
 
         // check data
@@ -382,17 +348,7 @@ $(function (){
             return;
         }
 
-        let request_data = {
-            userIds: [userId],
-            teamId: teamId,
-        };
-
-        const API_LINK_DELETE_USER_FROM_TEAM = `/dashboard/api/${projectId}/removeUsersFromTeam`;
-
-        let response_error = undefined;
-        const response = await make_post_request(API_LINK_DELETE_USER_FROM_TEAM, request_data).catch(err => {
-            response_error = err;
-        });
+        const {response, response_error} = await removeUserFromTeam(teamId, [userId]);
 
         if (response){
 
@@ -431,14 +387,9 @@ $(function (){
         // Remove the disabled attribute
         $(SELECT_USER_TO_ADD_TO_TEAM_INPUT).attr("disabled", true);
 
-        const projectId = getProjectId();
-
-        const API_LINK_GET_USERS_NOT_IN_TEAM = `/dashboard/api/${projectId}/getTeamUsers/${teamId}?notInTeam=true`;
-        let response_error = undefined;
-        const response = await make_get_request(API_LINK_GET_USERS_NOT_IN_TEAM).catch(err => {
-            response_error = err;
-        });
-
+        let getUsersNotInThisTeam = true;
+        let {response, response_error} = await getTeamUsers(teamId, getUsersNotInThisTeam);
+        console.log(response);
         if (!response_error){
         
             // check if empty
@@ -472,16 +423,8 @@ $(function (){
             return;
         }
 
-        const projectId = getProjectId();
-        const API_LINK_ADD_USER_TO_TEAM = `/dashboard/api/${projectId}/addUserToTeam/`
-
-        const data = {"userId": userId, "teamId": teamId};
-
-        let response_error = null;
-        const response = await make_post_request(API_LINK_ADD_USER_TO_TEAM, data).catch(err => {
-            response_error = err;
-        });
-
+        // add user to team
+        let {response, response_error} = await addUserToTeam(teamId, userId);
 
         if (!response_error){
 

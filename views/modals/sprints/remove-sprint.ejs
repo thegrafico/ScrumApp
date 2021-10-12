@@ -20,7 +20,10 @@
 
                         <select class="custom-select my-custon-select" name="sprintToRemove" id="modal-remove-sprint-select-team">
                             <option value='0' selected>Select a team to get sprints.</option>
-                            <% for(let i = 1; i < projectTeams.length; i++){%>
+                            <% for(let i = 0; i < projectTeams.length; i++){%>
+
+                                <% if (projectTeams[i]['_id'] == "0") { continue;} %>
+
                                 <option value="<%=projectTeams[i]['_id']%>"><%=projectTeams[i]['name']%></option>
                             <%}%>
                         </select>

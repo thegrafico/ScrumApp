@@ -20,7 +20,10 @@ module.exports = {
             "/javascripts/modals/team-controller.js",
             "/javascripts/modals/sprint-controller.js",
             "/javascripts/create-work-item-modal.js",
-
+            "/javascripts/api-calls/api-sprints.js",
+            "/javascripts/api-calls/api-work-items.js",
+            "/javascripts/api-calls/api-teams.js",
+            "/javascripts/api-calls/api-users.js",
         ]
     },
     planigWorkItemPath: {
@@ -40,7 +43,8 @@ module.exports = {
             "/javascripts/work-item-sub-menu.js",
             "/javascripts/api-calls/api-sprints.js",
             "/javascripts/api-calls/api-work-items.js",
-
+            "/javascripts/api-calls/api-teams.js",
+            "/javascripts/api-calls/api-users.js",
         ]
     },
     backlogPath: {
@@ -59,6 +63,10 @@ module.exports = {
             "/javascripts/modals/sprint-controller.js",
             "/javascripts/dependecies/col-resizable-min.js",
             "/javascripts/work-item-sub-menu.js",
+            "/javascripts/api-calls/api-sprints.js",
+            "/javascripts/api-calls/api-work-items.js",
+            "/javascripts/api-calls/api-teams.js",
+            "/javascripts/api-calls/api-users.js",
         ]
     },
     sprintPath: {
@@ -79,6 +87,10 @@ module.exports = {
             "/javascripts/modals/sprint-points-graph.js",
             "/javascripts/dependecies/col-resizable-min.js",
             "/javascripts/work-item-sub-menu.js",
+            "/javascripts/api-calls/api-sprints.js",
+            "/javascripts/api-calls/api-work-items.js",
+            "/javascripts/api-calls/api-teams.js",
+            "/javascripts/api-calls/api-users.js",
         ]
     },
 
@@ -95,6 +107,10 @@ module.exports = {
             "/javascripts/modals/team-controller.js",
             "/javascripts/modals/sprint-controller.js",
             "/javascripts/sprint-review.js",
+            "/javascripts/api-calls/api-sprints.js",
+            "/javascripts/api-calls/api-work-items.js",
+            "/javascripts/api-calls/api-teams.js",
+            "/javascripts/api-calls/api-users.js",
 
         ]
     },
@@ -115,6 +131,10 @@ module.exports = {
             "/javascripts/modals/team-controller.js",
             "/javascripts/modals/sprint-controller.js",
             "/javascripts/sprint-board.js",
+            "/javascripts/api-calls/api-sprints.js",
+            "/javascripts/api-calls/api-work-items.js",
+            "/javascripts/api-calls/api-teams.js",
+            "/javascripts/api-calls/api-users.js",
 
         ]
     },
@@ -132,6 +152,10 @@ module.exports = {
             "/javascripts/modals/user-controller.js",
             "/javascripts/modals/team-controller.js",
             "/javascripts/modals/sprint-controller.js",
+            "/javascripts/api-calls/api-sprints.js",
+            "/javascripts/api-calls/api-work-items.js",
+            "/javascripts/api-calls/api-teams.js",
+            "/javascripts/api-calls/api-users.js",
         ]
     },
     queryPath: {
@@ -153,6 +177,10 @@ module.exports = {
             "/javascripts/modals/sprint-controller.js",
             "/javascripts/modals/sprint-points-graph.js",
             "/javascripts/dependecies/col-resizable-min.js",
+            "/javascripts/api-calls/api-sprints.js",
+            "/javascripts/api-calls/api-work-items.js",
+            "/javascripts/api-calls/api-teams.js",
+            "/javascripts/api-calls/api-users.js",
 
         ]
     },

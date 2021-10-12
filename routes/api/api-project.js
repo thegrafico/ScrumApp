@@ -192,14 +192,14 @@ router.post("/api/:id/newTeam", middleware.isUserInProject, async function (req,
     }
 
     response["msg"] = "Successfully added team to the project.";
-    response["team"] = { name: teamName, id: team["_id"]};
+    response["team"] = { name: teamName, id: team["_id"], users: team["users"]};
 
     res.status(200).send(response);
 });
 
 
 /**
- * METHOD: POST - REMOVE TEAM
+ * METHOD: POST - REMOVE ONE TEAM
  */
 router.post("/api/:id/deleteTeam", middleware.isUserInProject, async function (req, res) {
     
@@ -207,7 +207,7 @@ router.post("/api/:id/deleteTeam", middleware.isUserInProject, async function (r
 
     const {teamId} = req.body;
 
-    let response = {"teamId": null};
+    let response = {"teamId": teamId};
 
     // is a string
     if (_.isString(projectId) && _.isString(teamId) && !_.isEmpty(teamId)){
@@ -223,19 +223,91 @@ router.post("/api/:id/deleteTeam", middleware.isUserInProject, async function (r
             return;
         }
 
-        let err_response = null;
-        let teamWasRemovedResponse = await projectInfo.removeTeam(teamId).catch(err =>{
-            err_response = err;
-        });
+        // remove all sprints from this team
+        SprintCollection.deleteMany({teamId}).then( async () => {
+            // sprints were removed from the team
 
-        // validate response
-        if (!_.isNull(err_response) || _.isUndefined(teamWasRemovedResponse)){
-            res.status(400).send(err_response);
+            let err_response = null;
+            let teamWasRemovedResponse = await projectInfo.removeTeam(teamId).catch(err =>{
+                err_response = err;
+            });
+
+            // validate response
+            if (err_response || _.isUndefined(teamWasRemovedResponse)){
+                response["msg"] = "Oops, There was a problem removing the team from the project. Please try later.";
+                res.status(400).send(response);
+                return;
+            }
+
+            response["msg"] = "Team was removed from project.";
+            res.status(200).send(response);
+            return;
+
+        }).catch(err => {
+            console.error("Error deleting sprints for teams: ", err);
+            response["msg"] = "Oops, There was a problem deleting the sprints for this team.";
+            res.status(400).send(response);
+            return;
+        });
+    }else{
+        response["msg"] = "Oops, it looks like this is an invalid team.";
+        res.status(400).send(response);
+        return;
+    }
+});
+
+/**
+ * METHOD: POST - REMOVE TEAMS
+ */
+ router.post("/api/:id/deleteTeams", middleware.isUserInProject, async function (req, res) {
+    
+    const projectId = req.params.id;
+
+    const { teamsId } = req.body;
+
+    let response = {"teamsId": teamsId};
+
+    // is a string
+    if (_.isString(projectId) && _.isArray(teamsId) && !_.isEmpty(teamsId)){
+        // Add the comment to the DB
+        const projectInfo = await projectCollection.findById(projectId).catch(
+            err => console.error("Error getting project information: ", err)
+        );
+
+        // validate project
+        if (_.isUndefined(projectInfo) || _.isNull(projectInfo)){
+            response["msg"] = "Sorry, There was a problem getting the project information. Please try leter.";
+            res.status(400).send(response);
             return;
         }
 
-        res.status(200).send(teamWasRemovedResponse);
-        return;
+        // remove all sprints from this team
+        SprintCollection.deleteMany({teamId: {$in: teamsId}}).then( async () => {
+            // sprints were removed from the team
+
+            let err_response = null;
+            let teamWasRemovedResponse = await projectInfo.removeTeams(teamsId).catch(err =>{
+                err_response = err;
+                console.log("Error removing team from project: ", err);
+            });
+
+            // validate response
+            if (err_response || _.isUndefined(teamWasRemovedResponse)){
+                response["msg"] = "Oops, There was a problem removing teams from the project. Please try later.";
+                res.status(400).send(response);
+                return;
+            }
+
+            response["msg"] = "Team was removed from project.";
+            res.status(200).send(response);
+            return;
+
+        }).catch(err => {
+            console.error("Error deleting sprints for teams: ", err);
+            response["msg"] = "Oops, There was a problem removing sprint data for a team.";
+            res.status(400).send(response);
+            return;
+        });
     }else{
         response["msg"] = "Oops, it looks like this is an invalid team.";
         res.status(400).send(response);

@@ -313,7 +313,7 @@ projectSchema.methods.getUsersForTeam = async function(teamId, getUsersNotInTeam
     })[0];
 
     // verify is there is users in the team
-    if (_.isUndefined(team) || team.users.length == 0){ return [];}
+    if (_.isUndefined(team)){ return [];}
 
     // getting the users in the team
     let usersInfo = [];
@@ -342,7 +342,7 @@ projectSchema.methods.getUsersForTeam = async function(teamId, getUsersNotInTeam
  projectSchema.methods.getUserPreferedTeam = function() {
 
     if (_.isEmpty(this.teams)){
-        return {};
+        return UNASSIGNED;
     }
 
     // TODO: How do we know this is the prefered team for user
@@ -472,8 +472,8 @@ projectSchema.methods.removeUsers = async function(userIds) {
 
 
 /**
- * Remove user from project
- * @param {String} userId - userId
+ * Remove team from project
+ * @param {String} teamId - team id
  * @returns {Promise}
 */
 projectSchema.methods.removeTeam = async function(teamId) {
@@ -509,6 +509,60 @@ projectSchema.methods.removeTeam = async function(teamId) {
         father.save().then( (doc) => {
             return resolve({msg: "Team was removed successfully!", teamId: teamId});
         }).catch( err =>{
+            response["msg"] = "Sorry, There was an error removing the team from project. Please try later."
+            return reject( response );
+        });
+
+    });
+};
+
+/**
+ * Remove teams from project
+ * @param {String} teamsId - id of the teams
+ * @returns {Promise}
+*/
+projectSchema.methods.removeTeams = async function(teamsId) {
+    
+    const father = this;
+    return new Promise( async function (resolve, reject){
+
+        for (let teamId of teamsId){
+
+            // check every team is belongs to this project
+            if (!father.isTeamInProject(teamId)){
+                return reject({msg: "There is a team that does not belong to this project", teamsId: teamsId});
+            }
+        }
+
+        let response = {teamsId: teamsId};
+
+        // removing team from work items
+        let err_msg = null;
+        const wasUpdatedWorkItems = await workItemCollection
+        .updateMany( 
+            { projectId: father._id, teamId: {$in: teamsId} },
+            {$set: {teamId: null}}
+        ).catch(err => {
+            console.error("Error removing team from work item: ", err);
+            err_msg = err;
+        });
+
+        // delete first work items
+        if (err_msg || _.isUndefined(wasUpdatedWorkItems)){
+            response['msg'] = "Sorry, there was a problem removing the team from the work items.";
+            return reject(response);
+        }
+
+        // removing the team from the project
+        for (let teamId  of teamsId){
+            father.teams.pull(teamId);
+        }
+
+        father.save().then( (doc) => {
+            response['msg'] = (teamsId.length > 1) ? "Teams were removed successfully!" : "Team was removed successfully";
+            return resolve(response);
+        }).catch( err =>{
+            console.error("Error saving the changes: ", err);
             response["msg"] = "Sorry, There was an error removing the team from project. Please try later."
             return reject( response );
         });

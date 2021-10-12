@@ -55,7 +55,7 @@ router.get("/api/:id/getTeamUsers/:teamId", middleware.isUserInProject, async fu
 
     // make variable a boolean
     notInTeam = (notInTeam == "true");
-
+    
     // is a string
     if (_.isString(projectId) && _.isString(teamId)){
     

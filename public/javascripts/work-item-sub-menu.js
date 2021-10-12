@@ -239,7 +239,7 @@ $(function() {
         let workItemId = $(this).attr("id");
 
         // get checked elements in table
-        const workItems = getVisibleElements(TABLE_ROW_CHECKBOX_ELEMENT_CHECKED);
+        const workItems = getCheckedElementIds(TABLE_ROW_CHECKBOX_ELEMENT_CHECKED);
 
         if (_.isArray(workItems) && !_.isEmpty(workItems)){   
             moveWorkItemToSprint(workItems, UNNASIGNED_VALUE);
