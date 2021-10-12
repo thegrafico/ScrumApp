@@ -981,6 +981,29 @@ async function moveWorkItemToSprint(workItemId, sprintId) {
  * @param {Object} others 
  */
 function updateHtml(currentPage, updateType, valueToUpdate, inputType, others = null) {
+
+    // since most of the page share the same top navbar, we can update those values just once
+
+    // update from top navbar menu
+    if (inputType === UPDATE_INPUTS.USER) {
+        // if a user is added or removed from topnavar option (users)
+        updateSelectOption(MODAL_REMOVE_USER_INPUT, updateType, valueToUpdate);
+    }else if (inputType === UPDATE_INPUTS.TEAM) {
+
+        // update delete team modal when a team has been created
+        updateSelectOption(DELETE_TEAM_SELECT_INPUT, updateType, valueToUpdate);
+
+        // sprint modal
+        updateSelectOption(SPRINT_CREATE_MODAL_TEAM_INPUT, updateType, valueToUpdate);
+        updateSelectOption(SPRINT_DELETE_MODAL_SELECT_TEAM, updateType, valueToUpdate);
+    }else if (inputType === UPDATE_INPUTS.SPRINT) {
+        
+        // sprint modal
+        updateSelectOption(SPRINT_CREATE_MODAL_TEAM_INPUT, updateType, valueToUpdate);
+        updateSelectOption(SPRINT_DELETE_MODAL_SELECT_SPRINT, updateType, valueToUpdate);
+    }
+
+
     switch (currentPage) {
         case PAGES["STATISTICS"]:
             updateStatisticsHtml(updateType, valueToUpdate);
@@ -999,10 +1022,6 @@ function updateHtml(currentPage, updateType, valueToUpdate, inputType, others = 
                 updateSelectOption(WORK_ITEM["user"], updateType, valueToUpdate);
                 updateSelectOption(UPDATE_WORK_ITEM["user"], updateType, valueToUpdate);
 
-
-                // update the remove user from project option
-                updateSelectOption(MODAL_REMOVE_USER_INPUT, updateType, valueToUpdate);
-
                 // update filter if user is removed from filter
                 updateOptionFromFilter(FILTER_OPTIONS["user"], updateType, valueToUpdate);
 
@@ -1020,12 +1039,6 @@ function updateHtml(currentPage, updateType, valueToUpdate, inputType, others = 
                  // work item
                 updateSelectOption(WORK_ITEM["team"], updateType, valueToUpdate);
                 updateSelectOption(UPDATE_WORK_ITEM["team"], updateType, valueToUpdate);
-
-                updateSelectOption(DELETE_TEAM_SELECT_INPUT, updateType, valueToUpdate);
-
-                // sprint modal
-                updateSelectOption(SPRINT_CREATE_MODAL_TEAM_INPUT, updateType, valueToUpdate);
-                updateSelectOption(SPRINT_DELETE_MODAL_SELECT_TEAM, updateType, valueToUpdate);
 
                 // updating filter by team
                 updateOptionFromFilter(FILTER_OPTIONS["team"], updateType, valueToUpdate);
@@ -1046,10 +1059,6 @@ function updateHtml(currentPage, updateType, valueToUpdate, inputType, others = 
             if (inputType === UPDATE_INPUTS.SPRINT) {
                 updateSelectOption(WORK_ITEM["sprint"], updateType, valueToUpdate);
                 updateSelectOption(UPDATE_WORK_ITEM["sprint"], updateType, valueToUpdate);
-
-                // sprint modal
-                updateSelectOption(SPRINT_CREATE_MODAL_TEAM_INPUT, updateType, valueToUpdate);
-                updateSelectOption(SPRINT_DELETE_MODAL_SELECT_SPRINT, updateType, valueToUpdate);
 
                 // remove team from table
                 if (updateType == UPDATE_TYPE["DELETE"]) {
@@ -1098,12 +1107,6 @@ function updateHtml(currentPage, updateType, valueToUpdate, inputType, others = 
                 updateSelectOption(WORK_ITEM["team"], updateType, valueToUpdate);
                 updateSelectOption(UPDATE_WORK_ITEM["team"], updateType, valueToUpdate);
 
-                updateSelectOption(DELETE_TEAM_SELECT_INPUT, updateType, valueToUpdate);
-
-                // sprint modal
-                updateSelectOption(SPRINT_CREATE_MODAL_TEAM_INPUT, updateType, valueToUpdate);
-                updateSelectOption(SPRINT_DELETE_MODAL_SELECT_TEAM, updateType, valueToUpdate);
-
                 // updating filter by team
                 updateOptionFromFilter(FILTER_OPTIONS["team"], updateType, valueToUpdate);
             }
@@ -1112,10 +1115,6 @@ function updateHtml(currentPage, updateType, valueToUpdate, inputType, others = 
             if (inputType === UPDATE_INPUTS.SPRINT) {
                 updateSelectOption(WORK_ITEM["sprint"], updateType, valueToUpdate);
                 updateSelectOption(UPDATE_WORK_ITEM["sprint"], updateType, valueToUpdate);
-
-                // sprint modal
-                updateSelectOption(SPRINT_CREATE_MODAL_TEAM_INPUT, updateType, valueToUpdate);
-                updateSelectOption(SPRINT_DELETE_MODAL_SELECT_SPRINT, updateType, valueToUpdate);
             }
             break;
         case PAGES["SPRINT"]:
@@ -1139,10 +1138,6 @@ function updateHtml(currentPage, updateType, valueToUpdate, inputType, others = 
                 updateSelectOption(WORK_ITEM["user"], updateType, valueToUpdate);
                 updateSelectOption(UPDATE_WORK_ITEM["user"], updateType, valueToUpdate);
 
-
-                // update the remove user from project option
-                updateSelectOption(MODAL_REMOVE_USER_INPUT, updateType, valueToUpdate);
-
                 // update filter if user is removed from filter
                 updateOptionFromFilter(FILTER_OPTIONS["user"], updateType, valueToUpdate);
 
@@ -1161,12 +1156,6 @@ function updateHtml(currentPage, updateType, valueToUpdate, inputType, others = 
                 updateSelectOption(WORK_ITEM["team"], updateType, valueToUpdate);
                 updateSelectOption(UPDATE_WORK_ITEM["team"], updateType, valueToUpdate);
 
-                updateSelectOption(DELETE_TEAM_SELECT_INPUT, updateType, valueToUpdate);
-
-                // sprint modal
-                updateSelectOption(SPRINT_CREATE_MODAL_TEAM_INPUT, updateType, valueToUpdate);
-                updateSelectOption(SPRINT_DELETE_MODAL_SELECT_TEAM, updateType, valueToUpdate);
-
                 // updating filter by team
                 updateOptionFromFilter(FILTER_OPTIONS["team"], updateType, valueToUpdate);
             }
@@ -1175,15 +1164,13 @@ function updateHtml(currentPage, updateType, valueToUpdate, inputType, others = 
             if (inputType === UPDATE_INPUTS.SPRINT) {
                 updateSelectOption(WORK_ITEM["sprint"], updateType, valueToUpdate);
                 updateSelectOption(UPDATE_WORK_ITEM["sprint"], updateType, valueToUpdate);
-
-                // sprint modal
-                updateSelectOption(SPRINT_CREATE_MODAL_TEAM_INPUT, updateType, valueToUpdate);
-                updateSelectOption(SPRINT_DELETE_MODAL_SELECT_SPRINT, updateType, valueToUpdate);
+                
+                // SPRINT FILTERING
+                updateSelectOption(SPRINT_FILTER_BY_SPRINT_SELECT, updateType, valueToUpdate);
+                updateSelectOption(FILTER_BY_TEAM_SPRINT, updateType, valueToUpdate);
             }
 
-            // SPRINT FILTERING
-            updateSelectOption(SPRINT_FILTER_BY_SPRINT_SELECT, updateType, valueToUpdate);
-            updateSelectOption(FILTER_BY_TEAM_SPRINT, updateType, valueToUpdate);
+
             break;
         case PAGES["SPRINT_BOARD"]:
 
@@ -1203,10 +1190,6 @@ function updateHtml(currentPage, updateType, valueToUpdate, inputType, others = 
                 // update create work item modal 
                 updateSelectOption(WORK_ITEM["user"], updateType, valueToUpdate);
                 updateSelectOption(UPDATE_WORK_ITEM["user"], updateType, valueToUpdate);
-
-
-                // update the remove user from project option
-                updateSelectOption(MODAL_REMOVE_USER_INPUT, updateType, valueToUpdate);
 
                 // remove user from table
                 if (updateType == UPDATE_TYPE["DELETE"]) {
@@ -1232,12 +1215,6 @@ function updateHtml(currentPage, updateType, valueToUpdate, inputType, others = 
                 updateSelectOption(WORK_ITEM["team"], updateType, valueToUpdate);
                 updateSelectOption(UPDATE_WORK_ITEM["team"], updateType, valueToUpdate);
 
-                updateSelectOption(DELETE_TEAM_SELECT_INPUT, updateType, valueToUpdate);
-
-                // sprint modal
-                updateSelectOption(SPRINT_CREATE_MODAL_TEAM_INPUT, updateType, valueToUpdate);
-                updateSelectOption(SPRINT_DELETE_MODAL_SELECT_TEAM, updateType, valueToUpdate);
-
                 // update filter by team in page
                 updateSelectOption(FILTER_BY_TEAM_SPRINT, updateType, valueToUpdate);
             }
@@ -1246,7 +1223,6 @@ function updateHtml(currentPage, updateType, valueToUpdate, inputType, others = 
             if (inputType === UPDATE_INPUTS.SPRINT) {
 
                 if (updateType == UPDATE_TYPE["DELETE"]) {
-
                     // update the page if the current active team was removed
                     refreshIfCurrentItemWasRemoved(valueToUpdate, FILTER_BY_SPRINT_INPUT);
                 }
@@ -1254,10 +1230,6 @@ function updateHtml(currentPage, updateType, valueToUpdate, inputType, others = 
                 // update work items
                 updateSelectOption(WORK_ITEM["sprint"], updateType, valueToUpdate);
                 updateSelectOption(UPDATE_WORK_ITEM["sprint"], updateType, valueToUpdate);
-
-                // sprint modal
-                updateSelectOption(SPRINT_CREATE_MODAL_TEAM_INPUT, updateType, valueToUpdate);
-                updateSelectOption(SPRINT_DELETE_MODAL_SELECT_SPRINT, updateType, valueToUpdate);
 
                 // update filter by sprint
                 updateSelectOption(FILTER_BY_SPRINT_INPUT, updateType, valueToUpdate);
@@ -1267,7 +1239,6 @@ function updateHtml(currentPage, updateType, valueToUpdate, inputType, others = 
         case PAGES["MANAGE_USER"]:
 
             if (inputType === UPDATE_INPUTS.USER) {
-                updateSelectOption(MODAL_REMOVE_USER_INPUT, updateType, valueToUpdate);
 
                 if (updateType == UPDATE_TYPE["ADD"]) {
                     addUserToTable(others);
@@ -1276,37 +1247,11 @@ function updateHtml(currentPage, updateType, valueToUpdate, inputType, others = 
                 }
             }
 
-            // check update in teams
-            if (inputType === UPDATE_INPUTS.TEAM) {
-                updateSelectOption(DELETE_TEAM_SELECT_INPUT, updateType, valueToUpdate);
-
-                // sprint modal
-                updateSelectOption(SPRINT_CREATE_MODAL_TEAM_INPUT, updateType, valueToUpdate);
-                updateSelectOption(SPRINT_DELETE_MODAL_SELECT_TEAM, updateType, valueToUpdate);
-            }
-
-            // check update in sprints
-            if (inputType === UPDATE_INPUTS.SPRINT) {
-
-                // sprint modal
-                updateSelectOption(SPRINT_CREATE_MODAL_TEAM_INPUT, updateType, valueToUpdate);
-                updateSelectOption(SPRINT_DELETE_MODAL_SELECT_SPRINT, updateType, valueToUpdate);
-            }
-
             break;
         case PAGES["MANAGE_SPRINT"]:
 
-            // USER 
-            if (inputType === UPDATE_INPUTS.USER) {
-                updateSelectOption(MODAL_REMOVE_USER_INPUT, updateType, valueToUpdate);
-            }
-
             // SPRINT
             if (inputType === UPDATE_INPUTS.SPRINT) {
-
-                // sprint modal
-                updateSelectOption(SPRINT_CREATE_MODAL_TEAM_INPUT, updateType, valueToUpdate);
-                updateSelectOption(SPRINT_DELETE_MODAL_SELECT_SPRINT, updateType, valueToUpdate);
 
                 // in case we received a sprint
                 if (others && others["sprint"]) {
@@ -1319,27 +1264,12 @@ function updateHtml(currentPage, updateType, valueToUpdate, inputType, others = 
             }
 
             // TEAM 
-            if (inputType === UPDATE_INPUTS.TEAM) {
-
-
-                // check if update is delete and has deleted the same team is active
-                if (updateType == UPDATE_TYPE["DELETE"]) {
-
-                    // update the page if the current active team was removed
-                    refreshIfCurrentItemWasRemoved(valueToUpdate, UPDATE_FILTER_BY_TEAM);
-                }
-
-                updateSelectOption(SPRINT_DELETE_MODAL_SELECT_TEAM, updateType, valueToUpdate);
-                updateSelectOption(SPRINT_CREATE_MODAL_TEAM_INPUT, updateType, valueToUpdate);
-                updateSelectOption(DELETE_TEAM_SELECT_INPUT, updateType, valueToUpdate);
+            if (inputType === UPDATE_INPUTS.TEAM && updateType == UPDATE_TYPE["DELETE"]) {
+                // update the page if the current active team was removed
+                refreshIfCurrentItemWasRemoved(valueToUpdate, UPDATE_FILTER_BY_TEAM);
             }
             break;
         case PAGES["MANAGE_TEAM"]:
-
-            // USER 
-            if (inputType === UPDATE_INPUTS.USER) {
-                updateSelectOption(MODAL_REMOVE_USER_INPUT, updateType, valueToUpdate);
-            }
 
             // TEAM 
             if (inputType === UPDATE_INPUTS.TEAM) {
@@ -1347,13 +1277,7 @@ function updateHtml(currentPage, updateType, valueToUpdate, inputType, others = 
                 // update select team from add user
                 updateSelectOption(SELECT_TEAM_TO_ADD_USER_INPUT, updateType, valueToUpdate);
 
-                // update topnav options
-                updateSelectOption(SPRINT_DELETE_MODAL_SELECT_TEAM, updateType, valueToUpdate);
-                updateSelectOption(SPRINT_CREATE_MODAL_TEAM_INPUT, updateType, valueToUpdate);
-                updateSelectOption(DELETE_TEAM_SELECT_INPUT, updateType, valueToUpdate);
-
                 if (updateType == UPDATE_TYPE["ADD"]){
-                    console.log(others["team"]);
                     if (others && others["team"]){
                         addTeamToTable(others["team"]);
                     }
@@ -1361,36 +1285,10 @@ function updateHtml(currentPage, updateType, valueToUpdate, inputType, others = 
                     $(`.rowValues#${valueToUpdate}`).remove();
                 }
             }
-            // check update in sprints
-            if (inputType === UPDATE_INPUTS.SPRINT) {
-                // sprint modal
-                updateSelectOption(SPRINT_CREATE_MODAL_TEAM_INPUT, updateType, valueToUpdate);
-                updateSelectOption(SPRINT_DELETE_MODAL_SELECT_SPRINT, updateType, valueToUpdate);
-            }
+
             break;
         case PAGES["QUERIES"]:
 
-            // USER 
-            if (inputType === UPDATE_INPUTS.USER) {
-                updateSelectOption(MODAL_REMOVE_USER_INPUT, updateType, valueToUpdate);
-            }
-
-            // TEAM 
-            if (inputType === UPDATE_INPUTS.TEAM) {
-
-                updateSelectOption(DELETE_TEAM_SELECT_INPUT, updateType, valueToUpdate);
-
-                // sprint modal
-                updateSelectOption(SPRINT_CREATE_MODAL_TEAM_INPUT, updateType, valueToUpdate);
-                updateSelectOption(SPRINT_DELETE_MODAL_SELECT_TEAM, updateType, valueToUpdate);
-            }
-            
-            // check update in sprints
-            if (inputType === UPDATE_INPUTS.SPRINT) {
-                // sprint modal
-                updateSelectOption(SPRINT_CREATE_MODAL_TEAM_INPUT, updateType, valueToUpdate);
-                updateSelectOption(SPRINT_DELETE_MODAL_SELECT_SPRINT, updateType, valueToUpdate);
-            }
             break;
         default:
             break;
