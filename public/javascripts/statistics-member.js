@@ -90,8 +90,6 @@ function updateStatisticsHtml(updateType, valueToUpdate){
         currentNumberOfMembers++;
         $(NUMBERS_OF_MEMBERS_TEXT).text(`${currentNumberOfMembers} members`);
         $(NUMBER_OF_MEMBERS_VALUE).val(currentNumberOfMembers);
-        updateSelectOption(MODAL_REMOVE_USER_INPUT, UPDATE_TYPE.ADD, valueToUpdate);
-
     }else if(updateType === UPDATE_TYPE.DELETE){
 
         // updating text
@@ -102,7 +100,5 @@ function updateStatisticsHtml(updateType, valueToUpdate){
             $(NUMBERS_OF_MEMBERS_TEXT).text(`${--currentNumberOfMembers} members`);
             $(NUMBER_OF_MEMBERS_VALUE).val(currentNumberOfMembers);
         }
-
-        updateSelectOption(MODAL_REMOVE_USER_INPUT, UPDATE_TYPE.DELETE, valueToUpdate);
     }
 }
