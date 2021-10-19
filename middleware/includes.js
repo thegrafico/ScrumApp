@@ -8,7 +8,13 @@ module.exports = {
     // Includes for dashboard
     dashboardPath: {
         styles: ["/stylesheets/dashboard.css"], 
-        scripts: ["/javascripts/quotes.js", "/javascripts/modals/projects.js", "/javascripts/dependecies/bootstrap.bundle.min.js"]
+        scripts: [
+            "/javascripts/quotes.js", 
+            "/javascripts/modals/projects.js", 
+            "/javascripts/dependecies/bootstrap.bundle.min.js",
+            "/javascripts/dashboard.js",
+            "/javascripts/api-calls/api-project.js",
+        ]
     },
     // includes for statistics
     statisticsPath: {

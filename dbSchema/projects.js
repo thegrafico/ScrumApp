@@ -469,6 +469,18 @@ projectSchema.methods.removeUsers = async function(userIds) {
     });
 };
 
+/**
+ * Return true if the user id is the author of the project
+ * @param {String} userid - team id
+ * @returns {Boolean}
+*/
+projectSchema.methods.isProjectAuthor = function(userid) {
+    
+    const project = this;
+
+    return (project["author"].toString() === userid.toString());
+};
+
 
 
 /**

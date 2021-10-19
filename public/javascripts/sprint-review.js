@@ -495,8 +495,11 @@ function updateBurnDownChart(burnDownChart, statusReport){
     // getting the guideline data 
     const guidelineData = getGuideleValues(totalPoints, dates.length -1);
 
+    // check if the start date of this sprint is greater than today
+    const isFutureSprint = isDateGreaterThanToday(startDate);
+
     // getting the actual burndown of the sprint
-    const actualBurndownData = getBurndownLineData(pointsHistory, totalPoints, dates, isTodayBetween);
+    const actualBurndownData = getBurndownLineData(pointsHistory, totalPoints, dates, isTodayBetween, isFutureSprint);
 
     // Updating labels
     burnDownChart.data.labels = dates;
@@ -514,10 +517,18 @@ function updateBurnDownChart(burnDownChart, statusReport){
 
 
 /**
- * get the line data for the workItems completed
- * @param {Array} workItems - array of object with work items completed
+ * get the burndowm graph
+ * @param {Array} pointsHistory 
+ * @param {Number} totalPoints 
+ * @param {Array} labelDates 
+ * @param {Boolean} isTodayBetween 
+ * @param {Boolean} isFutureSprint 
+ * @returns {Array} data points for graph
  */
-function getBurndownLineData(pointsHistory, totalPoints, labelDates, isTodayBetween){
+function getBurndownLineData(pointsHistory, totalPoints, labelDates, isTodayBetween, isFutureSprint){
+
+    // return empty array if we're dealing with a future sprint
+    if (isFutureSprint){return [];}
 
     let today = moment(new Date()).format(DATE_LABEL_FORMAT);
 
@@ -595,11 +606,14 @@ function burndownChart(pointsHistory, labelDateFormat){
     // to update the plot until today
     const isTodayBetween = isDateBetween(startDate, endDate);
 
+    // check if the start date of this sprint is greater than today
+    const isFutureSprint = isDateGreaterThanToday(startDate);
+
     // getting the guideline data 
     const guidelineData = getGuideleValues(totalPoints, dates.length -1);
     
     // getting the actual burndown of the sprint
-    const actualBurndownData = getBurndownLineData(pointsHistory, totalPoints, dates, isTodayBetween);
+    const actualBurndownData = getBurndownLineData(pointsHistory, totalPoints, dates, isTodayBetween, isFutureSprint);
 
     const data = {
       labels: dates,
@@ -1033,4 +1047,12 @@ function showStartSprintButton(isFutureSprint, isActiveSprint){
     }else{
         $(START_SPRINT_BTN_CONTAINER).addClass("d-none");
     }
+}
+
+/**
+ * Return true if date is greater than today
+ * @param {String} date 
+ */
+function isDateGreaterThanToday(date, format=SPRINT_FORMAT_DATE){
+    return moment(new Date()).isBefore(moment(date, format));
 }

@@ -26,3 +26,261 @@
     color: rgba(255, 255, 255, 0.5);
 }
 
+
+/* dashboard side navbar */
+#dashboard-side-navbar {
+    width: 20vw !important;
+    max-width: 20vw !important;
+}
+
+.dashboard-tabs {
+    margin-bottom: 1%;
+}
+
+.dashboard-tabs a.active span {
+    border-bottom: 2px solid #2f4d6c;
+    padding-bottom: .5em;
+}
+
+.dashboard-tabs a span {
+    font-size: 1.5em;
+}
+
+.dashboard-tabs .nav-link{
+    padding-left: 0;
+}
+
+.dashboard-tabs .nav-item a {
+    color: white !important;
+    font-weight: bold;
+}
+
+.create-project-container {
+    margin-bottom: 1% !important;
+}
+
+.b-red {
+    border: 1px solid red;
+}
+
+.b-blue {
+    border: 1px solid blue;
+}
+.b-green {
+    border: 1px solid green;
+}
+
+.card:first-child {
+    margin-left: 0;
+    /* padding-left: 0; */
+}
+
+.add-shadow-box {
+    -webkit-box-shadow: 10px 10px 28px 0px rgba(0, 0, 0, 0.41);
+    -moz-box-shadow: 10px 10px 28px 0px rgba(0, 0, 0, 0.41);
+    box-shadow: 10px 10px 28px 0px rgba(0, 0, 0, 0.41);
+}
+
+.add-shadow-box:hover {
+    -webkit-box-shadow: 10px 10px 28px 0px rgba(0, 0, 0, 0.2);
+    -moz-box-shadow: 10px 10px 28px 0px rgba(0, 0, 0, 0.2);
+    box-shadow: 10px 10px 28px 0px rgba(0, 0, 0, 0.2);
+}
+
+#filter-projects {
+    background-color: #444;
+    color: white;
+    padding: .2rem 1rem .2rem 3rem;
+    border-radius: .2rem;
+    border-color: transparent;
+}
+
+#filter-projects::placeholder {
+    /* Chrome, Firefox, Opera, Safari 10.1+ */
+    color: white;
+    opacity: .7;
+    /* Firefox */
+    font-style: italic;
+}
+
+#filter-projects:focus, #create-project-btn:focus, .button-container:focus{
+    outline: none !important;
+    outline-color: none !important;
+}
+
+.filter-icon {
+    position: absolute;
+    padding-top: .05rem;
+    padding-left: 1.1rem;
+    font-size: 1.1rem;
+}
+
+.filter-projects-container{
+    padding-top: .3rem;
+}
+
+.button-container{
+    position: absolute;
+    right: 2rem;
+    top: 0;
+}
+
+/* PROJECT INFO IN ROW */
+
+.project-name{
+    font-size: 1.2em;
+    font-weight: bold;
+}
+
+.project-description{
+    font-size: 1em;
+}
+
+.card-project{
+    padding-bottom: 2% !important;
+}
+
+.card-initials{
+    float: left;
+}
+
+.card-body{
+    padding-left: .9rem;
+}
+
+.card-body .project-description{
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
+    -webkit-box-orient: vertical;  
+}
+
+.project-row .project-description{
+    display: block;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.description-color{
+    opacity: .7;
+}
+
+.project-work-done{
+    font-size: small;
+}
+
+.project-initials{
+    font-size: 2.5em;
+    font-weight: bold;
+    color: white;
+    padding: 10%;
+}
+
+.bg-initials-color{
+    background-color: #375a7f;
+    border-radius: .5rem;
+}
+
+.project-initials-container{
+    text-align: center;
+    height: 3.5vh !important;
+    width: 2vw !important;
+    padding-top: .5vh;
+}
+/* 
+@media screen and (max-width: 600px) {
+    .project-initials-container{
+        height: 3.5vh !important;
+        width: 3.5vw !important;
+    }
+  } */
+
+.project-initials-container span{
+    font-weight: bold;
+    font-size: 1.5em;
+}
+
+.project-row {
+    background-color: rgb(48, 48, 48);;
+    border-radius: .5rem;
+}
+
+.initals-container{
+    padding-left: 1.5%;
+}
+
+.card-initials{
+    padding-left: 0;
+}
+
+
+.n-mb{
+    margin-bottom: 0 !important;
+}
+
+.b-botton{
+    border-bottom: .5px solid rgba(128, 128, 128, 0.561);
+}
+
+.info-container{
+    width: 90%; 
+    margin-left: 5%;
+}
+
+.initial-color-1{
+    background-color: #2f4d6c,
+}
+.initial-color-2{
+    background-color: #2c81ba,
+}
+.initial-color-3{
+    background-color: #15aabf,
+}
+.initial-color-4{
+    background-color: #822bad,
+}
+.initial-color-5{
+    background-color: #2487b6,
+}
+.initial-color-6{
+    background-color: #b32e6f,
+}
+.initial-color-7{
+    background-color: #5e38a4,
+}
+.initial-color-8{
+    background-color: #296c74d3,
+}
+
+.go-to-project:hover{
+    cursor: pointer;
+    opacity: .7;
+}
+
+.project-icons i {
+    font-size: 1.5em;
+}
+
+.project-icons i{
+    padding-right: 1rem;
+}
+
+.fa-trash{
+    color: rgb(231, 76, 60);
+}
+
+.fa-edit{
+    color: #2c81ba;
+}
+
+.fa-trash:hover, .fa-edit:hover{
+    opacity: .5;
+    cursor: pointer;
+}
+
+.project-icons-row{
+    position: relative;
+    right: 0;
+    top: 2rem;
+}

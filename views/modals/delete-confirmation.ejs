@@ -1,0 +1,25 @@
+<!-- Modal -->
+<div class="modal fade" id="remove-confirmation-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel"><span id="remove-confirmation-title"> </span></h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p id="remove-confirmation-body-text">  </p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-danger" id="remove-confirmation-submit-btn">Submit</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hidden input to store id if needed -->
+    <!-- This element should be populated when the modal is open -->
+    <input type="hidden" name="idToRemove" id="remove-confirmation-id-input" value="0">
+</div>

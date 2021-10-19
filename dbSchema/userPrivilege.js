@@ -35,4 +35,34 @@ let userPrivilege = new mongoose.Schema({
 // make the userId, ProjectId unique
 userPrivilege.index({ userId: 1, projectId: 1 }, { unique: true });
 
+/**
+ * remove all privilege for a project
+ * @param {String} projectId - id of the project
+ * @returns {Promise}
+ */
+ userPrivilege.statics.removeProjectPrivilege = async function(projectId) {
+    
+    let father = this;
+
+    return new Promise(async function (resolve, reject){
+
+        let err_msg = null;
+        if (_.isUndefined(projectId) || _.isNull(projectId)){
+            err_msg = 'Invalid project id received.';
+            return reject(err_msg);
+        }
+
+        // ============= REMOVE PROJECT PRIVILEGES ==============
+        await father.deleteMany({ projectId: projectId}).catch(err =>{
+            err_msg = err;
+        });
+        
+        if (err_msg){
+            return reject(err_msg);        
+        }
+
+        return resolve(true);
+    });
+};
+
 module.exports = mongoose.model("UserPrivilege", userPrivilege);

@@ -191,6 +191,7 @@ const MAX_NUMBER_OF_TAGS = 4;
 const MAX_LENGTH_TITLE = 80;
 const MIN_LENGTH_TITLE = 3;
 const MAX_PRIORITY_POINTS = 5;
+const MAX_LENGTH_DESCRIPTION = 500;
 
 const HIGHLIGST_CLASS = "highligtRow";
 
@@ -217,6 +218,29 @@ const PAGES = {
     MANAGE_SPRINT: "manageSprint",
     QUERIES: "queries",
 }
+
+const INVALID_SYMBOLS = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]+/;
+
+
+// Background color for project initials in dashboard
+const PROJECT_INITIALS_COLORS = [
+    "#2f4d6c",
+    "#2c81ba",
+    "#15aabf",
+    "#822bad",
+    "#2487b6",
+    "#b32e6f",
+    "#5e38a4",
+    "#3ab8c5"
+];
+
+
+// REMOVE CONFIRMATION MODAL
+const REMOVE_CONFIRMATION_MODAL = "#remove-confirmation-modal";
+const REMOVE_CONFIRMATION_TITLE = "#remove-confirmation-title";
+const REMOVE_CONFIRMATION_BODY_TEXT = "#remove-confirmation-body-text";
+const REMOVE_CONFIRMATION_SUBMIT_BTN = "#remove-confirmation-submit-btn";
+const REMOVE_CONFIRMATION_HIDDEN_INPUT = "#remove-confirmation-id-input";
 
 //  ======= SPRINT
 

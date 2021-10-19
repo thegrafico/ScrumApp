@@ -40,6 +40,14 @@ function validateForm(formParams) {
 }
 
 /**
+ * Check if a string contains symbols
+ * @param {String} string 
+ */
+function containsSymbols(string){
+    return INVALID_SYMBOLS.test(string);
+}
+
+/**
  * Show a span element with an error message
  * @param {String} spanId - id of the span to show
  * @param {String} message - message the span will have 
@@ -165,9 +173,11 @@ function make_post_request(link, data) {
                     console.log("Sent!");
                 })
             .done(function (data, status) {
+                // console.log(data, status);
                 return resolve(data, status);
             })
             .fail(function (data, status) {
+                // console.log(data, status);
                 return reject({
                     data,
                     status
@@ -2113,3 +2123,30 @@ function refreshPage() {
     location.reload();
     return;
 }
+
+/**
+ * Set up the title, body text, and element to be removed in delete modal
+ * @param {Object} data 
+ */
+function setUpRemoveModal(data){
+    console.log("Setting up delete modal...");
+
+    // setting title
+    $(REMOVE_CONFIRMATION_TITLE).text(data["title"]);
+    
+    // setting bodt text
+    $(REMOVE_CONFIRMATION_BODY_TEXT).text(data["body"]);
+
+    // assign needed data to hidden input
+    $(REMOVE_CONFIRMATION_HIDDEN_INPUT).val(data["id"]);
+
+}
+
+/**
+ * Close modal is has close class
+ * @param {String} modalId 
+ */
+function closeModal(modalId){
+    $(`${modalId} .close`).click();
+}
+

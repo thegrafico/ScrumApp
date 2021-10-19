@@ -101,7 +101,7 @@ workItemSchema.plugin(AutoIncrement, {id: 'sequence', inc_field: 'itemId', refer
  * Check if the work item has a user assigned
  * @returns {Boolean}
  */
- workItemSchema.methods.hasUserAssigned = function() {
+workItemSchema.methods.hasUserAssigned = function() {
 
     let workItem = this;
     
@@ -111,6 +111,36 @@ workItemSchema.plugin(AutoIncrement, {id: 'sequence', inc_field: 'itemId', refer
         workItem["assignedUser"]["id"] == null ||
         workItem["assignedUser"]["id"].toString() == UNASSIGNED_USER["id"]
     );
+};
+
+/**
+ * Remove all work items for a project
+ * @param {String} projectId - id of the project
+ * @returns {Promise}
+ */
+ workItemSchema.statics.removeWorkItemsFromProject = async function(projectId) {
+    
+    let father = this;
+
+    return new Promise(async function (resolve, reject){
+
+        let err_msg = null;
+        if (_.isUndefined(projectId) || _.isNull(projectId)){
+            err_msg = 'Invalid project id received.';
+            return reject(err_msg);
+        }
+
+        // ============= REMOVE WORK ITEMS ==============
+        await father.deleteMany({ projectId: projectId}).catch(err =>{
+            err_msg = err;
+        });
+        
+        if (err_msg){
+            return reject(err_msg);        
+        }
+
+        return resolve(true);
+    });
 };
 
 

@@ -1,56 +1,163 @@
-
 <!--  Header and Styles -->
 <%- include('modals/header'); %>
 
-    <%- include('modals/topNavbar'); %>
+<%- include('modals/topNavbar'); %>
 
-    <div class="box-main-text">
+<div class="wrapper d-flex align-items-stretch">
 
-        <div class="jumbotron">
-            <h1 class="display-3">Scrum Board - Projects
-                <i class="fas fa-space-shuttle"></i>
-            </h1>
-            <p class="lead"><span id="quote-span"></span></p>
-            <hr class="my-4">
-            <p class="lead">
-                <button class="btn btn-success btn-lg" role="button" data-toggle="modal"
-                    data-target="#createProjectModal">Create New Project
-                </button>
-            </p>
+    <%- include('modals/dashboard-side-navbar'); %>
+
+    <!-- Page Content  -->
+    <div id="content">
+
+        <div class="info-container p-4">
+
+            <div class="container-fluid" style="margin-left: 7%;">
+
+                <div class="row create-project-container">
+
+                    <!-- Create project button -->
+                    <div class="col-10 create-project-button-container pb-2">
+                        <div class="button-container">
+                            <button 
+                                type="button" 
+                                id="create-project-btn"
+                                class="btn btn-primary"
+                                data-toggle="modal" 
+                                data-target="#create-project-modal"
+                                > <i class="far fa-plus-square"></i>  Create Project</button>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Tabs and filter -->
+                <div class="row">
+                    <div class="col-10" style="padding-left: 0;">
+                        <nav class="navbar navbar-expand-lg">
+
+                            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                                <ul class="nav mr-auto dashboard-tabs">
+                                    <li class="nav-item">
+                                        <a class="nav-link active" data-bs-toggle="tab" href="#tabs-projects"> <span> Projects</span></a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" data-bs-toggle="tab" href="#tabs-work-items"> <span> My Work Items </span></a>
+                                    </li>
+                                    
+                                    
+                                </ul>
+                                <form class="form-inline my-2 my-lg-0 filter-projects-container">
+                                    <i class="fas fa-filter filter-icon"></i>
+                                    <input class="add-shadow-box" type="text" placeholder="filter projects"
+                                        id="filter-projects">
+                                </form>
+                            </div>
+                        </nav>
+                    </div>
+                </div>
+
+                <!-- Tabs UI -->
+                <div class="row">
+
+                    <div class="col-12">
+
+                        <div id="myTabContent" class="tab-content">
+                            <div class="tab-pane fade active show" id="tabs-projects">
+                                <div class="container-fluid">
+
+                                    <!-- FAVORITE PROJETS -->
+                                    <div class="row pl-3" id="favorite-projects-container">
+                                        <% for(let i = 0; i < numberOfFavoriteProjects; i++){ %>
+                                            <div id="<%= projects[i]._id %>" class="col-3 card text-white bg-dark mb-6 card-project add-shadow-box">
+                                                <div class="card-body">
+
+                                                    <div class="initals-container card-initials pr-2 go-to-project" data-projectid="<%= projects[i]._id %>">
+                                                        <div class="project-initials-container bg-initials-color" style="background-color: <%= projects[i]['initialsColors']%>;">
+                                                            <span><%= projects[i]["initials"]%></span>
+                                                        </div>
+                                                    </div>
+                                                    
+                                                    <h4 class="card-title go-to-project project-name" data-projectid="<%= projects[i]._id %>">
+                                                        <%= projects[i].title %>
+                                                    </h4>
+                                                    <p class="card-text project-description description-color"><%= projects[i].description %></p>
+                                                </div>
+                                                <div class="pr-4 project-icons" style="text-align: right;">
+                                                <span class="edit-project-btn" data-toggle="modal" data-target="#edit-project-modal" data-projectid="<%= projects[i]._id %>"><i class="fas fa-edit"></i></span>
+                                                <span class="remove-project-btn" data-toggle="modal" data-target="#remove-confirmation-modal" data-projectid="<%= projects[i]._id %>"><i class="fas fa-trash"></i></span>
+                                                </div>
+                                            </div>
+                                        <% } %>
+                                    </div>
+
+
+                                    <!-- REMAINING PROJECTS -->
+                                    <div class="row n-mb" style="width: 100% !important;">
+
+                                        <div class="col-10 " id="row-projects-container">
+                                            <% for(let i = 3; i < projects.length; i++){ %>
+                                                <div id="<%= projects[i]._id %>" class="row mb-4 add-shadow-box project-row">
+
+                                                    <!-- INITIALS -->
+                                                    <div class="initals-container pt-4 go-to-project" data-projectid="<%= projects[i]._id %>">
+                                                        <div class="project-initials-container bg-initials-color" style="background-color: <%= projects[i]['initialsColors']%>;">
+                                                            <span><%= projects[i]["initials"]%></span>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="col-9 pt-2">
+
+                                                        <div class="row">
+                                                            <div class="col-12 go-to-project" data-projectid="<%= projects[i]._id%>">
+                                                                <span class="project-name"> <%= projects[i]["title"]%></span>
+                                                            </div>
+
+                                                            <div class="col-12">
+                                                                <span class="project-description description-color"> <%= projects[i]["description"]%> &nbsp;</span>
+                                                            </div>
+
+                                                            <div class="col-12">
+                                                                <span class="project-work-done description-color"> <i class="fas fa-clipboard-list"></i> 10/20 Work items completed</span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="col-2">
+                                                        <div class="pr-4 project-icons project-icons-row" style="text-align: right;">
+                                                            <span class="edit-project-btn" data-toggle="modal" data-target="#edit-project-modal" data-projectid="<%= projects[i]._id %>"><i class="fas fa-edit"></i></span>
+                                                            <span class="remove-project-btn" data-toggle="modal" data-target="#remove-confirmation-modal" data-projectid="<%= projects[i]._id %>"><i class="fas fa-trash"></i></span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            <% } %>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="tab-pane fade" id="tabs-work-items">
+                                <p>Food truck fixie locavore, accusamus mcsweeney's marfa nulla single-origin coffee
+                                    squid. Exercitation +1 labore velit, blog sartorial PBR leggings next level wes
+                                    anderson artisan four loko farm-to-table craft beer twee. Qui photo booth
+                                    letterpress, commodo enim craft beer mlkshk aliquip jean shorts ullamco ad vinyl
+                                    cillum PBR. Homo nostrud organic, assumenda labore aesthetic magna delectus mollit.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
+</div>
 
-    <!-- LOADING MODAL -->
-    <%- include('modals/createProject'); %>
-
-    <div id="box-show-projects" class="container-fluid">
-
-        <% for(let project of projects){ %>
-            <div class="row">
-                <% for(let i = 0; i < project.length; i++){ %>
-
-                        <div id="<%= project[i]._id %>" class="col-3 card text-white bg-dark mb-6 card-project">
-                            <a href="http://localhost:3000/<%= project_rediret %>/<%= project[i]._id %>" style="color:inherit; text-decoration: inherit;display: block;">
-                                <div class="card-header">
-                                    <span class='card-title'> <%= project[i].status %> </span> - <span class='card-date'> <%= project[i].createdAt %> </span>
-                                </div>
-
-                                <div class="card-body">
-                                    <h4 class="card-title"><%= project[i].title %></h4>
-                                    <p class="card-text"><%= project[i].description %></p>
-                                </div>
-                            </a>
-                        </div>
-                <% } %>
-            </div>
-        <% } %>
+<%- include('modals/create-project'); %>
+<%- include('modals/edit-project'); %>
 
 
-    </div>
+<%- include('modals/delete-confirmation'); %>
 
-    <div class="container-fluid">
 
-    </div>
 
-   <!-- Footer and scripts -->
-   <%- include('modals/footer'); %>
+<%- include('modals/footer'); %>

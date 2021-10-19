@@ -417,9 +417,9 @@ sprintSchema.methods.removeWorkItemFromSprints = async function(workItemId) {
 
 
 /**
- * Remove the work item from the sprints
+ * add the work item from the sprints
  * @param {String} projectId - id of the project
- * @param {String} workItemId - if id the work item to remove 
+ * @param {String} workItemId - if id the work item to add 
  * @returns {Promise} true if the work item was added
  */
 sprintSchema.statics.addWorkItemToSprint = async function(projectId, workItemId, sprintId) {
@@ -517,7 +517,7 @@ sprintSchema.statics.addWorkItemToSprint = async function(projectId, workItemId,
 /**
  * get the sprint where this work item belongs
  * @param {String} projectId - id of the project
- * @param {String} workItemId - if id the work item to remove 
+ * @param {String} workItemId - if id the work item
  * @returns {Promise} sprint for the work item
  */
 sprintSchema.statics.getSprintForWorkItem = async function(projectId, workItemId) {
@@ -672,6 +672,47 @@ sprintSchema.statics.getSprintOrder = async function(sprintId, projectId) {
     return sprintOrder;
 };
 
+/**
+ * get the team information for the sprint
+ * @param {String} sprintId - id of the project
+ * @returns {Promise} team for the sprint
+ */
+sprintSchema.statics.removeSprintsFromProject = async function(projectId) {
+    
+    let father = this;
+
+    return new Promise(async function (resolve, reject){
+
+        let err_msg = null;
+        if (_.isUndefined(projectId) || _.isNull(projectId)){
+            err_msg = 'Invalid project id received.';
+            return reject(err_msg);
+        }
+
+        // ============= Remove sprint order ==============
+
+        await OrderSprintCollection.deleteMany({projectId}).catch(err => {
+            err_msg = err;
+        });
+
+        if (err_msg){
+            return reject(err_msg);
+        }
+
+        // ============= REMOVE SPRINTS ==============
+        await father.deleteMany({ projectId: projectId}).catch(err =>{
+            err_msg = err;
+        });
+        
+        if (err_msg){
+            return reject(err_msg);        
+        }
+
+        return resolve(true);
+    });
+};
+
+
 
 /**
  * Get the order of the sprint data
@@ -711,5 +752,7 @@ sprintSchema.methods.haveOrderSchema = async function() {
     
     return this.getSprintOrder() != null;
 };
+
+
 
 module.exports = mongoose.model("Sprint", sprintSchema);

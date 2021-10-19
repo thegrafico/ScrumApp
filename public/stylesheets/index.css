@@ -15,10 +15,6 @@ nav>a {
 
 /* ICONS */
 
-i {
-    font-size: 2em;
-}
-
 .fa-space-shuttle {
     font-size: 0.7em;
 }
@@ -61,7 +57,7 @@ i {
     align-items: stretch !important;
 }
 
-#sidebar {
+.side-navbar {
     border-top: 0.1px solid rgba(255, 255, 255, 0.1);
     min-width: 12vw;
     max-width: 12vw;
@@ -72,58 +68,63 @@ i {
     transition: all 0.3s;
 }
 
-#sidebar.active {
+.side-navbar a {
+    font-size: 1.2em;
+    font-weight: bold;
+}
+
+.side-navbar.active {
     margin-left: -300px;
 }
 
-#sidebar .logo {
+.side-navbar .logo {
     display: block;
     width: 120px;
     height: 120px;
     margin: 0 auto;
 }
 
-#sidebar .logo span {
+.side-navbar .logo span {
     display: block;
 }
 
-#sidebar ul.components {
+.side-navbar ul.components {
     padding: 0;
 }
 
-#sidebar ul li {
+.side-navbar ul li {
     font-size: 16px;
 }
 
-#sidebar ul li>ul {
+.side-navbar ul li>ul {
     margin-left: 10px;
 }
 
-#sidebar ul li>ul li {
+.side-navbar ul li>ul li {
     font-size: 14px;
 }
 
-#sidebar ul li a {
+.side-navbar ul li a {
     padding: 10px 0;
     display: block;
     color: rgba(255, 255, 255, 0.8);
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-#sidebar ul li a:hover {
+.side-navbar ul li a:hover {
     color: #f8b739;
 }
 
-#sidebar ul li.active>a {
+.side-navbar ul li.active>a {
     background: transparent;
     color: #f8b739;
 }
 
 @media (max-width: 991.98px) {
-    #sidebar {
+    .side-navbar {
         margin-left: -300px;
     }
-    #sidebar.active {
+    .side-navbar.active {
         margin-left: 0;
     }
 }

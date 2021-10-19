@@ -1,9 +1,10 @@
 
 const express                   = require("express");
 const middleware                = require("../../middleware/auth");
-const workItemCollection        = require("../../dbSchema/workItem");
-const projectCollection         = require("../../dbSchema/projects");
+const WorkItemCollection        = require("../../dbSchema/workItem");
+const ProjectCollection         = require("../../dbSchema/projects");
 const SprintCollection          = require("../../dbSchema/sprint");
+const UserPrivilege             = require("../../dbSchema/userPrivilege");
 const moment                    = require("moment");
 const _                         = require("lodash");
 let router                      = express.Router();
@@ -11,9 +12,13 @@ let router                      = express.Router();
 const {
     TEAM_NAME_LENGHT_MAX_LIMIT,
     TEAM_NAME_LENGHT_MIN_LIMIT,
+    PROJECT_INITIALS_COLORS,
+    MAX_LENGTH_DESCRIPTION,
+    MAX_LENGTH_TITLE,
     UNASSIGNED_SPRINT,
     joinData,
     sortByDate,
+    containsSymbols,
 } = require('../../dbSchema/Constanst');
 
 // ================= GET REQUEST ==============
@@ -30,7 +35,7 @@ router.get("/api/:id/getworkItemsByTeamId/:teamId", middleware.isUserInProject, 
     if (_.isString(projectId) && _.isString(teamId)){
     
         // Add the comment to the DB
-        const result = await workItemCollection.find({"projectId": projectId, "teamId": teamId}).catch(
+        const result = await WorkItemCollection.find({"projectId": projectId, "teamId": teamId}).catch(
             err => console.error("Error getting work items: ", err)
         );
 
@@ -61,7 +66,7 @@ router.get("/api/:id/getworkItemsAndSprintsByTeam/:teamId", middleware.isUserInP
     
         // Add the comment to the DB
         // THIS IS NOT A MONGOOSE OBJECT - lean()
-        const workItems = await workItemCollection.find({"projectId": projectId, "teamId": teamId}).lean().catch(
+        const workItems = await WorkItemCollection.find({"projectId": projectId, "teamId": teamId}).lean().catch(
             err => console.error("Error getting work items: ", err)
         );
 
@@ -105,6 +110,192 @@ router.get("/api/:id/getworkItemsAndSprintsByTeam/:teamId", middleware.isUserInP
 });
 
 
+/**
+ * METHOD: POST - CREATE PROJECT
+*/
+router.post("/api/createProject", async function (req, res) {
+    
+    console.log("Getting request to create a project...");
+    // project name and description
+    let {name, description} = req.body;
+
+    let response = {};
+
+    if (!_.isString(name) || name.length > MAX_LENGTH_TITLE){
+        response["msg"] = "Invalid project name";
+        res.status(400).send(response);
+        return;
+    }
+
+    if (containsSymbols(name)){
+        response["msg"] = "Project name cannot have symbols";
+        res.status(400).send(response);
+        return;
+    }
+
+    if (_.isString(description) && description.length > MAX_LENGTH_DESCRIPTION){
+        response["msg"] = "Project description is too long.";
+        res.status(400).send(response);
+        return;
+    }
+
+    const newProject = {
+        "title": name,
+        "description": description,
+        "author": req.user._id,
+        "users": [req.user._id],
+    };
+
+    ProjectCollection.create(newProject).then((project) => {
+        project = project.toObject();
+
+        if (name.length > 1) {
+            project["initials"] = name[0][0].toUpperCase() + name[1][0].toUpperCase();
+        } else {
+            project["initials"] = name[0][0].toUpperCase();
+        }
+        project["initialsColors"] = PROJECT_INITIALS_COLORS[0];
+
+        response["project"] = project;
+        response["msg"] = "Project created.";
+        res.status(200).send(response);
+    }).catch(err => {
+        console.log("Error creating project: ", err);
+        response["msg"] = "Sorry, it seems there was a problem creating the project. Please try later.";
+        res.status(400).send(response);
+    });
+});
+
+/**
+ * METHOD: POST - DELETE PROJECT
+*/
+router.post("/api/deleteProject", async function (req, res) {
+    
+    console.log("Getting request to delete a project...");
+    
+    // project name and description
+    let {projectId} = req.body;
+
+    let response = {};
+
+    let getting_project_error = null;
+    let project = await ProjectCollection.findById(projectId).catch(err =>{
+        getting_project_error = err;
+        console.error("There was a problem getting the project to be removed: ", err);
+    });
+
+    if (getting_project_error){
+        response["msg"] = "Sorry, it seems there was a problem finding the project to remove.";
+        res.status(400).send(response);
+        return;
+    }
+
+    if (_.isUndefined(project) || _.isNull(project) || _.isEmpty(project)){
+        response["msg"] = "Sorry, we did not find the information of the project";
+        res.status(400).send(response);
+        return;
+    }
+
+    // if the current user login the author of the project
+    if (!project.isProjectAuthor(req.user._id) ){
+        response["msg"] = "You don't have permission to remove the project";
+        res.status(400).send(response);
+        return;
+    }
+
+    // ================ REMOVING SPRINTS ==============
+    let sprintWasRemoved = await SprintCollection.removeSprintsFromProject(projectId).catch(err => {
+        console.error("There was a problem removing the sprints from project: ", err);
+    });
+
+    if (!sprintWasRemoved){
+        response["msg"] = "Sorry, There was a problem removing the sprints for the project. Please try later.";
+        res.status(400).send(response);
+        return;
+    }
+    // ================ REMOVING WORK ITEMS ==============
+    let workItemWasRemoved = await WorkItemCollection.removeWorkItemsFromProject(projectId).catch(err =>{
+        console.error("Error removing work items from project: ", err);
+    });
+
+    if (!workItemWasRemoved){
+        response["msg"] = "Sorry, There was a problem removing the work items from the project. Please try later.";
+        res.status(400).send(response);
+        return;
+    }
+
+    // ================ REMOVING USER PROJECT PRIVILEGES ==============
+    let privilegeWereRemoved = await UserPrivilege.removeProjectPrivilege(projectId).catch(err =>{
+        console.error("Error removing privilege from project: ", err);
+    });
+    
+    if (!privilegeWereRemoved){
+        response["msg"] = "Sorry, There was a problem removing users from the project. Please try later.";
+        res.status(400).send(response);
+        return;
+    }
+
+    // ================ REMOVING Project instance ==============
+    ProjectCollection.deleteOne({_id: projectId}).then(() => {
+        console.log("Project was removed successfully");
+        response["msg"] = "Project was removed!";
+        response["removedProjectId"] = projectId;
+        res.status(200).send(response);
+        return;
+    }).catch(err =>{
+        console.error("There was a problem removing the project: ", err);
+        response["msg"] = "Oops, There was a problem removing the project. Please try again.";
+        res.status(400).send(response);
+    });
+});
+
+/**
+ * METHOD: POST - UPDATE PROJECT
+*/
+router.post("/api/updateProject", async function (req, res) {
+    
+    console.log("Getting request to update a project...");
+    // project name and description
+    let {projectId, name, description} = req.body;
+
+    let response = {};
+
+    if (!_.isString(name) || name.length > MAX_LENGTH_TITLE){
+        response["msg"] = "Invalid project name";
+        res.status(400).send(response);
+        return;
+    }
+
+    if (containsSymbols(name)){
+        response["msg"] = "Project name cannot have symbols";
+        res.status(400).send(response);
+        return;
+    }
+   
+    if (_.isString(description) && description.length > MAX_LENGTH_DESCRIPTION){
+        response["msg"] = "Project description is too long.";
+        res.status(400).send(response);
+        return;
+    }
+
+    // update my project 
+    ProjectCollection.updateOne(
+        {_id: projectId, author: req.user["_id"]}, 
+        {$set: {title:name, description:  description}})
+    .then( () => {
+        console.log("Project updated!");
+        response["msg"] = "Project was updated!";
+        res.status(200).send(response);
+        return;
+    }).catch(err => {
+        console.log("Error updating project: ", err);
+        response["msg"] = "Sorry, it seems there was a problem updating the project. Please try later.";
+        res.status(400).send(response);
+        return;
+    });
+});
+
+
 // =========================== TEAM REQUEST =====================
 
 /**
@@ -113,7 +304,7 @@ router.get("/api/:id/getworkItemsAndSprintsByTeam/:teamId", middleware.isUserInP
 router.post("/api/:id/newTeam", middleware.isUserInProject, async function (req, res) {
 
     // validate project
-    let project = await projectCollection.findById(req.params.id).catch(err => {
+    let project = await ProjectCollection.findById(req.params.id).catch(err => {
         console.error("Error getting the project: ", err);
     });
 
@@ -212,7 +403,7 @@ router.post("/api/:id/deleteTeam", middleware.isUserInProject, async function (r
     // is a string
     if (_.isString(projectId) && _.isString(teamId) && !_.isEmpty(teamId)){
         // Add the comment to the DB
-        const projectInfo = await projectCollection.findById(projectId).catch(
+        const projectInfo = await ProjectCollection.findById(projectId).catch(
             err => console.error("Error getting project information: ", err)
         );
 
@@ -259,7 +450,7 @@ router.post("/api/:id/deleteTeam", middleware.isUserInProject, async function (r
 /**
  * METHOD: POST - REMOVE TEAMS
  */
- router.post("/api/:id/deleteTeams", middleware.isUserInProject, async function (req, res) {
+router.post("/api/:id/deleteTeams", middleware.isUserInProject, async function (req, res) {
     
     const projectId = req.params.id;
 
@@ -270,7 +461,7 @@ router.post("/api/:id/deleteTeam", middleware.isUserInProject, async function (r
     // is a string
     if (_.isString(projectId) && _.isArray(teamsId) && !_.isEmpty(teamsId)){
         // Add the comment to the DB
-        const projectInfo = await projectCollection.findById(projectId).catch(
+        const projectInfo = await ProjectCollection.findById(projectId).catch(
             err => console.error("Error getting project information: ", err)
         );
 
@@ -324,7 +515,7 @@ router.post("/api/:id/editTeam/:teamid", middleware.isUserInProject, async funct
     const teamId = req.params.teamid;
 
     // validate project
-    let project = await projectCollection.findById(projectId).catch(err => {
+    let project = await ProjectCollection.findById(projectId).catch(err => {
         console.error("Error getting the project: ", err);
     });
 

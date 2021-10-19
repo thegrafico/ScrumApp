@@ -38,12 +38,25 @@ const SPRINT_STATUS = {
     "Coming": "Coming", 
     "Active": "Active",
 };
-
 module.exports.SPRINT_STATUS = SPRINT_STATUS;
+
+
+const PROJECT_INITIALS_COLORS = [
+    "#2f4d6c",
+    "#822bad",
+    "#3ab8c5",
+    "#15aabf",
+    "#b32e6f",
+    "#2487b6",
+    "#2c81ba",
+    "#5e38a4",
+];
+module.exports.PROJECT_INITIALS_COLORS = PROJECT_INITIALS_COLORS;
 
 const SPRINT_FORMAT_DATE = "MM/DD/YYYY";
 module.exports.SPRINT_FORMAT_DATE = SPRINT_FORMAT_DATE;
 module.exports.ADD_SPRINT_TO_ALL_TEAM_ID = "ALL";
+
 
 
 // STORY TYPE and ICONS
@@ -642,6 +655,17 @@ module.exports.cleanQuery = (query) => {
 
     return masterQuery;
 }
+
+const INVALID_SYMBOLS = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]+/;
+/**
+ * Check if a string contains symbols
+ * @param {String} string 
+ */
+function containsSymbols(string){
+    return INVALID_SYMBOLS.test(string);
+}
+module.exports.containsSymbols = containsSymbols;
+
 
 
 /**

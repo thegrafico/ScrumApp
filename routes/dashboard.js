@@ -5,14 +5,19 @@
  */
 
 // ============= CONST AND DEPENDENCIES =============
-const express               = require("express");
-const valid                 = require("validator");
-const _                     = require("lodash");
-let projectCollection       = require("../dbSchema/projects");
-const { dashboardPath }     = require("../middleware/includes");
-
-
+const express = require("express");
+const valid = require("validator");
+const _ = require("lodash");
+let projectCollection = require("../dbSchema/projects");
+const {
+    dashboardPath
+} = require("../middleware/includes");
 let router = express.Router();
+
+
+const {
+    PROJECT_INITIALS_COLORS
+} = require("../dbSchema/Constanst");
 
 // JUST FOR TESTING
 const NUM_OF_PROJECT_PER_ROW = 3;
@@ -26,38 +31,64 @@ const BASE_ROUTE = 'dashboard';
  */
 router.get("/", async function (req, res) {
 
-  let params = {
-    title: "Dashboard",
-    projectId: undefined,
-    assignedUsers: undefined,
-    projectTeams: [],
-    addUserModal: undefined,
-    sprints: [],
-    currentPage: undefined,
-    createProjectFormRedirect: "/",
-    project_rediret: BASE_ROUTE,
-    stylesPath: dashboardPath["styles"],
-    scriptsPath: dashboardPath["scripts"],
-  };
+    let projects = await getProjectsForUser(req.user._id).catch(err => {
+        console.error(err)
+    });
 
-  let projects = await getProjectsForUser(req.user._id).catch(err => {console.error(err)});
+    // set it to an empty array in case is undefine or empty
+    if (_.isUndefined(projects) || _.isEmpty(projects)) {
+        projects = [];
+    }
 
-  // set it to an empty array in case is undefine or empty
-  if (_.isUndefined(projects) || _.isEmpty(projects)) {
-    projects = [];
-  }
+    // getting inital of the projects
+    const COLORS_LIMIT = 3; //PROJECT_INITIALS_COLORS.length;
+    let colorsIndex = 0;
+    for (let project of projects) {
+        let title = project.title.split(" ");
+        if (title.length > 1) {
+            project["initials"] = title[0][0].toUpperCase() + title[1][0].toUpperCase();
+        } else {
+            project["initials"] = title[0][0].toUpperCase();
+        }
 
-  console.log(projects)
+        project["initialsColors"] = PROJECT_INITIALS_COLORS[colorsIndex];
+        colorsIndex++;
 
-  /**
-   * Add the project to the frond-end
-   * Divide the project in chunk, so is easy to mantain in the user-site
-   */
-  params["projects"] = _.chunk(projects, NUM_OF_PROJECT_PER_ROW);
-  // console.log(params["projects"]);
+        if (colorsIndex >= COLORS_LIMIT){
+            colorsIndex = 0;
+        }
+    }
 
-  res.render("dashboard", params);
+    // Keep the favorite number of project to 3. in case there are less than 3, assign the length
+    let LIMIT_NUMBER_OF_FAVORITE_PROJECTS = (projects.length > 3) ? 3 : projects.length;
+
+
+    let params = {
+        title: "Dashboard",
+        projectId: undefined,
+        assignedUsers: undefined,
+        projectTeams: [],
+        addUserModal: undefined,
+        sprints: [],
+        currentPage: undefined,
+        createProjectFormRedirect: "/",
+        project_rediret: BASE_ROUTE,
+        stylesPath: dashboardPath["styles"],
+        scriptsPath: dashboardPath["scripts"],
+        numberOfFavoriteProjects: LIMIT_NUMBER_OF_FAVORITE_PROJECTS,
+        projects: projects,
+    };
+
+    /**
+     * Add the project to the frond-end
+     * Divide the project in chunk, so is easy to mantain in the user-site
+     */
+    // params["projects"] = _.chunk(projects, NUM_OF_PROJECT_PER_ROW);
+    // console.log(params["projects"]);
+
+    res.render("dashboard", params);
 });
+
 
 
 /**
@@ -66,36 +97,38 @@ router.get("/", async function (req, res) {
  * // TODO: validate project data
  */
 router.post("/", function (req, res) {
-  
-  // get data from the form
-  let projectName = req.body.projectName;
-  let projectDescription = req.body.projectDescription;
 
-  // validate params 
-  if (projectParamsAreValid(projectName, projectDescription)) {
-    req.flash("error", "Sorry, There was an error with the name or the description. Please try again.");
-    res.redirect("/");
-    return;
-  }
+    // get data from the form
+    let projectName = req.body.projectName;
+    let projectDescription = req.body.projectDescription;
 
-  const newProject = {
-    "title": projectName,
-    "description": projectDescription,
-    "author": req.user._id,
-    "users": [req.user._id],
-  };
+    
 
-  // Insert into the database
-  projectCollection.create(newProject, function (err, projectCreated) {
-    if (err) {
-      // TODO: Log this into a TXT
-      console.error("Error creating the project: ", err);
-      req.flash("error", "Sorry, There was an error creating the Project. Try later or contact support.");
-      res.redirect("/");
-      return
+    // validate params 
+    if (projectParamsAreValid(projectName, projectDescription)) {
+        req.flash("error", "Sorry, There was an error with the name or the description. Please try again.");
+        res.redirect("/");
+        return;
+    }
+
+    const newProject = {
+        "title": projectName,
+        "description": projectDescription,
+        "author": req.user._id,
+        "users": [req.user._id],
     };
-    res.redirect("/");
-  });
+
+    // Insert into the database
+    projectCollection.create(newProject, function (err, projectCreated) {
+        if (err) {
+            // TODO: Log this into a TXT
+            console.error("Error creating the project: ", err);
+            req.flash("error", "Sorry, There was an error creating the Project. Try later or contact support.");
+            res.redirect("/");
+            return
+        };
+        res.redirect("/");
+    });
 });
 
 
@@ -104,20 +137,22 @@ router.post("/", function (req, res) {
  * @param {*} userId - id of the user
  */
 function getProjectsForUser(userId) {
-  return new Promise(async function (resolve, rejected) {
-    
-    // find all projects user is
-    let userProjects = await projectCollection.find({users: userId}).catch(err => {
-      console.error("Error getting the projects for the user: ", err);
+    return new Promise(async function (resolve, rejected) {
+
+        // find all projects user is
+        let userProjects = await projectCollection.find({
+            users: userId
+        }).catch(err => {
+            console.error("Error getting the projects for the user: ", err);
+        });
+
+        if (!userProjects || userProjects.length == 0) {
+            rejected("Response is empty, cannot get the project for the user");
+            return;
+        }
+
+        resolve(userProjects);
     });
-
-    if (!userProjects || userProjects.length == 0) {
-      rejected("Response is empty, cannot get the project for the user");
-      return;
-    }
-
-    resolve(userProjects);
-  });
 
 }
 
@@ -127,7 +162,7 @@ function getProjectsForUser(userId) {
  * @param {String} desc - description of the project 
  */
 function projectParamsAreValid(name, desc) {
-  return (valid.isEmpty(name) || !valid.isAlphanumeric(valid.blacklist(name, ' ')) || name.length > 50 || valid.isEmpty(desc) || desc.length > 500);
+    return (valid.isEmpty(name) || !valid.isAlphanumeric(valid.blacklist(name, ' ')) || name.length > 50 || valid.isEmpty(desc) || desc.length > 500);
 }
 
 module.exports = router;
