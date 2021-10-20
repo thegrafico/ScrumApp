@@ -10,7 +10,7 @@
             
             <li class="nav-item active">
                 <a class="nav-link" href="/">
-                    <h4><%=currentUser['fullName']%></h4>
+                    <h4>Scrum App</h4>
                     <span class="sr-only">(current)</span>
                 </a>
             </li>
@@ -65,20 +65,128 @@
                             aria-expanded="false"><i class="fas fa-plus addIcon"></i> Work Item</a>
                         </li>
                     <% } %>
-
-                    
                 </div>
            </li >
 
-          
-        
            <% } %>
-
         </ul>
-        
-        <a href="http://localhost:3000/login/logout" style="padding-right: 2%;text-decoration: none;color: white;"><i class="fas fa-sign-out-alt"></i></a>
-        
-        <i class="far fa-user-circle"></i>
+
+        <!-- NOTIFICATIONS -->
+        <div class="user-options-icon mr-4">
+
+            <div class="nav-item dropdown">
+                
+                <a class="open-user-menu-options p-2" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+                    <i class="fas fa-bell pt-1"></i>              
+                </a>
+
+                <div class="user-options-dropdown dropdown-menu dropdown-menu-right" onclick="event.stopPropagation()">
+
+                    <div class="container-fluid">
+                        
+                       <div class="row" style="margin: 0; padding:0; width: 100%;">
+                            <span class="notification-title">Notifications</span>
+                       </div>
+                    </div>
+
+                    <div class="dropdown-divider"></div>
+
+
+                    <a class="dropdown-item" href="#">
+                        <div class="circle-icon">
+                            <i class="far fa-comments"></i>
+                        </div>
+                        <span class="dropdown-text">
+                            Send us a message
+                        </span>
+
+                    </a>                    
+
+                    <a class="dropdown-item" href="#">
+                        <div class="circle-icon">
+                            <i class="fas fa-cog"></i>  
+                        </div>
+                        <span class="dropdown-text">
+                            My configurations
+                        </span>
+                    </a> 
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" href="http://localhost:3000/login/logout">
+                        <div class="circle-icon">
+                            <i class="fas fa-sign-out-alt"></i> 
+                        </div>
+                        <span class="dropdown-text">
+                            Logout
+                        </span>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- USER OPTIONS -->
+        <div class="user-options-icon mr-4">
+
+            <div class="nav-item dropdown">
+                
+                <a class="open-user-menu-options p-2" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+                    <i class="fas fa-caret-down triangle-icon"></i>
+                </a>
+
+                <div class="user-options-dropdown dropdown-menu dropdown-menu-right" onclick="event.stopPropagation()">
+
+                    <div class="container-fluid">
+                        
+                       <div class="row" style="margin: 0; padding:0; width: 100%;">
+
+                            <div class="col-3 pr-2 picture-container">
+                                <div class="user-options-icon-profile">
+                                    <span></span>
+                                </div>
+                            </div>
+
+                            <div class="col pt-2">
+                                <span class="options-user-name"><%=currentUser["fullName"]%></span> <br>
+                                <small class="add-opacity options-view-profile-link">View my profile</small>
+                            </div>
+                       </div>
+                    </div>
+
+                    <div class="dropdown-divider"></div>
+
+
+                    <a class="dropdown-item" href="#">
+                        <div class="circle-icon">
+                            <i class="far fa-comments"></i>
+                        </div>
+                        <span class="dropdown-text">
+                            Send us a message
+                        </span>
+
+                    </a>                    
+
+                    <a class="dropdown-item" href="#">
+                        <div class="circle-icon">
+                            <i class="fas fa-cog"></i>  
+                        </div>
+                        <span class="dropdown-text">
+                            My configurations
+                        </span>
+                    </a> 
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" href="http://localhost:3000/login/logout">
+                        <div class="circle-icon">
+                            <i class="fas fa-sign-out-alt"></i> 
+                        </div>
+                        <span class="dropdown-text">
+                            Logout
+                        </span>
+                    </a>
+                </div>
+            </div>
+        </div>
+               
+        <!-- <a href="http://localhost:3000/login/logout" style="padding-right: 2%;text-decoration: none;color: white;"><i class="fas fa-sign-out-alt"></i></a>
+        <i class="far fa-user-circle"></i> -->
     </div>
 </nav>
 

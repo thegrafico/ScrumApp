@@ -239,8 +239,6 @@ function filterTable() {
     const stateIndex = headers.indexOf(filterElements["state"]);
     const usersIndex = headers.indexOf(filterElements["assigned"]);
     
-
-
     let searchInput = getSearchInput(FILTER_SEARCH_ID);
     let activeTypeCheckbox = getCheckboxInput(TYPE_CHECKBOX_CLASS);
     let activeStateCheckbox = getCheckboxInput(STATE_CHECKBOX_CLASS);
@@ -369,12 +367,4 @@ function getCheckboxInput(checkboxClass){
     }
     
     return filterWorkItem.join(" ").toLowerCase();
-}
-
-/**
- * Get the text inside the search
- * @param {String} searchId 
- */
-function getSearchInput(searchId){
-    return document.getElementById(searchId).value.toLowerCase();
 }

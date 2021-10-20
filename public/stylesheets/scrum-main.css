@@ -10,6 +10,17 @@
     font-size: 0.9em;
 }
 
+.fa-meteor{
+    font-size: 1.8em;
+    padding-bottom: .5rem;
+}
+
+
+
+.fa-sign-out-alt{
+    font-size: 2em;
+}
+
 .box-title {
     margin-bottom: 0.5%;
     border-bottom: 1px solid rgba(240, 240, 240, 0.2);
@@ -115,7 +126,6 @@ a:hover {
         padding: 0rem !important
             /* padding: 3rem !important; */
     }
-
 }
 
 .table-primary th,
@@ -503,4 +513,80 @@ td.off{
       transform: translateX(0px);
       timing-function: ease-in;
     }
+}
+
+
+.triangle-icon{
+    font-size: 1.8em;
+}
+
+
+.open-user-menu-options:hover{
+    color: white;
+    opacity: .8;
+    cursor: pointer;
+}
+
+.open-user-menu-options:focus{
+    outline: none;
+    outline-color: transparent;
+}
+
+
+
+.user-options-icon, .user-options-icon-profile{
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 50%;
+    text-align: center;
+    padding-top: .4rem;
+    background-color: rgba(128, 128, 128, 0.507);
+}
+
+.user-options-icon-profile{
+    width: 4rem;
+    height: 4rem;
+}
+
+.user-options-dropdown{
+    width: 15vw; 
+    z-index: 999;
+}
+
+.options-user-name{
+    color: white;
+    font-weight: bold;
+    font-size: 1.2em;
+}
+
+.add-opacity{
+    opacity: .8;
+}
+
+.options-view-profile-link:hover{
+    border-bottom: .5px solid gray;
+    cursor: pointer;
+}
+
+.circle-icon{
+    display: inline-block;
+    border-radius: 50%;
+    background-color: gray;
+    padding: .3rem;
+    width: 2rem;
+    height: 2rem;
+    text-align: center;
+}
+
+.circle-icon i {
+    font-size: 1em !important;
+}
+
+.dropdown-text{
+    color: white;
+    font-size: 1em;
+}
+
+.notification-title{
+    font-size: 1.5em;
 }

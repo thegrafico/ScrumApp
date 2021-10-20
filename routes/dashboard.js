@@ -90,48 +90,6 @@ router.get("/", async function (req, res) {
 });
 
 
-
-/**
- * METHOD: POST - Create a new project
- * https://localhost:3000/dashboard
- * // TODO: validate project data
- */
-router.post("/", function (req, res) {
-
-    // get data from the form
-    let projectName = req.body.projectName;
-    let projectDescription = req.body.projectDescription;
-
-    
-
-    // validate params 
-    if (projectParamsAreValid(projectName, projectDescription)) {
-        req.flash("error", "Sorry, There was an error with the name or the description. Please try again.");
-        res.redirect("/");
-        return;
-    }
-
-    const newProject = {
-        "title": projectName,
-        "description": projectDescription,
-        "author": req.user._id,
-        "users": [req.user._id],
-    };
-
-    // Insert into the database
-    projectCollection.create(newProject, function (err, projectCreated) {
-        if (err) {
-            // TODO: Log this into a TXT
-            console.error("Error creating the project: ", err);
-            req.flash("error", "Sorry, There was an error creating the Project. Try later or contact support.");
-            res.redirect("/");
-            return
-        };
-        res.redirect("/");
-    });
-});
-
-
 /**
  * Get all projects the user is
  * @param {*} userId - id of the user

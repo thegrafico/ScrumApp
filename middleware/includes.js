@@ -7,7 +7,8 @@ module.exports = {
 
     // Includes for dashboard
     dashboardPath: {
-        styles: ["/stylesheets/dashboard.css"], 
+        styles: ["/stylesheets/statistics.css", "/stylesheets/scrum-main.css", "/stylesheets/backlog.css", "/stylesheets/work-item.css", "/stylesheets/dashboard.css"], 
+
         scripts: [
             "/javascripts/quotes.js", 
             "/javascripts/modals/projects.js", 

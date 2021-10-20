@@ -1,3 +1,4 @@
+
 .box-main-text {
     width: 70%;
     margin-top: 2%;
@@ -225,7 +226,9 @@
 
 .info-container{
     width: 90%; 
-    margin-left: 5%;
+    margin-left: 2%;
+    max-height: 90% !important;
+    overflow-y: scroll;
 }
 
 .initial-color-1{
@@ -283,4 +286,8 @@
     position: relative;
     right: 0;
     top: 2rem;
+}
+
+#myTabContent{
+    overflow-x: hidden;
 }

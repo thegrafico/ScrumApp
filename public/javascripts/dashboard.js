@@ -34,6 +34,8 @@ const EDIT_PROJECT_DESCRIPTION = "#edit-project-description";
 const EDIT_PROJECT_SUBMIT_BTN = "#edit-project-submit-btn";
 const EDIT_PROJECT_HIDDEN_INPUT = "#edit-project-id-input";
 
+// filter dashboard projects
+const FILTER_PROJECTS_INPUT = "#filter-projects";
 
 $(function () {
 
@@ -206,11 +208,24 @@ $(function () {
             // reset hidden input
             $(EDIT_PROJECT_HIDDEN_INPUT).val(UNNASIGNED_VALUE);
         }else{
-            console.log(response_error);
-            // $.notify(response_error.data.responseJSON.msg, "error");
+            $.notify(response_error.data.responseJSON.msg, "error");
         }
     });
+    // ======================================
 
+    // =============== FILTER PROJECT ==========
+
+    // when the user types something in the search filter
+    $(FILTER_PROJECTS_INPUT).keyup( function(){
+        let userInput = $(this).val().toLowerCase().trim();
+
+        // Filter favorites projects
+        filterProject(FAVORITE_PROJECTS_CONTAINER, userInput);
+
+        // Filter row projects
+        filterProject(ROW_PROJECTS_CONTAINER, userInput);
+        
+    });
 
     // GO TO PROJECT 
     $(document).on("click", GO_TO_PROJECT, function(){
@@ -219,9 +234,31 @@ $(function () {
         const clickedProjectId = $(this).attr("data-projectid");
 
         window.location.href = `/dashboard/${clickedProjectId}`;
-    });    
-
+    });
 });
+
+/**
+ * Filter project in UI
+ * @param {String} selector 
+ * @param {String} userInput 
+ */
+function filterProject(selector, userInput){
+
+    $(`${selector} .project-container`).each(function(){
+
+        // getting project name and description
+        let projectName = $(this).find(".project-name").text().toLowerCase().trim();
+
+        // check if user input match project name or description
+        let userInputMatchProjectName = projectName.includes(userInput);
+
+        if (userInputMatchProjectName){
+            $(this).removeClass("d-none");
+        }else{
+            $(this).addClass("d-none");
+        }
+    });
+}
 
 
 /**

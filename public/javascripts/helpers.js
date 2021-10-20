@@ -371,6 +371,13 @@ function getTableHeadersArray(tableId) {
     return header;
 }
 
+/**
+ * Get the text inside the search
+ * @param {String} searchId 
+ */
+function getSearchInput(searchId){
+    return document.getElementById(searchId).value.toLowerCase();
+}
 
 /**
  * Add data to work item table
