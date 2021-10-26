@@ -32,12 +32,17 @@
                             </li>
 
 
+                            <!-- Trash button -->
                             <li class="nav-item trashIconWrapper">
                                 &nbsp;
-                                <button id="trashBtnWorkItem" class="trash-btn" disabled> <i class="far fa-trash-alt grayColor"></i> </button>
+                                <button id="trashBtnWorkItem" class="trash-btn" disabled data-toggle="modal" data-target="#remove-confirmation-modal"> 
+                                    <i class="far fa-trash-alt grayColor"></i> 
+                                </button>
                             </li>
 
                         </ul>
+
+                        <!-- Search and filter -->
                         <div class="form-inline my-2 my-lg-0">
                             <input id="searchTable" class="form-control mr-sm-2" type="text" placeholder="Search">
                             
@@ -153,6 +158,7 @@
         <input type="hidden" name="currentTab" id="currentTab" value="<%=activeTab%>">
     </div>
 
+    <!-- Sub menu modals -->
     <%- include('modals/workItemSubMenu/assign-to-user'); %>
     <%- include('modals/workItemSubMenu/assign-to-team'); %>
 

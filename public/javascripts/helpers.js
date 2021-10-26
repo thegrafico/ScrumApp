@@ -2141,12 +2141,14 @@ function setUpRemoveModal(data){
     // setting title
     $(REMOVE_CONFIRMATION_TITLE).text(data["title"]);
     
-    // setting bodt text
+    // setting body text
     $(REMOVE_CONFIRMATION_BODY_TEXT).text(data["body"]);
 
-    // assign needed data to hidden input
+    // in case dev needs to store an id
     $(REMOVE_CONFIRMATION_HIDDEN_INPUT).val(data["id"]);
 
+    // what are we deleting
+    $(REMOVE_OPTION_HIDDEN_INPUT).val(data["option"]);
 }
 
 /**

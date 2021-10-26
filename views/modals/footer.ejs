@@ -26,6 +26,9 @@
 <% } %>
 
 
+<!-- Delete work item confirmation modal -->
+<%- include('delete-confirmation'); %>
+
 <input type="hidden" id="current-page" name="currentPage" value="<%=currentPage%>">
 <input type="hidden" id="sprint-time-period" name="sprintTimePeriod" value="<%=sprintDefaultTimePeriod%>">
 <input type="hidden" id="current-user-id" name="userId" value="<%=currentUser['_id']%>">

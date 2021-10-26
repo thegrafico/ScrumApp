@@ -241,6 +241,15 @@ const REMOVE_CONFIRMATION_TITLE = "#remove-confirmation-title";
 const REMOVE_CONFIRMATION_BODY_TEXT = "#remove-confirmation-body-text";
 const REMOVE_CONFIRMATION_SUBMIT_BTN = "#remove-confirmation-submit-btn";
 const REMOVE_CONFIRMATION_HIDDEN_INPUT = "#remove-confirmation-id-input";
+const REMOVE_OPTION_HIDDEN_INPUT = "#remove-option-to-remove";
+
+const REMOVE_OPTIONS = {
+    WORK_ITEMS: "1",
+    USERS: "2",
+    TEAMS: "3",
+    SPRINTS: "4",
+    TEAM_USER: "5"
+}
 
 //  ======= SPRINT
 

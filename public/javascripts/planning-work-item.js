@@ -72,17 +72,61 @@ $(function () {
     // REMOVE THE WORK ITEMS SELECTED IN CHECKBOX
     // TODO: Create a database modal to store deleted element
     $(TRASH_BTN_WORK_ITEM).on("click", async function(){
-        
+
+        let numberOfCheckedElements = getCheckedElementIds(TABLE_ROW_CHECKBOX_ELEMENT_CHECKED).length;
+        let workItemText = (numberOfCheckedElements > 1) ? "Work items" : "Work item";
+        let removeWorkItemsData = {
+            title: "Removing work items",
+            body: `Are you sure you want to remove ${numberOfCheckedElements} ${workItemText}?`,
+            id: null,
+            option: REMOVE_OPTIONS["WORK_ITEMS"]
+        }
+        setUpRemoveModal(removeWorkItemsData);
+    });
+
+    // Confirmation modal to remove the work items
+    $(REMOVE_CONFIRMATION_SUBMIT_BTN).on("click", async function(){
+
+
+        const GET_ONLY_VISIBLES_CHECKED_ELEMENTS = false;
+
         // get checked elements in table
-        const row_checked = getCheckedElementIds(TABLE_ROW_CHECKBOX_ELEMENT_CHECKED);
+        const rowsChecked = getCheckedElementIds(TABLE_ROW_CHECKBOX_ELEMENT_CHECKED, GET_ONLY_VISIBLES_CHECKED_ELEMENTS);
 
         const projectId = getProjectId();
-        
-        await removeWorkItems(projectId, row_checked);
 
-        updateWorkItemFeedback();
+        let elementToRemove = $(REMOVE_OPTION_HIDDEN_INPUT).val();
 
+        if (elementToRemove == UNNASIGNED_VALUE){
+            $.notify("Oops, There was a problem getting the information to remove. Please try later.");
+            return;
+        }
+
+        switch (elementToRemove) {
+
+            // Removing work items
+            case REMOVE_OPTIONS["WORK_ITEMS"]:
+                await removeWorkItems(projectId, rowsChecked);
+                updateWorkItemFeedback();
+                break;
+            case REMOVE_OPTIONS["USERS"]:
+                await removeUsersManage(rowsChecked)
+                break;
+            case REMOVE_OPTIONS["TEAMS"]:
+                await removeTeamManage(rowsChecked);
+                break;
+            case REMOVE_OPTIONS["SPRINTS"]:
+                await removeSprintManage(rowsChecked);
+                break;
+            default:
+                console.log("Invalid option to remove: ", elementToRemove);
+            break;
+        }
+       
         unCheckAll();
+
+        closeModal(REMOVE_CONFIRMATION_MODAL);
+
     });
 
     // TOGGLE THE FILTER

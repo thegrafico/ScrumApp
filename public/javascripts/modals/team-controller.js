@@ -171,27 +171,18 @@ $(function (){
 
     // TRASH BTN EVENT 
     $(TRASH_BTN_MANAGE).on("click", async function(){
-        
+
         const getOnlyVisibleElements = false;
-        let teamIds = getCheckedElementIds(TABLE_ROW_CHECKBOX_ELEMENT_CHECKED, getOnlyVisibleElements);
-       
-        // check if not empty
-        if (!_.isArray(teamIds) || _.isEmpty(teamIds) ){return;}
-
-        const {response, response_error} = await deleteTeamsFromProject(teamIds);
-
-        if (!response_error){
-            removeCheckedElement();
-
-            $.notify(response.msg, "success");
-
-            removeDisableAttr(SELECT_USERS_PROJECT_INPUT, teamIds);
-            
-            // disable the trash button again
-            enableTrashButton(false);
-        }else{
-            $.notify(response_error.data.responseJSON.msg, "error");
+        let numberOfCheckedElements = getCheckedElementIds(TABLE_ROW_CHECKBOX_ELEMENT_CHECKED, getOnlyVisibleElements).length;
+        let removeText = (numberOfCheckedElements > 1) ? "Teams" : "Team";
+        let removeData = {
+            title: "Removing Teams",
+            body: `Are you sure you want to remove ${numberOfCheckedElements} ${removeText}?`,
+            id: null,
+            option: REMOVE_OPTIONS["TEAMS"]
         }
+        
+        setUpRemoveModal(removeData);
     });
 
     // ============= EDIT TEAM ===========
@@ -338,12 +329,14 @@ $(function (){
 
     // remove user from team
     $(document).on("click", REMOVE_USER_FROM_TEAM_TRASH_BTN, async function(){
-        let userId = $(this).parent().parent().attr("id");
 
+        // user to be removed
+        let userId = $(this).parent().parent().attr("id");
+  
         const teamId =  $(CURRENT_SELECTED_TEAM).val();
 
         // check data
-        if (_.isUndefined(projectId) || _.isEmpty(projectId) || _.isUndefined(teamId) || _.isEmpty(teamId)){
+        if (_.isUndefined(teamId) || _.isEmpty(teamId)){
             $.notify("Sorry, There was a problem getting information for the team. Please later");
             return;
         }
@@ -466,7 +459,7 @@ function addUserToModal(users){
         <div class="row show-team-users-row-modal" id="${user['id']}">
         
             <div class="col-10 colUserName team-user-name-row">
-                <span>- ${user["fullName"]}</span>
+                - <span class="team-user-name">${user["fullName"]}</span>
             </div>
 
             <div class="col-2 my-auto">
@@ -479,6 +472,35 @@ function addUserToModal(users){
     }
 }
 
+
+/**
+ * Remove team from project
+ * @param {Array} teamIds - team ids
+ * @returns 
+ */
+async function removeTeamManage(teamIds){
+
+    // check if not empty
+    if (!_.isArray(teamIds) || _.isEmpty(teamIds) ){
+        $.notify("Invalid teams selected.", "error");
+        return;
+    }
+
+    const {response, response_error} = await deleteTeamsFromProject(teamIds);
+
+    if (!response_error){
+        removeCheckedElement();
+
+        $.notify(response.msg, "success");
+
+        removeDisableAttr(SELECT_USERS_PROJECT_INPUT, teamIds);
+        
+        // disable the trash button again
+        enableTrashButton(false);
+    }else{
+        $.notify(response_error.data.responseJSON.msg, "error");
+    }
+}
 
 /**
  * Validate the name of the team

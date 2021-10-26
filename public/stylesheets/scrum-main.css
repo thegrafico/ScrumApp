@@ -590,3 +590,8 @@ td.off{
 .notification-title{
     font-size: 1.5em;
 }
+
+.trash-btn:focus{
+    outline: none;
+    outline-color: none;
+}

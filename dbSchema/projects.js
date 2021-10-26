@@ -318,18 +318,26 @@ projectSchema.methods.getUsersForTeam = async function(teamId, getUsersNotInTeam
     // getting the users in the team
     let usersInfo = [];
 
+    // getting all users from the project
+    let projectUsers = await userCollection.find({"_id": {$in: this.users}}).catch(err => {
+        console.error("err getting the users for the project: ", err);
+    }) || [];
+
+    // get the users not in the team 
     if (getUsersNotInTeam){
 
-        usersInfo = await userCollection.find({"_id": {$nin: team.users}}).catch(err => {
-            console.error(err);
-        }) || [];
+        // getting users not in the team
+        usersInfo = projectUsers.filter( user => {
+            return !team.users.includes(user["_id"]);
+        });
     }else{
-        usersInfo = await userCollection.find({"_id": {$in: team.users}}).catch(err => {
-            console.error(err);
-        }) || [];
+
+        // getting the users in the team
+        usersInfo = projectUsers.filter( user => {
+            return team.users.includes(user["_id"]);
+        });
     }
     
-
     return usersInfo;
 };
 

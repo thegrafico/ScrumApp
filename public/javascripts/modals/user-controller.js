@@ -88,47 +88,16 @@ $(function (){
 
     // TRASH BTN EVENT 
     $(TRASH_BTN_REMOVE_USER_PROJECT).on("click", async function(){
-    
-        let checkedElements = getCheckedElementIds(TABLE_ROW_CHECKBOX_ELEMENT_CHECKED);
         
-        // check if not empty
-        if (!_.isArray(checkedElements) || _.isEmpty(checkedElements) ){
-            $.notify("Invalid users were selected", "error");
-            return;
+        let numberOfCheckedElements = getCheckedElementIds(TABLE_ROW_CHECKBOX_ELEMENT_CHECKED, false).length;
+        let userText = (numberOfCheckedElements > 1) ? "Users" : "user";
+        let removeUsersData = {
+            title: "Removing users",
+            body: `Are you sure you want to remove ${numberOfCheckedElements} ${userText}?`,
+            id: null,
+            option: REMOVE_OPTIONS["USERS"]
         }
-
-        const projectId = getProjectId();
-
-        const data = {"userIds": checkedElements};
-        const API_LINK_REMOVE_USERS_FROM_PROJECT = `/dashboard/api/${projectId}/deleteUsersFromProject/`
-
-        let response_error = undefined;
-        const response = await make_post_request(API_LINK_REMOVE_USERS_FROM_PROJECT, data).catch(err => {
-            response_error = err;
-        });
-
-        if (response){
-            removeCheckedElement();
-            
-            $.notify(response.msg, "success");
-
-            removeDisableAttr(SELECT_USERS_PROJECT_INPUT, checkedElements);
-            
-            // disable the trash button again
-            enableTrashButton(false);
-
-            for (let i = 0; i < response.userIds.length; i++) {
-                let userId = response["userIds"][i];
-                updateHtml( 
-                    $(CURRENT_PAGE_ID).val(), 
-                    UPDATE_TYPE.DELETE, 
-                    userId,
-                    UPDATE_INPUTS.USER
-                );
-            }
-        }else{
-            $.notify(response_error.data.responseJSON.msg, "error");
-        }
+        setUpRemoveModal(removeUsersData);
     });
 
     // clean the project modal
@@ -195,3 +164,40 @@ $(function (){
 
     });
 });
+
+/**
+ * Remove users from the manage page
+ * @param {Array} usersId 
+ * @returns 
+ */
+async function removeUsersManage(usersId){
+
+    if (!_.isArray(usersId) || _.isEmpty(usersId)){
+        $.notify("Invalid users selected.", "error");
+        return;
+    }
+
+    let {response, response_error} = await removeUsersFromProject(usersId);
+    
+    if (!response_error){
+        removeCheckedElement();
+        
+        $.notify(response.msg, "success");
+        
+        // disable the trash button again
+        enableTrashButton(false);
+
+        for (let i = 0; i < response.userIds.length; i++) {
+            let userId = response["userIds"][i];
+            updateHtml( 
+                $(CURRENT_PAGE_ID).val(), 
+                UPDATE_TYPE.DELETE, 
+                userId,
+                UPDATE_INPUTS.USER
+            );
+        }
+    }else{
+        $.notify(response_error.data.responseJSON.msg, "error");
+    }
+}
+

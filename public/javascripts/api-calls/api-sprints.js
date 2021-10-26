@@ -28,6 +28,7 @@ async function getSprintsForTeam(teamId){
  * Remove the sprint from a team
  * @param {String} teamId 
  * @param {Object} data - Expecting: {sprintId}
+ * @returns {Object} response and error_response 
  */
 async function removeSprintFromTeam(teamId, data){
     const projectId = getProjectId();
@@ -40,3 +41,23 @@ async function removeSprintFromTeam(teamId, data){
 
     return {"response": response, "response_error": response_error};
 }
+
+/**
+ * Remove sprint from project
+ * @param {Array} sprintsIds 
+ * @returns {Object} response and error_response 
+ */
+async function removeSprintsFromProject(sprintsIds){
+
+    const projectId = getProjectId();
+
+    const data = {"sprintsIds": sprintsIds};
+    const API_LINK_REMOVE_SPRINTS_FROM_PROJECT = `/dashboard/api/${projectId}/deleteSprintsFromProject/`
+
+    let response_error = undefined;
+    const response = await make_post_request(API_LINK_REMOVE_SPRINTS_FROM_PROJECT, data).catch(err => {
+        response_error = err;
+    });
+
+    return {"response": response, "response_error": response_error};
+} 

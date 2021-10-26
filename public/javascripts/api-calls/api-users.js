@@ -72,7 +72,7 @@ async function inviteUserToProject(userEmail){
  * @param {String} userId - id of the user
  * @returns {Object} response, response_error
  */
- async function removeUserFromProject(userId){
+async function removeUserFromProject(userId){
 
     const projectId = getProjectId();
 
@@ -81,6 +81,26 @@ async function inviteUserToProject(userEmail){
 
     let response_error = null;
     const response = await make_post_request(API_LINK_REMOVE_USER_FROM_PROJECT, data).catch(err => {
+        response_error = err;
+    });
+    
+    return {"response": response, "response_error": response_error};
+}
+
+/**
+ * Remove users from current project
+ * @param {Array} usersId - id of the users
+ * @returns {Object} response, response_error
+ */
+async function removeUsersFromProject(usersId){
+
+    const projectId = getProjectId();
+
+    const API_LINK_REMOVE_USERS_FROM_PROJECT = `/dashboard/api/${projectId}/deleteUsersFromProject`;
+    const data = {"userIds": usersId};
+
+    let response_error = null;
+    const response = await make_post_request(API_LINK_REMOVE_USERS_FROM_PROJECT, data).catch(err => {
         response_error = err;
     });
     

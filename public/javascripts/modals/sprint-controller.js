@@ -401,48 +401,58 @@ $(function () {
 
     // TRASH BTN EVENT 
     $(TRASH_BTN_REMOVE_SPRINT).on("click", async function(){
+
+        const getOnlyVisibleElements = false;
+        let numberOfCheckedElements = getCheckedElementIds(TABLE_ROW_CHECKBOX_ELEMENT_CHECKED, getOnlyVisibleElements).length;
+        let removeText = (numberOfCheckedElements > 1) ? "Sprints" : "sprint";
+        let removeData = {
+            title: "Removing Sprints",
+            body: `Are you sure you want to remove ${numberOfCheckedElements} ${removeText}?`,
+            id: null,
+            option: REMOVE_OPTIONS["SPRINTS"]
+        }
+        
+        setUpRemoveModal(removeData);
     
-        let checkedElements = getCheckedElementIds(TABLE_ROW_CHECKBOX_ELEMENT_CHECKED);
-
-        // check if not empty
-        if (!_.isArray(checkedElements) || _.isEmpty(checkedElements) ){
-            $.notify("Invalid sprints were selected", "error");
-            return;
-        }
-
-        const projectId = getProjectId();
-
-        const data = {"sprintsIds": checkedElements};
-        const API_LINK_REMOVE_SPRINTS_FROM_PROJECT = `/dashboard/api/${projectId}/deleteSprintsFromProject/`
-
-        let response_error = undefined;
-        const response = await make_post_request(API_LINK_REMOVE_SPRINTS_FROM_PROJECT, data).catch(err => {
-            response_error = err;
-        });
-
-        if (response){
-            removeCheckedElement();
-            
-            $.notify(response.msg, "success");
-            
-            // disable the trash button again
-            enableTrashButton(false);
-
-            for (let i = 0; i < checkedElements.length; i++) {
-                let sprintId = checkedElements[i];
-                updateHtml( 
-                    $(CURRENT_PAGE_ID).val(), 
-                    UPDATE_TYPE.DELETE, 
-                    sprintId,
-                    null
-                );
-            }
-        }else{
-            $.notify(response_error.data.responseJSON.msg, "error");
-        }
+       
     });
     
 });
+
+/**
+ * Remove sprints from project
+ * @param {Array} sprintIds 
+ * @returns 
+ */
+async function removeSprintManage(sprintIds){
+    // check if not empty
+    if (!_.isArray(sprintIds) || _.isEmpty(sprintIds) ){
+        $.notify("Invalid sprints were selected", "error");
+        return;
+    }
+
+    let {response, response_error} = await removeSprintsFromProject(sprintIds);
+
+    if (!response_error){
+        removeCheckedElement();
+        
+        $.notify(response.msg, "success");
+        
+        // disable the trash button again
+        enableTrashButton(false);
+
+        for (let sprintId of sprintIds) {
+            updateHtml( 
+                $(CURRENT_PAGE_ID).val(), 
+                UPDATE_TYPE.DELETE, 
+                sprintId,
+                null
+            );
+        }
+    }else{
+        $.notify(response_error.data.responseJSON.msg, "error");
+    }
+}
 
 
 /**

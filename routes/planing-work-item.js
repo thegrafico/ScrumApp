@@ -66,34 +66,13 @@ router.get("/:id/planing/workitems", middleware.isUserInProject, async function 
     joinData(workItems, teams, "teamId", "equal", "_id", "team", UNASSIGNED);
     joinData(workItems, sprints, "_id", "is in", "tasks", "sprint", UNASSIGNED_SPRINT);
 
-    //  GETTING USER BEST TEAM WHEN CREATING A WORK ITEM
-    // get the team for the user in order to filter by it.
-    let sprintForPreferedTeam = [];
+    // since this is the work item page, not sprint or team should be selected
+    // so the user needs to select i
     let activeSprintId = null;
 
-    let userPreferedTeam = projectInfo.getUserPreferedTeam();
-
-    // if the user have a team
-    if (!_.isNull(userPreferedTeam)){
-        // getting all sprints for team
-        sprintForPreferedTeam = await sprintCollection.getSprintsForTeam(projectId, userPreferedTeam["_id"]).catch(err => {
-            console.error(err);
-        }) || [];
-        let activeSprint = sprintCollection.getActiveSprint(sprintForPreferedTeam);
-        
-        if (!_.isNull(activeSprint) || !_.isUndefined(activeSprint)){
-            activeSprintId = activeSprint["_id"];
-        }
-
-    } 
-
-    sprintForPreferedTeam = sortByDate(sprintForPreferedTeam, "startDate");
-
-    // === END
     // adding defaults
     teams.unshift(UNASSIGNED);
     users.unshift(UNASSIGNED_USER);
-    sprintForPreferedTeam.unshift(UNASSIGNED_SPRINT);
 
     // populating params
     let params = {
@@ -106,8 +85,8 @@ router.get("/:id/planing/workitems", middleware.isUserInProject, async function 
         "assignedUsers": users,
         "statusWorkItem": WORK_ITEM_STATUS_COLORS,
         "projectTeams": teams, 
-        "userTeam": userPreferedTeam["_id"],
-        "sprints": sprintForPreferedTeam,
+        "userTeam": null,
+        "sprints": [],
         "activeSprintId": activeSprintId,
         "addUserModal": true,
         "workItemType": WORK_ITEM_ICONS,
