@@ -291,6 +291,7 @@ router.post("/api/:id/saveQuery", middleware.isUserInProject, async function (re
 
         let newQueryData = {
             user: req.user["id"],
+            projectId: projectId,
             queries: [{
                 "name": name,
                 "query": query,
@@ -314,7 +315,7 @@ router.post("/api/:id/saveQuery", middleware.isUserInProject, async function (re
         res.status(400).send(response);
         return;
     }
-    // at this point, we know the user have a query record available
+    // at this point, we know the user have a record of query available
 
     // check if the name for the query already is in the queries for the user
     if (userQueries.isNameInQueries(name)){
@@ -329,7 +330,7 @@ router.post("/api/:id/saveQuery", middleware.isUserInProject, async function (re
     await userQueries.save().catch(err => {
         console.log("Error saving the query: ", err);
     });
-
+ 
     response["query"] = userQueries;
     response["msg"] = "Query Saved successfully!";
     res.status(200).send(response);

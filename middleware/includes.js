@@ -188,7 +188,7 @@ module.exports = {
             "/javascripts/api-calls/api-work-items.js",
             "/javascripts/api-calls/api-teams.js",
             "/javascripts/api-calls/api-users.js",
-
+            "/javascripts/api-calls/api-queries.js",
         ]
     },
 }

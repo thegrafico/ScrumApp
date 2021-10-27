@@ -15,6 +15,10 @@ const INPUT_USER_VALUE = ".userValue";
 const ERROR_BOUNCE_ANIMATION_SECONDS = 3;
 const LIMIT_NUMBER_OF_ROW = 5;
 
+// CONTAINERS
+const QUERY_ROW_CONTAINER = ".queries-container";
+const SHOW_QUERIES_IMG_CONTAINER = "#show-queries-empty-img";
+
 
 //Tab Buttons
 const QUERY_RESULT_TAB = "#queryResultsTab";
@@ -105,17 +109,10 @@ $(function () {
             return;
         }
 
-        // making the request to the API
-        const projectId =getProjectId();
-        const API_LINK_GET_QUERY = `/dashboard/api/${projectId}/getWorkItemsByQuery`;
-
-        let response_error = null;
-        const response = await make_post_request(API_LINK_GET_QUERY, {"query": query}).catch(err=> {
-            response_error = err;
-        });
+        let {response, response_error} = await getWorkItemsByQuery(query);
 
         // Success message
-        if (response){
+        if (!response_error){
 
             if (_.isEmpty(response["workItems"])){
                 $.notify("There is not work item that match the query.", "error");
@@ -162,7 +159,7 @@ $(function () {
 
     });
 
-    // Save Query
+    // SAVE QUERY
     $(SUBMIT_SAVE_QUERY_BTN).on("click", async function(){
         console.log("Saving query...");
 
@@ -183,20 +180,23 @@ $(function () {
             return;
         }
 
-        // making the request to the API
-        const projectId = getProjectId();
-        const API_LINK_SAVE_QUERY = `/dashboard/api/${projectId}/saveQuery`;
+        let {response, response_error} = await saveQuery(queryName, query);
 
-        let response_error = null;
-        const response = await make_post_request(API_LINK_SAVE_QUERY, {"query": query, "name": queryName}).catch(err=> {
-            response_error = err;
-        });
-
-        if (!response_error && response){
+        if (!response_error){
             $.notify(response.msg, "success");
-            console.log(response);
 
-            $(`${SAVE_QUERY_MODAL} .close`).click();
+            closeModal(SAVE_QUERY_MODAL);
+
+            let newQuery = response["query"]["queries"].filter(query => {
+                return query["name"].trim() === queryName.trim();
+            });
+
+            if (_.isEmpty(newQuery)){
+                // Don't tell the user, just refresh the page
+                return;
+            }   
+
+            addQueryToMyQueries(newQuery[0]);
 
         }else{
             $.notify(response_error.data.responseJSON.msg, "error");
@@ -213,14 +213,7 @@ $(function () {
             return;
         }
 
-        // making the request to the API
-        const projectId = getProjectId();
-        const API_LINK_GET_QUERY = `/dashboard/api/${projectId}/getQuery?queryId=${queryId}`;
-
-        let response_error = null;
-        const response = await make_get_request(API_LINK_GET_QUERY).catch(err=> {
-            response_error = err;
-        });
+        let {response, response_error} = await getQueryById(queryId);
 
         if (!response_error && response){
             // $.notify(response.msg, "success");
@@ -297,16 +290,9 @@ $(function () {
             return;
         }
 
-        // making the request to the API
-        const projectId = getProjectId();
-        const API_LINK_REMOVE_QUERY = `/dashboard/api/${projectId}/removeMyQuery`;
+        let {response, response_error} = await removeQueryById(queryId);
 
-        let response_error = null;
-        const response = await make_post_request(API_LINK_REMOVE_QUERY, {queryId: queryId}).catch(err=> {
-            response_error = err;
-        });
-
-        if (!response_error && response){
+        if (!response_error){
             $.notify(response["msg"], "success");
 
             // remove the current element
@@ -473,6 +459,36 @@ function updateDataList(field, selector){
  */
 function removeQueryRow(selector){
     $(selector).parent().parent().parent().remove();
+}
+
+/**
+ * Add the query to my queries modal
+ * @param {Object} query 
+ */
+function addQueryToMyQueries(query){
+
+    console.log(query);
+    
+    let template = `
+    <div class="row" id="${query["_id"]}">
+                    
+        <div class="col-10 colMyQuery">
+            - <span>${query["name"]}</span>
+        </div>
+
+        <div class="col-2 my-auto">
+            <i class="fas fa-trash trashIconMyQueries blockColor"></i>
+        </div>
+    </div>`;
+
+    let numberOfQueries = $(QUERY_ROW_CONTAINER).children().length;
+
+    if (numberOfQueries == 0){
+        // hide from the UI
+        $(SHOW_QUERIES_IMG_CONTAINER).remove();
+    }
+
+    $(QUERY_ROW_CONTAINER).append(template);
 }
 
 /**

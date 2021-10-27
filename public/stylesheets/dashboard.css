@@ -60,17 +60,6 @@
     margin-bottom: 1% !important;
 }
 
-.b-red {
-    border: 1px solid red;
-}
-
-.b-blue {
-    border: 1px solid blue;
-}
-.b-green {
-    border: 1px solid green;
-}
-
 .card:first-child {
     margin-left: 0;
     /* padding-left: 0; */

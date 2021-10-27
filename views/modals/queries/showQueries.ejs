@@ -1,0 +1,56 @@
+ <!-- Save Query Modal -->
+    <!-- Modal -->
+<div class="modal fade" id="showQueries" tabindex="-1" role="dialog"
+    aria-labelledby="My Queries" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">My Queries <i class="fas fa-list formatIcon"></i></h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+
+                <% if (userQueries.length > 0) { %>
+
+                    <div class="container-fluid queries-container">
+
+                        <% for (let query of userQueries) { %>
+                            <div class="row" id="<%=query['_id']%>">
+                            
+                                <div class="col-10 colMyQuery">
+                                    <% if (query["name"]) {%>
+                                        <span>- <%=query["name"]%></span>
+                                    <% }else { %>
+                                        <span>- Unnamed</span>
+                                    <% }%>
+                                </div>
+        
+                                <div class="col-2 my-auto">
+                                    <i class="fas fa-trash trashIconMyQueries blockColor"></i>
+                                </div>
+                            </div>
+                        <%}%>
+
+                    </div>
+                <% } else { %> 
+                    <!-- Only show when there is not queries -->
+                    <div id="show-queries-empty-img">
+                        <img id="empty-folder-image" src="/images/rocket-icon.png" alt="Empty folder">
+                        <p>Oops, it looks you don't have any query yet.</p>
+                    </div>
+
+                    <!-- in case the user save the query -->
+                    <div class="container-fluid queries-container">
+                    </div>
+                <% } %> 
+                
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" id="saveQuery" class="btn btn-primary">Save</button>
+            </div>
+        </div>
+    </div>
+</div>

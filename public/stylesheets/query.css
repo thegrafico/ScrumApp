@@ -192,6 +192,7 @@ html, body{
 #showQueries .modal-content{
     /* border: 1px solid red; */
     max-height: 50vh !important;
+    min-height: 50vh !important;
 }
 
 #showQueries .modal-body{
@@ -219,4 +220,20 @@ html, body{
 .trashIconMyQueries:hover{
     opacity: .7;
     cursor: pointer;
+}
+
+/* Image when show query modal is empty */
+#show-queries-empty-img{
+    text-align: center;
+    color: white;
+    opacity: .7;
+}
+#show-queries-empty-img img{
+    margin-top: 8vh;
+    width: 50%;
+    height: 50%;
+}
+
+#empty-folder-image{
+    opacity: 0.8 !important;
 }

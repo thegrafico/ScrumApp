@@ -13,7 +13,12 @@ let userQueriesSchema = new mongoose.Schema({
     user: {
         type: ObjectId, 
         ref: "User",
-        unique: true,
+        required: true,
+    },
+    projectId: {
+        type: ObjectId,
+        ref: "Project",
+        required: true
     },
     queries:[
         {
@@ -22,6 +27,10 @@ let userQueriesSchema = new mongoose.Schema({
         }
     ],
 }, {timestamps: true});
+
+// making the user and the project unique 
+userQueriesSchema.index({ user: 1, projectId: 1 }, { unique: true });
+
 
 /**
  * Check if the name for the query is duplicate or not
