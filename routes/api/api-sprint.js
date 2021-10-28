@@ -1055,6 +1055,8 @@ router.post("/api/:id/closeSprint", middleware.isUserInProject, async function (
         sprintToBeActive["initialPoints"] = amountOfPoints;
     }
 
+    // ========== Moving incompleted work items to backlog ================
+
     // getting incompleted work items for the closing sprint
     let incompletedWorkItems = await sprintToBeClose.getIncompletedWorkItems().catch(err => {
         console.error("Error getting incompleted work items: ", err);
@@ -1064,6 +1066,7 @@ router.post("/api/:id/closeSprint", middleware.isUserInProject, async function (
     for (let workItem of incompletedWorkItems){
         sprintToBeClose["tasks"].pull(workItem["_id"]);
     }
+    // ===================================================================
 
     // save data into the database
     sprintToBeClose.save().then( async () => {
