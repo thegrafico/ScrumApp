@@ -11,6 +11,7 @@ const OrderSprintCollection     = require("./sprint-order");
 
 
 const {
+    WORK_ITEM_STATUS,
     SPRINT_FORMAT_DATE,
     SPRINT_STATUS,
     getSprintDateStatus,
@@ -549,7 +550,7 @@ sprintSchema.statics.getSprintForWorkItem = async function(projectId, workItemId
 };
 
 /**
- * get the sprint where this work item belongs
+ * Get work items for sprint
  * @param {String} projectId - id of the project
  * @param {String} workItemId - if id the work item to remove 
  * @returns {Promise} sprint for the work item
@@ -577,7 +578,7 @@ sprintSchema.statics.getWorkItemsForSprint = async function(projectId, tasks) {
 };
 
 /**
- * get the sprint where this work item belongs
+ * Get work items for the sprint
  * @returns {Promise} sprint for the work item
  */
 sprintSchema.methods.getWorkItemsForSprint = async function() {
@@ -589,6 +590,35 @@ sprintSchema.methods.getWorkItemsForSprint = async function() {
 
         let err_msg = null;
         let workItems = await mongoose.model("WorkItem").find({"projectId": projectId, _id: {$in: tasks}}).catch(err =>{
+            err_msg = err;
+            console.error(err);
+        });
+        
+        if (_.isUndefined(workItems) || _.isNull(workItems)){
+            return reject("Not work item found: " + err_msg);
+        }
+
+        return resolve(workItems);
+    });
+};
+
+/**
+ * Get work items that are incompleted for the sprint
+ * @returns {Promise} sprint for the work item
+ */
+ sprintSchema.methods.getIncompletedWorkItems = async function() {
+    
+    const projectId = this["projectId"];
+    const tasks = this["tasks"];
+
+    return new Promise(async function (resolve, reject){
+
+        let err_msg = null;
+        let workItems = await mongoose.model("WorkItem").find({
+            "projectId": projectId, 
+            "_id": {$in: tasks},
+            "status": {$ne: WORK_ITEM_STATUS["Completed"]}
+        }).catch(err =>{
             err_msg = err;
             console.error(err);
         });

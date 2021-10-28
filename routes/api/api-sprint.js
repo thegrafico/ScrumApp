@@ -1,7 +1,7 @@
 
 const express                   = require("express");
 const middleware                = require("../../middleware/auth");
-const workItemCollection        = require("../../dbSchema/workItem");
+const WorkItemCollection        = require("../../dbSchema/workItem");
 const ProjectCollection         = require("../../dbSchema/projects");
 const SprintCollection          = require("../../dbSchema/sprint");
 const OrderSprintCollection     = require("../../dbSchema/sprint-order");
@@ -83,7 +83,7 @@ router.get("/api/:id/getAllSprintWorkItems/:teamId", middleware.isUserInProject,
     let activeSprint = SprintCollection.getActiveSprint(teamSprints);
 
     // get sprint work items
-    let workItems = await workItemCollection.find({projectId, _id: {$in: activeSprint["tasks"]}}).catch(err => {
+    let workItems = await WorkItemCollection.find({projectId, _id: {$in: activeSprint["tasks"]}}).catch(err => {
         console.error(err);
     });
 
@@ -223,7 +223,7 @@ router.get("/api/:id/getSprintWorkItems/:teamId/:sprintId", middleware.isUserInP
     // ======== GETTING WORK ITEMS FOR SPRINT ============
 
     // get sprint work items
-    let workItems = await workItemCollection.find({projectId, _id: {$in: sprint["tasks"]}}).catch(err => {
+    let workItems = await WorkItemCollection.find({projectId, _id: {$in: sprint["tasks"]}}).catch(err => {
         console.error(err);
     });
 
@@ -349,7 +349,7 @@ router.get("/api/:id/getSprintReview/:teamId", middleware.isUserInProject, async
             sprintStatus = getSprintDateStatus(activeSprint["startDate"], activeSprint["endDate"]);
 
             // get the work items by the sprint
-            workItems = await workItemCollection.find({projectId: projectId, _id: {$in: activeSprint.tasks}}).catch(err => {
+            workItems = await WorkItemCollection.find({projectId: projectId, _id: {$in: activeSprint.tasks}}).catch(err => {
                 console.error("Error getting work items: ", err)
             }) || [];
         }
@@ -430,7 +430,7 @@ router.get("/api/:id/getSprintReview/:teamId/:sprintId", middleware.isUserInProj
     // ======== GETTING WORK ITEMS FOR SPRINT ============
 
     // get sprint work items
-    let workItems = await workItemCollection.find({projectId, _id: {$in: sprint["tasks"]}}).catch(err => {
+    let workItems = await WorkItemCollection.find({projectId, _id: {$in: sprint["tasks"]}}).catch(err => {
         console.error(err);
     });
 
@@ -1010,7 +1010,8 @@ router.post("/api/:id/closeSprint", middleware.isUserInProject, async function (
     let sprintToBeClose = await SprintCollection.findOne({projectId, _id: closingSprint}).catch(err =>{
         console.error("Error getting closing sprint: ", err);
     });
-    // check closing sprint
+   
+    // check closing sprint has data 
     if (_.isUndefined(sprintToBeClose) || _.isNull(sprintToBeClose)){
         response["msg"] = "Sorry, There was a problem getting the closing sprint information. Please try later.";
         res.status(400).send(response);
@@ -1054,6 +1055,16 @@ router.post("/api/:id/closeSprint", middleware.isUserInProject, async function (
         sprintToBeActive["initialPoints"] = amountOfPoints;
     }
 
+    // getting incompleted work items for the closing sprint
+    let incompletedWorkItems = await sprintToBeClose.getIncompletedWorkItems().catch(err => {
+        console.error("Error getting incompleted work items: ", err);
+    }) || [];
+
+    // remove from sprint the imcompleted work items
+    for (let workItem of incompletedWorkItems){
+        sprintToBeClose["tasks"].pull(workItem["_id"]);
+    }
+
     // save data into the database
     sprintToBeClose.save().then( async () => {
         console.log("A sprint was closed.");
@@ -1062,7 +1073,7 @@ router.post("/api/:id/closeSprint", middleware.isUserInProject, async function (
         // save active sprint
         await sprintToBeActive.save().catch(err => {
            console.error("Error saving new active sprint: ", err); 
-            erro_saving_active_sprint = err;
+           error_saving_active_sprint = err;
         });
 
         if (error_saving_active_sprint){

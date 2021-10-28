@@ -58,7 +58,7 @@ router.get("/:id/queries", middleware.isUserInProject, async function (req, res)
     }
 
     // getting user queries
-    const userQueries = await UserQueriesCollection.findOne({user: req.user["_id"]}).catch(err => {
+    const userQueries = await UserQueriesCollection.findOne({user: req.user["_id"], projectId: projectId}).catch(err => {
         console.error("Error getting the queries for the user: ", err);
     }) || {};
 

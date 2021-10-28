@@ -192,7 +192,7 @@ $(function () {
             });
 
             if (_.isEmpty(newQuery)){
-                // Don't tell the user, just refresh the page
+                // Don't send any feedback to the user, just refresh the page
                 return;
             }   
 

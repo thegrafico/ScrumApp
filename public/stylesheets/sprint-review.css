@@ -127,3 +127,11 @@
 
 }
 
+.close-sprint-warning{
+    text-align: left;
+}
+
+.close-sprint-warning i{
+    color: #f39c12;
+}
+
