@@ -86,7 +86,7 @@ router.get("/:id/planing/workitems", middleware.isUserInProject, async function 
         "statusWorkItem": WORK_ITEM_STATUS_COLORS,
         "projectTeams": teams, 
         "userTeam": null,
-        "sprints": [],
+        "sprints": [UNASSIGNED],
         "activeSprintId": activeSprintId,
         "addUserModal": true,
         "workItemType": WORK_ITEM_ICONS,

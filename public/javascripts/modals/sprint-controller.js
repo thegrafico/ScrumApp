@@ -111,23 +111,18 @@ $(function () {
             "teamId": teamId
         };
 
-        const projectId = getProjectId();
-        const API_LINK_CREATE_SPRINT = `/dashboard/api/${projectId}/createSprint`;
-
-        let response_error = null;
-        const response = await make_post_request(API_LINK_CREATE_SPRINT, request_data).catch(err => {
-            response_error = err;
-        });
+        let {response, response_error} = await createSprint(request_data);
 
         // Success message
-        if (response){
+        if (!response_error){
             
             $.notify(response.msg, "success");
+            
             $(CLOSE_MODAL_SPRINT_BTN).click();
 
             $(SPRINT_FILTER_BY_SPRINT_SELECT).attr("disabled", false);
+            
             updateSelectOption(SPRINT_FILTER_BY_SPRINT_SELECT, UPDATE_TYPE.DELETE, "0");   
-
             
             // get user best team or selected team is available
             updateHtml( 
@@ -147,10 +142,11 @@ $(function () {
     // =========== DELETE ============
 
     // when the remove sprint modal is open
-    $(SPRINT_DELETE_MODAL).on("show.bs.modal", function(){
+    $(SPRINT_DELETE_MODAL).on("shown.bs.modal", function(){
         // reset to default
         $(SPRINT_DELETE_MODAL_SELECT_TEAM).val(0).change();
         $(SPRINT_DELETE_MODAL_SELECT_SPRINT).val(0).change();
+        LOCAL_CANCEL_ON_CHANGE = false;
     });
 
     // SUBMIT REMOVE SPRINT
@@ -204,7 +200,6 @@ $(function () {
             LOCAL_CANCEL_ON_CHANGE = false;
             return;
         }
-
         if (teamId == 0){
             setDisabledAttr(SPRINT_DELETE_MODAL_SELECT_SPRINT, true);
             $(SPRINT_DELETE_MODAL_SELECT_SPRINT).val("0").change();
@@ -217,6 +212,8 @@ $(function () {
         setDisabledAttr(SPRINT_DELETE_MODAL_SELECT_SPRINT, false);
 
         let {response, response_error} = await getSprintsForTeam(teamId);
+        
+        console.log("GETTING SPRINTS FOR TEAM: ", response);
 
         // Success message
         if (!response_error){
@@ -280,7 +277,7 @@ $(function () {
     $(document).on("click", UPDATE_SPRINT_BTN_SUBMIT, async function(){
 
         let data = {};
-        let sprintId = $(UPDATE_SPRINT_ID).val();
+        const sprintId = $(UPDATE_SPRINT_ID).val();
 
         // current values
         let currentName         = $(`tr#${sprintId} td.values span.title`).text();
@@ -293,9 +290,6 @@ $(function () {
 
         // getting capacity
         let capacity = $(UPDATE_SPRINT_CAPACITY_INPUT).val().trim();
-
-        // console.log(currentName, currentStartDate, currentEndDate);
-        // console.log(newName, startDate, endDate);
 
         // updating values
         if (currentStartDate.trim() != startDate.trim()){
@@ -316,28 +310,15 @@ $(function () {
         }
 
         // getting basic info for request
-        const teamId      = $(UPDATE_FILTER_BY_TEAM).val();
-        const projectId   = getProjectId();
+        const teamId = $(UPDATE_FILTER_BY_TEAM).val();
 
         // check team Id
-        if (_.isUndefined(teamId) || teamId === "0"){
+        if (_.isUndefined(teamId) || teamId === UNNASIGNED_VALUE){
             $.notify("Sorry, undefined team is selected", "error");
             return;
         }
 
-        // check project Id
-        if (_.isUndefined(projectId) || _.isNull(projectId)){
-            $.notify("Sorry, Cannot find the project information", "error");
-            return;
-        }
-
-        // API link
-        const API_LINK_UPDATE_SPRINT = `/dashboard/api/${projectId}/updateSprint/${teamId}/${sprintId}`;
-
-        let response_error = null;
-        const response = await make_post_request(API_LINK_UPDATE_SPRINT, data).catch(err => {
-            response_error = err;
-        });
+        let {response, response_error} = await updateSprint(sprintId, teamId, data);
 
         // Success message
         if (response){
@@ -345,8 +326,6 @@ $(function () {
             $.notify("Sprint Updated", "success");
 
             $(CLOSE_MODAL_SPRINT_BTN).click();
-
-            let sprintId = response["sprint"]["_id"];
 
             updateTableElement(sprintId, response["sprint"], addSprintToTable);
 
@@ -590,7 +569,9 @@ function addSprintToTable(sprint, index=null){
 
         let numberOflements = $(`${MANAGE_TABLE_ID} > tbody > tr`).length;
 
-        if (numberOflements != index){
+        if (index == 0 && numberOflements == 0){
+            $(`${MANAGE_TABLE_ID} > tbody`).append(table_row);
+        }else if (numberOflements != index){
             $(`${MANAGE_TABLE_ID} > tbody > tr`).eq(index).before(table_row);
         }else{
             $(`${MANAGE_TABLE_ID} > tbody > tr`).eq(index -1).after(table_row);
@@ -599,4 +580,6 @@ function addSprintToTable(sprint, index=null){
     }else{
         $(`${MANAGE_TABLE_ID} > tbody`).prepend(table_row);
     }
+
+    
 }

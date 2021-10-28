@@ -60,4 +60,44 @@ async function removeSprintsFromProject(sprintsIds){
     });
 
     return {"response": response, "response_error": response_error};
+}
+
+
+/**
+ * Update sprint 
+ * @param {String} sprintId 
+ * @param {String} teamId 
+ * @param {Object} update 
+ * @returns {Object} response and error_response 
+ */
+async function updateSprint(sprintId, teamId, update){
+
+    const projectId = getProjectId();
+
+    // API link
+    const API_LINK_UPDATE_SPRINT = `/dashboard/api/${projectId}/updateSprint/${teamId}/${sprintId}`;
+
+    let response_error = null;
+    const response = await make_post_request(API_LINK_UPDATE_SPRINT, update).catch(err => {
+        response_error = err;
+    });
+
+    return {"response": response, "response_error": response_error};
+}
+
+/**
+ * Create new sprint
+ * @param {Object} sprint 
+ */
+async function createSprint(sprint){
+
+    const projectId = getProjectId();
+    const API_LINK_CREATE_SPRINT = `/dashboard/api/${projectId}/createSprint`;
+
+    let response_error = null;
+    const response = await make_post_request(API_LINK_CREATE_SPRINT, sprint).catch(err => {
+        response_error = err;
+    });
+
+    return {"response": response, "response_error": response_error};
 } 

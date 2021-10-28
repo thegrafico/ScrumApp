@@ -995,11 +995,11 @@ async function moveWorkItemToSprint(workItemId, sprintId) {
 
 /**
  * Update HMTL after a POST request was successful
- * @param {String} currentPage 
- * @param {String} updateType 
- * @param {Any} valueToUpdate 
- * @param {Object} inputType 
- * @param {Object} others 
+ * @param {String} currentPage - current page the user at
+ * @param {String} updateType - type of updete - ADD, UPDATE, REMOVE
+ * @param {Any} valueToUpdate - Value to update
+ * @param {Object} inputType  - Input type 
+ * @param {Object} others - Additional data if needed 
  */
 function updateHtml(currentPage, updateType, valueToUpdate, inputType, others = null) {
 
@@ -1059,6 +1059,19 @@ function updateHtml(currentPage, updateType, valueToUpdate, inputType, others = 
             }
 
             if (inputType === UPDATE_INPUTS.SPRINT) {
+
+                // check if we have sprint
+                if (others && others["sprint"]) {
+                    
+                    // now check the team for that sprint is selected
+                    let teamSelected = $(WORK_ITEM["team"]).val();
+
+                    // if the team is not the same of the sprint created, then ignored
+                    if (teamSelected.toString() != others["sprint"]["teamId"].toString()){
+                        break
+                    }
+                }
+
                 updateSelectOption(WORK_ITEM["sprint"], updateType, valueToUpdate);
                 updateSelectOption(UPDATE_WORK_ITEM["sprint"], updateType, valueToUpdate);
 
@@ -1115,6 +1128,19 @@ function updateHtml(currentPage, updateType, valueToUpdate, inputType, others = 
 
             // check update in sprints
             if (inputType === UPDATE_INPUTS.SPRINT) {
+
+                // check if we have sprint
+                if (others && others["sprint"]) {
+                    
+                    // now check the team for that sprint is selected
+                    let teamSelected = $(WORK_ITEM["team"]).val();
+
+                    // if the team is not the same of the sprint created, then ignored
+                    if (teamSelected.toString() != others["sprint"]["teamId"].toString()){
+                        break
+                    }
+                }
+
                 updateSelectOption(WORK_ITEM["sprint"], updateType, valueToUpdate);
                 updateSelectOption(UPDATE_WORK_ITEM["sprint"], updateType, valueToUpdate);
             }
@@ -1164,6 +1190,19 @@ function updateHtml(currentPage, updateType, valueToUpdate, inputType, others = 
 
             // check update in sprints
             if (inputType === UPDATE_INPUTS.SPRINT) {
+
+                // check if we have sprint
+                if (others && others["sprint"]) {
+    
+                    // now check the team for that sprint is selected
+                    let teamSelected = $(WORK_ITEM["team"]).val();
+
+                    // if the team is not the same of the sprint created, then ignored
+                    if (teamSelected.toString() != others["sprint"]["teamId"].toString()){
+                        break
+                    }
+                }
+
                 updateSelectOption(WORK_ITEM["sprint"], updateType, valueToUpdate);
                 updateSelectOption(UPDATE_WORK_ITEM["sprint"], updateType, valueToUpdate);
                 
@@ -1223,6 +1262,18 @@ function updateHtml(currentPage, updateType, valueToUpdate, inputType, others = 
 
             // check update in sprints
             if (inputType === UPDATE_INPUTS.SPRINT) {
+
+                // check if we have sprint
+                if (others && others["sprint"]) {
+    
+                    // now check the team for that sprint is selected
+                    let teamSelected = $(WORK_ITEM["team"]).val();
+
+                    // if the team is not the same of the sprint created, then ignored
+                    if (teamSelected.toString() != others["sprint"]["teamId"].toString()){
+                        break
+                    }
+                }
 
                 if (updateType == UPDATE_TYPE["DELETE"]) {
                     // update the page if the current active team was removed

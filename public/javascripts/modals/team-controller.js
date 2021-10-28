@@ -382,7 +382,7 @@ $(function (){
 
         let getUsersNotInThisTeam = true;
         let {response, response_error} = await getTeamUsers(teamId, getUsersNotInThisTeam);
-        console.log(response);
+
         if (!response_error){
         
             // check if empty
