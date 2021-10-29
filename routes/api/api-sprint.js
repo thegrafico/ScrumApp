@@ -601,8 +601,7 @@ router.post("/api/:id/createSprint", middleware.isUserInProject, async function 
     }
 
     // if verify if the team is part of the project
-    let addSprintToAllTeams = (teamId == ADD_SPRINT_TO_ALL_TEAM_ID);
-    if (!addSprintToAllTeams && !project.isTeamInProject(teamId)){
+    if (!project.isTeamInProject(teamId)){
         response["msg"] = "The team received does not belong to this project.";
         res.status(400).send(response);
         return;
@@ -624,123 +623,52 @@ router.post("/api/:id/createSprint", middleware.isUserInProject, async function 
         "status":  sprintStatus
     };
 
-    if (addSprintToAllTeams){
-        let teamWasSkyped = false;
-        let sprints = [];
-        for (let i = 0; i < project.teams.length; i++) {
-            const projectTeamId = project.teams[i]._id;
-            
-            // adding sprint to the team
-            sprintData["teamId"] = projectTeamId;
+    let errorMsg = null;
+    let teamSprints = await SprintCollection.getSprintsForTeam(projectId, teamId).catch(err => {
+        console.error(err);
+        errorMsg = err;
+    });
 
-            // get all sprint by the team
-            let errorMsg = null;
-            let teamSprints = await SprintCollection.getSprintsForTeam(projectId, projectTeamId).catch(err => {
-                console.error(err);
-                errorMsg = err;
-            });
-
-            // check sprint
-            if (_.isUndefined(teamSprints) || errorMsg){
-                response["msg"] = "Sorry, There was a problem getting the sprints for this team.";
-                res.status(400).send(response);
-                return;
-            }
-    
-            if (!_.isEmpty(teamSprints) && !SprintCollection.isValidSprintDate(teamSprints, startDate, endDate)){
-                teamWasSkyped = true;
-                // response["msg"] = "Sorry, A team cannot have more than one sprint at the same time.";
-                // res.status(400).send(response);
-                // return;
-                continue;
-            }
-            
-            let newSprint = await SprintCollection.create(sprintData).catch(err => {
-                error_message = err;
-                console.error(err);
-            });
-            
-
-            if (_.isUndefined(newSprint) || error_message){
-                response["msg"] = "Sorry, There was a problem creating the Sprints for the teams";
-                res.status(400).send(response);
-                return;
-            }
-
-            //  ===== create order for sprint =====
-            await OrderSprintCollection.create({sprintId: newSprint["_id"], projectId}).catch(err => {
-                console.error("Error creating the order for the sprint: ", err);
-            });
-            // ====================================
-
-            newSprint = newSprint.toObject();
-
-            // formatting sprint dates
-            newSprint["startDateFormated"] = moment(newSprint["startDate"], SPRINT_FORMAT_DATE).format("MMM Do");
-            newSprint["endDateFormated"] = moment(newSprint["endDate"], SPRINT_FORMAT_DATE).format("MMM Do");
-
-            sprints.push(newSprint);
-        }
-
-        if (teamWasSkyped){
-            response["msg"] = "Some of the sprints were not created because some of the teams already have a sprint with the dates selected.";
-        }else{
-            response["msg"] = "Sprints were created succesfully!";
-        }
-
-        response["sprint"] = sprints;
-        response["multiple"] = true; // added more than one sprint
-
-    }else{
-
-        let errorMsg = null;
-        let teamSprints = await SprintCollection.getSprintsForTeam(projectId, teamId).catch(err => {
-            console.error(err);
-            errorMsg = err;
-        });
-
-        if (_.isUndefined(teamSprints) || errorMsg){
-            response["msg"] = "Sorry, There was a problem getting the sprints for this team.";
-            res.status(400).send(response);
-            return;
-        }
-
-
-        if (!_.isEmpty(teamSprints) && !SprintCollection.isValidSprintDate(teamSprints, startDate, endDate)){
-            response["msg"] = "Sorry, A team cannot have more than one sprint at the same time.";
-            res.status(400).send(response);
-            return;
-        }
-
-        let newSprint = await SprintCollection.create(sprintData).catch(err => {
-            error_message = err;
-            console.error(err);
-        });
-
-        // validate new Sprint
-        if (_.isUndefined(newSprint) || error_message){
-            response["msg"] = "Sorry, There was a problem creating the Sprints for the teams";
-            res.status(400).send(response);
-            return;
-        }
-
-        //  ===== create order for sprint =====
-        await OrderSprintCollection.create({sprintId: newSprint["_id"], projectId}).catch(err => {
-            console.error("Error creating the order for the sprint: ", err);
-        });
-        // ====================================
-
-
-        newSprint = newSprint.toObject();
-
-        // formatting sprint dates
-        newSprint["startDateFormated"] = moment(newSprint["startDate"], SPRINT_FORMAT_DATE).format("MMM Do");
-        newSprint["endDateFormated"] = moment(newSprint["endDate"], SPRINT_FORMAT_DATE).format("MMM Do");
-        
-        response["sprint"] = newSprint;
-        response["multiple"] = false; // just one sprint was added
-        response["msg"] = "Sprint was created!";
+    if (_.isUndefined(teamSprints) || errorMsg){
+        response["msg"] = "Sorry, There was a problem getting the sprints for this team.";
+        res.status(400).send(response);
+        return;
     }
+
+
+    if (!_.isEmpty(teamSprints) && !SprintCollection.isValidSprintDate(teamSprints, startDate, endDate)){
+        response["msg"] = "Sorry, A team cannot have more than one sprint at the same time.";
+        res.status(400).send(response);
+        return;
+    }
+
+    let newSprint = await SprintCollection.create(sprintData).catch(err => {
+        error_message = err;
+        console.error(err);
+    });
+
+    // validate new Sprint
+    if (_.isUndefined(newSprint) || error_message){
+        response["msg"] = "Sorry, There was a problem creating the Sprints for the teams";
+        res.status(400).send(response);
+        return;
+    }
+
+    //  ===== create order for sprint =====
+    await OrderSprintCollection.create({sprintId: newSprint["_id"], projectId}).catch(err => {
+        console.error("Error creating the order for the sprint: ", err);
+    });
+    // ====================================
+
+
+    newSprint = newSprint.toObject();
+
+    // formatting sprint dates
+    newSprint["startDateFormated"] = moment(newSprint["startDate"], SPRINT_FORMAT_DATE).format("MMM Do");
+    newSprint["endDateFormated"] = moment(newSprint["endDate"], SPRINT_FORMAT_DATE).format("MMM Do");
+    
+    response["sprint"] = newSprint;
+    response["msg"] = "Sprint was created!";
 
     res.status(200).send(response);
 });

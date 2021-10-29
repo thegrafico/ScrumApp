@@ -33,7 +33,8 @@ const CLOSE_MODAL_SPRINT_BTN = ".close-sprint-modal";
 
 const MODAL_DELETE_SPRINT_SUBMIT_BTN = "#modal-delete-sprint-submit-btn";
 
-
+// MODAL
+const CREATE_SPRINT_MODAL = ".create-sprint-modal";
 
 $(function () {
 
@@ -79,7 +80,7 @@ $(function () {
         }
     });
 
-    // SUBMIT CREATE SPRINT
+    // ================= CREATE SPRINT =================
     $(CREATE_SPRINT_SUBMIT_BTN).on("click", async function(){
         
         // ========= NAME ==============
@@ -117,8 +118,9 @@ $(function () {
         if (!response_error){
             
             $.notify(response.msg, "success");
-            
-            $(CLOSE_MODAL_SPRINT_BTN).click();
+    
+            // closing modal
+            closeModal(CREATE_SPRINT_MODAL);
 
             $(SPRINT_FILTER_BY_SPRINT_SELECT).attr("disabled", false);
             

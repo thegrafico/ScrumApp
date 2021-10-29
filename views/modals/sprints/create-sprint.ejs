@@ -61,12 +61,6 @@
                                     id="sprint-team-input" 
                                     aria-label="select team for sprint">
 
-                                    <% if (userTeam) { %>
-                                        <option value="ALL">All Teams</option>
-                                    <% }else{  %>
-                                        <option value="ALL" selected>All Teams</option>
-                                    <% } %>
-
                                     <% for (let team of projectTeams) { %>     
 
                                         <% if (team["_id"].toString() == "0") { continue;} %>
