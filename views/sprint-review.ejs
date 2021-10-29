@@ -45,7 +45,8 @@
                         <% } %>
                     </div>
 
-                    <% if (isActiveSprint) { %>
+                    <!-- CLOSE SPRINT -->
+                    <% if (isActiveSprint && activeSprint && activeSprint["status"] == "Active") { %>
                         <div id="close-sprint-button-container" >
                     <% } else {%>
                         <div id="close-sprint-button-container" class="d-none">
@@ -59,8 +60,14 @@
                                 Close Sprint
                             </button>
                         </div>
+                    <!-- END -->
 
-                    <div id="start-sprint-button-container" class="d-none">
+                    <!-- START SPRINT -->
+                    <% if (activeSprint && activeSprint["status"] != "Active") { %>
+                        <div id="start-sprint-button-container">
+                    <% } else {%>
+                        <div id="start-sprint-button-container" class="d-none">
+                    <%}%> 
                         <button 
                         type="button" 
                         class="btn btn-outline-success ml-5" 
@@ -70,6 +77,7 @@
                             Start Sprint
                         </button>
                     </div>
+                    <!-- END -->
 
                     <div class="collapse navbar-collapse" id="navbarColor02">
                         <ul class="navbar-nav mr-auto">

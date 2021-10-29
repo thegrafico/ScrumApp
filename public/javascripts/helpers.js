@@ -391,7 +391,7 @@ function getSearchInput(searchId){
 function appendToWotkItemTable(workItems, index = null, showIfSprint = true, removeTable = true, activeSprintId = "0") {
 
     if (!_.isArray(workItems) || _.isEmpty(workItems)) {
-        // console.log("Work items is empty");
+        console.log("Work items is empty");
         return;
     }
 
@@ -535,7 +535,9 @@ function appendToWotkItemTable(workItems, index = null, showIfSprint = true, rem
 
             let numberOflements = $(`${WORK_ITEM_TABLE} > tbody > tr`).length;
 
-            if (numberOflements != index) {
+            if (index == 0 && numberOflements == 0){
+                $(`${WORK_ITEM_TABLE} > tbody:last-child`).append(table_row);
+            }else if (numberOflements != index) {
                 $(`${WORK_ITEM_TABLE} > tbody > tr`).eq(index).before(table_row);
             } else {
                 $(`${WORK_ITEM_TABLE} > tbody > tr`).eq(index - 1).after(table_row);
@@ -1317,9 +1319,15 @@ function updateHtml(currentPage, updateType, valueToUpdate, inputType, others = 
             }
 
             // TEAM 
-            if (inputType === UPDATE_INPUTS.TEAM && updateType == UPDATE_TYPE["DELETE"]) {
-                // update the page if the current active team was removed
-                refreshIfCurrentItemWasRemoved(valueToUpdate, UPDATE_FILTER_BY_TEAM);
+            if (inputType === UPDATE_INPUTS.TEAM) {
+
+                if (updateType == UPDATE_TYPE["DELETE"]){
+                    // update the page if the current active team was removed
+                    refreshIfCurrentItemWasRemoved(valueToUpdate, UPDATE_FILTER_BY_TEAM);
+                }
+
+                updateSelectOption(UPDATE_FILTER_BY_TEAM, updateType, valueToUpdate);
+
             }
             break;
         case PAGES["MANAGE_TEAM"]:

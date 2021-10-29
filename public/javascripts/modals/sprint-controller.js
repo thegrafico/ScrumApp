@@ -7,10 +7,12 @@ const UPDATE_SPRINT_ID = "#update-sprint-id";
 const UPDATE_SPRINT_NAME = ".update-sprint-name";
 const UPDATE_SPRINT_BTN_SUBMIT = "#update-sprint-btn-submit";
 const UPDATE_DATE_RANGE_CONTAINER = ".update-container-date";
-const UPDATE_FILTER_BY_TEAM = "#update-sprint-filter-by-team";
 const TRASH_BTN_REMOVE_SPRINT = "#trashBtnManageSprint";
 const SPRINT_CAPACITY_COLUMN = ".sprintCapacityColumn";
 const UPDATE_SPRINT_CAPACITY_INPUT = "#update-sprint-capacity-input";
+
+// FILTER
+const UPDATE_FILTER_BY_TEAM = "#update-sprint-filter-by-team";
 
 const DATE_RANGE_INPUT_ID = ".sprint-start-date-input";
 

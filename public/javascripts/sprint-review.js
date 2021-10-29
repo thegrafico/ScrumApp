@@ -269,6 +269,8 @@ $(function () {
             // show the close sprint button
             showCloseSprintButton(true);
 
+            closeModal(START_SPRINT_MODAL);
+
         }else{
             $.notify(response_error.data.responseJSON.msg, "error");
         }
@@ -398,6 +400,8 @@ $(function () {
 
             // from the sprints available, disabled the sprint to be close
             setDisableAttrToSelectOption(NEW_ACTIVE_SPRINT_SELECT, newActiveSprintId, true);
+
+            closeModal(CLOSE_SPRINT_CONFIRMATION_MODAL);
         }else{
             $.notify(response_error.data.responseJSON.msg, "error");
         }

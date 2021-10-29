@@ -62,7 +62,6 @@ router.get("/:id/sprint/review", middleware.isUserInProject, async function (req
     // get all users for this project -> expected an array
     let users = await projectInfo.getUsers().catch(err => console.log(err)) || [];
 
-    // TODO: Verify which project is the user in, and set that to be the selected in the frontend
     // get all the teams for this project
     let teams = [...projectInfo.teams];
 
@@ -154,6 +153,7 @@ router.get("/:id/sprint/review", middleware.isUserInProject, async function (req
         "statusWorkItem": WORK_ITEM_STATUS_COLORS,
         "projectTeams": teams,
         "sprints": sprints,
+        "activeSprint": activeSprint,
         "activeSprintId": activeSprintId,
         "isActiveSprint": (activeSprintId != undefined),
         "isFutureSprint": (sprintStatus === SPRINT_STATUS["Coming"]),
