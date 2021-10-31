@@ -128,7 +128,7 @@ passport.deserializeUser(function (id, done) {
 app.use(function (req, res, next) {
 
 	res.locals.currentUser = req.user;
-	res.locals.favoriteProjects = req.user["favoriteProjects"] || [];
+	res.locals.favoriteProjects = (req.user || {})["favoriteProjects"] || [];
 	res.locals.error = req.flash("error"); //error mesage go red
 	res.locals.success = req.flash("success"); //success message go green
 	res.locals.SPRINT_TIME_PERIOD = SPRINT_TIME_PERIOD;

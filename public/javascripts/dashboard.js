@@ -211,14 +211,12 @@ $(function () {
             let addToFavorite = !($(FAVORITE_PROJECTS_CONTAINER).children().length >= MAX_NUMBER_OF_FAVORITE_PROJECTS);
             console.log(addToFavorite)
             
-            addProjectToUI(response["project"], addToFavorite);
+            addProjectToUI(response["project"], false);
 
             closeModal(CREATE_PROJECT_MODAL);
         }else{
             $.notify(response_error.data.responseJSON.msg, "error");
-
         }
-
     });
 
     // Create project modal is closed

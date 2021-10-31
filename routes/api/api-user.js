@@ -2,7 +2,7 @@
 const express                   = require("express");
 const middleware                = require("../../middleware/auth");
 const projectCollection         = require("../../dbSchema/projects");
-const userCollection            = require("../../dbSchema/user");
+const UserCollection            = require("../../dbSchema/user");
 const UserPrivilegeCollection   = require("../../dbSchema/userPrivilege");
 const moment                    = require("moment");
 const _                         = require("lodash");
@@ -132,7 +132,7 @@ router.post("/api/:id/addUserToProject", middleware.isUserInProject, async funct
     }
 
     // getting user information
-    const userInfo = await userCollection.getUserByEmail(userEmail).catch(err => {
+    const userInfo = await UserCollection.getUserByEmail(userEmail).catch(err => {
         console.error(err);
     });
 
@@ -232,6 +232,26 @@ router.post("/api/:id/deleteUserFromProject", middleware.isUserInProject, async 
         return;
     }
 
+    // ======== REMOVE FAVORITE PROJECT IF ANY =============
+
+    // remove project from favorite projects
+    let errorRemovingFromFavorite = null;
+    await UserCollection.updateOne(
+        {_id: userId},
+        {$pull: {favoriteProjects: projectId}}
+    ).catch(err => {
+        errorRemovingFromFavorite = err;
+        console.error("Error removing project from favorite: ", err);
+    });
+
+    if (errorRemovingFromFavorite){
+        response["msg"] = "Sorry, There was a problem removing the project from favorites.";
+        res.status(400).send(response);
+        return;
+    }
+    // =============================================
+
+
     let response_error = null;
     response = await projectInfo.removeUser(userId).catch(err => {
         response_error = err;
@@ -283,6 +303,26 @@ router.post("/api/:id/deleteUsersFromProject", middleware.isUserInProject, async
         res.status(400).send(response);
         return;
     }
+
+    // ======== REMOVE FAVORITE PROJECT IF ANY =============
+
+    // remove project from favorite projects
+    let errorRemovingFromFavorite = null;
+    await UserCollection.updateOne(
+        {_id: {$in: userIds}},
+        {$pull: {favoriteProjects: projectId}}
+    ).catch(err => {
+        errorRemovingFromFavorite = err;
+        console.error("Error removing project from favorite: ", err);
+    });
+
+    if (errorRemovingFromFavorite){
+        response["msg"] = "Sorry, There was a problem removing the project from favorites.";
+        res.status(400).send(response);
+        return;
+    }
+
+    // ================================================
 
     let response_error = null;
     response = await projectInfo.removeUsers(userIds).catch(err => {

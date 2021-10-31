@@ -238,6 +238,22 @@ router.post("/api/deleteProject", async function (req, res) {
         return;
     }
 
+    // remove project from favorite projects
+    let errorRemovingFromFavorite = null;
+    await UserCollection.updateMany(
+        {_id: {$in: project["users"]}},
+        {$pull: {favoriteProjects: projectId}}
+    ).catch(err => {
+        errorRemovingFromFavorite = err;
+        console.error("Error removing project from favorite: ", err);
+    });
+
+    if (errorRemovingFromFavorite){
+        response["msg"] = "Sorry, There was a problem removing the project from favorites.";
+        res.status(400).send(response);
+        return;
+    }
+
     // ================ REMOVING Project instance ==============
     ProjectCollection.deleteOne({_id: projectId}).then(() => {
         console.log("Project was removed successfully");
