@@ -120,6 +120,12 @@
 .project-name{
     font-size: 1.2em;
     font-weight: bold;
+    max-width: 80%;
+}
+
+.favorite-project-name{
+    font-weight: bolder;
+    font-style: italic;
 }
 
 .project-description{
@@ -279,4 +285,13 @@
 
 #myTabContent{
     overflow-x: hidden;
+}
+
+.favorite-icon-project-container .favorite-icon-container{
+    margin-top: .8rem;
+}
+
+.start-icon-rem-favorite{
+    -webkit-transform: scaleX(-1);
+    transform: scaleX(-1);
 }

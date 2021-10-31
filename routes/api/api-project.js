@@ -4,6 +4,7 @@ const middleware                = require("../../middleware/auth");
 const WorkItemCollection        = require("../../dbSchema/workItem");
 const ProjectCollection         = require("../../dbSchema/projects");
 const SprintCollection          = require("../../dbSchema/sprint");
+const UserCollection            = require("../../dbSchema/user");
 const UserPrivilege             = require("../../dbSchema/userPrivilege");
 const moment                    = require("moment");
 const _                         = require("lodash");
@@ -15,10 +16,12 @@ const {
     PROJECT_INITIALS_COLORS,
     MAX_LENGTH_DESCRIPTION,
     MAX_LENGTH_TITLE,
+    MAX_NUMBER_OF_FAVORITE_PROJECTS,
     UNASSIGNED_SPRINT,
     joinData,
     sortByDate,
     containsSymbols,
+    setupProjectInitials,
 } = require('../../dbSchema/Constanst');
 
 // ================= GET REQUEST ==============
@@ -290,6 +293,142 @@ router.post("/api/updateProject", async function (req, res) {
     }).catch(err => {
         console.log("Error updating project: ", err);
         response["msg"] = "Sorry, it seems there was a problem updating the project. Please try later.";
+        res.status(400).send(response);
+        return;
+    });
+});
+
+/**
+ * METHOD: POST - ADD PROJECT TO FAVORITE
+*/
+router.post("/api/addProjectToFavorite", async function (req, res) {
+    
+    console.log("Getting request to add a project to favorite...");
+    
+    // getting data received
+    let { projectId } = req.body;
+    const currentUserId = req.user["_id"];
+
+    let response = {};
+
+    // check the user is in the project
+    let project = await ProjectCollection.findById(projectId).catch(err =>{
+        console.error("Error getting project: ", err);
+    });
+
+    // check project
+    if (_.isNull(project) || _.isUndefined(project) || !project){
+        response["msg"] = "Oops, cannot find the information of the project";
+        res.status(400).send(response);
+        return;
+    }
+
+    let userIsProjectOwner = project["author"].toString() === currentUserId.toString();
+
+    // check if the user DOES NOT has access to this project
+    if ( !userIsProjectOwner && !project["users"].includes(currentUserId)){
+        response["msg"] = "You don't have permission to add this project to your favorites.";
+        res.status(400).send(response);
+        return;
+    }
+
+    // getting user information 
+    let userInfo = await UserCollection.findById(currentUserId).catch(err => {
+        console.error("Error getting user info: ", err);
+    });
+
+    if (_.isUndefined(userInfo) || _.isNull(userInfo) || !userInfo){
+        response["msg"] = "Sorry, there was a problem getting your information. Please try later.";
+        res.status(400).send(response);
+        return;
+    }
+
+    console.log(userInfo["favoriteProjects"]);
+    
+    // check if the user can not add a favorite project 
+    if (userInfo["favoriteProjects"].length > MAX_NUMBER_OF_FAVORITE_PROJECTS - 1){
+        response["msg"] = "Sorry, Max number of favorite projects has been reached.";
+        res.status(400).send(response);
+        return;
+    }
+
+    // adding project to favorites
+    userInfo["favoriteProjects"].push(projectId);
+
+    userInfo.save().then( () => {
+        response["msg"] = "Project was added to your favorites.";
+        let favProject = project.toObject();
+
+        setupProjectInitials(favProject);
+        response["project"] = favProject;
+        res.status(200).send(response);
+        return;
+    }).catch(err => {
+        console.error(err);
+        response["msg"] = "Oops, there was a problem adding the project to your favorites. Try again.";
+        res.status(400).send(response);
+        return;
+    });
+});
+
+/**
+ * METHOD: POST - REMOVE PROJECT TO FAVORITE
+*/
+router.post("/api/removeProjectFromFavorite", async function (req, res) {
+    
+    console.log("Getting request to remove a project from favorite...");
+    
+    // getting data received
+    let { projectId } = req.body;
+    const currentUserId = req.user["_id"];
+
+    let response = {};
+
+    // check the user is in the project
+    let project = await ProjectCollection.findById(projectId).catch(err =>{
+        console.error("Error getting project: ", err);
+    });
+
+    // check project
+    if (_.isNull(project) || _.isUndefined(project) || !project){
+        response["msg"] = "Oops, cannot find the information of the project";
+        res.status(400).send(response);
+        return;
+    }
+
+    let userIsProjectOwner = project["author"].toString() === currentUserId.toString();
+
+    // check if the user DOES NOT has access to this project
+    if ( !userIsProjectOwner && !project["users"].includes(currentUserId)){
+        response["msg"] = "You don't have permission to remove this project from your favorites.";
+        res.status(400).send(response);
+        return;
+    }
+
+    // getting user information 
+    let userInfo = await UserCollection.findById(currentUserId).catch(err => {
+        console.error("Error getting user info: ", err);
+    });
+
+    if (_.isUndefined(userInfo) || _.isNull(userInfo) || !userInfo){
+        response["msg"] = "Sorry, there was a problem getting your information. Please try later.";
+        res.status(400).send(response);
+        return;
+    }
+    
+    // remove project to favorites
+    userInfo["favoriteProjects"].pull(projectId);
+
+    userInfo.save().then( () => {
+        response["msg"] = "Project was removed from your favorites.";
+        let favProject = project.toObject();
+        setupProjectInitials(favProject);
+        response["project"] = favProject;
+        res.status(200).send(response);
+        return;
+    }).catch(err => {
+        console.error(err);
+        response["msg"] = "Oops, there was a problem removing the project from your favorites. Try again.";
         res.status(400).send(response);
         return;
     });

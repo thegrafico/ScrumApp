@@ -10,9 +10,9 @@
     <!-- Page Content  -->
     <div id="content">
 
-        <div class="info-container p-4">
+        <div class="info-container pt-4" style="margin-left: 5%;max-width: 100%; overflow-x: hidden;">
 
-            <div class="container-fluid">
+            <div class="container-fluid" style="width: 100%; margin-left: 5%;">
 
                 <div class="row create-project-container">
 
@@ -68,41 +68,71 @@
                                 <div class="container-fluid">
 
                                     <!-- FAVORITE PROJETS -->
+
+                                <% if (userFavoriteProjects.length > 0){ %>
                                     <div class="row pl-3" id="favorite-projects-container">
                                         <% for(let i = 0; i < numberOfFavoriteProjects; i++){ %>
-                                            <div id="<%= projects[i]._id %>" class="col-3 card text-white project-container bg-dark mb-6 card-project add-shadow-box">
+                                            <div id="<%= userFavoriteProjects[i]._id %>" class="col-3 card text-white project-container bg-dark mb-6 card-project add-shadow-box">
+
+                                                <div class="favorite-icon-project-container remove-favorite-container">
+                                                    <span class="favorite-icon-container remove-project-favorite-btn" 
+                                                    data-projectid="<%= userFavoriteProjects[i]._id %>"
+                                                    data-projectname="<%= userFavoriteProjects[i]['title']%>"
+                                                    data-toggle="modal" 
+                                                    data-target="#remove-project-favorite-modal">
+                                                        <i class="fas fa-star favoriteIconAct"></i>
+                                                    </span>
+                                                </div>
+
                                                 <div class="card-body">
 
-                                                    <div class="initals-container card-initials pr-2 go-to-project" data-projectid="<%= projects[i]._id %>">
-                                                        <div class="project-initials-container bg-initials-color" style="background-color: <%= projects[i]['initialsColors']%>;">
-                                                            <span><%= projects[i]["initials"]%></span>
+                                                    <div class="initals-container card-initials pr-2 go-to-project" data-projectid="<%= userFavoriteProjects[i]._id %>">
+                                                        <div class="project-initials-container bg-initials-color" style="background-color: <%= userFavoriteProjects[i]['initialsColors']%>;">
+                                                            <span><%= userFavoriteProjects[i]["initials"]%></span>
                                                         </div>
                                                     </div>
                                                     
-                                                    <h4 class="card-title go-to-project project-name" data-projectid="<%= projects[i]._id %>">
-                                                        <%= projects[i].title %>
+                                                    <h4 class="card-title go-to-project project-name" data-projectid="<%= userFavoriteProjects[i]._id %>">
+                                                        <%= userFavoriteProjects[i].title %>
                                                     </h4>
-                                                    <p class="card-text project-description description-color"><%= projects[i].description %></p>
+                                                    <p class="card-text project-description description-color"><%= userFavoriteProjects[i].description %></p>
                                                 </div>
-                                                <% if (projects[i]["author"].toString() == currentUser["_id"].toString()) { %>
+                                                <% if (userFavoriteProjects[i]["author"].toString() == currentUser["_id"].toString()) { %>
 
                                                     <div class="pr-4 project-icons" style="text-align: right;">
-                                                        <span class="edit-project-btn" data-toggle="modal" data-target="#edit-project-modal" data-projectid="<%= projects[i]._id %>"><i class="fas fa-edit"></i></span>
-                                                        <span class="remove-project-btn" data-toggle="modal" data-target="#remove-confirmation-modal" data-projectid="<%= projects[i]._id %>"><i class="fas fa-trash"></i></span>
+                                                        <span class="edit-project-btn" data-toggle="modal" data-target="#edit-project-modal" data-projectid="<%= userFavoriteProjects[i]._id %>"><i class="fas fa-edit"></i></span>
+                                                        <span class="remove-project-btn" data-toggle="modal" data-target="#remove-confirmation-modal" data-projectid="<%= userFavoriteProjects[i]._id %>"><i class="fas fa-trash"></i></span>
                                                     </div>
                                                 <% } %>
                                             </div>
                                         <% } %>
                                     </div>
-
+                                <% } %>
 
                                     <!-- REMAINING PROJECTS -->
                                     <div class="row n-mb" style="width: 100% !important;">
 
                                         <div class="col-10" id="row-projects-container">
-                                            <% for(let i = 3; i < projects.length; i++){ %>
+                                            <% for(let i = 0; i < projects.length; i++){ %>
                                                 <div id="<%= projects[i]._id %>" class="row mb-4 project-container add-shadow-box project-row">
 
+                                                    <!-- ADD TO FAVORITE -->
+
+                                                    <% if (maxNumberOfFavoriteProjects == numberOfFavoriteProjects) { %>
+                                                        <div class="favorite-icon-project-container make-project-favorite-container d-none">
+                                                    <% }else{ %>
+                                                        <div class="favorite-icon-project-container make-project-favorite-container">
+                                                    <% } %>
+
+                                                        <span 
+                                                            class="favorite-icon-container make-project-favorite-btn" 
+                                                            data-projectid="<%= projects[i]._id %>"
+                                                            data-projectname="<%= projects[i]['title']%>"
+                                                            data-toggle="modal" data-target="#make-project-favorite-modal">
+                                                            <i class="fas fa-star favoriteIconInactive"></i>
+                                                        </span>
+                                                    </div>
+                                                    
                                                     <!-- INITIALS -->
                                                     <div class="initals-container pt-4 go-to-project" data-projectid="<%= projects[i]._id %>">
                                                         <div class="project-initials-container bg-initials-color" style="background-color: <%= projects[i]['initialsColors']%>;">
@@ -158,5 +188,9 @@
 
 <%- include('modals/create-project'); %>
 <%- include('modals/edit-project'); %>
+
+<!-- Make project Favorite -->
+<%- include('modals/favoriteProject/make-project-favorite'); %>
+<%- include('modals/favoriteProject/remove-project-from-favorite'); %>
 
 <%- include('modals/footer'); %>

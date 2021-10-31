@@ -37,9 +37,151 @@ const EDIT_PROJECT_HIDDEN_INPUT = "#edit-project-id-input";
 // filter dashboard projects
 const FILTER_PROJECTS_INPUT = "#filter-projects";
 
+const MAX_NUMBER_OF_FAVORITE_PROJECTS = 3;
+
+
+// FAVORITE PROJECTS
+const PROJECT_FAVORITE = {
+    makeFavorite: {
+        btn: ".make-project-favorite-btn",
+        class: "make-project-favorite-btn",
+        iconClass: "favoriteIconAct",
+        submitBtnId: "#add-project-to-favorite-submit-btn",
+        modalId: "#make-project-favorite-modal",
+        projectIdHidden: "#favorite-project-id-add",
+        container: ".make-project-favorite-container"
+    },
+    removeFavorite: {
+        btn: ".remove-project-favorite-btn",
+        class: "remove-project-favorite-btn",
+        iconClass: "favoriteIconInactive",
+        submitBtnId: "#remove-project-from-favorite-submit-btn",
+        modalId: "#remove-project-favorite-modal",
+        projectIdHidden: "#favorite-project-id-remove",
+        container: ".remove-favorite-container"
+    },
+    modalProjectNameSpan: ".favorite-project-name",
+}
+
+
 $(function () {
 
-    // ============ CREATE PROJECT ==============
+
+    // ============ FAVORITE PROJECT ============
+
+    // OPEN MODAL TO ADD PROJECT TO FAVORITE
+    $(document).on("click", PROJECT_FAVORITE["makeFavorite"]["btn"], function(){
+
+        // Get the project id clicked
+        const projectId = $(this).attr("data-projectid");
+
+        // get the name of the project
+        const projectName = $(this).attr("data-projectname").trim() || "this project";
+
+        // change the name of the project in the modal
+        $(PROJECT_FAVORITE["modalProjectNameSpan"]).text(projectName);
+
+        // add that id to the hidden input in the modal
+        $(PROJECT_FAVORITE["makeFavorite"]["projectIdHidden"]).val(projectId);
+    });
+
+    // ADD PROJECT TO FAVORITE SUBMIT
+    $(document).on("click", PROJECT_FAVORITE["makeFavorite"]["submitBtnId"], async function(){
+        
+        // getting the id of the project to add to favorites
+        const projectId = $(PROJECT_FAVORITE["makeFavorite"]["projectIdHidden"]).val();
+
+        if (projectId == UNNASIGNED_VALUE){
+            $.notify("Sorry, cannot get the project information at this time. Please try later", "error");
+            return;
+        }
+
+        let numberOfFavoriteProjects = $(FAVORITE_PROJECTS_CONTAINER).children().length;
+
+        // check how many projects are in favorite ( 3 Max )
+        if (numberOfFavoriteProjects >= MAX_NUMBER_OF_FAVORITE_PROJECTS){
+            $.notify("Sorry, Max number of favorite projects has been reached", "error");
+            return;
+        }
+
+        let {response, response_error} = await addProjectToFavorite(projectId);
+
+        if (!response_error){
+
+            closeModal(PROJECT_FAVORITE["makeFavorite"]["modalId"]);
+
+            // remove project from row
+            $(`div#${projectId}`).slideUp(function() {
+                $(this).remove();
+            });
+
+            // add project to favorite
+            addProjectToUI(response["project"], true);
+
+            let maxNumberOfFavoriteProjectsHasBeenReached = numberOfFavoriteProjects + 1 >= MAX_NUMBER_OF_FAVORITE_PROJECTS;
+
+            // disabled the add to favorite buttons if max number of favorites has been reached
+            enableAddProjectToFavorite( !maxNumberOfFavoriteProjectsHasBeenReached );
+        }else{
+            $.notify(response_error.data.responseJSON.msg, "error");
+        }
+
+
+    });
+
+    // - REMOVE PROJECT FROM PROJECT -
+
+    // OPEN MODAL TO REMOVE PROJECT FROM FAVORITE
+    $(document).on("click", PROJECT_FAVORITE["removeFavorite"]["btn"], function(){
+
+        // Get the project id clicked
+        const projectId = $(this).attr("data-projectid");
+
+        // get the name of the project
+        const projectName = $(this).attr("data-projectname").trim() || "this project";
+
+        // change the name of the project in the modal
+        $(PROJECT_FAVORITE["modalProjectNameSpan"]).text(projectName);
+
+        // add that id to the hidden input in the modal
+        $(PROJECT_FAVORITE["removeFavorite"]["projectIdHidden"]).val(projectId);
+    });
+
+    // REMOVE PROJECT TO FAVORITE SUBMIT
+    $(document).on("click", PROJECT_FAVORITE["removeFavorite"]["submitBtnId"], async function(){
+
+        // getting the id of the project to add to favorites
+        const projectId = $(PROJECT_FAVORITE["removeFavorite"]["projectIdHidden"]).val();
+
+        if (projectId == UNNASIGNED_VALUE){
+            $.notify("Sorry, cannot get the project information at this time. Please try later", "error");
+            return;
+        }
+
+        let {response, response_error} = await removeProjectFromFavorite(projectId);
+
+        if (!response_error){
+
+            // closing modal
+            closeModal(PROJECT_FAVORITE["removeFavorite"]["modalId"]);
+
+            // remove project from row
+            $(`div#${projectId}`).slideUp(function() {
+                $(this).remove();
+            });
+
+            // add project to favorite
+            addProjectToUI(response["project"], false);
+            
+            enableAddProjectToFavorite(true);
+        }else{
+            $.notify(response_error.data.responseJSON.msg, "error");
+        }
+
+
+    });
+
+    // ============ CREATE PROJET ==============
     // Create Project
     $(CREATE_PROJECT_SUBMIT_BTN).on("click", async function(){
 
@@ -66,7 +208,7 @@ $(function () {
         if (!response_error){
             
             // check where to add project
-            let addToFavorite = !($(FAVORITE_PROJECTS_CONTAINER).children().length >= 3);
+            let addToFavorite = !($(FAVORITE_PROJECTS_CONTAINER).children().length >= MAX_NUMBER_OF_FAVORITE_PROJECTS);
             console.log(addToFavorite)
             
             addProjectToUI(response["project"], addToFavorite);
@@ -273,6 +415,17 @@ function addProjectToUI(project, isFavorite){
     if (isFavorite){
         projectTemplate = `
         <div id="${project["_id"]}" class="col-3 card text-white bg-dark mb-6 card-project add-shadow-box">             
+        
+            <div class="favorite-icon-project-container remove-favorite-container">
+                <span class="favorite-icon-container remove-project-favorite-btn" 
+                data-projectid="${project["_id"]}"
+                data-projectname="${project["title"]}"
+                data-toggle="modal" 
+                data-target="#remove-project-favorite-modal">
+                    <i class="fas fa-star favoriteIconAct"></i>
+                </span>
+            </div>
+
             <div class="card-body">
                 <div class="initals-container card-initials pr-2 go-to-project" data-projectid="${project["_id"]}">
                     <div class="project-initials-container bg-initials-color" style="background-color: ${project['initialsColors']}">
@@ -295,10 +448,21 @@ function addProjectToUI(project, isFavorite){
 
         // add to UI
         $(FAVORITE_PROJECTS_CONTAINER).append(projectTemplate);
-        console.log("ADDING TO FAVORITE...");
+        console.log("ADDING TO FAVORITE");
     }else{
         projectTemplate = `
         <div id="${project["_id"]}" class="row mb-4 add-shadow-box project-row">
+
+            <div class="favorite-icon-project-container make-project-favorite-container">
+                <span 
+                    class="favorite-icon-container make-project-favorite-btn" 
+                    data-projectid="${project["_id"]}"
+                    data-projectname="${project["title"]}"
+                    data-toggle="modal" data-target="#make-project-favorite-modal">
+                    <i class="fas fa-star favoriteIconInactive"></i>
+                </span>
+            </div>
+
             <div class="initals-container pt-4 go-to-project" data-projectid="${project["_id"]}">
                 <div class="project-initials-container bg-initials-color" style="background-color: ${project['initialsColors']}">
                     <span>${project["initials"]}</span>
@@ -338,8 +502,20 @@ function addProjectToUI(project, isFavorite){
                 </div>
             </div>
         </div>`;
-        console.log("ADDING TO ROW...");
+
         $(ROW_PROJECTS_CONTAINER).append(projectTemplate);
     }
+}
 
+/**
+ * Disable the add project to favorite button.
+ * @param {Boolean} enable 
+ */
+function enableAddProjectToFavorite(enable){
+    
+    if (enable){
+        $(PROJECT_FAVORITE["makeFavorite"]["container"]).removeClass("d-none");
+    }else{ // disabled
+        $(PROJECT_FAVORITE["makeFavorite"]["container"]).addClass("d-none");
+    }
 }

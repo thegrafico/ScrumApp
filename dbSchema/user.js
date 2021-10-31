@@ -29,6 +29,7 @@ let userSchema = new mongoose.Schema({
         type: String, 
         required: true
     },
+    favoriteProjects: [String]
 }, {timestamps: true});
 
 userSchema.plugin(passportLocalMongoose);

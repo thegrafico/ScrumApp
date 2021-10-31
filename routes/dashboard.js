@@ -16,11 +16,11 @@ let router = express.Router();
 
 
 const {
-    PROJECT_INITIALS_COLORS
+    PROJECT_INITIALS_COLORS,
+    MAX_NUMBER_OF_FAVORITE_PROJECTS,
+    setupProjectInitials,
 } = require("../dbSchema/Constanst");
 
-// JUST FOR TESTING
-const NUM_OF_PROJECT_PER_ROW = 3;
 const BASE_ROUTE = 'dashboard';
 // ===================================================
 
@@ -44,14 +44,9 @@ router.get("/", async function (req, res) {
     const COLORS_LIMIT = 3; //PROJECT_INITIALS_COLORS.length;
     let colorsIndex = 0;
     for (let project of projects) {
-        let title = project.title.split(" ");
-        if (title.length > 1) {
-            project["initials"] = title[0][0].toUpperCase() + title[1][0].toUpperCase();
-        } else {
-            project["initials"] = title[0][0].toUpperCase();
-        }
 
-        project["initialsColors"] = PROJECT_INITIALS_COLORS[colorsIndex];
+        setupProjectInitials(project, colorsIndex);
+
         colorsIndex++;
 
         if (colorsIndex >= COLORS_LIMIT){
@@ -59,8 +54,20 @@ router.get("/", async function (req, res) {
         }
     }
 
+    // getting user favorite projects
+    let userFavoriteProjects = projects.filter(each => {
+        return req.user["favoriteProjects"].includes(each["_id"].toString());
+    });
+
+    console.log(projects.length);
+
+    // filter normal projects
+    projects = projects.filter(each => {
+        return !req.user["favoriteProjects"].includes(each["_id"].toString());
+    });
+
     // Keep the favorite number of project to 3. in case there are less than 3, assign the length
-    let LIMIT_NUMBER_OF_FAVORITE_PROJECTS = (projects.length > 3) ? 3 : projects.length;
+    const LIMIT_NUMBER_OF_FAVORITE_PROJECTS = (userFavoriteProjects.length > MAX_NUMBER_OF_FAVORITE_PROJECTS) ? MAX_NUMBER_OF_FAVORITE_PROJECTS : userFavoriteProjects.length;
 
 
     let params = {
@@ -76,7 +83,9 @@ router.get("/", async function (req, res) {
         stylesPath: dashboardPath["styles"],
         scriptsPath: dashboardPath["scripts"],
         numberOfFavoriteProjects: LIMIT_NUMBER_OF_FAVORITE_PROJECTS,
+        maxNumberOfFavoriteProjects: MAX_NUMBER_OF_FAVORITE_PROJECTS,
         projects: projects,
+        userFavoriteProjects: userFavoriteProjects,
     };
 
     /**

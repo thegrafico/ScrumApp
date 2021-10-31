@@ -108,6 +108,9 @@ module.exports.WORK_ITEM_STATUS_COLORS = {
 // max number of tags per work item
 module.exports.MAX_NUMBER_OF_TAGS_PER_WORK_ITEM = 4;
 
+module.exports.MAX_NUMBER_OF_FAVORITE_PROJECTS = 3;
+
+
 module.exports.MAX_LENGTH_TITLE = 80;
 
 // MAX STORY POINTS
@@ -815,6 +818,27 @@ function doesQueryValueMatch(workItemValue, operator, userValue, isDate = false)
 }
 module.exports.doesQueryValueMatch = doesQueryValueMatch;
 
+
+/**
+ * 
+ * @param {Any} workItemValue 
+ * @param {String} operator 
+ * @param {Any} userValue 
+ * @param {Boolean} isDate 
+ * @returns 
+ */
+ function setupProjectInitials(project, colorIndex=3){
+
+    let title = project.title.split(" ");
+    if (title.length > 1) {
+        project["initials"] = title[0][0].toUpperCase() + title[1][0].toUpperCase();
+    } else {
+        project["initials"] = title[0][0].toUpperCase();
+    }
+
+    project["initialsColors"] = PROJECT_INITIALS_COLORS[colorIndex];
+}
+module.exports.setupProjectInitials = setupProjectInitials;
 
 
 

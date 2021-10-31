@@ -229,3 +229,51 @@ nav>a {
     border: 1px solid green;
 }
 /*  */
+
+.small-title{
+    font-size: 0.8em !important;
+}
+
+.normal-title{
+    font-size: .9em !important;
+}
+
+.med-title{
+    font-size: 1.2em !important;
+}
+
+.favoriteIconInactive{
+    color: white;
+    opacity: .8;
+}
+
+.favoriteIconInactive:hover{
+    opacity: 1;
+    color: yellow;
+    cursor: pointer;
+}
+
+.favoriteIconAct{
+    color: yellow;
+}
+
+.favoriteIconAct:hover{
+    color: white;
+    opacity: .8;
+    cursor: pointer;
+}
+
+.favorite-icon-container{
+    text-align: right !important;
+    position: absolute;
+    right: 1rem;
+    margin-top: .3rem;
+}
+
+.favorite-icon-container i{
+    font-size: 1.3em;
+}
+
+.option-container{
+    margin-bottom: 2%;
+}
