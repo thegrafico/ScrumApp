@@ -210,26 +210,6 @@ $(function () {
 });
 
 /**
- * update work item
- * @param {String} workItemId 
- * @param {Object} values 
- * @returns 
- */
-async function updateWorkItem(workItemId, values){
-    
-    const projectId = getProjectId();
-    const API_LINK_UPDATE_WORK_ITEM = `/dashboard/api/${projectId}/updateWorkItem/${workItemId}`;
-
-    let response_error = null;
-    const response = await make_post_request(API_LINK_UPDATE_WORK_ITEM, values).catch(err=> {
-        response_error = err;
-    });
-
-    return {"response": response, "response_error": response_error};
-
-}
-
-/**
  * Active the save button in order to save the current state of the work item if has changed
  */
 function activeSaveButton(){

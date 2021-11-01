@@ -48,14 +48,7 @@ $(function () {
             tags :getTags(WORK_ITEM),
         };
 
-        const projectId = getProjectId();
-
-        const API_LINK_CREATE_WORK_ITEM = `/dashboard/api/${projectId}/createWorkItem`;
-
-        let response_error = null;
-        const response = await make_post_request(API_LINK_CREATE_WORK_ITEM, workItemRequest).catch(err=> {
-            response_error = err;
-        });
+        let {response, response_error} = await createWorkItem(workItemRequest);
 
         // Success message
         if (response){

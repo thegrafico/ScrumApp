@@ -1441,6 +1441,16 @@ function updateSprintBoardWorkItem(elementId, workItem) {
     // remove element from UI
     removeWorkItemFromBoard(elementId);
 
+    // Check the sprint of the work item is DIFFERENT as the current sprint selected
+    if (workItem["sprint"]["_id"].toString() != $(FILTER_BY_SPRINT_INPUT).val()){
+        return;
+    }
+
+    // check if the team of the work item is DIFFERNET as the current team selected
+    if (workItem["teamId"].toString() != $(FILTER_BY_TEAM_SPRINT).val()){
+        return;
+    }
+
     // Check if index is not found
     if (index < NOT_FOUND) {
         addWorkItemToBoard(workItem, null);
