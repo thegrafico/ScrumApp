@@ -114,11 +114,45 @@ workItemSchema.methods.hasUserAssigned = function() {
 };
 
 /**
+ * get user work items 
+ * @param {String} projectId - id of the project 
+ * @param {String} userId - id of the project
+ * @param {Number} numberOfRecords - Number of elements to retreive
+ * @returns {Promise}
+ */
+workItemSchema.statics.getUserWorkItems = async function(projectId, userId, numberOfRecords=5) {
+
+    let father = this;
+    return new Promise( async function (resolve, reject){
+
+        if (!projectId || !userId){
+            return reject("Invalid parameters passed.");
+        }
+
+        let error = null;
+        let userWorkItems = await father.find({
+            "projectId": projectId, 
+            "assignedUser.id": userId,
+            "status": {$in: [WORK_ITEM_STATUS["New"], WORK_ITEM_STATUS["Active"], WORK_ITEM_STATUS["Review"]]}
+        }).limit(numberOfRecords).catch( err => {
+            console.error("Error getting user work items: ", err);
+            error = err;
+        }) || [];
+
+        if (error){
+            return reject("Sorry, There was a problem getting the work items for the user.");
+        }
+
+        return resolve(userWorkItems);
+    });
+};
+
+/**
  * Remove all work items for a project
  * @param {String} projectId - id of the project
  * @returns {Promise}
  */
- workItemSchema.statics.removeWorkItemsFromProject = async function(projectId) {
+workItemSchema.statics.removeWorkItemsFromProject = async function(projectId) {
     
     let father = this;
 

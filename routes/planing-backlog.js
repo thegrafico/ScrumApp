@@ -108,7 +108,6 @@ router.get("/:id/planing/backlog", middleware.isUserInProject, async function (r
         "sprints": sprints,
         "activeSprintId": UNASSIGNED["_id"],
         "addUserModal": true,
-        "workItemType": WORK_ITEM_ICONS,
         "workItems": workItems,
         "currentPage": PAGES.BACKLOG,
         "userTeam": userPreferedTeam["_id"],

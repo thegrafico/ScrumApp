@@ -31,44 +31,8 @@ const BASE_ROUTE = 'dashboard';
  */
 router.get("/", async function (req, res) {
 
-    let projects = await getProjectsForUser(req.user._id).catch(err => {
-        console.error(err)
-    });
-
-    // set it to an empty array in case is undefine or empty
-    if (_.isUndefined(projects) || _.isEmpty(projects)) {
-        projects = [];
-    }
-
-    // getting inital of the projects
-    const COLORS_LIMIT = 3; //PROJECT_INITIALS_COLORS.length;
-    let colorsIndex = 0;
-    for (let project of projects) {
-
-        setupProjectInitials(project, colorsIndex);
-
-        colorsIndex++;
-
-        if (colorsIndex >= COLORS_LIMIT){
-            colorsIndex = 0;
-        }
-    }
-
-    // getting user favorite projects
-    let userFavoriteProjects = projects.filter(each => {
-        return req.user["favoriteProjects"].includes(each["_id"].toString());
-    });
-
-    console.log(projects.length);
-
-    // filter normal projects
-    projects = projects.filter(each => {
-        return !req.user["favoriteProjects"].includes(each["_id"].toString());
-    });
-
     // Keep the favorite number of project to 3. in case there are less than 3, assign the length
-    const LIMIT_NUMBER_OF_FAVORITE_PROJECTS = (userFavoriteProjects.length > MAX_NUMBER_OF_FAVORITE_PROJECTS) ? MAX_NUMBER_OF_FAVORITE_PROJECTS : userFavoriteProjects.length;
-
+    const LIMIT_NUMBER_OF_FAVORITE_PROJECTS = (req.user["favoriteProjects"].length > MAX_NUMBER_OF_FAVORITE_PROJECTS) ? MAX_NUMBER_OF_FAVORITE_PROJECTS : req.user["favoriteProjects"].length;
 
     let params = {
         title: "Dashboard",
@@ -84,16 +48,7 @@ router.get("/", async function (req, res) {
         scriptsPath: dashboardPath["scripts"],
         numberOfFavoriteProjects: LIMIT_NUMBER_OF_FAVORITE_PROJECTS,
         maxNumberOfFavoriteProjects: MAX_NUMBER_OF_FAVORITE_PROJECTS,
-        projects: projects,
-        userFavoriteProjects: userFavoriteProjects,
     };
-
-    /**
-     * Add the project to the frond-end
-     * Divide the project in chunk, so is easy to mantain in the user-site
-     */
-    // params["projects"] = _.chunk(projects, NUM_OF_PROJECT_PER_ROW);
-    // console.log(params["projects"]);
 
     res.render("dashboard", params);
 });

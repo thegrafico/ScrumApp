@@ -818,16 +818,12 @@ function doesQueryValueMatch(workItemValue, operator, userValue, isDate = false)
 }
 module.exports.doesQueryValueMatch = doesQueryValueMatch;
 
-
 /**
- * 
- * @param {Any} workItemValue 
- * @param {String} operator 
- * @param {Any} userValue 
- * @param {Boolean} isDate 
- * @returns 
+ * Setup the initials for the project
+ * @param {Object} project 
+ * @param {Number} colorIndex 
  */
- function setupProjectInitials(project, colorIndex=3){
+function setupProjectInitials(project, colorIndex=3){
 
     let title = project.title.split(" ");
     if (title.length > 1) {
@@ -839,6 +835,3 @@ module.exports.doesQueryValueMatch = doesQueryValueMatch;
     project["initialsColors"] = PROJECT_INITIALS_COLORS[colorIndex];
 }
 module.exports.setupProjectInitials = setupProjectInitials;
-
-
-

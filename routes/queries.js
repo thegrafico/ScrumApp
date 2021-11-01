@@ -87,7 +87,6 @@ router.get("/:id/queries", middleware.isUserInProject, async function (req, res)
         "projectTeams": teams,
         "sprints": sprints,
         "addUserModal": true,
-        "workItemType": WORK_ITEM_ICONS,
         "currentPage": PAGES.QUERIES,
         "userTeam": undefined,
         "sprintDefaultTimePeriod": SPRINT_DEFAULT_PERIOD_TIME, // Here the user can selet the time, but defualt is two weeks

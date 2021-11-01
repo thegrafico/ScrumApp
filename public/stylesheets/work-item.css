@@ -116,6 +116,21 @@
     white-space: nowrap;
 }
 
+.top-navbar-work-items-container{
+    overflow-x: hidden;    
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.top-navbar-work-item-title{
+    font-size: .9em;
+}
+
+
+/* .top-navbar-work-item:nth-child(even){
+    background-color: rgba(128, 128, 128, 0.1);
+} */
+
 .table-comments-column > span{ 
     padding-left: 4%;
 }

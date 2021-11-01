@@ -72,7 +72,6 @@ router.get("/:id/manageUsers", middleware.isUserInProject, async function (req, 
         "sprints": [],
         "statusWorkItem": WORK_ITEM_STATUS_COLORS,
         "priorityPoints":PRIORITY_POINTS,
-        "workItemType": WORK_ITEM_ICONS,
         "userPrivilege": USER_PRIVILEGES,
     };
 
@@ -117,7 +116,6 @@ router.get("/:id/manageTeam", middleware.isUserInProject, async function (req, r
         "scriptsPath": managePath["scripts"],
         "statusWorkItem": WORK_ITEM_STATUS_COLORS,
         "priorityPoints":PRIORITY_POINTS,
-        "workItemType": WORK_ITEM_ICONS,
     };
 
     res.render("manage-teams", params);
@@ -197,7 +195,6 @@ router.get("/:id/manageSprints", middleware.isUserInProject, async function (req
         "scriptsPath": managePath["scripts"],
         "statusWorkItem": WORK_ITEM_STATUS_COLORS,
         "priorityPoints":PRIORITY_POINTS,
-        "workItemType": WORK_ITEM_ICONS,
     };
 
     res.render("manage-sprints", params);

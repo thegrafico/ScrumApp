@@ -18,7 +18,8 @@ const {
 } = require('./config/db');
 
 const {
-	SPRINT_TIME_PERIOD
+	SPRINT_TIME_PERIOD,
+	WORK_ITEM_ICONS
 } = require('./dbSchema/Constanst');
 
 dotenv.config({
@@ -132,6 +133,7 @@ app.use(function (req, res, next) {
 	res.locals.error = req.flash("error"); //error mesage go red
 	res.locals.success = req.flash("success"); //success message go green
 	res.locals.SPRINT_TIME_PERIOD = SPRINT_TIME_PERIOD;
+	res.locals.workItemType =  WORK_ITEM_ICONS;
 	res.locals.sprintDefaultTimePeriod = SPRINT_TIME_PERIOD["Two Weeks"];
 	res.locals.userTeam = null;
 	res.locals.showCompletedWorkItems = false;
@@ -143,13 +145,12 @@ app.use(function (req, res, next) {
 // ==================== ROUTES =================
 app.use('/login', loginRoute);
 
-app.use('/', middleware.isUserLogin, dashboardRoute); // main page
-app.use('/dashboard/', middleware.isUserLogin, projectDetailRoute); // Statistiscs
-app.use('/dashboard/', middleware.isUserLogin, planingworkItemRoute); // Work Item
-app.use('/dashboard/', middleware.isUserLogin, planingBacklogRoute); // backlog
-app.use('/dashboard/', middleware.isUserLogin, sprintRoutes); // sprint
-app.use('/dashboard/', middleware.isUserLogin, queriesRoute); // Queries
-
+app.use('/', middleware.isUserLogin, middleware.setUserProjects, dashboardRoute); // main page
+app.use('/dashboard/', middleware.isUserLogin, middleware.setUserProjects, projectDetailRoute); // Statistiscs
+app.use('/dashboard/', middleware.isUserLogin, middleware.setUserProjects, planingworkItemRoute); // Work Item
+app.use('/dashboard/', middleware.isUserLogin, middleware.setUserProjects, planingBacklogRoute); // backlog
+app.use('/dashboard/', middleware.isUserLogin, middleware.setUserProjects, sprintRoutes); // sprint
+app.use('/dashboard/', middleware.isUserLogin, middleware.setUserProjects, queriesRoute); // Queries
 
 // API - Route
 app.use('/dashboard/', middleware.isUserLogin, apiProjectRoute); // dashboard to show project

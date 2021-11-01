@@ -62,7 +62,6 @@ router.get("/:id", middleware.isUserInProject, async function (req, res) {
         "projectId": projectId,
         "projectStatus": STATUS,
         "statusWorkItem": WORK_ITEM_STATUS_COLORS,
-        "workItemType": WORK_ITEM_ICONS,
         "priorityPoints":PRIORITY_POINTS,
         "creationDate": formatDate(projectInfo["createdAt"]),
         "currentSprint": "Not sprint found",

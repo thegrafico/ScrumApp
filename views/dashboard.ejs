@@ -115,8 +115,8 @@
                                     <div class="row n-mb" style="width: 100% !important;">
 
                                         <div class="col-10" id="row-projects-container">
-                                            <% for(let i = 0; i < projects.length; i++){ %>
-                                                <div id="<%= projects[i]._id %>" class="row mb-4 project-container add-shadow-box project-row">
+                                            <% for(let project of userProjects){ %>
+                                                <div id="<%= project._id %>" class="row mb-4 project-container add-shadow-box project-row">
 
                                                     <!-- ADD TO FAVORITE -->
 
@@ -128,29 +128,29 @@
 
                                                         <span 
                                                             class="favorite-icon-container make-project-favorite-btn" 
-                                                            data-projectid="<%= projects[i]._id %>"
-                                                            data-projectname="<%= projects[i]['title']%>"
+                                                            data-projectid="<%= project._id %>"
+                                                            data-projectname="<%= project['title']%>"
                                                             data-toggle="modal" data-target="#make-project-favorite-modal">
                                                             <i class="fas fa-star favoriteIconInactive"></i>
                                                         </span>
                                                     </div>
                                                     
                                                     <!-- INITIALS -->
-                                                    <div class="initals-container pt-4 go-to-project" data-projectid="<%= projects[i]._id %>">
-                                                        <div class="project-initials-container bg-initials-color" style="background-color: <%= projects[i]['initialsColors']%>;">
-                                                            <span><%= projects[i]["initials"]%></span>
+                                                    <div class="initals-container pt-4 go-to-project" data-projectid="<%= project._id %>">
+                                                        <div class="project-initials-container bg-initials-color" style="background-color: <%= project['initialsColors']%>;">
+                                                            <span><%= project["initials"]%></span>
                                                         </div>
                                                     </div>
 
                                                     <div class="col-9 pt-2">
 
                                                         <div class="row">
-                                                            <div class="col-12 go-to-project" data-projectid="<%= projects[i]._id%>">
-                                                                <span class="project-name"> <%= projects[i]["title"]%></span>
+                                                            <div class="col-12 go-to-project" data-projectid="<%= project._id%>">
+                                                                <span class="project-name"> <%= project["title"]%></span>
                                                             </div>
 
                                                             <div class="col-12">
-                                                                <span class="project-description description-color"> <%= projects[i]["description"]%> &nbsp;</span>
+                                                                <span class="project-description description-color"> <%= project["description"]%> &nbsp;</span>
                                                             </div>
 
                                                             <div class="col-12">
@@ -159,11 +159,11 @@
                                                         </div>
                                                     </div>
 
-                                                    <% if (projects[i]["author"].toString() == currentUser["_id"].toString()) { %>
+                                                    <% if (project["author"].toString() == currentUser["_id"].toString()) { %>
                                                         <div class="col-2">
                                                             <div class="pr-4 project-icons project-icons-row" style="text-align: right;">
-                                                                <span class="edit-project-btn" data-toggle="modal" data-target="#edit-project-modal" data-projectid="<%= projects[i]._id %>"><i class="fas fa-edit"></i></span>
-                                                                <span class="remove-project-btn" data-toggle="modal" data-target="#remove-confirmation-modal" data-projectid="<%= projects[i]._id %>"><i class="fas fa-trash"></i></span>
+                                                                <span class="edit-project-btn" data-toggle="modal" data-target="#edit-project-modal" data-projectid="<%= project._id %>"><i class="fas fa-edit"></i></span>
+                                                                <span class="remove-project-btn" data-toggle="modal" data-target="#remove-confirmation-modal" data-projectid="<%= project._id %>"><i class="fas fa-trash"></i></span>
                                                             </div>
                                                         </div>
                                                     <% } %>

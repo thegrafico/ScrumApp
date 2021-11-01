@@ -34,41 +34,38 @@
                             style="z-index: 10000000;">
                                 
                                 <!-- FAVORITES -->
-                                <div class="container-fluid mb-2">
+
+                                <% if (userFavoriteProjects && userFavoriteProjects.length > 0){ %>
+
+                                    <div class="container-fluid mb-2">
+                                        
+                                        <div class="row" style="margin: 0; padding:0; width: 100%;">
+                                            <span class="notification-title small-title">Favorites</span>
+                                        </div>
+                                    </div>
                                     
-                                    <div class="row" style="margin: 0; padding:0; width: 100%;">
-                                        <span class="notification-title small-title">Favorites</span>
-                                    </div>
-                                </div>
-                                
-                                <div class="dropdown-item option-container" style="width: 100%;">
-                                    <div class="circle-icon normal-title">
-                                        AB
-                                    </div>
+                                    <% for( let project of userFavoriteProjects) { %>
+                                    
+                                        <a class="dropdown-item med-title" href="/dashboard/<%=project['_id']%>" style="width: 100%;">
+                                            <div class="circle-icon normal-title">
+                                                <%=project["initials"]%>
+                                            </div>
+    
+                                            <span class="dropdown-text normal-title">
+                                                <%=project["title"]%>
+                                            </span>
+        
+                                            <span class="favorite-icon-container">
+                                                <i class="fas fa-star favoriteIconAct"></i>
+                                            </span>
+                                        </a>
 
-                                        <span class="dropdown-text normal-title">
-                                        PROJECT BLA BLA
-                                        </span>
- 
-                                    <span class="favorite-icon-container">
-                                        <i class="fas fa-star favoriteIconAct"></i>
-                                    </span>
-                                </div>                
-            
-                                <div class="dropdown-item option-container" style="width: 100%;">
-                                    <div class="circle-icon normal-title">
-                                        AB
-                                    </div>
- 
-                                    <span class="dropdown-text normal-title">
-                                        PROJECT BLA BLA
-                                    </span>
-
-                                    <span class="favorite-icon-container">
-                                        <i class="fas fa-star favoriteIconAct"></i>
-                                    </span>
-                                </div>   
+                                    <%}%>
+                                <%}%>
+                                    
                                 <!--  END FAVORITE -->
+                                
+                                <% if (userProjects && userProjects.length > 0){ %>
 
                                 <!-- RECENTS -->
                                 <div class="container-fluid mt-2 mb-2">
@@ -77,27 +74,23 @@
                                         <span class="notification-title small-title">Recents</span>
                                     </div>
                                 </div>
-                                
-                                <div class="dropdown-item option-container" style="width: 100%;">
-                                    <div class="circle-icon normal-title">
-                                        AB
-                                     </div>
- 
-                                     <span class="dropdown-text normal-title">
-                                        PROJECT BLA BLA
-                                     </span>
- 
-                                </div>                
-            
-                                <div class="dropdown-item option-container" style="width: 100%;">
-                                    <div class="circle-icon normal-title">
-                                        AV
-                                    </div>
 
-                                    <span class="dropdown-text normal-title">
-                                        AVIATION
-                                    </span>
-                                </div> 
+                                    <% for( let i = 0; i < userProjects.length; i++) { %>
+
+                                        <a class="dropdown-item med-title" href="/dashboard/<%=userProjects[i]['_id']%>" style="width: 100%;">
+                                            <div class="circle-icon normal-title">
+                                                <%=userProjects[i]["initials"]%>
+                                            </div>
+        
+                                            <span class="dropdown-text normal-title">
+                                                <%=userProjects[i]["title"]%>
+                                            </span>
+                                        </a>
+
+                                        <!-- Just show two projects -->
+                                        <% if (i > 0) {break;} %>
+                                    <%}%>
+                                <%}%>
 
                                 <div class="dropdown-divider"></div>
                                 <a class="dropdown-item med-title" href="/">
@@ -139,6 +132,79 @@
                             <a class="dropdown-item" href="/dashboard/<%=projectId%>/manageSprints/">Manage Sprints</a>
                         </div>
                     </li>
+
+                    <!-- MY WORK ITEMS -->
+                    <li class="nav-item dropdown">
+                        <div class="nav-item dropdown">
+
+                            <a class="nav-link dropdown-toggle" 
+                            data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+                                My Work items
+                            </a>
+                            
+                            <div class="user-options-dropdown dropdown-menu" onclick="event.stopPropagation()" 
+                            style="z-index: 10000000;">
+                                
+                                <!-- ASSIGNED TO ME AND ACTIVE -->
+
+                                <% if (userWorkItems && userWorkItems.length > 0){ %>
+
+                                    <div class="container-fluid mb-2">
+                                        
+                                        <div class="row" style="margin: 0; padding:0; width: 100%;">
+                                            <span class="notification-title small-title">Open Work items</span>
+                                        </div>
+                                    </div>
+                                    
+                                    <% for(let i = 0; i < userWorkItems.length; i++) { %>
+                                    
+                                        <a class="dropdown-item med-title top-navbar-work-item mb-2" href="/dashboard/<%=project['_id']%>/planing/workItems/<%=userWorkItems[i]['_id']%>" style="width: 99%; padding-left: .5rem;">                                            
+
+                                            <div class="top-navbar-work-items-container" style="width: 100%">
+
+                                                <span class="top-navbar-work-item-title">
+                                                    <div class="" style="display: inline-block; width: 5%;text-align: center;">
+
+                                                        <span class="table-icon"> 
+                                                            <i class="fas <%=workItemType[userWorkItems[i]['type']].icon%>"></i> 
+                                                        </span> 
+    
+                                                    </div>
+                                                    
+                                                    <span class="dropdown-text top-navbar-work-item-title" style="border-bottom: .5px solid rgba(128, 128, 128, 0.493);">
+                                                        <%=userWorkItems[i]["title"]%>                                                  
+                                                    </span> 
+                                                </span>                                                 
+                                            </div>
+                                        </a>
+                                    <%}%>
+                                <%}%>
+                                    
+                                <!--  END OF ASSIGNED -->
+                                
+
+                                <!-- MENTIONED -->
+                                <!-- <div class="container-fluid mt-2 mb-2">
+                                    
+                                    <div class="row" style="margin: 0; padding:0; width: 100%;">
+                                        <span class="notification-title small-title">Mentioned</span>
+                                    </div>
+                                </div>
+
+
+                                        <a class="dropdown-item med-title" href="/dashboard/userProjects[i]['_id']" style="width: 100%;">
+                                            <div class="circle-icon normal-title">
+                                            </div>
+        
+                                            <span class="dropdown-text normal-title">
+                                            </span>
+                                        </a> -->
+                                    <!-- Just show two projects -->
+                                <!-- END MENTIONED -->
+                            </div>
+                        </div>
+                    </li>
+                    <!-- END WORK ITEMS -->
 
                     <% if (showCreateWorkItemModal){ %>
                         <li class="nav-item">
