@@ -160,6 +160,8 @@ router.post("/api/:id/getWorkItemsByQuery", middleware.isUserInProject, async fu
                 // there are two status field
                 
                 switch (field) {
+                    case FIELDS["ID"]:
+                        logicalOr = doesQueryValueMatch(workItem[dbField], operator, value.trim());
                     case FIELDS["WORK_ITEM_TITLE"]:
                         logicalOr = doesQueryValueMatch(workItem[dbField], operator, value.trim());
                         break;

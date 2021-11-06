@@ -149,23 +149,23 @@ module.exports.ADD_TO_THE_BEGINNING = true;
 
 // ========= QUERY ===================
 module.exports.QUERY_FIELD = {
-    
-    WORK_ITEM_TITLE: {text: "Work Item Title", dbField: "title"},
-    ASSIGNED_USER: {text: "Assigned User", dbField: "assignedUser"},
-    STORY_POINTS: {text: "Story Points", dbField: "storyPoints"},
-    PRIORITY_POINTS: {text: "Priority", dbField: "priorityPoints"},
-    WORK_ITEM_STATUS: {text: "Work Item Status", dbField: "status"},
-    TEAM: {text: "Team", dbField: "team"},
-    WORK_ITEM_TYPE: {text: "Work Item Type", dbField: "type"},
-    WORK_ITEM_DESCRIPTION: {text: "Work Item Description", dbField: "description"},
-    TAGS: {text: "Tags", dbField: "tags"},
-    COMMENTS: {text: "Comments", dbField: "comments"},
-    WORK_ITEM_CREATION: {text: "Work Item Creation Date", dbField: "createdAt"},
-    SPRINT_NAME: {text: "Sprint Name", dbField: "name"},
-    SPRINT_START_DATE: {text: "Sprint Start Date", dbField: "startDate"},
-    SPRINT_END_DATE: {text: "Sprint End Date", dbField: "endDate"},
-    SPRINT_STATUS: {text: "Sprint Status", dbField: "status"},
-    SPRINT_POINTS: {text: "Sprint Points", dbField: "initialPoints"}
+    ID:                     {text: "Work Item Id", dbField: "itemId"},
+    WORK_ITEM_TITLE:        {text: "Work Item Title", dbField: "title"},
+    ASSIGNED_USER:          {text: "Assigned User", dbField: "assignedUser"},
+    STORY_POINTS:           {text: "Story Points", dbField: "storyPoints"},
+    PRIORITY_POINTS:        {text: "Priority", dbField: "priorityPoints"},
+    WORK_ITEM_STATUS:       {text: "Work Item Status", dbField: "status"},
+    TEAM:                   {text: "Team", dbField: "team"},
+    WORK_ITEM_TYPE:         {text: "Work Item Type", dbField: "type"},
+    WORK_ITEM_DESCRIPTION:  {text: "Work Item Description", dbField: "description"},
+    TAGS:                   {text: "Tags", dbField: "tags"},
+    COMMENTS:               {text: "Comments", dbField: "comments"},
+    WORK_ITEM_CREATION:     {text: "Work Item Creation Date", dbField: "createdAt"},
+    SPRINT_NAME:            {text: "Sprint Name", dbField: "name"},
+    SPRINT_START_DATE:      {text: "Sprint Start Date", dbField: "startDate"},
+    SPRINT_END_DATE:        {text: "Sprint End Date", dbField: "endDate"},
+    SPRINT_STATUS:          {text: "Sprint Status", dbField: "status"},
+    SPRINT_POINTS:          {text: "Sprint Points", dbField: "initialPoints"}
 }
 
 const QUERY_OPERATOR = {
