@@ -84,7 +84,7 @@
 
                                                 <% for (const [key, value] of Object.entries(statusWorkItem)) { %>
                                                     <a class="dropdown-item btnWorkItemStatus" href="#">
-                                                        <span> <i class="fa fa-circle <%=value['class']%>" aria-hidden="true"></i> <%=key%></span>
+                                                        <span class="<%=key%>"> <i class="fa fa-circle <%=value['class']%>" aria-hidden="true"></i> <%=key%></span>
                                                     </a>
                                                 <%}%>
                                             </div>
@@ -136,7 +136,9 @@
                                             <div class="dropdown-menu">
                                                 <% for(let key in workItemType){ %>
                                                     <a class="dropdown-item btnType" href="#"> 
-                                                        <span>  <i class="fas <%=workItemType[key].icon%>"></i> &nbsp; <%=key%>  </span>    
+                                                        <span class="<%=key%>">  
+                                                            <i class="fas <%=workItemType[key].icon%>"></i> &nbsp; <%=key%>  
+                                                        </span>    
                                                     </a>
                                                 <%}%>
                                             </div>

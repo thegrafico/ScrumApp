@@ -25,6 +25,7 @@ $(function () {
     // clean the modal when opened
     $(CREATE_WORK_ITEM_MODAL).on('show.bs.modal', function (e) {
         cleanModal(WORK_ITEM);
+        console.log("Cleaning modal");
     });
 
     // CREATE NEW WORK ITEM

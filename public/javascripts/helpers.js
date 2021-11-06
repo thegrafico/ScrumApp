@@ -239,7 +239,7 @@ function cleanModal(element) {
 
     // reset title
     $(element["title"]).val("");
-    $(spanTitleMsg).removeClass("d-none");
+    showElement(spanTitleMsg);
 
     // reset assigned user
     $(element["user"]).val(0).trigger("change");
@@ -247,9 +247,11 @@ function cleanModal(element) {
     // reset tags
     $(`${element["tag_container"]} span`).remove();
 
-    // reset state
-    // TODO: set the default value to be the firts from an array from CONSTANTS.js
-    $(element["state"]).val("New");
+    // reset status
+    $(`${element["btn_change_status"]} span.New`)[0].click();
+
+    // reset type
+    $(`${element["btn_change_type"]} span.Story`)[0].click();
 
     // Reset description
     $(element["description"]).val("");
@@ -258,16 +260,13 @@ function cleanModal(element) {
     $(element["points"]).val("");
 
     // reset priority
-    $(element["priority"]).val("");
+    $(element["priority"]).val(PRIORITY_POINTS["Low"]).change();
 
     // reset discussion
     $(element["discussion"]).val("");
 
     // reset links
     $(RELATIONSHIP_WORK_ITEM_CONTAINER).empty();
-    // TODO: reset type
-    // TODO: reset team depending on the user's team
-    // TODO: reset sprint depending on the current sprint
 }
 
 /**
