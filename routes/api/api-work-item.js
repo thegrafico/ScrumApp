@@ -551,6 +551,8 @@ router.post("/api/:id/updateWorkItem/:workItemId", middleware.isUserInProject, a
         links
     } = req.body;
 
+    const currentLinks = workItem["links"];
+
     // in case only updating the status
     let UPDATING_ONLY_STATUS = (Object.keys(req.body).length == 1 && req.body["status"] != undefined);
 
@@ -732,7 +734,6 @@ router.post("/api/:id/updateWorkItem/:workItemId", middleware.isUserInProject, a
         if (_.isEmpty(links) || links.every(val => _.isEmpty(val))){
             updateValues["links"] = [];
         }else{
-            console.log("LINKS ARE:", links);
             let invalidWorkItemFound = false;
             let workItemRelationships = [];
             let workItemsAlreadyAdded = [];
@@ -811,6 +812,11 @@ router.post("/api/:id/updateWorkItem/:workItemId", middleware.isUserInProject, a
         res.status(400).send(response);
         return;
     }
+
+    // In case the user updates the relationship and removed some relationships
+    await WorkItemCollection.removeRelationFromWorkItem(projectId, workItem["_id"], currentLinks, updateValues["links"]).catch(err => {
+        console.error("Error removing relationship form other work items: ", err);
+    });
 
     // Add the relationship to the other work items since relationship is two ways
     await WorkItemCollection.addRelationToWorkItem(projectId, addRelationshipToOtherWorkItems, workItem["_id"]).catch(err => {

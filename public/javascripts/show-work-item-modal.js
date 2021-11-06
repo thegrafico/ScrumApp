@@ -23,7 +23,7 @@ $(function () {
             let workItemId = $(this).attr("rel");
             
             // need update this in order to send the reques to the good URL
-            $(WORK_ITEM_ID).val(workItemId)
+            $(WORK_ITEM_ID).val(workItemId);
 
             populateWorkItemModal(workItemId);
 
@@ -35,6 +35,7 @@ $(function () {
     // CLOSE MODAL
     $(CLOSE_WORK_ITEM_MODAL).on("click", function(){
         $(WORK_ITEM_MODAL).modal("hide");
+        $(WORK_ITEM_ID).val(UNNASIGNED_VALUE);
     });
 
     // close select2 in case is still open

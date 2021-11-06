@@ -196,7 +196,7 @@ workItemSchema.statics.addRelationToWorkItem = async function(projectId, related
     let father = this;
     return new Promise( async function (resolve, reject){
 
-        if (!projectId || !relatedWorkItems || _.isEmpty(relatedWorkItems) || !_.isArray(relatedWorkItems)){
+        if (!projectId || !relatedWorkItems || !_.isArray(relatedWorkItems)){
             return reject("Invalid parameters passed.");
         }
         
@@ -221,6 +221,47 @@ workItemSchema.statics.addRelationToWorkItem = async function(projectId, related
 
             if (!wasUpdated){
                 return reject("There was a problem updating the other work item relationship.");
+            }
+        }
+
+        return resolve(true);
+    });
+};
+
+/**
+ * 
+ * @param {String} projectId - id of the project
+ * @param {String} workItemId - id of the work item to be removed from other work items
+ * @param {Array} currentLinks - links before update
+ * @param {Array} updatedLinks - links after update
+ * @returns {Promise}
+ */
+ workItemSchema.statics.removeRelationFromWorkItem = async function(projectId, workItemId, currentLinks, updatedLinks) {
+
+    let father = this;
+    return new Promise( async function (resolve, reject){
+
+        if (!projectId || !workItemId || !currentLinks || !updatedLinks){
+            return reject("Invalid parameters passed.");
+        }
+        
+        let previusWorkItems = currentLinks.map(each => each["workItemId"]);
+        let updatedWorkItems = updatedLinks.map(each => each["workItemId"]);
+
+        // getting which work items were removed. 
+        let differentWorkItems = previusWorkItems.filter(workItem => !updatedWorkItems.includes(workItem));
+        
+        for (let workItemToRemove of differentWorkItems){
+
+            let wasRemoved = await father.updateOne(
+                {projectId, _id: workItemToRemove},
+                {$pull: {"links": {"workItemId": workItemId}}}
+            ).catch(err => {
+                console.error("Error removing relationship from work item: ", err);
+            });
+
+            if (!wasRemoved){
+                return reject("There was a problem removing the other work item relationship.");
             }
         }
 

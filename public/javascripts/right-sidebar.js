@@ -18,6 +18,10 @@ const RIGHT_SIDEBAR_WORK_ITEM_LIST = "#work-item-list";
 
 // span with the work item id
 const SPAN_RELATED_WORKITEM_ITEM_ID = ".related-workitem-item-id";
+const RELEATE_WORK_ITEM_CONTAINER = ".related-workitem";
+
+// ======== REMOVE RELATIONSHIP FROM WORK ITEM ==============
+const REMOVE_RELATIONSHIP_BTN = ".remove-relationship-btn";
 
 $(function () {
 
@@ -159,6 +163,32 @@ $(function () {
         }else{
             $.notify(response_error.data.responseJSON.msg, "error");
         }
+    });
+
+    // Remove the relationship from the work item
+    $(document).on("click", REMOVE_RELATIONSHIP_BTN, async function(){
+        // let relatedWorkItem = $(this).attr(ATTR_WORK_ITEM_ID);
+        let currentWorkItem = $(WORK_ITEM_ID).val();
+
+        let numberOfElements = $(this).parent().parent().find(RELEATE_WORK_ITEM_CONTAINER).length;
+        // if there is not workitem id, just remove the relationship from the UI
+            
+        // get the number of elements inside this relationship
+        if (numberOfElements <= 1){
+
+            // remove the whole div with the relationship name
+            $(this).parent().parent().remove();
+        }else{
+
+            // remove just the relationship work item
+            $(this).parent().remove();
+        }
+        
+        // only show the save button on update work item modal
+        if ( !(currentWorkItem == UNNASIGNED_VALUE)){
+            $(UPDATE_WORK_ITEM["relationship_container"]).trigger("change");
+        }
+
     });
 
     // Close sidebar
