@@ -10,6 +10,7 @@ module.exports = {
         styles: ["/stylesheets/statistics.css", "/stylesheets/scrum-main.css", "/stylesheets/backlog.css", "/stylesheets/work-item.css", "/stylesheets/dashboard.css"], 
 
         scripts: [
+            "/javascripts/feedback-message.js", 
             "/javascripts/quotes.js", 
             "/javascripts/modals/projects.js", 
             "/javascripts/dependecies/bootstrap.bundle.min.js",
@@ -21,6 +22,7 @@ module.exports = {
     statisticsPath: {
         styles: ["/stylesheets/statistics.css", "/stylesheets/scrum-main.css", "/stylesheets/backlog.css", "/stylesheets/work-item.css"], 
         scripts: [
+            "/javascripts/feedback-message.js", 
             "/javascripts/statistics-member.js", 
             "/javascripts/dependecies/bootstrap.bundle.min.js",
             "/javascripts/modals/user-controller.js",
@@ -36,6 +38,7 @@ module.exports = {
     planigWorkItemPath: {
         styles: ["/stylesheets/scrum-main.css","/stylesheets/backlog.css", "/stylesheets/work-item.css"], 
         scripts: [
+            "/javascripts/feedback-message.js", 
             "/javascripts/planning-work-item.js", 
             "/javascripts/dependecies/bootstrap.bundle.min.js",
             "/javascripts/filter-and-search.js",
@@ -58,6 +61,7 @@ module.exports = {
     backlogPath: {
         styles: ["/stylesheets/scrum-main.css", "/stylesheets/work-item.css", "/stylesheets/backlog.css"], 
         scripts: [
+            "/javascripts/feedback-message.js", 
             "/javascripts/dependecies/jquery-ui.min.js",
             "/javascripts/planning-work-item.js",
             "/javascripts/planning-backlog.js",
@@ -81,6 +85,7 @@ module.exports = {
     sprintPath: {
         styles: ["/stylesheets/scrum-main.css", "/stylesheets/work-item.css", "/stylesheets/backlog.css"], 
         scripts: [
+            "/javascripts/feedback-message.js", 
             "/javascripts/dependecies/jquery-ui.min.js",
             "/javascripts/planning-work-item.js",
             "/javascripts/planning-backlog.js",
@@ -107,6 +112,7 @@ module.exports = {
     sprintReview: {
         styles: ["/stylesheets/scrum-main.css", "/stylesheets/work-item.css", "/stylesheets/backlog.css", "/stylesheets/sprint-review.css"], 
         scripts: [
+            "/javascripts/feedback-message.js", 
             "/javascripts/dependecies/jquery-ui.min.js",
             "/javascripts/planning-work-item.js",
             "/javascripts/planning-backlog.js",
@@ -128,6 +134,7 @@ module.exports = {
     sprintBoard: {
         styles: ["/stylesheets/scrum-main.css", "/stylesheets/work-item.css", "/stylesheets/backlog.css",  "/stylesheets/sprint-board.css"], 
         scripts: [
+            "/javascripts/feedback-message.js", 
             "/javascripts/dependecies/jquery-ui.min.js",
             "/javascripts/planning-work-item.js",
             "/javascripts/planning-backlog.js",
@@ -152,6 +159,7 @@ module.exports = {
     managePath: {
         styles: ["/stylesheets/scrum-main.css", "/stylesheets/work-item.css", "/stylesheets/backlog.css", "/stylesheets/manage-routes.css"], 
         scripts: [
+            "/javascripts/feedback-message.js", 
             "/javascripts/dependecies/jquery-ui.min.js",
             "/javascripts/planning-work-item.js",
             "/javascripts/planning-backlog.js",
@@ -172,6 +180,7 @@ module.exports = {
 
         styles: ["/stylesheets/scrum-main.css", "/stylesheets/backlog.css", "/stylesheets/work-item.css",  "/stylesheets/query.css"], 
         scripts: [
+            "/javascripts/feedback-message.js", 
             "/javascripts/dependecies/jquery-ui.min.js",
             "/javascripts/planning-work-item.js",
             "/javascripts/planning-backlog.js",
