@@ -8,59 +8,59 @@
 
         <ul class="list-unstyled components mb-5">
 
-            <!-- <li class="active"> -->
             <!-- STATISTICS -->
             <li>
-                <a href="/dashboard/<%=projectId%>" class="urlBtn" role="button" id="Statistics">Statistics</a>
+                <a href="/dashboard/<%=projectId%>" class="urlBtn" role="button" id="Statistics">
+                    <i class="fas fa-chart-line"></i> Statistics
+                </a>
             </li>
 
-            <!-- PLANING -->
+
+            <!-- WORK ITEM -->
             <li>
-                <a href="#planingSubMenu" data-toggle="collapse" aria-expanded="false"  id="Planing" class="dropdown-toggle">
-                    Planing
+                <a href="/dashboard/<%=projectId%>/planing/workitems" class="urlBtn" role="button" id="WorkItem">
+                    <i class="fas fa-clipboard-list"></i> Work Items
                 </a>
-                
-                <ul class="collapse list-unstyled" id="planingSubMenu">
-                    
-                    <!-- WORK ITEM -->
-                    <li>
-                        <a href="/dashboard/<%=projectId%>/planing/workitems" class="urlBtn" role="button" id="WorkItem">Work Item</a>
-                    </li>
+            </li>
 
-                    <!-- BACKLOG -->
-                    <li>
-                        <a href="/dashboard/<%=projectId%>/planing/backlog" class="urlBtn" role="button" id="Backlog">Backlog</a>
-                    </li>
-
-                    <!-- Sprint -->
-                    <li>
-                        <a href="/dashboard/<%=projectId%>/planing/sprint"class="urlBtn" role="button" id="SprintPlaning">Sprint</a>
-                    </li>
-                </ul>
+            <!-- BACKLOG -->
+            <li>
+                <a href="/dashboard/<%=projectId%>/planing/backlog" class="urlBtn" role="button" id="Backlog">
+                    <i class="fas fa-cubes"></i> Backlog
+                </a>
             </li>
 
             <!-- SPRINT -->
             <li>
-                <a href="#sprintSubMenu" data-toggle="collapse" aria-expanded="false" id="Sprint" class="dropdown-toggle sprint">
-                    Sprint
+                <a href="/dashboard/<%=projectId%>/planing/sprint"class="urlBtn" role="button" id="SprintPlaning">
+                    <i class="fas fa-fire"></i> Sprint
                 </a>
-                
-                <ul class="collapse list-unstyled" id="sprintSubMenu">
-                    <li>
-                        <a href="/dashboard/<%=projectId%>/sprint/board" class="urlBtn" role="button" id="SprintBoard">Board</a>
-                    </li>
-                    <li>
-                        <a href="/dashboard/<%=projectId%>/sprint/review" class="urlBtn" role="button" id="SprintReview">Review</a>
-                    </li>
-                </ul>
+            </li>
+
+            <!-- BOARD -->
+            <li>
+                <a href="/dashboard/<%=projectId%>/sprint/board" class="urlBtn" role="button" id="SprintBoard">
+                    <i class="fas fa-border-all"></i> Board
+                </a>
+            </li>
+
+            <!-- REVIEW -->
+            <li>
+                <a href="/dashboard/<%=projectId%>/sprint/review" class="urlBtn" role="button" id="SprintReview">
+                    <i class="fas fa-tasks"></i> Sprint Review
+                </a>
             </li>
 
             <li>
-                <a href="/dashboard/<%=projectId%>/queries" class="urlBtn queries" role="button" id="ProjectQueries">Queries</a>
+                <a href="/dashboard/<%=projectId%>/queries" class="urlBtn queries" role="button" id="ProjectQueries">
+                    <i class="fas fa-search-plus"></i>    Queries
+                </a>
             </li>
 
             <li>
-                <a href="#" class="urlBtn wiki" role="button" id="linkToWiki">Wiki</a>
+                <a href="#" class="urlBtn wiki" role="button" id="linkToWiki">
+                    <i class="fas fa-book-open"></i>   Wiki
+                </a>
             </li>
 
         </ul>
