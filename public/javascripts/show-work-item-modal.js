@@ -8,10 +8,9 @@ const CLOSE_WORK_ITEM_MODAL = ".close-modal-button"
 // =========== This function is fire as soon as the file is loaded after the HTML ===========
 $(function () {
 
+
     // OPEN MODAL AND POPULATE DATA
     $(document).on("click", OPEN_WORK_ITEM_MODAL, function(event){
-
-
         // check if the ctrl key is pressed while the element is also pressed
         let ctrlIsPressed = event.metaKey | event.trlKey;
 
@@ -38,7 +37,20 @@ $(function () {
         $(WORK_ITEM_MODAL).modal("hide");
     });
 
+    // close select2 in case is still open
+    $(WORK_ITEM_MODAL).on('hide.bs.modal', function (e) {
+        $(UPDATE_WORK_ITEM["user"]).select2('close');
+        $(UPDATE_WORK_ITEM["team"]).select2('close');
+        $(UPDATE_WORK_ITEM["sprint"]).select2('close');
+        $(UPDATE_WORK_ITEM["priority"]).select2('close');
+
+        // In case right side is open
+        $(RIGHT_SIDE_NAVBAR_ID).hide("slow");
+    });
+
 });
+
+
 
 /**
  * populate the modal with the work item information
@@ -138,8 +150,6 @@ async function populateWorkItemModal(workItemId){
         );
     }    
 
-
-
     // add update number of comments
     $(UPDATE_WORK_ITEM["number_of_comments"]).text(workItem["comments"].length);
 
@@ -148,6 +158,31 @@ async function populateWorkItemModal(workItemId){
         // since the request is done (Success), we can add the html 
         const comment_html = COMMENT_HTML_TEMPLATE.replace(REPLACE_SYMBOL, comment);
         addToHtml(USER_COMMENT_CONTAINER, comment_html); // Helper function
+    }
+
+    // update link attribute
+    $(UPDATE_WORK_ITEM["add_link"]).attr(ATTR_WORK_ITEM_ID, workItem["itemId"]);
+    $(UPDATE_WORK_ITEM["add_link"]).attr(ATTR_WORK_ITEM_NAME, workItem["title"]);
+    
+    // Update Icon to remove relationship
+    // TODO: check if this update all relationship
+    $(UPDATE_WORK_ITEM["btn_remove_relationship"]).attr(ATTR_WORK_ITEM_ID, workItem["_id"]);
+
+
+    // clean links as default
+    cleanElement(WORK_ITEM_MODALS["update"]["container"]);
+    // check if work item has links
+
+    if (workItem["relatedWorkItems"] && Object.keys(workItem["relatedWorkItems"]).length > 0){
+        
+        for (let relationKey of Object.keys(workItem["relatedWorkItems"])){
+            // add to modad
+            addRelationshipToWorkItemModal(
+                workItem["relatedWorkItems"][relationKey], 
+                relationKey, 
+                WORK_ITEM_MODALS["update"]["container"]
+            );
+        }
     }
 
     resetWorkItemState();

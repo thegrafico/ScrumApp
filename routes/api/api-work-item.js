@@ -58,6 +58,8 @@ router.get("/api/:id/getWorkItem/:workItemId", middleware.isUserInProject, async
         return res.status(400).send(response);
     }
     
+    workItem = workItem.toObject();
+
     // ============ GETTING SPRINTS for the team of the work item =====
 
     // getting all sprints for team
@@ -79,6 +81,11 @@ router.get("/api/:id/getWorkItem/:workItemId", middleware.isUserInProject, async
         }
     }
 
+    // add the relationship to the current work item
+    await WorkItemCollection.setRelationship(workItem).catch(err => {
+        console.error("Error setting the relationship for the work item: ", err);
+    });
+
     // sorting sprint
     sprints = sortByDate(sprints, "startDate");
 
@@ -90,6 +97,100 @@ router.get("/api/:id/getWorkItem/:workItemId", middleware.isUserInProject, async
     response["msg"] = "success";
     return res.status(200).send(response);
 });
+
+/**
+ * METHOD: GET - Get work item by itemId
+ */
+ router.get("/api/:id/getWorkItemByItemId/:workItemId", middleware.isUserInProject, async function (req, res) {
+    console.log("Getting request to get work item by item id...");
+
+    const projectId = req.params.id;
+    const workItemItemId = req.params.workItemId;
+    let response = {};
+
+    // verify is the project exists
+    let projectInfo = await ProjectCollection.findOne({_id: projectId}).catch(err => {
+        console.log("Error is: ", err.reason);
+    });
+
+    if (_.isUndefined(projectInfo) || _.isEmpty(projectInfo)) {
+        response["msg"] = "Sorry, There was a problem getting the project information.";
+        return res.status(400).send(response);
+    }
+
+    // check workItemItemId
+    if (_.isEmpty(workItemItemId) || isNaN(workItemItemId)){
+        response["msg"] = "Sorry, Invalid Id for the work item was received.";
+        return res.status(400).send(response);
+    }
+
+    // ============== CHECK WORK ITEM INFO ==============
+    let errorGettingWorkItem = null;
+    let workItem = await projectInfo.getWorkItemByItemId(workItemItemId).catch(err => {
+        console.error("Error getting work items: ", err);
+        errorGettingWorkItem = err;
+    }) || [];
+
+
+    // check if there was error getting work item
+    if (errorGettingWorkItem){
+        response["msg"] = "Sorry, There was a problem getting the work item information.";
+        return res.status(400).send(response);
+    }
+    
+    response["workItem"] = workItem;
+    response["msg"] = "success";
+    return res.status(200).send(response);
+});
+
+
+/**
+ * METHOD: GET - get similar work items by id: 
+ * E.X: id of the work item is: 20, it will get work items that id start with 20, 21, 22;
+ */
+router.get("/api/:id/getSimilarWorkItems", middleware.isUserInProject, async function (req, res) {
+    console.log("Getting request to get work item by similar id...");
+
+    const projectId = req.params.id;
+    let response = {};
+    let { id, limit} = req.query;
+
+    if (_.isUndefined(id) || _.isEmpty(id) || isNaN(id)){
+        response["msg"] = "Sorry, Invalid data was received.";
+        return res.status(400).send(response);
+    }
+    // verify is the project exists
+    let projectInfo = await ProjectCollection.findOne({_id: projectId}).catch(err => {
+        console.log("Error is: ", err.reason);
+    });
+
+    if (_.isUndefined(projectInfo) || _.isEmpty(projectInfo)) {
+        response["msg"] = "Sorry, There was a problem getting the project information.";
+        return res.status(400).send(response);
+    }
+    // == end 
+
+    // get all work items for the project
+    let projectWorkItems = await projectInfo.getWorkItems().catch(err => {
+        console.error("Error getting work items: ", err);
+    }) || [];
+
+    // filter work items by the id of the user
+    let similarWorkItems = projectWorkItems.filter( workItem => {
+        return workItem["itemId"].toString().startsWith(id);
+    });
+
+    // if not empty and is a number
+    if (limit && !_.isEmpty(limit) && !isNaN(limit)){
+        similarWorkItems = similarWorkItems.slice(0, limit);
+    }
+
+    response["msg"] = "success";
+    response["workItems"] = similarWorkItems;
+
+    return res.status(200).send(response);
+});
+
 
 // ============== POST ==================
 
@@ -109,7 +210,8 @@ router.post("/api/:id/createWorkItem", middleware.isUserInProject, async functio
         workItemDescription,
         storyPoints,
         priorityPoints,
-        tags
+        tags,
+        links
     } = req.body;
 
     // Fixing variables 
@@ -235,14 +337,65 @@ router.post("/api/:id/createWorkItem", middleware.isUserInProject, async functio
         newWorkItem["tags"] = tags;
     }
 
+    // ============ LINKS ==============
+    // to add the relationship to other work item since relationship is two ways. 
+    let addRelationshipToOtherWorkItems = [];
+
+    // LINKS - for relationship of the work item
+    if (_.isArray(links)){
+        if (_.isEmpty(links) || links.every(val => _.isEmpty(val))){
+            newWorkItem["links"] = [];
+        }else{
+
+            let invalidWorkItemFound = false;
+            let workItemRelationships = [];
+            let workItemsAlreadyAdded = [];
+
+            // check all links are in project
+            for (let workItemRelationId of links){
+
+                let workItemRelationship = workItemRelationId.split("-");
+
+                // assuming there is not more -
+                let relationship = workItemRelationship[0].trim();
+                let wId = workItemRelationship[1].trim();
+
+                // if the work item already has a relationship, jump to next iteration
+                if (workItemsAlreadyAdded.includes(wId)){
+                    continue;
+                }
+
+                // add work item to the record so we dont add duplicate work items
+                workItemsAlreadyAdded.push(wId);
+
+                // check if the work item is not in the project
+                if (!projectInfo.isWorkItemInProject(wId)){
+                    invalidWorkItemFound = true;
+                    break;
+                }
+
+                workItemRelationships.push({relationship: relationship, workItemId: wId});
+
+                // add the relation to the other work item now
+                addRelationshipToOtherWorkItems.push({addTo: wId, from: null, "relationship": relationship});
+            }
+
+            if (invalidWorkItemFound){
+                response["msg"] = "Sorry, Invalid work item received for the relationship of the current work item.";
+                res.status(400).send(response);
+                return;
+            }else{
+                newWorkItem["links"] = workItemRelationships;
+            }
+        }
+    }
+    // ============== END
+
     newWorkItem["title"] = title;
     newWorkItem["status"] = workItemStatus;
     newWorkItem["description"] = workItemDescription;
     newWorkItem["projectId"] = projectId;
     
-    // TODO: Create new schema for comments
-    // newWorkItem["comments"]
-
     // add user to the team assigned if the user is not already in there. 
     if (newWorkItem["teamId"] || addUserToTeam){
         let teamId = newWorkItem["teamId"];
@@ -260,14 +413,18 @@ router.post("/api/:id/createWorkItem", middleware.isUserInProject, async functio
         console.error("Error creating the work item: ", err)
     });
 
-    // console.log("New work item: ", newWorkItem);
-
     // verify work item was created
     if (_.isEmpty(newWorkItem) || _.isNull(newWorkItem)){
         response["msg"] = `There was an error creating the work item: ${errors}`;
         res.status(400).send(response);
         return;
     }
+
+    //  at this point we know the work item was created, so now we can add the relationship for the other work items
+    // Add the relationship to the other work items since relationship is two ways
+    await WorkItemCollection.addRelationToWorkItem(projectId, addRelationshipToOtherWorkItems, newWorkItem["_id"]).catch(err => {
+        console.error("Error adding relationship to other work items: ", err);
+    });
 
     // Add the work item to the sprint if was selected by the user
     if (!_.isUndefined(sprint) && !_.isEmpty(sprint) && sprint != UNASSIGNED_SPRINT._id){
@@ -391,6 +548,7 @@ router.post("/api/:id/updateWorkItem/:workItemId", middleware.isUserInProject, a
         type,
         description,
         tags,
+        links
     } = req.body;
 
     // in case only updating the status
@@ -565,6 +723,66 @@ router.post("/api/:id/updateWorkItem/:workItemId", middleware.isUserInProject, a
         }
     }
 
+    // to add the relationship to other work item
+    // since relationship is two ways. 
+    let addRelationshipToOtherWorkItems = [];
+
+    // LINKS - for relationship of the work item
+    if (_.isArray(links)){
+        if (_.isEmpty(links) || links.every(val => _.isEmpty(val))){
+            updateValues["links"] = [];
+        }else{
+            console.log("LINKS ARE:", links);
+            let invalidWorkItemFound = false;
+            let workItemRelationships = [];
+            let workItemsAlreadyAdded = [];
+
+            // check all links are in project
+            for (let workItemRelationId of links){
+
+                let workItemRelationship = workItemRelationId.split("-");
+
+                // assuming there is not more -
+                let relationship = workItemRelationship[0].trim();
+                let wId = workItemRelationship[1].trim();
+
+                // if the work item already has a relationship, jump to next iteration
+                if (workItemsAlreadyAdded.includes(wId)){
+                    response["msg"] = "Sorry, Related work items cannot be duplicates.";
+                    res.status(400).send(response);
+                    return;
+                }
+
+                // check if the user is trying to add a related work item with the same id of the
+                // current id
+                if (wId === workItem["_id"].toString()){
+                    response["msg"] = "Sorry, Related work item cannot be the same as the current work item.";
+                    res.status(400).send(response);
+                    return;
+                }
+
+                // check if the work item is not in the project
+                if (!project.isWorkItemInProject(wId)){
+                    invalidWorkItemFound = true;
+                    break;
+                }
+
+                workItemRelationships.push({relationship: relationship, workItemId: wId});
+
+                // add the relation to the other work item now
+                addRelationshipToOtherWorkItems.push({addTo: wId, "relationship": relationship});
+            }
+
+            if (invalidWorkItemFound){
+                response["msg"] = "Sorry, Invalid work item received for the relationship of the current work item.";
+                res.status(400).send(response);
+                return;
+            }else{
+                updateValues["links"] = workItemRelationships;
+            }
+        }
+    }
+
     // add user to the team assigned if the user is not already in there. 
     if (updateValues["teamId"] || addUserToTeam){
         let teamId = updateValues["teamId"] || workItem["teamId"];
@@ -584,7 +802,6 @@ router.post("/api/:id/updateWorkItem/:workItemId", middleware.isUserInProject, a
 
     workItem["updatedAt"] = Date.now();
 
-    
     let updatedWorkItem = await workItem.save().catch(err => {
         console.error("Error saving the work item: ", err);
     });
@@ -595,6 +812,10 @@ router.post("/api/:id/updateWorkItem/:workItemId", middleware.isUserInProject, a
         return;
     }
 
+    // Add the relationship to the other work items since relationship is two ways
+    await WorkItemCollection.addRelationToWorkItem(projectId, addRelationshipToOtherWorkItems, workItem["_id"]).catch(err => {
+        console.error("Error adding relationship to other work items: ", err);
+    });
 
     // ======== TO JOIN THE WORK ITEM WITH THE TEAMS =============
     updatedWorkItem = updatedWorkItem.toObject();

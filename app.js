@@ -19,7 +19,8 @@ const {
 
 const {
 	SPRINT_TIME_PERIOD,
-	WORK_ITEM_ICONS
+	WORK_ITEM_ICONS,
+	WORK_ITEM_RELATIONSHIP
 } = require('./dbSchema/Constanst');
 
 dotenv.config({
@@ -133,6 +134,7 @@ app.use(function (req, res, next) {
 	res.locals.error = req.flash("error"); //error mesage go red
 	res.locals.success = req.flash("success"); //success message go green
 	res.locals.SPRINT_TIME_PERIOD = SPRINT_TIME_PERIOD;
+	res.locals.WORK_ITEM_RELATIONSHIP = WORK_ITEM_RELATIONSHIP;
 	res.locals.workItemType =  WORK_ITEM_ICONS;
 	res.locals.sprintDefaultTimePeriod = SPRINT_TIME_PERIOD["Two Weeks"];
 	res.locals.userTeam = null;

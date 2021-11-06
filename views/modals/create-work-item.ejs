@@ -1,5 +1,5 @@
 <!-- Large modal -->
-<div class="modal fade createNewItemModal"  id="create-work-item-modal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+<div class="modal fade createNewItemModal"  id="create-work-item-modal"  role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
 
         <div class="modal-content">
@@ -213,7 +213,13 @@
 
                         <div class="col-3 addLink">
                             <h5 class="pd-p">Related work</h5>
-                            <p> <i class="fas fa-plus "></i> Add link</p>
+                            <p class="open-add-links-options" data-modal-open="create" data-workitem-id="0"> 
+                                <i class="fas fa-plus "></i> Add link
+                            </p>
+
+                            <div class="work-item-relationship-container create-work-item-relationship-container">
+
+                            </div>
                         </div>
 
                     </div>

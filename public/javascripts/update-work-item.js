@@ -16,6 +16,7 @@ let workItemValuesToUpdate = {
     type:           undefined,
     description:    undefined,
     tags:           undefined,
+    links:          undefined,
 }
 
 // Variables to store the entire state of the work item. 
@@ -29,12 +30,15 @@ let currentIteration      = undefined;
 let currentDescription    = undefined;
 let currentStoryPoints    = undefined;
 let currentPriorityPoints = undefined;
+let currentRelationship   = undefined; // links
 
 // Save button 
 const SAVE_BTN_CONTAINER = "#saveStatusBtn";
 const ENABLE_SAVE_BTN_CLASS = "saveBtnContainer";
 const UPDATE_TAGS_CONTAINER = ".update-tags-container";
 const UPDATE_TAGS_BTN = "#udpate-add-tags-btn";
+
+const UPDATE_WORK_ITEM_RELATIONSHIP_ID = `${UPDATE_WORK_ITEM["relationship_container"]} .relationship-workitem-id`;
 
 const LOG_AVAILABLE = false;
 $(function () {
@@ -161,6 +165,28 @@ $(function () {
         activeSaveButton();
     });
 
+    // Adding relationship link
+    $(UPDATE_WORK_ITEM["relationship_container"]).on("change", function(){
+        
+        // get all the tags available
+        let linksAvailable = $(UPDATE_WORK_ITEM_RELATIONSHIP_ID).map((_,element) => element.value).get();
+
+        // using lodash in order to know if the array has changed
+        let arrayAreEqual = _.isEqual(_.sortBy(linksAvailable), _.sortBy(currentRelationship));
+        if (!arrayAreEqual){
+            workItemValuesToUpdate["links"] = linksAvailable;
+
+            if (_.isEmpty(workItemValuesToUpdate["links"])){
+                workItemValuesToUpdate["links"] = [null]; // since empty array is not sent, we need to send it with something
+            }
+        }else{
+            // we need this else in case the user add something, never save it, and then delete it. 
+            workItemValuesToUpdate["links"] = undefined;
+        }
+
+        activeSaveButton();
+    });
+
     // Save button event
     $(SAVE_BTN_CONTAINER).on("click", async function(){
         // only do the post when something has changed
@@ -170,7 +196,7 @@ $(function () {
 
             // Sending the request 
             let {response, response_error} = await updateWorkItem(workItemId, workItemValuesToUpdate);
-
+            console.log(response);
             // Success message
             if (response){
                 $.notify(response.msg, "success");
@@ -243,6 +269,7 @@ function setWorkItemState(){
     currentDescription    = $(UPDATE_WORK_ITEM["description"]).val();
     currentStoryPoints    = $(UPDATE_WORK_ITEM["points"]).val();
     currentPriorityPoints = $(UPDATE_WORK_ITEM["priority"]).val();
+    currentRelationship   = $(UPDATE_WORK_ITEM_RELATIONSHIP_ID).map((_,element) => element.value).get();
 }
 
 /**

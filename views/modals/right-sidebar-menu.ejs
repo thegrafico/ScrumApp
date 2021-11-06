@@ -1,0 +1,53 @@
+<!-- Right Sidebar -->
+<aside id="right-sidebar" class="pmd-sidebar pmd-z-depth" style="display: none;">
+    <!-- style="display: none;" -->
+    
+    <div class="right-sidebar-title">
+        <p>
+            Add Relationship
+        </p>
+    </div>
+
+    <div class="right-sidebar-inputs-container">
+
+    
+        <div class="form-group">
+            <label for="currentActiveSprint">Relationship:</label>
+            <select 
+                class="custom-select"
+                name="workItemRelationship"
+                id="work-item-relationship" 
+                aria-label="Work item relationship">
+                <!-- DYNAMICALLI LOAD THIS -->
+                    <option value="0" selected>Select relationship</option> 
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="currentActiveSprint">Work item Id:</label>
+            <input 
+            type="text"
+            class="form-control" 
+            list="work-item-list" 
+            name="workItemList" 
+            id="list-of-work-items" 
+            placeholder="Insert Id"
+            autocomplete="off">
+            <datalist id="work-item-list">
+                
+            </datalist>
+        </div>
+
+        <div class="form-group ">
+
+            <div class="right-sidebar-submit-btn-container">
+                <button type="button" id="right-sidebar-close-btn" class="btn btn-dark">Close</button>
+            </div>
+
+            <div class="right-sidebar-submit-btn-container">
+                <button id="right-sidebar-submit-btn" type="button" class="btn btn-success">Add</button>
+            </div>
+
+        </div>        
+    </div>
+</aside>

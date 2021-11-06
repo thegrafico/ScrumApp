@@ -5,6 +5,8 @@ let userCollection          = require("./dbSchema/user");
 let projectCollection       = require("./dbSchema/projects");
 let sprintCollection        = require("./dbSchema/sprint");
 let workItemCollection      = require("./dbSchema/workItem");
+// let TestCollection          = require("./dbSchema/test");
+
 
 // user
 const USERS = [
@@ -166,49 +168,66 @@ async function createWorkItem(){
   }
 }
 
+// /**
+//  * Create sprint for a project
+//  */
+//  async function createTest(){
+  
+//   let testData = {
+//     name: "Pedro"
+//   };
+
+//   await TestCollection.create(testData).catch(err => { 
+//     console.log("Error Creating the sprint for the project: ", err); 
+//   }).catch(err => {
+//     console.error("Error Creating the test: ", err);
+//   });
+// }
+
 
 async function seedDB() {
   // ==================== CLEAN THE DB ==================== 
+  // createTest();
+  // console.log("===================");
+  // // remove work items
+  // let result = await workItemCollection.deleteMany({});
+  // console.log("work Item removed!: ", result);
 
-  console.log("===================");
-  // remove work items
-  let result = await workItemCollection.deleteMany({});
-  console.log("work Item removed!: ", result);
+  // workItemCollection.counterReset('sequence', function(err) {console.log("Counter reset")});
 
-  workItemCollection.counterReset('sequence', function(err) {console.log("Counter reset")});
+  // // remove all sprint from a project
+  // result = await sprintCollection.deleteMany({});
+  // console.log("Sprint removed!: ", result);
 
-  // remove all sprint from a project
-  result = await sprintCollection.deleteMany({});
-  console.log("Sprint removed!: ", result);
+  // // remove projects
+  // result = await projectCollection.deleteMany({});
+  // console.log("Project removed!: ", result);
 
-  // remove projects
-  result = await projectCollection.deleteMany({});
-  console.log("Project removed!: ", result);
+  // // await projectCollection.deleteOne({_id: INDIVIDUAL_PROJECT});
 
-  // await projectCollection.deleteOne({_id: INDIVIDUAL_PROJECT});
+  // // remove users
+  // result = await userCollection.deleteMany({});
+  // console.log("Users removed!: ", result);
+  // console.log("===================");
 
-  // remove users
-  result = await userCollection.deleteMany({});
-  console.log("Users removed!: ", result);
-  console.log("===================");
+  // // reset counter to 0
 
-  // reset counter to 0
+  // // ======================================================
 
-  // ======================================================
+  // const usersId = await addUsersToDB();
 
-  const usersId = await addUsersToDB();
-
-  // add one project with a specify id to the user: for testing
-  await createProjectForUser(usersId[0], INDIVIDUAL_PROJECT).catch(err => console.log("Error Creating project for user: ", err));
+  // // add one project with a specify id to the user: for testing
+  // await createProjectForUser(usersId[0], INDIVIDUAL_PROJECT).catch(err => console.log("Error Creating project for user: ", err));
     
-  for (let i = 0; i < usersId.length; i++) {
-    const id = usersId[i];
-    await createProjectForUser(id);
-  }
+  // for (let i = 0; i < usersId.length; i++) {
+  //   const id = usersId[i];
+  //   await createProjectForUser(id);
+  // }
 
-  // await createProjectSprint();
+  // // await createProjectSprint();
 
-  await createWorkItem();
+  // await createWorkItem();
+
 }
 
 // export our function

@@ -47,12 +47,52 @@ async function createWorkItem(workItemData){
  * @returns 
  */
  async function updateWorkItem(workItemId, values){
+
+    console.log("DATA TO UPDATE: ", values);
     
     const projectId = getProjectId();
     const API_LINK_UPDATE_WORK_ITEM = `/dashboard/api/${projectId}/updateWorkItem/${workItemId}`;
 
     let response_error = null;
     const response = await make_post_request(API_LINK_UPDATE_WORK_ITEM, values).catch(err=> {
+        response_error = err;
+    });
+
+    return {"response": response, "response_error": response_error};
+}
+
+
+/**
+ * Get work items with similar id if available
+ * @param {String} workItemItemId 
+ * @param {Number} limit - max number of work items to retreived
+ * @returns 
+ */
+async function getSimilarWorkItemsById(workItemItemId, limit=5){
+    
+    const projectId = getProjectId();
+    const API_LINK_GET_SIMILAR_WORK_ITEMS = `/dashboard/api/${projectId}/getSimilarWorkItems?id=${workItemItemId}&limit=${limit}`;
+
+    let response_error = null;
+    const response = await make_get_request(API_LINK_GET_SIMILAR_WORK_ITEMS).catch(err=> {
+        response_error = err;
+    });
+
+    return {"response": response, "response_error": response_error};
+}
+
+/**
+ * Get work item by item id
+ * @param {String} itemId 
+ * @returns 
+ */
+ async function getWorkItemByItemId(itemId){
+    
+    const projectId = getProjectId();
+    const API_LINK_GET_WORK_ITEM_BY_ITEM_ID = `/dashboard/api/${projectId}/getWorkItemByItemId/${itemId}`;
+
+    let response_error = null;
+    const response = await make_get_request(API_LINK_GET_WORK_ITEM_BY_ITEM_ID).catch(err=> {
         response_error = err;
     });
 

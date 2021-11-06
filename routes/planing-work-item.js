@@ -11,7 +11,7 @@ const STATUS                    = require('../dbSchema/Constanst').projectStatus
 const moment                    = require('moment');
 const projectCollection         = require("../dbSchema/projects");
 const sprintCollection          = require("../dbSchema/sprint");
-const workItemCollection        = require("../dbSchema/workItem");
+const WorkItemCollection        = require("../dbSchema/workItem");
 const middleware                = require("../middleware/auth");
 let router                      = express.Router();
 const { planigWorkItemPath }    = require("../middleware/includes");
@@ -23,6 +23,7 @@ const {
     WORK_ITEM_STATUS_COLORS,
     MAIN_WORK_ITEMS_TO_SHOW,
     PRIORITY_POINTS,
+    SPRINT_FORMAT_DATE,
     PAGES,
     joinData,
     sortByDate
@@ -55,7 +56,7 @@ router.get("/:id/planing/workitems", middleware.isUserInProject, async function 
     let users = await projectInfo.getUsers().catch(err => console.error(err)) || [];
 
     // LOADING TABLE WORK ITEMS. We're not showing completed, deleted and abandoned
-    let workItems = await workItemCollection.find({projectId, status: {$in: MAIN_WORK_ITEMS_TO_SHOW}}).catch(err => 
+    let workItems = await WorkItemCollection.find({projectId, status: {$in: MAIN_WORK_ITEMS_TO_SHOW}}).catch(err => 
         console.error("Error getting work items: ", err)
     ) || [];
 
@@ -121,7 +122,7 @@ router.get("/:id/planing/workitems/:workItemId", middleware.isUserInProject, asy
     // Load work item specify data
     let workItem = await projectInfo.getWorkItem(workItemId).catch(err => {
         console.error("Error getting work items: ", err);
-    }) || [];
+    }) || {};
 
 
     if (_.isUndefined(workItem) || _.isEmpty(workItem)){
@@ -129,6 +130,11 @@ router.get("/:id/planing/workitems/:workItemId", middleware.isUserInProject, asy
         return res.redirect("back");
     }
     // ===================================================
+
+    // set the links for the work item
+    await WorkItemCollection.setRelationship(workItem).catch(err => {
+        console.error("Error setting the relationship for the work item: ", err);
+    });
 
     // get all users for this project -> expected an array
     let users = await projectInfo.getUsers().catch(err => console.error("Error getting the users: ", err)) || [];

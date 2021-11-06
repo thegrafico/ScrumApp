@@ -158,9 +158,9 @@ projectSchema.methods.getWorkItems = async function(toObject=false) {
 };
 
 /**
- * Get all work items from the project 
- * @param {String} -> workItemId
- * @returns {Array} - array of object  -> []
+ * Get work item by id
+ * @param {String} workItemId -> id of the work item
+ * @returns {Object} - work item
  */
 projectSchema.methods.getWorkItem = async function(workItemId) {
 
@@ -176,6 +176,39 @@ projectSchema.methods.getWorkItem = async function(workItemId) {
     
     // TODO: verify if workItems has something
     return workItem;
+};
+
+/**
+ * Get work item by Item Id 
+ * @param {String} itemId - itemid of the work item
+ * @returns {Promise} - work item
+ */
+projectSchema.methods.getWorkItemByItemId = async function(itemId) {
+    
+    const projectId = this["_id"];
+
+    return new Promise(async function(resolve, reject){
+
+        // Verify if the param is a string and not empty
+        if (_.isUndefined(itemId) || _.isEmpty(itemId)  || isNaN(itemId) || _.isUndefined(projectId) || _.isEmpty(projectId)){
+            return reject("Invalid parameters were received");
+        }
+        
+        let error = null;
+        const workItem = await workItemCollection.findOne(
+            {"projectId": projectId, "itemId": parseInt(itemId)}
+        ).catch(err =>{
+            console.error("Error getting work items: ", err);
+            error = err;
+        });
+        
+        
+        if (error){
+            return reject(error);
+        }
+
+        return resolve(workItem || []);
+    });
 };
 
 /**

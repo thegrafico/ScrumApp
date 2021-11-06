@@ -387,7 +387,8 @@ function updateDataList(field, selector){
     const DATALIST = `#${dataListInput}-datalist`;
     const FIELDS = arrayToObject(Object.keys(QUERY_FIELD));
     // clean the datalist
-    $(DATALIST).empty();
+    cleanElement(DATALIST)
+
     $(`#${dataListInput}`).attr("list", '');
 
     switch (field) {

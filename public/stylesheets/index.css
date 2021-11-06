@@ -277,3 +277,22 @@ nav>a {
 .option-container{
     margin-bottom: 2%;
 }
+
+.remove-arrow-select::-ms-expand{
+    display: none;
+
+}
+
+.right-sidebar-submit-btn-container{
+    display: inline-block;
+    width: 30%;
+}
+
+.right-sidebar-submit-btn-container button{
+    width: 100%;
+}
+
+.right-sidebar-submit-btn-container{
+    margin-left: 10% !important;
+}
+

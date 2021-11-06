@@ -180,7 +180,7 @@ html,body {
 .addLink{
     font-size: 0.9em;
 }
-.addLink i{
+.addLink .open-add-links-options i{
     color: green;
     font-size: 1em;
 }

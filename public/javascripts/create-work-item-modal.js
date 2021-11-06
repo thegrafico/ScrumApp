@@ -4,6 +4,8 @@
 */
 // =========== This function is fire as soon as the file is loaded after the HTML ===========
 $(function () {
+    const CREATE_WORK_ITEM_RELATIONSHIP_ID = `${WORK_ITEM["relationship_container"]} .relationship-workitem-id`;
+
 
     // ============== SELECT 2 ===================
     $(WORK_ITEM["user"]).select2();
@@ -46,6 +48,7 @@ $(function () {
             storyPoints : $(WORK_ITEM["points"]).val(),
             priorityPoints : $(WORK_ITEM["priority"]).val(),
             tags :getTags(WORK_ITEM),
+            links: $(CREATE_WORK_ITEM_RELATIONSHIP_ID).map((_,element) => element.value).get(),
         };
 
         let {response, response_error} = await createWorkItem(workItemRequest);
@@ -74,6 +77,9 @@ $(function () {
         $(WORK_ITEM["team"]).select2('close');
         $(WORK_ITEM["sprint"]).select2('close');
         $(WORK_ITEM["priority"]).select2('close');
+
+        // In case right side is open
+        $(RIGHT_SIDE_NAVBAR_ID).hide("slow");
     });
 
 });

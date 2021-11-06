@@ -52,6 +52,7 @@ module.exports = {
             "/javascripts/api-calls/api-work-items.js",
             "/javascripts/api-calls/api-teams.js",
             "/javascripts/api-calls/api-users.js",
+            "/javascripts/right-sidebar.js",
         ]
     },
     backlogPath: {
@@ -74,6 +75,7 @@ module.exports = {
             "/javascripts/api-calls/api-work-items.js",
             "/javascripts/api-calls/api-teams.js",
             "/javascripts/api-calls/api-users.js",
+            "/javascripts/right-sidebar.js",
         ]
     },
     sprintPath: {
@@ -98,6 +100,7 @@ module.exports = {
             "/javascripts/api-calls/api-work-items.js",
             "/javascripts/api-calls/api-teams.js",
             "/javascripts/api-calls/api-users.js",
+            "/javascripts/right-sidebar.js",
         ]
     },
 
@@ -118,7 +121,7 @@ module.exports = {
             "/javascripts/api-calls/api-work-items.js",
             "/javascripts/api-calls/api-teams.js",
             "/javascripts/api-calls/api-users.js",
-
+            "/javascripts/right-sidebar.js",
         ]
     },
 
@@ -142,7 +145,7 @@ module.exports = {
             "/javascripts/api-calls/api-work-items.js",
             "/javascripts/api-calls/api-teams.js",
             "/javascripts/api-calls/api-users.js",
-
+            "/javascripts/right-sidebar.js",
         ]
     },
 
@@ -189,6 +192,7 @@ module.exports = {
             "/javascripts/api-calls/api-teams.js",
             "/javascripts/api-calls/api-users.js",
             "/javascripts/api-calls/api-queries.js",
+            "/javascripts/right-sidebar.js",
         ]
     },
 }

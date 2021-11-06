@@ -198,6 +198,17 @@ module.exports.USER_PRIVILEGES = {
     "PRODUCT_OWNER": "Product Owner",
 };
 
+
+const WORK_ITEM_RELATIONSHIP = {
+    RELATED:        {value: 1, text: "Is Related to",   title: "Related"},
+    CHILD:          {value: 2, text: "Is Child of",     title: "Child"}, 
+    PARENT:         {value: 3, text: "Is Parent of",    title: "Parent"}, 
+    DUPLICATE:      {value: 4, text: "Is Duplicate by", title: "Duplicate by"}, 
+    BLOCKED:        {value: 5, text: "Is Blocked By",   title: "Blocked by"},
+    DUPLICATE_FROM: {value: 6, text: "Is Duplicating",  title: "Duplicating"},
+    BLOCKING:       {value: 7, text: "Is Blocking",     title: "Bloking"}
+};
+module.exports.WORK_ITEM_RELATIONSHIP = WORK_ITEM_RELATIONSHIP;
 // ===================================
 
 
@@ -835,3 +846,39 @@ function setupProjectInitials(project, colorIndex=3){
     project["initialsColors"] = PROJECT_INITIALS_COLORS[colorIndex];
 }
 module.exports.setupProjectInitials = setupProjectInitials;
+
+
+/**
+ * Base on the relationship, set a new relationship for the work item
+ * @param {String} relationship 
+ * @returns 
+ */
+function getRelationShipForWorkItem(relationship){
+    
+    const RELATIONSHIP = arrayToObject(Object.keys(WORK_ITEM_RELATIONSHIP));
+
+    let newRelationship = relationship;
+    switch (relationship) {
+
+        // If the relationship is child, then this work item is the parent
+        case RELATIONSHIP["CHILD"]:
+            newRelationship = RELATIONSHIP["PARENT"];
+            break;
+        // If the relationship is parent, then this work item is the child
+        case RELATIONSHIP["PARENT"]:
+            newRelationship = RELATIONSHIP["CHILD"];
+            break;
+        // If the relationship is duplicate by, then this work item is the duplicate from
+        case RELATIONSHIP["DUPLICATE"]:
+            newRelationship = RELATIONSHIP["DUPLICATE_FROM"];
+            break;
+        // If the relationship is Blocked by, then this work item is the one blocking
+        case RELATIONSHIP["BLOCKED"]:
+            newRelationship = RELATIONSHIP["BLOCKING"];
+            break;
+        default:
+            break;
+    }
+    return newRelationship;
+}
+module.exports.getRelationShipForWorkItem = getRelationShipForWorkItem;

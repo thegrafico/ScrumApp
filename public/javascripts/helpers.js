@@ -242,7 +242,7 @@ function cleanModal(element) {
     $(spanTitleMsg).removeClass("d-none");
 
     // reset assigned user
-    $(element["user"]).val(0);
+    $(element["user"]).val(0).trigger("change");
 
     // reset tags
     $(`${element["tag_container"]} span`).remove();
@@ -263,7 +263,8 @@ function cleanModal(element) {
     // reset discussion
     $(element["discussion"]).val("");
 
-    // TODO: reset links
+    // reset links
+    $(RELATIONSHIP_WORK_ITEM_CONTAINER).empty();
     // TODO: reset type
     // TODO: reset team depending on the user's team
     // TODO: reset sprint depending on the current sprint
@@ -2118,6 +2119,14 @@ function cleanAndaddDefaultToSelect(selectId, text) {
 }
 
 /**
+ * Clean an element using the selector
+ * @param {String} selector 
+ */
+function cleanElement(selector){
+    $(selector).empty();
+}
+
+/**
  * Remove the disabled attribute from the select option
  * @param {String} selector - Selector element
  */
@@ -2226,5 +2235,39 @@ function setUpRemoveModal(data){
  */
 function closeModal(modalId){
     $(`${modalId} .close`).click();
+}
+
+/**
+ * Base on the relationship, set a new relationship for the work item
+ * @param {String} relationship 
+ * @returns 
+ */
+function getRelationShipForWorkItem(relationship){
+    
+    const RELATIONSHIP = arrayToObject(Object.keys(WORK_ITEM_RELATIONSHIP));
+
+    let newRelationship = relationship;
+    switch (relationship) {
+
+        // If the relationship is child, then this work item is the parent
+        case RELATIONSHIP["CHILD"]:
+            newRelationship = RELATIONSHIP["PARENT"];
+            break;
+        // If the relationship is parent, then this work item is the child
+        case RELATIONSHIP["PARENT"]:
+            newRelationship = RELATIONSHIP["CHILD"];
+            break;
+        // If the relationship is duplicate by, then this work item is the duplicate from
+        case RELATIONSHIP["DUPLICATE"]:
+            newRelationship = RELATIONSHIP["DUPLICATE_FROM"];
+            break;
+        // // If the relationship is Blocked by, then this work item is the one blocking
+        // case RELATIONSHIP["BLOCKED"]:
+        //     newRelationship = RELATIONSHIP["BLOCKING"];
+        //     break;
+        default:
+            break;
+    }
+    return newRelationship;
 }
 

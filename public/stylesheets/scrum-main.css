@@ -237,7 +237,7 @@ a:hover {
 }
 
 
-#workItemTable td {
+#workItemTable td, .work-item-relationship-name-container {
     /* border: 2px solid #000; */
     /* width: 60px; */
     overflow: hidden;
@@ -594,4 +594,76 @@ td.off{
 .trash-btn:focus{
     outline: none;
     outline-color: none;
+}
+
+.work-item-relationship-status-container{
+    opacity: .7;
+    font-size: .8em;
+}
+
+.work-item-relationship-name-container, .work-item-relationship-status-container{
+    margin-left: 1rem;
+}
+
+#right-sidebar{
+    position: absolute; 
+    right: 0; 
+    width: 15%; 
+    height: 100%; 
+    background-color: #444; 
+    z-index: 1000000;
+}
+
+.right-sidebar-title{
+    margin-top: 1rem;
+    text-align: center;
+    font-size: 1.3em;
+    font-weight: bold;
+    padding-left: 1rem;
+    padding-right: 1rem;
+}
+
+.right-sidebar-title p{
+    border-bottom: .5px solid gray;
+    
+}
+
+.right-sidebar-inputs-container{
+    width: 85%;
+    margin-left: 7.5%;
+}
+
+#work-item-relationship{
+    border: 1px solid gray;
+    border-bottom: 1px solid gray !important;
+}
+
+#work-item-relationship:focus{
+    outline: none;
+    outline-color: transparent;
+}
+
+.work-item-relationship-container {
+    height: 20vh !important;
+    width: 90% !important;
+    position: absolute;
+    overflow-y: scroll;  
+}
+
+.remove-relationship-btn:hover{
+    cursor: pointer;
+    opacity: .5;
+}
+
+.remove-relationship-btn{
+    position: absolute;
+    right: 0;
+    /* right: 1rem; */
+}
+.remove-relationship-btn i{
+    color: rgba(255, 255, 255, 0.637) !important;
+}
+
+.related-workitem{
+    width: 80% !important;
 }

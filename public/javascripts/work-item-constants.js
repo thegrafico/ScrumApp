@@ -29,14 +29,19 @@ const WORK_ITEM = {
     btn_add_tags: "#addTagBtn",
     btn_remove_tag: ".rmTag",
     number_of_comments: "#numberOfCommentSpan",
+    subId: null,
+    btn_remove_relationship: ".remove-relationship-btn",
 
     // CONTAINERS
     tag_container: ".tagsContainer",
     tag_template: TAG_TEMPLATE,
+    relationship_container : ".create-work-item-relationship-container",
 
     // Modal Id
     modal_id :".createNewItemModal",
 
+    // ADD LINK
+    add_link: ".open-add-links-options"
 };
 
 // same as work item but for the update part
@@ -63,19 +68,26 @@ const UPDATE_WORK_ITEM = {
     btn_remove_tag: ".rmTag",
     subId: "#update-work-item-sub-id",
     number_of_comments: "#update-number-of-comments",
+    btn_remove_relationship: ".remove-relationship-btn",
 
     current_type: "#update-current-type",
     current_status: "#update-current-work-item-status",
 
-
     // CONTAINERS
     tag_container: ".update-tags-container",
     tag_template: UPDATE_TAG_TEMPLATE,
+    relationship_container: ".update-work-item-relationship-container",
 
     // Modal Id
     modal_id: ".work-item-information",
 
+    // ADD LINK
+    add_link: ".open-add-links-options"
 };
+
+// attribute for the work item id
+const ATTR_WORK_ITEM_ID = "data-workitem-id";
+const ATTR_WORK_ITEM_NAME = "data-workitem-name";
 
 // create work item submit btn
 const CREATE_WORK_ITEM_SUBMIT_BTN = "#create-work-item-submit-btn";
@@ -118,6 +130,20 @@ const WORK_ITEM_STATUS_COLORS = {
     "Abandoned":    {"class": "abandonedColor"}
 };
 // =============================
+
+// to keep track which modal is open for the user
+const WORK_ITEM_MODALS = {
+    create: {
+        value: "create", 
+        container: ".create-work-item-relationship-container",
+        workItemTeamId: null, // Create work item does not have id
+    },
+    update: {
+        value: "update", 
+        container: ".update-work-item-relationship-container",
+        workItemTeamId: UPDATE_WORK_ITEM["subId"]
+    }
+}
 
 const CREATE_WORK_ITEM_MODAL = "#create-work-item-modal";
 const CREATE_WORK_ITEM_CLOSE_BTN = "#close-create-work-item";
@@ -328,6 +354,21 @@ const PRIORITY_POINTS = {
     "High": 3,
     "Highest": 4,
     "Critical": 5,
+};
+
+// RIGHT SIDE NAVBAR
+const RIGHT_SIDE_NAVBAR_ID = "#right-sidebar";
+// RELATIONSHIP WORK ITEM ID HIDDEN INPUT
+const RELATIONSHIP_WORK_ITEM_ID = ".relationship-workitem-id";
+const RELATIONSHIP_WORK_ITEM_CONTAINER = ".work-item-relationship-container";
+const WORK_ITEM_RELATIONSHIP = {
+    RELATED:        {value: 1, text: "Is Related to",   title: "Related"},
+    CHILD:          {value: 2, text: "Is Child of",     title: "Child"}, 
+    PARENT:         {value: 3, text: "Is Parent of",    title: "Parent"}, 
+    DUPLICATE:      {value: 4, text: "Is Duplicate by", title: "Duplicate by"}, 
+    BLOCKED:        {value: 5, text: "Is Blocked By",   title: "Blocked by"},
+    DUPLICATE_FROM: {value: 6, text: "Is Duplicating",  title: "Duplicating"},
+    BLOCKING:       {value: 7, text: "Is Blocking",     title: "Bloking"}
 };
 
 // =========== QUERY DATA ===========
