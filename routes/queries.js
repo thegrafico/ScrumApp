@@ -96,6 +96,7 @@ router.get("/:id/queries", middleware.isUserInProject, async function (req, res)
         "queryOperator": QUERY_OPERATOR,
         "queryFields": QUERY_FIELD,
         "userQueries": userQueries["queries"] || [],
+        "showCreateWorkItemModal": true,
     };
 
     res.render("queries", params);

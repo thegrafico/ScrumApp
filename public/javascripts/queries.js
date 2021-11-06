@@ -132,11 +132,11 @@ $(function () {
             $(TELESCOPE_IMAGE_SHOW_RESULTS).addClass("d-none");
 
             // add all work items to table
-            appendToWotkItemTable(response["workItems"]);
+            appendToWotkItemTable(response["workItems"], 0, true, false);
+
 
             // show the table
             $(WORK_ITEM_TABLE_CONTAINER).removeClass("d-none");
-
 
             const numberOfWorkItemsFound = response["workItems"].length;
 

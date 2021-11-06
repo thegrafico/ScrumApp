@@ -13,7 +13,6 @@ $(function () {
     $(document).on("click", OPEN_WORK_ITEM_MODAL, function(event){
         // check if the ctrl key is pressed while the element is also pressed
         let ctrlIsPressed = event.metaKey | event.trlKey;
-
         // Open the modal if the user is not pressing clrt
         if (!ctrlIsPressed){   
             // prevent the link to open in another tab
@@ -95,7 +94,6 @@ async function populateWorkItemModal(workItemId){
     const status = workItem["status"];
     $(`${UPDATE_WORK_ITEM["btn_change_status"]} span.${status}`)[0].click();
     
-    // TYPE
     let type = workItem["type"];
     $(`${UPDATE_WORK_ITEM["btn_change_type"]} span.${type}`)[0].click();
 
