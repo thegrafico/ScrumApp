@@ -77,6 +77,7 @@ const UPDATE_WORK_ITEM = {
     tag_container: ".update-tags-container",
     tag_template: UPDATE_TAG_TEMPLATE,
     relationship_container: ".update-work-item-relationship-container",
+    type_container: "#update-work-item-type-container",
 
     // Modal Id
     modal_id: ".work-item-information",

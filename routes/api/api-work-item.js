@@ -554,15 +554,24 @@ router.post("/api/:id/updateWorkItem/:workItemId", middleware.isUserInProject, a
     const currentLinks = workItem["links"];
 
     // in case only updating the status
-    let UPDATING_ONLY_STATUS = (Object.keys(req.body).length == 1 && req.body["status"] != undefined);
+    const UPDATING_ONLY_STATUS = (Object.keys(req.body).length == 1 && status != undefined);
+    const UPDATING_ONLY_LINKS =  (Object.keys(req.body).length == 1 && links != undefined && _.isArray(links));
 
     // validate work item is not completed yet
-    if (workItem["status"] === WORK_ITEM_STATUS["Completed"] && !UPDATING_ONLY_STATUS){
-        response["msg"] = "Sorry, Completed work items cannot be edited. Still you can add comments to it.";
-        res.status(400).send(response);
-        return;
+    if (!status){
+        if (workItem["status"] === WORK_ITEM_STATUS["Completed"] && !UPDATING_ONLY_STATUS && !UPDATING_ONLY_LINKS){
+            response["msg"] = "Sorry, Completed work items cannot be edit unless status is changed";
+            res.status(400).send(response);
+            return;
+        }
+    }else{
+        if (workItem["status"] === WORK_ITEM_STATUS["Completed"] && !UPDATING_ONLY_STATUS && status != WORK_ITEM_STATUS["Completed"] && !UPDATING_ONLY_LINKS){
+            response["msg"] = "Sorry, Completed work items cannot be edit unless status is changed";
+            res.status(400).send(response);
+            return;
+        }
     }
-
+    
     let addUserToTeam = false;
     let updateValues = {};
 
@@ -576,13 +585,23 @@ router.post("/api/:id/updateWorkItem/:workItemId", middleware.isUserInProject, a
         
         // verify if the user was selected to unnasigned
         if (assignedUser == UNASSIGNED._id){
-
-            // check if there is any user, if not, return error;
-            if (workItem["status"] === WORK_ITEM_STATUS["Completed"]){
-                response["msg"] = "Sorry, Work Item cannot be completed without an user assigned.";
-                res.status(400).send(response);
-                return;
+            
+            if (!status){
+                // check if there is any user, if not, return error;
+                if (workItem["status"] === WORK_ITEM_STATUS["Completed"]){
+                    response["msg"] = "Sorry, Work Item cannot be completed without an user assigned.";
+                    res.status(400).send(response);
+                    return;
+                }
+            }else{
+                // check if there is any user, if not, return error;
+                if (workItem["status"] === WORK_ITEM_STATUS["Completed"] && status != WORK_ITEM_STATUS["Completed"]){
+                    response["msg"] = "Sorry, Work Item cannot be completed without an user assigned.";
+                    res.status(400).send(response);
+                    return;
+                }
             }
+            
 
             updateValues["assignedUser"] = {name: UNASSIGNED.name};
 

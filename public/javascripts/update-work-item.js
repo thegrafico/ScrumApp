@@ -196,11 +196,12 @@ $(function () {
 
             // Sending the request 
             let {response, response_error} = await updateWorkItem(workItemId, workItemValuesToUpdate);
-            console.log(response);
+
             // Success message
             if (response){
                 $.notify(response.msg, "success");
 
+                makeWorkItemUpdatableIfNotCompleted(UPDATE_WORK_ITEM, response["workItem"]["status"] == WORK_ITEM_STATUS["Completed"]);
 
                 // in case we're in the sprint board page
                 if ($(CURRENT_PAGE_ID).val() === "sprintBoard"){

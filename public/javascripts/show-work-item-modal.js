@@ -190,21 +190,69 @@ async function populateWorkItemModal(workItemId){
 
     let isCompletedWorkItem = (status == "Completed");
 
-    makeWorkItemUpdatable(isCompletedWorkItem);
+    makeWorkItemUpdatableIfNotCompleted(UPDATE_WORK_ITEM, isCompletedWorkItem);
 }
 
 /**
  * Make the work item updatable, meaning it can be update. 
  * @param {Boolean} makeItUpdatable - if true work item can be saved. 
  */
-function makeWorkItemUpdatable(makeItUpdatable){
-    // ASSIGNED USER
-    if (makeItUpdatable){
-        $(SAVE_UPDATE_WORK_ITEM_BTN).addClass("d-none");
+function makeWorkItemUpdatableIfNotCompleted(workItemInputs, workItemIsCompleted){
+
+    const disabledClass = "addDisabled";
+    const addDisabledAttr = [
+        workItemInputs["title"],
+        workItemInputs["user"],
+        workItemInputs["btn_add_tags"],
+        workItemInputs["team"],
+        workItemInputs["sprint"],
+        workItemInputs["description"],
+        workItemInputs["points"],
+        workItemInputs["priority"],
+    ];
+
+    const select2Ids = [
+        workItemInputs["current_type"],
+        "#select2-update-assigned-user-container",
+        "#select2-update-work-item-team-container",
+        "#select2-update-work-item-sprints-container",
+        "#select2-update-work-item-priority-container"
+    ];
+
+    // disabled the work item if is completed 
+    if (workItemIsCompleted){
+        
+        // Add the disabled attribute
+        for (let input of addDisabledAttr){
+            $(input).attr("disabled", true);
+            $(input).addClass(disabledClass);
+        }
+
+        // since type is a custom input, we need to disabled this way
+        $(workItemInputs["type_container"]).find(".dropdown-menu").addClass("d-none")
+
+        // add css style class to select2 elements
+        for (let input of select2Ids){
+            $(input).addClass(disabledClass);
+        }
+       
         $(COMPLETED_WORK_ITEM_MESSAGE).removeClass("d-none");
-    }else{
+    }else{ // the work item is not completed
+     
+        // remove the disabled attribute
+        for (let input of addDisabledAttr){
+            $(input).attr("disabled", false);
+            $(input).removeClass("addDisabled");
+        }
+
+        // since type is a custom input, we need to disabled this way
+        $(workItemInputs["type_container"]).find(".dropdown-menu").removeClass("d-none")
+
+        // remove css style class to select2 elements
+        for (let input of select2Ids){
+            $(input).removeClass(disabledClass);
+        }
         $(COMPLETED_WORK_ITEM_MESSAGE).addClass("d-none");
-        $(SAVE_UPDATE_WORK_ITEM_BTN).removeClass("d-none");
     }
 }
 

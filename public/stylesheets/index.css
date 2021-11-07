@@ -296,3 +296,7 @@ nav>a {
     margin-left: 10% !important;
 }
 
+.addDisabled:hover{
+    cursor:not-allowed !important;
+}
+
