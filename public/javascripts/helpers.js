@@ -423,18 +423,18 @@ function appendToWotkItemTable(workItems, index = null, showIfSprint = true, rem
 
 
         // ORDER
-        let order = `<td class="orderColumn">${i+1}</td>`;
+        let order = `<td class="orderColumn"> <span> ${i+1} </span></td>`;
         headers_object["order"] = order;
 
 
         // ID
-        let id = `<td class="tableColumnID"> ${workItem['itemId']}</td>`;
+        let id = `<td class="tableColumnID"> <span> ${workItem['itemId']} </span></td>`;
         headers_object["id"] = id;
 
 
         // TYPE
         let type = `
-            <td class="d-none"> <i class="fas  ${WORK_ITEM_ICONS[workItems[i]['type']].icon}"></i> ${workItem['type']}</td>
+            <td class="d-none"> <i class="fas  ${WORK_ITEM_ICONS[workItems[i]['type']].icon}"></i> <span>${workItem['type']} </span> </td>
         `;
         headers_object["type"] = type;
 
@@ -443,7 +443,7 @@ function appendToWotkItemTable(workItems, index = null, showIfSprint = true, rem
             <td class="openStory">
                 <a href="/dashboard/${workItem["projectId"]}/planing/workitems/${workItem['_id']}" class="open-existing-work-item-modal" target="_blank" rel="${workItem['_id']}">
                     <i class="fas  ${WORK_ITEM_ICONS[workItems[i]['type']].icon}"></i> 
-                    ${workItem['title']} 
+                    <span> ${workItem['title']} </span>
                 </a> 
             </td>
         `;
@@ -469,14 +469,14 @@ function appendToWotkItemTable(workItems, index = null, showIfSprint = true, rem
 
         // STATUS
         let state = `
-            <td><i class="fa fa-circle ${workItem['status']}Color" aria-hidden="true"></i> ${workItem['status']}</td>
+            <td><i class="fa fa-circle ${workItem['status']}Color" aria-hidden="true"></i> <span> ${workItem['status']} </span></td>
         `;
         headers_object["state"] = state;
 
         // TEAM
         if (workItem["team"] && workItem["team"]["name"]) {
             let team = `
-                <td class="teamColumnName ${workItem["team"]["_id"]}"> ${workItem["team"]["name"]}</td>
+                <td class="teamColumnName ${workItem["team"]["_id"]}"> <span> ${workItem["team"]["name"]} </span></td>
             `;
             headers_object["team"] = team;
         }
@@ -485,7 +485,7 @@ function appendToWotkItemTable(workItems, index = null, showIfSprint = true, rem
         if (workItem["sprint"] && workItem["sprint"]["name"]) {
             let iteration = `
                 <td class="sprintColumnName ${workItem['sprint']['_id']}"> 
-                    ${workItem["sprint"]["name"]}
+                    <span> ${workItem["sprint"]["name"]} </span>
                 </td>
             `;
             headers_object["iteration"] = iteration;
@@ -515,7 +515,7 @@ function appendToWotkItemTable(workItems, index = null, showIfSprint = true, rem
 
         // POINTS
         let points = `
-            <td class="storyPointsRow ${workItem['status']}">${workItem['storyPoints']}</td>
+            <td class="storyPointsRow ${workItem['status']}"> <span> ${workItem['storyPoints']} </span></td>
         `;
         headers_object["points"] = points;
 
@@ -644,10 +644,12 @@ function addWorkItemToBoard(workItem, index) {
     
     <div class="card border-dark mb-3" style="max-width: 20rem;" id="${id}">
         <div class="card-header">
-            <span class="table-icon"> 
+            <span class="table-icon mr-1"> 
                 <i class="fas ${icon}"></i> 
             </span> 
-            ID: ${workItem["itemId"]}
+            <span>
+                ID: ${workItem["itemId"]}
+            </span>
         </div>
         <div class="card-body">
             <h4 class="card-title">

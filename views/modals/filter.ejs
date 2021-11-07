@@ -4,7 +4,7 @@
     <div class="col-8">
 
         <% if (workItems != null) { %>
-        <div class="p-2 pr-2 pb-2">
+        <div class="p-2 pr-2 pb-2 filter-text">
 
             <!-- Total number of work items -->
             <button type="button" class="btn btn-outline-light btn-sm invisible feedbackWorkItemBtn" id="totalNumberOfWorkItemsBtn"> 
@@ -12,18 +12,18 @@
 
             <!-- Active work Items -->
             <button type="button" class="btn btn-outline-info btn-sm invisible feedbackWorkItemBtn" id="activeWorkItemsBtn"> 
-                <span id="numberOfActiveWorkItems"></span> Active
+                <span id="numberOfActiveWorkItems"></span> <span> Active</span>
             </button>
 
             <!-- IN REVIEW work items -->
             <button type="button" class="btn btn-outline-warning btn-sm invisible feedbackWorkItemBtn" id="reviewWorkItemsBtn"> 
-                <span id="numberOfReviewWorkItems"></span> In Review
+                <span id="numberOfReviewWorkItems"></span> <span> In Review </span>
             </button>
 
             <% if (showCompletedWorkItems) { %>
                 <!-- Completed work items -->
                 <button type="button" class="btn btn-outline-success btn-sm invisible feedbackWorkItemBtn" id="completedWorkItemsBtn"> 
-                    <span id="numberOfCompletedWorkItems"></span> Completed
+                    <span id="numberOfCompletedWorkItems"></span> <span> Completed </span>
                 </button>
 
                 <!-- TOTAL POINTS -->
@@ -37,7 +37,7 @@
 
     </div>
 
-    <div class="col-4 d-flex flex-row-reverse table-filter-container">
+    <div class="col-4 d-flex flex-row-reverse table-filter-container filter-text">
 
         <% if (projectTeams.length > 1){ %>
             <!-- TEAMS -->
@@ -47,7 +47,7 @@
                     
                     <button type="button" class="btn btn-primary dropdown-toggle btn-sm" data-toggle="dropdown"
                         id="filter-btn-team">
-                        Team
+                        <span> Team </span>
                     </button>
 
                     <ul class="dropdown-menu filterOptions" id="filter-by-teams">
@@ -56,13 +56,15 @@
                             <li id="<%=projectTeams[i]['id']%>">
                                 <label class="small checkbox-container">
                                     <input class="teamCheckbox" type="checkbox" value="<%=projectTeams[i]['name']%>" />
-                                    <%=projectTeams[i]['name']%>
+                                    <span> <%=projectTeams[i]['name']%> </span>
                                 </label>
                             </li>
                         <%}%>
 
                         <div class="d-flex flex-row-reverse filterDivisor">
-                            <button type="button" class="btn btn-secondary btnClear" id="clearTeam">Clear</button>
+                            <button type="button" class="btn btn-secondary btnClear" id="clearTeam">
+                               <span> Clear</span>
+                            </button>
                         </div>
                     </ul>
                             
@@ -85,13 +87,16 @@
                         <li>
                             <label class="small checkbox-container">
                                 <input class="stateCheckBox" type="checkbox" value="<%=key%>" />&nbsp; <i
-                                    class="fa fa-circle <%=value['class']%>" aria-hidden="true"></i> <%=key%>
+                                    class="fa fa-circle <%=value['class']%>" aria-hidden="true"></i>  
+                                    <span><%=key%></span>
                             </label>
                         </li>
                     <%}%>
 
                     <div class="d-flex flex-row-reverse filterDivisor">
-                        <button type="button" class="btn btn-secondary btnClear" id="clearState">Clear</button>
+                        <button type="button" class="btn btn-secondary btnClear" id="clearState">
+                            <span> Clear </span>
+                        </button>
                     </div>
                 </ul>
             </div>
@@ -102,8 +107,8 @@
         <div class="p-2 pb-2">
 
             <div class="button-group">
-                <button type="button" class="btn btn-primary dropdown-toggle btn-sm" data-toggle="dropdown" id="filter-btn-user">
-                    Assigned User
+                <button type="button" class="btn btn-primary dropdown-toggle btn-sm filter-text-btn" data-toggle="dropdown" id="filter-btn-user">
+                    <span> Assigned User </span>
                 </button>
 
                 <ul class="dropdown-menu filterOptions" id="filter-by-user">
@@ -113,13 +118,15 @@
                             <!-- TODO: add width on user if case user name is to big -->
                             <label class="small checkbox-container">
                                 <input type="checkbox" data-id="<%=user['id']%>" class="userCheckbox" value="<%=user['name']%>" />&nbsp;
-                                <%=user['name']%>
+                               <span> <%=user['name']%> </span>
                             </label>
                         </li>
                     <%}%>
 
                     <div class="d-flex flex-row-reverse filterDivisor">
-                        <button type="button" class="btn btn-secondary btnClear" id="clearUser">Clear</button>
+                        <button type="button" class="btn btn-secondary btnClear" id="clearUser">
+                            <span> Clear</span>
+                        </button>
                     </div>
                 </ul>
             </div>
@@ -130,7 +137,7 @@
         <div class="p-2 pb-2">
             <div class="button-group">
                 <button type="button" class="btn btn-primary dropdown-toggle btn-sm" data-toggle="dropdown" id="filter-btn-type">
-                    Type 
+                    <span> Type </span>
                 </button>
 
                 <ul class="dropdown-menu filterOptions" id="filter-by-type">
@@ -140,13 +147,16 @@
                             <li class="clearType">
                                 <label class="small checkbox-container">
                                     <input type="checkbox" class="typeCheckBox" value="<%=key%>" />&nbsp; <i
-                                        class="fas <%=workItemType[key].icon%> small-fas"></i> <%=key%>
+                                        class="fas <%=workItemType[key].icon%> small-fas"></i> 
+                                    <span> <%=key%> </span>
                                 </label>
                             </li>
                             <%}%>
 
                     <div class="d-flex flex-row-reverse filterDivisor">
-                        <button type="button" class="btn btn-secondary btnClear" id="clearType">Clear</button>
+                        <button type="button" class="btn btn-secondary btnClear" id="clearType">
+                            <span>Clear</span>
+                        </button>
                     </div>
                 </ul>
             </div>

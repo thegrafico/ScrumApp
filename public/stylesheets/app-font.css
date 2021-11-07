@@ -1,0 +1,70 @@
+@font-face {
+    font-family: mochyFont;
+    src: url(./fonts/mochy-font/MochiyPopPOne-Regular.ttf);
+}
+
+/* ========== DONGLE =============== */
+@font-face {
+    font-family: dongleRegular;
+    src: url(./fonts/Dongle/Dongle-Regular.ttf);
+}
+
+@font-face {
+    font-family: dongleBold;
+    src: url(./fonts/Dongle/Dongle-Bold.ttf);
+}
+
+@font-face {
+    font-family: dongleLight;
+    src: url(./fonts/Dongle/Dongle-Light.ttf);
+}
+/* ========= UBUNTU ========== */
+@font-face {
+    font-family: ubuntu;
+    src: url(./fonts/Ubuntu/Ubuntu-Medium.ttf);
+}
+
+p, h1, h2, h3, h4, h5, span, li, ul, input, a, td, th, tr, table, button, textarea, select, option{
+    font-family: ubuntu !important;
+}
+
+/*  ======== WORK ITEM TABLE ========= */
+#workItemTable th{
+    font-size: 1.25em;
+}
+
+#workItemTable td{
+    font-size: 1.1em;
+}
+
+/*  ======== WORK ITEM TABLE END ========= */
+
+/* Header and statistics title */
+#createWorkItem, #manage-table th, #managesSprintTable th, .big-text, .statistics-title, .fa-filter, .filterByTeamContainer, .filterBySprintContainer, .navbarQueryContainer, #addUserBtn{
+    font-size: 1.3em !important;
+}
+
+.status-list, #projectDescription, #number-of-members-text{
+    font-size: 1.2em !important;
+}
+
+#box-title-title{
+    font-size: 1.5em !important;
+}
+
+.statistics-title{
+    font-weight: bold;
+}
+
+.top-navbar-menu a.nav-link, .makeQueryContainer{
+    font-size: 1.2em;
+}
+
+.filter-text button, .filter-text-btn, .board-column .columnTitle{
+    font-size: 1em;
+}
+
+#manage-table tbody, #managesSprintTable tbody{
+    font-size: 1.1em;
+}
+

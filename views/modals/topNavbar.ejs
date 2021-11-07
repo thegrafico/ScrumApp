@@ -18,205 +18,185 @@
             <% if (projectId != undefined) { %>
 
            <li class="nav-item topNavMenuContainer">
-                <div class="collapse navbar-collapse" id="topNavbarOptions">
-                    <ul class="navbar-nav me-auto">
-                    
-                    <!-- PROJECTS  -->
-                    <li class="nav-item dropdown">
-                        <div class="nav-item dropdown">
+                <div class="collapse navbar-collapse" id="topNavbarOptions" style="margin-top: 0; padding-top: 0;">
+                    <ul class="navbar-nav me-auto top-navbar-menu">
+                        
+                        <!-- PROJECTS  -->
+                        <li class="nav-item dropdown">
+                            <div class="nav-item dropdown">
 
-                            <a class="nav-link dropdown-toggle" 
-                            data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
-                                Projects
-                            </a>
-                            
-                            <div class="user-options-dropdown dropdown-menu" onclick="event.stopPropagation()" 
-                            style="z-index: 10000000;">
-                                
-                                <!-- FAVORITES -->
-
-                                <% if (userFavoriteProjects && userFavoriteProjects.length > 0){ %>
-
-                                    <div class="container-fluid mb-2">
-                                        
-                                        <div class="row" style="margin: 0; padding:0; width: 100%;">
-                                            <span class="notification-title small-title">Favorites</span>
-                                        </div>
-                                    </div>
-                                    
-                                    <% for( let project of userFavoriteProjects) { %>
-                                    
-                                        <a class="dropdown-item med-title" href="/dashboard/<%=project['_id']%>" style="width: 100%;">
-                                            <div class="circle-icon normal-title">
-                                                <%=project["initials"]%>
-                                            </div>
-    
-                                            <span class="dropdown-text normal-title">
-                                                <%=project["title"]%>
-                                            </span>
-        
-                                            <span class="favorite-icon-container">
-                                                <i class="fas fa-star favoriteIconAct"></i>
-                                            </span>
-                                        </a>
-
-                                    <%}%>
-                                <%}%>
-                                    
-                                <!--  END FAVORITE -->
-                                
-                                <% if (userProjects && userProjects.length > 0){ %>
-
-                                <!-- RECENTS -->
-                                <div class="container-fluid mt-2 mb-2">
-                                    
-                                    <div class="row" style="margin: 0; padding:0; width: 100%;">
-                                        <span class="notification-title small-title">Recents</span>
-                                    </div>
-                                </div>
-
-                                    <% for( let i = 0; i < userProjects.length; i++) { %>
-
-                                        <a class="dropdown-item med-title" href="/dashboard/<%=userProjects[i]['_id']%>" style="width: 100%;">
-                                            <div class="circle-icon normal-title">
-                                                <%=userProjects[i]["initials"]%>
-                                            </div>
-        
-                                            <span class="dropdown-text normal-title">
-                                                <%=userProjects[i]["title"]%>
-                                            </span>
-                                        </a>
-
-                                        <!-- Just show two projects -->
-                                        <% if (i > 0) {break;} %>
-                                    <%}%>
-                                <%}%>
-
-                                <div class="dropdown-divider"></div>
-                                <a class="dropdown-item med-title" href="/">
-                                    <i class="fas fa-columns"></i> Dashboard
+                                <a class="nav-link dropdown-toggle" 
+                                data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+                                    Projects
                                 </a>
-
-                                <!-- END RECENTS -->
-                            </div>
-                        </div>
-                    </li>
-                    <!-- EDN PROJECTS -->
-
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Users</a>
-                        <div class="dropdown-menu">
-                            <a class="dropdown-item" href="#" data-toggle="modal" data-target=".add-user-project-modal">Add User</a>
-                            <a class="dropdown-item" href="#" data-toggle="modal" data-target=".delete-user-modal">Remove User</a>
-                            <div class="dropdown-divider"></div>
-                            <a class="dropdown-item" href="/dashboard/<%=projectId%>/manageUsers/">Manage Privilege</a>
-                        </div>
-                    </li>
-
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Teams</a>
-                        <div class="dropdown-menu">
-                            <a class="dropdown-item" href="#" data-toggle="modal" data-target=".create-team-modal">Create Team</a>
-                            <a class="dropdown-item" href="#" data-toggle="modal" data-target=".delete-team-modal">Remove Team</a>
-                            <div class="dropdown-divider"></div>
-                            <a class="dropdown-item" href="/dashboard/<%=projectId%>/manageTeam/">Manage Team</a>
-                        </div>
-                    </li>
-
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Sprints</a>
-                        <div class="dropdown-menu">
-                        <a class="dropdown-item" href="#" data-toggle="modal" data-target=".create-sprint-modal">Create Sprint</a>
-                        <a class="dropdown-item" href="#" data-toggle="modal" data-target=".remove-sprint-modal">Remove Sprint</a>
-                        <div class="dropdown-divider"></div>
-                            <a class="dropdown-item" href="/dashboard/<%=projectId%>/manageSprints/">Manage Sprints</a>
-                        </div>
-                    </li>
-
-                    <!-- MY WORK ITEMS -->
-                    <li class="nav-item dropdown">
-                        <div class="nav-item dropdown">
-
-                            <a class="nav-link dropdown-toggle" 
-                            data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
-                                My Work items
-                            </a>
-                            
-                            <div class="user-options-dropdown dropdown-menu" onclick="event.stopPropagation()" 
-                            style="z-index: 10000000;">
                                 
-                                <!-- ASSIGNED TO ME AND ACTIVE -->
+                                <div class="user-options-dropdown dropdown-menu" onclick="event.stopPropagation()" 
+                                style="z-index: 10000000;">
+                                    
+                                    <!-- FAVORITES -->
 
-                                <% if (userWorkItems && userWorkItems.length > 0){ %>
+                                    <% if (userFavoriteProjects && userFavoriteProjects.length > 0){ %>
 
-                                    <div class="container-fluid mb-2">
+                                        <div class="container-fluid mb-2">
+                                            
+                                            <div class="row" style="margin: 0; padding:0; width: 100%;">
+                                                <span class="notification-title small-title">Favorites</span>
+                                            </div>
+                                        </div>
+                                        
+                                        <% for( let project of userFavoriteProjects) { %>
+                                        
+                                            <a class="dropdown-item med-title" href="/dashboard/<%=project['_id']%>" style="width: 100%;">
+                                                <div class="circle-icon normal-title">
+                                                    <%=project["initials"]%>
+                                                </div>
+        
+                                                <span class="dropdown-text normal-title">
+                                                    <%=project["title"]%>
+                                                </span>
+            
+                                                <span class="favorite-icon-container">
+                                                    <i class="fas fa-star favoriteIconAct"></i>
+                                                </span>
+                                            </a>
+
+                                        <%}%>
+                                    <%}%>
+                                        
+                                    <!--  END FAVORITE -->
+                                    
+                                    <% if (userProjects && userProjects.length > 0){ %>
+
+                                    <!-- RECENTS -->
+                                    <div class="container-fluid mt-2 mb-2">
                                         
                                         <div class="row" style="margin: 0; padding:0; width: 100%;">
-                                            <span class="notification-title small-title">Open Work items</span>
+                                            <span class="notification-title small-title">Recents</span>
                                         </div>
                                     </div>
-                                    
-                                    <% for(let i = 0; i < userWorkItems.length; i++) { %>
-                                    
-                                        <a class="dropdown-item med-title top-navbar-work-item mb-2" href="/dashboard/<%=project['_id']%>/planing/workItems/<%=userWorkItems[i]['_id']%>" style="width: 99%; padding-left: .5rem;">                                            
 
-                                            <div class="top-navbar-work-items-container" style="width: 100%">
+                                        <% for( let i = 0; i < userProjects.length; i++) { %>
 
-                                                <span class="top-navbar-work-item-title">
-                                                    <div class="" style="display: inline-block; width: 5%;text-align: center;">
+                                            <a class="dropdown-item med-title" href="/dashboard/<%=userProjects[i]['_id']%>" style="width: 100%;">
+                                                <div class="circle-icon normal-title">
+                                                    <%=userProjects[i]["initials"]%>
+                                                </div>
+            
+                                                <span class="dropdown-text normal-title">
+                                                    <%=userProjects[i]["title"]%>
+                                                </span>
+                                            </a>
 
-                                                        <span class="table-icon"> 
-                                                            <i class="fas <%=workItemType[userWorkItems[i]['type']].icon%>"></i> 
-                                                        </span> 
-    
-                                                    </div>
-                                                    
-                                                    <span class="dropdown-text top-navbar-work-item-title" style="border-bottom: .5px solid rgba(128, 128, 128, 0.493);">
-                                                        <%=userWorkItems[i]["title"]%>                                                  
-                                                    </span> 
-                                                </span>                                                 
-                                            </div>
-                                        </a>
+                                            <!-- Just show two projects -->
+                                            <% if (i > 0) {break;} %>
+                                        <%}%>
                                     <%}%>
-                                <%}%>
-                                    
-                                <!--  END OF ASSIGNED -->
-                                
 
-                                <!-- MENTIONED -->
-                                <!-- <div class="container-fluid mt-2 mb-2">
-                                    
-                                    <div class="row" style="margin: 0; padding:0; width: 100%;">
-                                        <span class="notification-title small-title">Mentioned</span>
-                                    </div>
+                                    <div class="dropdown-divider"></div>
+                                    <a class="dropdown-item med-title" href="/">
+                                        <i class="fas fa-columns"></i> Dashboard
+                                    </a>
+
+                                    <!-- END RECENTS -->
                                 </div>
-
-
-                                        <a class="dropdown-item med-title" href="/dashboard/userProjects[i]['_id']" style="width: 100%;">
-                                            <div class="circle-icon normal-title">
-                                            </div>
-        
-                                            <span class="dropdown-text normal-title">
-                                            </span>
-                                        </a> -->
-                                    <!-- Just show two projects -->
-                                <!-- END MENTIONED -->
                             </div>
-                        </div>
-                    </li>
-                    <!-- END WORK ITEMS -->
-
-                    <% if (showCreateWorkItemModal){ %>
-                        <li class="nav-item">
-                            <a class="nav-link"
-                            href="#" role="button" 
-                            aria-haspopup="true"
-                            id="createWorkItem"
-                            data-toggle="modal"
-                            data-target=".createNewItemModal"
-                            aria-expanded="false"><i class="fas fa-plus addIcon"></i> Work Item</a>
                         </li>
-                    <% } %>
+                        <!-- EDN PROJECTS -->
+
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Users</a>
+                            <div class="dropdown-menu">
+                                <a class="dropdown-item" href="#" data-toggle="modal" data-target=".add-user-project-modal">Add User</a>
+                                <a class="dropdown-item" href="#" data-toggle="modal" data-target=".delete-user-modal">Remove User</a>
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item" href="/dashboard/<%=projectId%>/manageUsers/">Manage Privilege</a>
+                            </div>
+                        </li>
+
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Teams</a>
+                            <div class="dropdown-menu">
+                                <a class="dropdown-item" href="#" data-toggle="modal" data-target=".create-team-modal">Create Team</a>
+                                <a class="dropdown-item" href="#" data-toggle="modal" data-target=".delete-team-modal">Remove Team</a>
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item" href="/dashboard/<%=projectId%>/manageTeam/">Manage Team</a>
+                            </div>
+                        </li>
+
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Sprints</a>
+                            <div class="dropdown-menu">
+                            <a class="dropdown-item" href="#" data-toggle="modal" data-target=".create-sprint-modal">Create Sprint</a>
+                            <a class="dropdown-item" href="#" data-toggle="modal" data-target=".remove-sprint-modal">Remove Sprint</a>
+                            <div class="dropdown-divider"></div>
+                                <a class="dropdown-item" href="/dashboard/<%=projectId%>/manageSprints/">Manage Sprints</a>
+                            </div>
+                        </li>
+
+                        <!-- MY WORK ITEMS -->
+                        <li class="nav-item dropdown">
+                            <div class="nav-item dropdown">
+
+                                <a class="nav-link dropdown-toggle" 
+                                data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+                                    My Work items
+                                </a>
+                                
+                                <div class="user-options-dropdown dropdown-menu" onclick="event.stopPropagation()" 
+                                style="z-index: 10000000;">
+                                    
+                                    <!-- ASSIGNED TO ME AND ACTIVE -->
+
+                                    <% if (userWorkItems && userWorkItems.length > 0){ %>
+
+                                        <div class="container-fluid mb-2">
+                                            
+                                            <div class="row" style="margin: 0; padding:0; width: 100%;">
+                                                <span class="notification-title small-title">Open Work items</span>
+                                            </div>
+                                        </div>
+                                        
+                                        <% for(let i = 0; i < userWorkItems.length; i++) { %>
+                                        
+                                            <a class="dropdown-item med-title top-navbar-work-item mb-2" href="/dashboard/<%=project['_id']%>/planing/workItems/<%=userWorkItems[i]['_id']%>" style="width: 99%; padding-left: .5rem;">                                            
+
+                                                <div class="top-navbar-work-items-container" style="width: 100%">
+
+                                                    <span class="top-navbar-work-item-title">
+                                                        <div class="" style="display: inline-block; width: 5%;text-align: center;">
+
+                                                            <span class="table-icon"> 
+                                                                <i class="fas <%=workItemType[userWorkItems[i]['type']].icon%>"></i> 
+                                                            </span> 
+        
+                                                        </div>
+                                                        
+                                                        <span class="dropdown-text top-navbar-work-item-title" style="border-bottom: .5px solid rgba(128, 128, 128, 0.493);">
+                                                            <%=userWorkItems[i]["title"]%>                                                  
+                                                        </span> 
+                                                    </span>                                                 
+                                                </div>
+                                            </a>
+                                        <%}%>
+                                    <%}%>
+                                </div>
+                            </div>
+                        </li>
+                        <!-- END WORK ITEMS -->
+
+                        <% if (showCreateWorkItemModal){ %>
+                            <li class="nav-item">
+                                <a class="nav-link"
+                                href="#" role="button" 
+                                aria-haspopup="true"
+                                id="createWorkItem"
+                                data-toggle="modal"
+                                data-target=".createNewItemModal"
+                                aria-expanded="false">
+                                <i class="fas fa-plus addIcon"></i> Work Item</a>
+                            </li>
+                        <% } %>                        
+                    </ul>
                 </div>
            </li >
 
@@ -232,7 +212,7 @@
                     <i class="fas fa-bell pt-1"></i>              
                 </a>
 
-                <div class="user-options-dropdown dropdown-menu dropdown-menu-right" onclick="event.stopPropagation()">
+                <div class="user-options-dropdown dropdown-menu dropdown-menu-right" onclick="event.stopPropagation()" style="z-index: 1000000;">
 
                     <div class="container-fluid">
                         

@@ -12,7 +12,7 @@
         <div id="content" class="p-4 p-md-5 mt-3">
 
             <!-- FILTERS -->
-            <div class="container-fluid statistics-boxs">
+            <div class="container-fluid statistics-boxs mb-2">
                 <nav class="navbar navbar-expand-lg navbar-dark bg-dark pb-2">
 
                     <h5 class="mr-5">Sprint Board</h5>
@@ -110,23 +110,26 @@
             <div class="p-4 container-fluid" id="sprint-board-container">
 
                 <div class="row">
-
-                   <!-- <div class="d-flex flex-row bd-highlight mb-3"> -->
                     
                     <!-- -TODO- WORK ITEMS -->
                     <div class="col-2 board-column" >
                         
-                        <div class="border-status todoColor"> <span class="columnTitle">Todo</span></div>
+                        <div class="border-status todoColor"> 
+                            <span class="columnTitle">Todo</span>
+                        </div>
 
                         <div id="<%=WORK_ITEM_STATUS['New']%>" class="container-column">
 
                             <% for (let workItem of workItems["New"]) { %>
                                 <div class="card border-dark mb-3" style="max-width: 20rem;" id="<%=workItem['_id']%>">
                                     <div class="card-header">
-                                        <span class="table-icon"> 
+                                        <span class="table-icon mr-1"> 
                                             <i class="fas <%=workItemType[workItem['type']].icon%>"></i> 
-                                        </span> 
-                                        ID: <%=workItem["itemId"]%>
+                                        </span>
+
+                                        <span>
+                                            ID: <%=workItem["itemId"]%>
+                                        </span>
                                     </div>
                                     <div class="card-body">
                                         <h4 class="card-title">
@@ -161,10 +164,13 @@
                                 <div class="card border-dark mb-3" style="max-width: 20rem;" id="<%=workItem['_id']%>">
                                     <div class="card-header">
                                     
-                                        <span class="table-icon"> 
+                                        <span class="table-icon mr-1"> 
                                             <i class="fas <%=workItemType[workItem['type']].icon%>"></i> 
-                                        </span> 
-                                        ID: <%=workItem["itemId"]%>
+                                        </span>
+
+                                        <span>
+                                            ID: <%=workItem["itemId"]%>
+                                        </span>
                                     </div>
                                     <div class="card-body">
                                         <h4 class="card-title">
@@ -185,7 +191,6 @@
                             <% } %>
                         </div>
 
-
                     </div>
 
                     <!-- REVIEW  WORK ITEMS-->
@@ -196,10 +201,13 @@
                             <% for (let workItem of workItems["Review"]) { %>
                                 <div class="card border-dark mb-3" style="max-width: 20rem;" id="<%=workItem['_id']%>">
                                     <div class="card-header">
-                                        <span class="table-icon"> 
+                                        <span class="table-icon mr-1"> 
                                             <i class="fas <%=workItemType[workItem['type']].icon%>"></i> 
-                                        </span> 
-                                        ID: <%=workItem["itemId"]%>
+                                        </span>
+
+                                        <span>
+                                            ID: <%=workItem["itemId"]%>
+                                        </span>
                                     </div>
                                     <div class="card-body">
                                         <h4 class="card-title">
@@ -233,10 +241,13 @@
                             <% for (let workItem of workItems["Completed"]) { %>
                                 <div class="card border-dark mb-3" style="max-width: 20rem;" id="<%=workItem['_id']%>">
                                     <div class="card-header">
-                                        <span class="table-icon"> 
+                                        <span class="table-icon mr-1"> 
                                             <i class="fas <%=workItemType[workItem['type']].icon%>"></i> 
-                                        </span> 
-                                        ID: <%=workItem["itemId"]%>
+                                        </span>
+
+                                        <span>
+                                            ID: <%=workItem["itemId"]%>
+                                        </span>
                                     </div>
                                     <div class="card-body">
                                         <h4 class="card-title">
@@ -268,10 +279,13 @@
                             <% for (let workItem of workItems["Block"]) { %>
                                 <div class="card border-dark mb-3" style="max-width: 20rem;" id="<%=workItem['_id']%>">
                                     <div class="card-header"> 
-                                         <span class="table-icon"> 
+                                         <span class="table-icon mr-1"> 
                                             <i class="fas <%=workItemType[workItem['type']].icon%>"></i> 
-                                        </span> 
-                                        ID: <%=workItem["itemId"]%>
+                                        </span>
+
+                                        <span>
+                                            ID: <%=workItem["itemId"]%>
+                                        </span>
                                     </div>
                                     
                                     <div class="card-body">
@@ -303,10 +317,13 @@
                             <% for (let workItem of workItems["Abandoned"]) { %>
                                 <div class="card border-dark mb-3" style="max-width: 20rem;" id="<%=workItem['_id']%>">
                                     <div class="card-header">
-                                        <span class="table-icon"> 
+                                        <span class="table-icon mr-1"> 
                                             <i class="fas <%=workItemType[workItem['type']].icon%>"></i> 
-                                        </span> 
-                                        ID: <%=workItem["itemId"]%>
+                                        </span>
+
+                                        <span>
+                                            ID: <%=workItem["itemId"]%>
+                                        </span>
                                     </div>
                                     <div class="card-body">
                                         <h4 class="card-title">
@@ -328,7 +345,6 @@
                         </div>
                     </div>
                 </div>
-               
             </div>
         </div>
 
