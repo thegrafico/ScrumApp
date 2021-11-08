@@ -694,30 +694,31 @@ function breakDownChart(workItems){
 
     const {planed, completed} = getBreakdownTypeData(workItems); 
     const data = {
-    labels: labels,
-    datasets: [
-        {
-            label: 'Expected Points',
-            data: [planed["Story"], planed["Task"], planed["Research"], planed["Bug"]],
-            borderColor: [
-                // "rgb(44, 129, 186)",
-                // "rgb(147, 154, 161)",
-                "rgb(255, 255, 255)",
-                // "rgb(196, 65, 51)",
-            ],
-            backgroundColor: [
-                // "rgba(44, 129, 186, 0.5)",
-                // "rgba(147, 154, 161, 0.5)",
-                "rgba(255, 255, 255, 0.5)",
-                // "rgba(196, 65, 51, 0.5)",
-            ],
-        },
-        {
-            label: 'Completed',
-            data: [completed["Story"], completed["Task"], completed["Research"], completed["Bug"]],
-            borderColor: "rgb(0, 160, 119)",
-            backgroundColor: "rgba(0, 160, 119, 0.5)",
-        }]
+        labels: labels,
+        datasets: [
+            {
+                label: 'Expected Points',
+                data: [planed["Story"], planed["Task"], planed["Research"], planed["Bug"]],
+                borderColor: [
+                    // "rgb(44, 129, 186)",
+                    // "rgb(147, 154, 161)",
+                    "rgb(255, 255, 255)",
+                    // "rgb(196, 65, 51)",
+                ],
+                backgroundColor: [
+                    // "rgba(44, 129, 186, 0.5)",
+                    // "rgba(147, 154, 161, 0.5)",
+                    "rgba(255, 255, 255, 0.5)",
+                    // "rgba(196, 65, 51, 0.5)",
+                ],
+            },
+            {
+                label: 'Completed',
+                data: [completed["Story"], completed["Task"], completed["Research"], completed["Bug"]],
+                borderColor: "rgb(0, 160, 119)",
+                backgroundColor: "rgba(0, 160, 119, 0.5)",
+            }
+        ]
     };
 
     const config = {
@@ -854,20 +855,6 @@ function getBreakdownTypeData(workItems){
 
     return {planed, completed};
 }
-
-/**
- * get the chartJs object
- * @param {Object} config 
- * @param {String} divId 
- * @returns {ChartJs}
- */
-function getChart(config, divId){
-
-    let ctx = document.getElementById(divId).getContext('2d');
-    
-    return new Chart(ctx, config);
-}
-
 
 /**
  * Get the days between two dates

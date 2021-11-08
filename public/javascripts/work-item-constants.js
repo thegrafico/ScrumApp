@@ -186,6 +186,8 @@ const SAVE_UPDATE_WORK_ITEM_BTN = ".saveUpdateWorkItem";
 
 const COMPLETED_WORK_ITEM_MESSAGE = ".completedWorkItemsMsg";
 
+// MODAL TO REMOVE USER INPUT
+const REMOVE_USER_MODAL_INPUT = "#modal-remove-user-select-user";
 
 // TRASH CAN ICON
 const TRASH_BTN_WORK_ITEM = "#trashBtnWorkItem";

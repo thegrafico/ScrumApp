@@ -68,3 +68,13 @@ p, h1, h2, h3, h4, h5, span, li, ul, input, a, td, th, tr, table, button, textar
     font-size: 1.1em;
 }
 
+.project-status-container{
+    font-size: 1.5em !important;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.user-row{
+    font-size: 1.2em !important;
+}
+

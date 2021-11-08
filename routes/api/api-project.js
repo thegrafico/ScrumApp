@@ -20,6 +20,7 @@ const {
     UNASSIGNED_SPRINT,
     joinData,
     sortByDate,
+    projectStatus,
     containsSymbols,
     setupProjectInitials,
 } = require('../../dbSchema/Constanst');
@@ -301,6 +302,44 @@ router.post("/api/updateProject", async function (req, res) {
     ProjectCollection.updateOne(
         {_id: projectId, author: req.user["_id"]}, 
         {$set: {title:name, description:  description}})
+    .then( () => {
+        console.log("Project updated!");
+        response["msg"] = "Project was updated!";
+        res.status(200).send(response);
+        return;
+    }).catch(err => {
+        console.log("Error updating project: ", err);
+        response["msg"] = "Sorry, it seems there was a problem updating the project. Please try later.";
+        res.status(400).send(response);
+        return;
+    });
+});
+
+/**
+ * METHOD: POST - UPDATE PROJECT STATUS
+*/
+router.post("/api/:id/updateProjectStatus", middleware.isUserInProject, async function (req, res) {
+    
+    console.log("Getting request to update a project status...");
+    
+    const projectId = req.params.id;
+
+    // get request data
+    let { status } = req.body;
+
+    let response = {};
+
+    // check if the status is valid
+    if (!_.isString(status) || !projectStatus.includes(status)){
+        response["msg"] = "Invalid project status";
+        res.status(400).send(response);
+        return;
+    }
+
+    // update my project 
+    ProjectCollection.updateOne(
+        {_id: projectId}, 
+        {$set: {status: status}})
     .then( () => {
         console.log("Project updated!");
         response["msg"] = "Project was updated!";

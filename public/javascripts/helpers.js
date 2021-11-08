@@ -2272,3 +2272,17 @@ function getRelationShipForWorkItem(relationship){
     return newRelationship;
 }
 
+
+/**
+ * get the chartJs object
+ * @param {Object} config 
+ * @param {String} divId 
+ * @returns {ChartJs}
+ */
+ function getChart(config, divId){
+
+    let ctx = document.getElementById(divId).getContext('2d');
+    
+    return new Chart(ctx, config);
+}
+

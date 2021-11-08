@@ -16,25 +16,26 @@
 
                     <!--  Status box -->
                     <div class="col p-md-4">
-                        <p class="statistics-title ">Status</p>
+                        <p class="statistics-title ">Status <i class="fas fa-satellite"></i></p>
 
                         <div class="status-container">
+                            
+                            <div class="form-group project-status-container">
 
-                            <i class="fas fa-burn icons"></i>
-                            <div class="form-group">
                                 <select class="custom-select" name="projectStatus" id="projectStatus">
 
                                     <% projectStatus.forEach(function(status){ %>
 
-                                    <% if (status == project["status"]){ %>
-                                    <option selected value="<%=status%>"><%=status%></option>
+                                        <% if (status == project["status"]){ %>
+                                            <option selected value="<%=status%>"><%=status%></option>
 
-                                    <% } else {%>
-                                    <option value="<%=status%>"><%=status%></option>
-                                    <% }%>
+                                        <% } else {%>
+                                            <option value="<%=status%>"><%=status%></option>
+                                        <% }%>
 
                                     <% }); %>
                                 </select>
+                               
                             </div>
                         </div>
 
@@ -44,16 +45,14 @@
                             <ul class="status-list list-unstyled">
                                 <li> Owner: <span id="ownerName"> <%=projectOwner%></span></li>
                                 <li>Project Start Date: <span id="startDate"><%=creationDate%></span></li>
-                                <li>Current Sprint: <span id="currentSprint"><%=currentSprint%></span></li>
+                                <!-- <li>Current Sprint: <span id="currentSprint"><%=currentSprint%></span></li> -->
                             </ul>
                         </div>
                     </div>
 
                     <!-- Project Descript Box -->
                     <div class="col p-md-3">
-                        <p class="statistics-title">Project Description</p>
-
-                        <i class="far fa-file-alt icons"></i>
+                        <p class="statistics-title">Project Description <i class="far fa-file-alt icons"></i></p>
 
                         <div class="row">
                             <div class="col">
@@ -65,35 +64,36 @@
 
                     <!-- Members Box -->
                     <div class="col p-md-3">
-                        <p class="statistics-title">Members</p>
-
-                        <i class="fas fa-users icons"></i>
-
+                        <p class="statistics-title">Members <i class="fas fa-users icons"></i></p>
 
                         <div class="mt-2">
                             <p id="number-of-members-text"> <%=numberOfMemberText%></p>
                             <input type="hidden" name="numberOfUsers" id="number-of-members-value" value="<%=numberOfMember%>">
                             
                             <ul class="member-list list-unstyled">
-                                <li> <span id="memberOfMonth"> Member of the month: </span> <span
-                                        id="memberOfMonthName">Raul Pichardo</span> </li>
+                                <li> 
+                                    <span id="memberOfMonth"> Member of the month: </span> 
+                                    <span id="memberOfMonthName">Raul Pichardo</span> </li>
                                 <br>
                                 <li>
                                     <div class="row user-row">
                                         <div class="col">
                                             <span>
-                                                <a href="#" id="addUserBtn" role="button" data-toggle="modal"
-                                                    data-target="#create-user">
-                                                    Invite <i class="fas fa-user-plus memberCardIcon"></i> 
+                                                <a href="#" id="addUserBtn" role="button" 
+                                                    data-toggle="modal" 
+                                                    data-target=".add-user-project-modal">
+                                                    <span> Invite </span> <i class="fas fa-user-plus memberCardIcon"></i> 
                                                 </a>
                                             </span>
                                         </div>
 
                                         <div class="col">
                                             <span>
-                                                <a href="" id="removeUserBtn" role="button" data-toggle="modal"
-                                                    data-target="#remove-user"> 
-                                                    Remove <i class="fas fa-trash memberCardIcon"></i> 
+                                                <a href="#" id="removeUserBtn" role="button" 
+                                                    data-toggle="modal" 
+                                                    data-target=".delete-user-modal">
+
+                                                    <span> Remove </span> <i class="fas fa-trash memberCardIcon"></i> 
                                                 </a>
                                             </span>
 
@@ -113,103 +113,33 @@
                     </div>
                 </div>
 
+               
                 <div class="row">
-                    <div class="col p-md-4">
-                        <p class="col-title">Sprints</p>
 
+                    <!--  CHART? box -->
+                    <div class="col col-7" style="text-align: center;">
+                       <h1 class="my-auto pt-5" style="height: 100%;">
+                           Still in development...
+                       </h1>
+                    </div>
 
-                        <i class="fas fa-running"></i>
+                    <!-- Breakdown Box -->
+                    <div class="col col-4 p-4 status-breakdown-container">
+                        
+                        <div class="chart-container">
+                            <canvas id="statusBreakdownChart"></canvas>
+                        </div>
 
-                        <div class="mt-2">
-                            <p>Sprints plots goes here </p>
+                        <div class="d-none chart-data" id="chart-data">
+                            <% for(let status of Object.keys(pieData)) { %>
+                                <input type="hidden" name="<%=status%>" id="pie-<%=status%>-input" value="<%=pieData[status]%>">
+                            <% } %>
                         </div>
                     </div>
                 </div>
             </div>
 
-
-            <!-- MODAL TO CREATE USER -->
-            <div class="modal fade" id="create-user" tabindex="-1" role="dialog" aria-labelledby="create-user-title"
-                aria-hidden="true">
-                <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
-
-                    <div class="modal-content">
-                        <form action="/dashboard/<%=project['_id']%>/addmember" method="post" id="inviteUserToProject">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="createUserTitle" style="width: 30%;">Add New Member <i
-                                        class="fas fa-user-plus"></i> </h5> &nbsp; &nbsp;
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
-                                </button>
-                            </div>
-
-                            <div class="modal-body">
-
-                                <fieldset>
-                                    <div class="form-group">
-                                        <label for="userEmail">User</label>
-                                        <input type="text" class="form-control" id="userEmail" name="userEmail"
-                                            placeholder="User email">
-                                    </div>
-                                    <span class="text-danger" id="createUserErrorMessage"></span>
-                                </fieldset>
-
-                            </div>
-
-                            <div class="modal-footer">
-                                <button type="btnCancelUser" class="btn btn-secondary"
-                                    data-dismiss="modal">Cancel</button>
-                                <button id="btnAddUser" type="submit" class="btn btn-success">Send Invitation</button>
-                            </div>
-
-                        </form>
-                    </div>
-
-                </div>
-            </div>
-
-            <!-- MODAL TO DELETE A USER FROM PROJECT -->
-            <div class="modal fade" id="remove-user" tabindex="-1" role="dialog" aria-labelledby="remove-user-title"
-                aria-hidden="true">
-                <div class="modal-dialog modal-dialog-centered" role="document">
-
-                    <div class="modal-content">
-                        <form action="/dashboard/<%=project['_id']%>/removemember" method="post"
-                            id="removeUserFromProject">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="removeUserTitle" style="width: 30%;">Remove Members <i
-                                        class="fas fa-trash memberCardIcon"></i> </h5> &nbsp; &nbsp;
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
-                                </button>
-                            </div>
-
-                            <div class="modal-body">
-
-                                <fieldset>
-                                    <div class="form-group">
-                                        <label for="removeUsersNameOrEmails">User(s)</label>
-                                        <input type="text" class="form-control" id="removeUsersNameOrEmails"
-                                            name='emailToRemove' placeholder="User email">
-                                    </div>
-                                    <span class="text-danger" id="removeUserErrorMessage"></span>
-
-                                </fieldset>
-
-                            </div>
-                            <div class="modal-footer">
-                                <button type="btnCancelRemoveUser" class="btn btn-secondary"
-                                    data-dismiss="modal">Cancel</button>
-                                <button id="btnRemoveUser" type="submit" class="btn btn-warning">Remove</button>
-                            </div>
-                        </form>
-                    </div>
-
-                </div>
-            </div>
         </div>
-
-        
         <input type="hidden" name="projectId" id="projectId" value="<%=projectId%>">
         <input type="hidden" name="currentTab" id="currentTab" value="<%=activeTab%>">
     </div>

@@ -95,3 +95,22 @@ async function createProject(name, description) {
 
     return {response, response_error};
 }
+
+/**
+ * remove project from favorite for user 
+ * @param {String} projectId - id of the project
+ * @param {String} status - Status of the project
+ * @returns {Object} response, response_error
+ */
+async function updateProjectStatus(projectId, status) {
+    
+    const API_LINK_UPDATE_PROJECT_STATUS = `/dashboard/api/${projectId}/updateProjectStatus`;
+    let request_data = {status: status};
+    let response_error = null;
+    
+    const response = await make_post_request(API_LINK_UPDATE_PROJECT_STATUS, request_data).catch(err => {
+        response_error = err;
+    });
+
+    return {response, response_error};
+}

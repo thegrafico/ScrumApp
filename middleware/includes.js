@@ -33,6 +33,9 @@ module.exports = {
             "/javascripts/api-calls/api-work-items.js",
             "/javascripts/api-calls/api-teams.js",
             "/javascripts/api-calls/api-users.js",
+            "/javascripts/api-calls/api-project.js",
+            "/javascripts/dependecies/chartjs-plugin-labels.min.js",
+
         ]
     },
     planigWorkItemPath: {

@@ -23,7 +23,9 @@ const {
     UNASSIGNED_USER,
     WORK_ITEM_STATUS_COLORS,
     WORK_ITEM_ICONS,
+    WORK_ITEM_STATUS,
     PRIORITY_POINTS,
+    getNumberOfElements,
 } = require('../dbSchema/Constanst');
 // ===================================================
 
@@ -51,6 +53,19 @@ router.get("/:id", middleware.isUserInProject, async function (req, res) {
     // getting the teams
     let teams = [...projectInfo.teams];
 
+    // getting data for charts
+    const workItems = await projectInfo.getWorkItems().catch(err => {
+        console.error("Error getting project work items: ", err);
+    }) || [];
+
+    let pieData = {
+        "New": getNumberOfElements(workItems, WORK_ITEM_STATUS["New"]),
+        "Active": getNumberOfElements(workItems, WORK_ITEM_STATUS["Active"]),
+        "Review": getNumberOfElements(workItems, WORK_ITEM_STATUS["Review"]),
+        "Completed": getNumberOfElements(workItems, WORK_ITEM_STATUS["Completed"]),
+        "Block": getNumberOfElements(workItems, WORK_ITEM_STATUS["Block"]),
+    }
+
     // adding defaults
     users.unshift(UNASSIGNED_USER);
     teams.unshift(UNASSIGNED);
@@ -74,6 +89,7 @@ router.get("/:id", middleware.isUserInProject, async function (req, res) {
         "addUserModal": true,
         "stylesPath": statisticsPath["styles"],
         "scriptsPath": statisticsPath["scripts"],
+        "pieData": pieData,
     };
 
     params["projectOwner"] = await getProjectOwnerNameById(projectInfo["author"]);
