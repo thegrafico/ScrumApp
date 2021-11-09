@@ -178,25 +178,6 @@
     border-radius: .5rem;
 }
 
-.project-initials-container{
-    text-align: center;
-    height: 3.5vh !important;
-    width: 2vw !important;
-    padding-top: .5vh;
-}
-/* 
-@media screen and (max-width: 600px) {
-    .project-initials-container{
-        height: 3.5vh !important;
-        width: 3.5vw !important;
-    }
-  } */
-
-.project-initials-container span{
-    font-weight: bold;
-    font-size: 1.5em;
-}
-
 .project-row {
     background-color: rgb(48, 48, 48);;
     border-radius: .5rem;
@@ -294,4 +275,31 @@
 .start-icon-rem-favorite{
     -webkit-transform: scaleX(-1);
     transform: scaleX(-1);
+}
+
+
+.dashboard-container{
+    margin-left: 5%;
+    max-width: 100%; 
+    overflow: hidden; 
+    overflow-y: scroll;
+}
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+.dashboard-container::-webkit-scrollbar {
+    display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+.dashboard-container {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
+.span-initials{
+    padding: 1rem;
+    background-color: green;
+    border-radius: 1rem;
+    font-size: 1.2em;
+    font-weight: bold;
 }

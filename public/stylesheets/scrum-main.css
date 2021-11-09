@@ -553,6 +553,12 @@ td.off{
     z-index: 999;
 }
 
+@media screen and (max-width: 2000px) {
+    .user-options-dropdown{
+        width: 22vw;
+    }
+}
+
 .options-user-name{
     color: white;
     font-weight: bold;

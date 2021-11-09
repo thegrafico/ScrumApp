@@ -143,7 +143,10 @@ router.get("/:id/planing/workitems/:workItemId", middleware.isUserInProject, asy
     let teams = [...projectInfo.teams];
 
     // getting work item team
-    let workItemTeam = teams.filter( each => {return each["_id"].toString() == workItem["teamId"].toString()})[0];
+    console.log(teams);
+    console.log(workItem);
+
+    let workItemTeam = teams.filter( each => {return (each["_id"] || "").toString() ==( workItem["teamId"] || "").toString()})[0];
 
     let sprints = [];
     let workItemSprintId = UNASSIGNED["_id"];

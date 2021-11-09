@@ -10,7 +10,7 @@
     <!-- Page Content  -->
     <div id="content">
 
-        <div class="info-container pt-4" style="margin-left: 5%;max-width: 100%; overflow-x: hidden;">
+        <div class="info-container dashboard-container pt-4">
 
             <div class="container-fluid" style="width: 100%; margin-left: 5%;">
 
@@ -42,11 +42,7 @@
                                     <li class="nav-item">
                                         <a class="nav-link active" data-bs-toggle="tab" href="#tabs-projects"> <span> Projects</span></a>
                                     </li>
-                                    <!-- <li class="nav-item">
-                                        <a class="nav-link" data-bs-toggle="tab" href="#tabs-work-items"> <span> My Work Items </span></a>
-                                    </li> -->
-                                    
-                                    
+
                                 </ul>
                                 <div class="form-inline my-2 my-lg-0 filter-projects-container">
                                     <i class="fas fa-filter filter-icon"></i>
@@ -87,9 +83,12 @@
 
                                                 <div class="card-body">
 
-                                                    <div class="initals-container card-initials pr-2 go-to-project" data-projectid="<%= userFavoriteProjects[i]._id %>">
-                                                        <div class="project-initials-container bg-initials-color" style="background-color: <%= userFavoriteProjects[i]['initialsColors']%>;">
-                                                            <span><%= userFavoriteProjects[i]["initials"]%></span>
+                                                    <div class="initals-container card-initials pr-2 go-to-project mb-2" data-projectid="<%= userFavoriteProjects[i]._id %>">
+
+                                                        <div class="pt-2">
+                                                            <span class="span-initials" style="background-color: <%= userFavoriteProjects[i]['initialsColors']%>;">
+                                                                <%= userFavoriteProjects[i]["initials"]%>
+                                                            </span>
                                                         </div>
                                                     </div>
                                                     
@@ -137,8 +136,11 @@
                                                     
                                                     <!-- INITIALS -->
                                                     <div class="initals-container pt-4 go-to-project" data-projectid="<%= project._id %>">
-                                                        <div class="project-initials-container bg-initials-color" style="background-color: <%= project['initialsColors']%>;">
-                                                            <span><%= project["initials"]%></span>
+
+                                                        <div class="pt-2">
+                                                            <span class="span-initials" style="background-color: <%= project['initialsColors']%>;">
+                                                                <%= project["initials"]%>
+                                                            </span>
                                                         </div>
                                                     </div>
 

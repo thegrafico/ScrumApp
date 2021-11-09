@@ -21,7 +21,7 @@
                         <ul class="nav nav-tabs">
                             <li class="nav-item">
                                 <span id="numberOfQueryResult" class="d-none">50</span>
-                                <a class="nav-link " id="queryResultsTab" data-bs-toggle="tab" href="#showQuery">Results</a>
+                                <a class="nav-link" id="queryResultsTab" data-bs-toggle="tab" href="#showQuery">Results</a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link active" data-bs-toggle="tab" href="#createQuery">Queries</a>
@@ -46,13 +46,13 @@
                 </div>
             </nav>
 
-            <div id="myTabContent" class="p-4 tab-content">
+            <div id="myTabContent" class="pl-4 pr-4 tab-content hide-functional-scroll">
                 
                 <!-- SHOW QUERY -->
                 <div class="tab-pane fade" id="showQuery">
-                    <div class="telescopeImage showQueryTelscopeImage">
+                    <div class="telescopeImage" style="width: 50%; margin-left: 30%; margin-top: 5%;">
                         <div class="container">
-                            <div class="image-container">
+                            <div class="image-container ">
                                 <img src="/images/telescope.ico" alt="Telescope Image">
                                 <p> 
                                     "Equipped with his five senses, man explores the universe around him and calls the adventure Science."
@@ -64,7 +64,7 @@
                     </div>
 
                     <!-- WORK ITEM TABLE -->
-                    <div class="pt-2 pl-4 pr-4 d-none" id="table-container">
+                    <div class="pt-2 pl-4 pr-4 d-none hide-scroll" id="table-container">
                         <table class="table table-hover" id="workItemTable">
                             <thead >
                                 <tr class="tableHeader">
@@ -79,20 +79,18 @@
                                     <th scope="col">Points</th>
                                 </tr>
                             </thead>
-                            <tbody>
+                            <tbody style="background-color: #444; overflow-x: hidden; overflow-y: scroll;">
                             </tbody>
                         </table>
                     </div>
-
-
                 </div>
                 
                 <!-- CREATE QUERY -->
-                <div class="tab-pane active fade show" id="createQuery">
+                <div class="tab-pane active fade show hide-scroll" id="createQuery">
 
-                    <div class="telescopeImage">
+                    <div class="telescopeImage" style="width: 50%; margin-left: 30%; margin-top: 5%;">
                         <div class="container">
-                            <div class="image-container">
+                            <div class="image-container ">
                                 <img src="/images/telescope.ico" alt="Telescope Image">
                                 <p> 
                                     "Equipped with his five senses, man explores the universe around him and calls the adventure Science."
@@ -103,10 +101,10 @@
                         </div>
                     </div>
                   
-                    <div class="container-fluid makeQueryContainer p-2">
+                    <div class="container-fluid makeQueryContainer p-2 hide-scroll">
 
                         <!-- ROW TITLE -->
-                        <div class="row rowTitle">
+                        <div class="row rowTitle hide-scroll">
 
                             <div class="col col-1">
                             </div>
@@ -182,8 +180,6 @@
                                 <i class="fas fa-chevron-down formatIcon"></i>
 
                                 </div>
-
-
                             </div>
                         </div>
 

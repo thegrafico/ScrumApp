@@ -59,13 +59,58 @@ nav>a {
 
 .side-navbar {
     border-top: 0.1px solid rgba(255, 255, 255, 0.1);
-    min-width: 12vw;
-    max-width: 12vw;
+    width: 15vw;
     background: #303030 !important;
     color: #fff;
     -webkit-transition: all 0.3s;
     -o-transition: all 0.3s;
     transition: all 0.3s;
+}
+
+.sprint-review-card{
+    font-weight: bold;
+    text-align: center;
+}
+
+/* Media Screem */
+@media screen and (max-width: 2000px) {
+    .side-navbar {
+        width: 18vw;
+    }
+
+    .list-unstyled li a{
+        padding-bottom: 0 !important;
+    }
+
+    .project-main-status-container{
+        padding-bottom: 0 !important;
+        margin-bottom: 0 !important;
+    }
+
+    #table-container{
+        padding-top: 1% !important;
+    }
+
+    .big-select{
+        width: 25vw !important;
+    }
+        
+}
+
+.hide-scroll{
+    overflow: hidden !important;
+}
+
+.hide-x-scroll{
+    overflow-x: hidden !important;
+}
+
+.hide-y-scroll{
+    overflow-y: hidden;
+}
+
+.table thead{
+    z-index: 1;
 }
 
 .side-navbar a {
@@ -300,3 +345,16 @@ nav>a {
     cursor:not-allowed !important;
 }
 
+#table-container{
+    margin-bottom: 5vh !important;
+}
+
+.hide-functional-scroll::-webkit-scrollbar {
+    display: none !important;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+.hide-functional-scroll {
+  -ms-overflow-style: none !important;  /* IE and Edge */
+  scrollbar-width: none !important;  /* Firefox */
+}

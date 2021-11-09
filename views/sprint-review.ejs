@@ -17,7 +17,7 @@
                 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
 
                     <i class="fas fa-users"></i>
-                    <div class="filterByTeamContainer">
+                    <div class="filterByTeamContainer big-select">
                         <% if(projectTeams.length > 1){ %>
                             <select 
                                 class="custom-select my-custon-select input-border seletedTeamToFilter"
@@ -92,7 +92,7 @@
 
                         <i class="fas fa-running sprintIcon"></i>
 
-                        <div class="filterBySprintContainer">
+                        <div class="filterBySprintContainer big-select">
                             <% if(sprints.length > 1){ %>
                             <select class="custom-select my-custon-select input-border" name="sprintFilter"
                                 id="filter-by-sprint-review" aria-label="filter by sprint">
@@ -194,8 +194,8 @@
                         <div class="col-3">
 
                             <div class="card border-success border-hover-success p-2 " id="review-completed-story-points">
-                                <div class="card-body">
-                                  <h4 class="card-title centerText">Completed Story Points </h4>
+                                <div class="card-body sprint-review-card">
+                                  <span class="card-title centerText">Completed Story Points </span>
                                   <p class="card-text centerText" id="completedStoryPoints"><%=statusReport['completedPoints']%>/<%=statusReport['totalPoints']%></p>
                                 </div>
                               </div>
@@ -203,8 +203,8 @@
 
                         <div class="col-3">
                             <div class="card border-warning border-hover-warning p-2" id="review-incompleted-story-points">
-                                <div class="card-body ">
-                                  <h4 class="card-title centerText">Incompleted Story Points</h4>
+                                <div class="card-body sprint-review-card">
+                                  <span class="card-title centerText">Incompleted Story Points</span>
                                   <p class="card-text centerText" id="incompletedStoryPoitns"><%=statusReport['incompletedPoints']%>/<%=statusReport['totalPoints']%></p>
                                 </div>
                               </div>
@@ -212,8 +212,8 @@
 
                         <div class="col-3">
                             <div class="card border-info border-hover-info p-2" id="review-capacity">
-                                <div class="card-body">
-                                  <h4 class="card-title centerText">Capacity</h4>
+                                <div class="card-body sprint-review-card">
+                                  <span class="card-title centerText">Capacity</span>
                                   <p class="card-text centerText" id="sprintCapacity"><%=statusReport['capacity']%></p>
  
                                 </div>
@@ -222,10 +222,9 @@
 
                         <div class="col-3">
                             <div class="card border-light p-2">
-                                <div class="card-body">
-                                  <h4 class="card-title centerText">Duartion</h4>
+                                <div class="card-body sprint-review-card">
+                                  <span class="card-title centerText">Duartion</span>
                                   <p class="card-text centerText" id="sprintDuration"><%=statusReport['numberOfDays']%> Days</p>
- 
                                 </div>
                               </div>
                         </div>

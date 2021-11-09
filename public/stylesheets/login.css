@@ -284,14 +284,23 @@ iframe {
     background-repeat: no-repeat;
     background-position: center;
     background-size: cover;
+}
 
+.b-red{
+    border: 1px solid red;
 }
 
 .wrap-login100 {
-    width: 500px;
+    width: 25vw;
     background-color: rgba(0, 0, 0, 0.9);
     border-radius: 10px;
     overflow: hidden;
+}
+
+@media screen and (max-width: 2000px) {
+    .wrap-login100{
+        width: 30vw;
+    }
 }
 
 
@@ -584,7 +593,6 @@ iframe {
 .login-container {
     position: absolute;
     left: 0;
-
 }
 
 .login100-form-title {

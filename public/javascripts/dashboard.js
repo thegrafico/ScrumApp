@@ -426,8 +426,11 @@ function addProjectToUI(project, isFavorite){
 
             <div class="card-body">
                 <div class="initals-container card-initials pr-2 go-to-project" data-projectid="${project["_id"]}">
-                    <div class="project-initials-container bg-initials-color" style="background-color: ${project['initialsColors']}">
-                        <span>${project["initials"]}</span>
+
+                    <div class="pt-2">
+                        <span class="span-initials" style="background-color: ${project['initialsColors']};">
+                            ${project["initials"]}
+                        </span>
                     </div>
                 </div>
                 
@@ -462,8 +465,10 @@ function addProjectToUI(project, isFavorite){
             </div>
 
             <div class="initals-container pt-4 go-to-project" data-projectid="${project["_id"]}">
-                <div class="project-initials-container bg-initials-color" style="background-color: ${project['initialsColors']}">
-                    <span>${project["initials"]}</span>
+                <div class="pt-2">
+                    <span class="span-initials" style="background-color: ${project['initialsColors']};">
+                        ${project["initials"]}
+                    </span>
                 </div>
             </div>
             <div class="col-9 pt-2">

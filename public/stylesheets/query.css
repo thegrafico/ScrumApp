@@ -234,6 +234,14 @@ html, body{
     height: 50%;
 }
 
+@media screen and (max-width: 2000px) {
+    #show-queries-empty-img img{
+        margin-top: 1vh !important;
+        width: 30%;
+        height: 30%;
+    }
+}
+
 #empty-folder-image{
     opacity: 0.8 !important;
 }

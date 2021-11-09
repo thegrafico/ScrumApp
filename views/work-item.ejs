@@ -106,7 +106,7 @@
                                     
                                     <div class="col-3 d-flex">
                                         
-                                        <span class="aling-vertically align-self-center"> 
+                                        <span class="title aling-vertically align-self-center"> 
                                             Status:
                                         </span>
 
@@ -146,7 +146,7 @@
                                     </div>
 
                                     <div class="col-4 d-flex assignedTeam-container">
-                                        <span class="aling-vertically align-self-center"> Team: </span>
+                                        <span class="title aling-vertically align-self-center"> Team: </span>
 
                                         <select class="custom-select my-custon-select" name="teamAssigned" id="update-work-item-team">
                                             <% for (team of projectTeams){ %>
@@ -167,7 +167,7 @@
 
                                 <div class="row">
                                     <div class="col-3 d-flex">
-                                        <span class="aling-vertically align-self-center"> Type: </span>
+                                        <span class="title aling-vertically align-self-center"> Type: </span>
 
                                         <ul class="nav nav-pills flex-column" id="customSelect">
                                             
@@ -204,7 +204,7 @@
                                     </div>
 
                                     <div class="col-4 d-flex">
-                                        <span class="aling-vertically align-self-center"> Iteration:</span>
+                                        <span class="title aling-vertically align-self-center"> Iteration:</span>
                                         <select class="custom-select my-custon-select "
                                             name="sprint" id="update-work-item-sprints">
                                             <% for (let sprint of sprints){ %>
@@ -243,21 +243,22 @@
                             </div>
                         </div>
 
-                        <div id="main-body-container">
+                        <div id="main-body-container" class="hide-functional-scroll">
 
                             <div class="row desc-planing-development">
-
+                                <!-- Description -->
                                 <div class="col">
                                     <h5 class="pd-p">Description</h5>
                                     <textarea 
                                     name="workItemDescription" 
                                         id="update-work-item-description"
-                                        rows="8" 
+                                        rows="5" 
                                         placeholder="Enter Description."
                                         class="bx-shadow descriptionBox"
                                         ><%=workItem['description']%></textarea>
                                 </div>
 
+                                <!-- Points -->
                                 <div class="col-3 planing-work-item">
                                     <h5 class="pd-p">Planing</h5>
 
@@ -287,13 +288,14 @@
 
                                 </div>
 
-                                <div class="col-3 addLink">
+                                <!-- Add Link Section -->
+                                <div class="col-3 addLink hide-functional-scroll">
                                     <h5 class="pd-p">Related work</h5>
                                     <p class="open-add-links-options" data-modal-open="update" data-workitem-id="0"> 
                                         <i class="fas fa-plus "></i> Add link
                                     </p>
 
-                                    <div class="work-item-relationship-container update-work-item-relationship-container">
+                                    <div class="work-item-relationship-container update-work-item-relationship-container hide-functional-scroll">
                                         
                                         <% for (let relationship of Object.keys(workItem["relatedWorkItems"])) {%>
                                             <div class="work-item-relationship mb-2">
@@ -340,10 +342,9 @@
                                         <% }%>
                                     </div>
                                 </div>
-                                
 
                             </div>
-
+                            <!-- Discussion -->
                             <div class="row desc-planing-development" >
                                 <div class="col-6">
 
@@ -359,7 +360,7 @@
                                 </div>
                             </div>
 
-                            <div class="col-6 comments-container">
+                            <div class="col-6 comments-container comments-container-unique-workItem">
                                 <div class="user-comments-container">
                                     <% if (workItem['comments'] && workItem['comments'].length > 0){%>
                                         

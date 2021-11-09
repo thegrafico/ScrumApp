@@ -73,7 +73,7 @@
 
 .user-comments-container{
     /* border: 1px solid red; */
-    max-height: 20vh;
+    /* max-height: 20vh; */
     width: 100%;
     margin: auto;
 }
@@ -85,7 +85,8 @@
 #main-body-container{
     max-height: 55vh;
     border-bottom: 1px solid #444;
-    margin-bottom: 10vh;
+    margin-bottom: 10vh !important;
+    overflow-y: scroll;
 }
 
 #main-body-container, #main-body-container-modal{
@@ -171,4 +172,31 @@
 
 .col-assigned-user{
     width: 13% !important;
+}
+
+@media screen and (max-width: 2000px) {
+    .comments-container{
+        margin-bottom: 5vh !important;
+    }
+
+    .comments-container-unique-workItem{
+        margin-bottom: 30vh !important;
+    }
+
+    .user-comments-container div:last-child{
+        margin-bottom: 5vh !important;
+    }
+
+    .create-work-item-bg span.aling-vertically{
+        font-size: 1.3em;
+    }
+   
+}
+
+
+
+
+
+.n-margin{
+    margin-bottom: 1% !important;
 }
