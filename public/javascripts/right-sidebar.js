@@ -207,7 +207,8 @@ $(function () {
 function addRelationshipToWorkItemModal(relatedWorkItems, relationship, container){
 
     // check if there is a container already
-    let containerIsAvailable = $(`#${relationship}`).length > 0;
+    let containerIsAvailable = $(`${container} #${relationship}`).length > 0;
+
     const projectId = getProjectId();
 
     // if there is not contianer to add the related work items, then create one
@@ -221,6 +222,7 @@ function addRelationshipToWorkItemModal(relatedWorkItems, relationship, containe
 
         // create the container
         $(container).append(containerTemplate);
+        console.log("related work item added!");
     }
     for( let workItem of relatedWorkItems){
         let lastUpdatedDate = moment( workItem['updatedAt']).format(SPRINT_FORMAT_DATE);
@@ -265,6 +267,8 @@ function addRelationshipToWorkItemModal(relatedWorkItems, relationship, containe
         </div>`;
         
         $(`${container} div#${relationship}`).append(wTemplate);
+        console.log("related work item added!");
+
     }
 }
 

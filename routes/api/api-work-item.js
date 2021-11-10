@@ -342,7 +342,10 @@ router.post("/api/:id/createWorkItem", middleware.isUserInProject, async functio
     let addRelationshipToOtherWorkItems = [];
 
     // LINKS - for relationship of the work item
+    console.log("LINKS: ", links);
     if (_.isArray(links)){
+
+        // Check if empty
         if (_.isEmpty(links) || links.every(val => _.isEmpty(val))){
             newWorkItem["links"] = [];
         }else{
@@ -773,6 +776,9 @@ router.post("/api/:id/updateWorkItem/:workItemId", middleware.isUserInProject, a
                     return;
                 }
 
+                // add work item to the record so we dont add duplicate work items
+                workItemsAlreadyAdded.push(wId);
+
                 // check if the user is trying to add a related work item with the same id of the
                 // current id
                 if (wId === workItem["_id"].toString()){
@@ -820,6 +826,7 @@ router.post("/api/:id/updateWorkItem/:workItemId", middleware.isUserInProject, a
         workItem[key] = updateValues[key];
     }
 
+    // update the Update field
     workItem["updatedAt"] = Date.now();
 
     let updatedWorkItem = await workItem.save().catch(err => {

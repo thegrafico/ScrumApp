@@ -434,7 +434,7 @@ function appendToWotkItemTable(workItems, index = null, showIfSprint = true, rem
 
         // TYPE
         let type = `
-            <td class="d-none"> <i class="fas  ${WORK_ITEM_ICONS[workItems[i]['type']].icon}"></i> <span>${workItem['type']} </span> </td>
+            <td class="d-none"> <i class="fas ${WORK_ITEM_ICONS[workItems[i]['type']].icon}"></i> <span>${workItem['type']} </span> </td>
         `;
         headers_object["type"] = type;
 

@@ -12,7 +12,7 @@ $(function () {
     // OPEN MODAL AND POPULATE DATA
     $(document).on("click", OPEN_WORK_ITEM_MODAL, function(event){
         // check if the ctrl key is pressed while the element is also pressed
-        let ctrlIsPressed = event.metaKey | event.trlKey;
+        let ctrlIsPressed = event.metaKey | event.ctrlKey;
         // Open the modal if the user is not pressing clrt
         if (!ctrlIsPressed){   
             // prevent the link to open in another tab
@@ -73,6 +73,7 @@ async function populateWorkItemModal(workItemId){
         $.notify(workItemResponse["error"].data.responseJSON.msg, "error");
         return;
     }
+
     const workItem = workItemResponse["response"]["workItem"];
     const sprints = workItemResponse["response"]["sprints"];
     const activeSprint = workItemResponse["response"]["activeSprint"] || "";
@@ -165,16 +166,17 @@ async function populateWorkItemModal(workItemId){
     $(UPDATE_WORK_ITEM["add_link"]).attr(ATTR_WORK_ITEM_NAME, workItem["title"]);
     
     // Update Icon to remove relationship
-    // TODO: check if this update all relationship
     $(UPDATE_WORK_ITEM["btn_remove_relationship"]).attr(ATTR_WORK_ITEM_ID, workItem["_id"]);
 
-
     // clean links as default
-    cleanElement(WORK_ITEM_MODALS["update"]["container"]);
+    cleanElement($(WORK_ITEM_MODALS["update"]["container"]));
     // check if work item has links
 
+    console.log(workItem);
+    console.log(workItem["relatedWorkItems"]);
+
     if (workItem["relatedWorkItems"] && Object.keys(workItem["relatedWorkItems"]).length > 0){
-        
+        console.log("related work item found");
         for (let relationKey of Object.keys(workItem["relatedWorkItems"])){
             // add to modad
             addRelationshipToWorkItemModal(

@@ -224,6 +224,7 @@ workItemSchema.statics.addRelationToWorkItem = async function(projectId, related
             }
         }
 
+        console.log("Related work item was added!");
         return resolve(true);
     });
 };

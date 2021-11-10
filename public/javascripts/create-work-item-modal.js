@@ -28,7 +28,7 @@ $(function () {
         console.log("Cleaning modal");
     });
 
-    // CREATE NEW WORK ITEM
+    // CREATE NEW WORK ITEM SUBMIT BTN
     $(CREATE_WORK_ITEM_SUBMIT_BTN).on("click", async function(){
         
         const {isValid, msg} = validateFormWorkItem(WORK_ITEM);
