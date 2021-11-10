@@ -91,14 +91,14 @@
 
 #main-body-container, #main-body-container-modal{
     overflow-x: hidden;
-    overflow-y: scroll;
-    margin-top: 2%;
+    overflow-y: auto;
+    margin-top: 1%;
 }
 
 
 #main-body-container-modal{
     max-height: 45vh;
-    margin-bottom: 2vh;
+    margin-bottom: 1vh;
 }
 
 .user-comments-container > div {
@@ -189,13 +189,13 @@
 
     .create-work-item-bg span.aling-vertically{
         font-size: 1.3em;
-    }
+    }   
    
 }
 
-
-
-
+.create-work-item-bg span.aling-vertically{
+    font-size: 1.2em;
+}
 
 .n-margin{
     margin-bottom: 1% !important;

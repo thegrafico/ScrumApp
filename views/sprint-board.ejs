@@ -117,7 +117,7 @@
                             <span class="columnTitle">Todo</span>
                         </div>
 
-                        <div id="<%=WORK_ITEM_STATUS['New']%>" class="container-column">
+                        <div id="<%=WORK_ITEM_STATUS['New']%>" class="container-column hide-functional-scroll">
 
                             <% for (let workItem of workItems["New"]) { %>
                                 <div class="card border-dark mb-3" style="max-width: 20rem;" id="<%=workItem['_id']%>">
@@ -158,7 +158,7 @@
                     <div class="col-2 board-column">
                         <div class="border-status activeColor"> <span class="columnTitle">Active</span> </div>
 
-                        <div id="<%=WORK_ITEM_STATUS['Active']%>" class="container-column">
+                        <div id="<%=WORK_ITEM_STATUS['Active']%>" class="container-column hide-functional-scroll">
                             <% for (let workItem of workItems["Active"]) { %>
                                 <div class="card border-dark mb-3" style="max-width: 20rem;" id="<%=workItem['_id']%>">
                                     <div class="card-header">
@@ -196,7 +196,7 @@
                     <div class="col-2 board-column">
                         <div class="border-status reviewColor"> <span class="columnTitle">Review</span> </div>
 
-                        <div id="<%=WORK_ITEM_STATUS['Review']%>" class="container-column">
+                        <div id="<%=WORK_ITEM_STATUS['Review']%>" class="container-column hide-functional-scroll">
                             <% for (let workItem of workItems["Review"]) { %>
                                 <div class="card border-dark mb-3" style="max-width: 20rem;" id="<%=workItem['_id']%>">
                                     <div class="card-header">
@@ -235,7 +235,7 @@
                       
                         <div class="border-status completedColor"> <span class="columnTitle">Completed</span></div>
 
-                        <div id="<%=WORK_ITEM_STATUS['Completed']%>" class="container-column">
+                        <div id="<%=WORK_ITEM_STATUS['Completed']%>" class="container-column hide-functional-scroll">
 
                             <% for (let workItem of workItems["Completed"]) { %>
                                 <div class="card border-dark mb-3" style="max-width: 20rem;" id="<%=workItem['_id']%>">
@@ -312,7 +312,7 @@
                     <div class="col-2 board-column">
                         <div class="border-status removedColor"><span class="columnTitle">Abandoned</span></div>
 
-                        <div id="<%=WORK_ITEM_STATUS['Abandoned']%>"  class="container-column">
+                        <div id="<%=WORK_ITEM_STATUS['Abandoned']%>"  class="container-column hide-functional-scroll">
                             <% for (let workItem of workItems["Abandoned"]) { %>
                                 <div class="card border-dark mb-3" style="max-width: 20rem;" id="<%=workItem['_id']%>">
                                     <div class="card-header">

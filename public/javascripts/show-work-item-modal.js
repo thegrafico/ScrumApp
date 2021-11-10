@@ -153,10 +153,11 @@ async function populateWorkItemModal(workItemId){
     $(UPDATE_WORK_ITEM["number_of_comments"]).text(workItem["comments"].length);
 
     // Add comments
+    $(UPDATE_WORK_ITEM_USER_COMMENT).empty();
     for (let comment of workItem["comments"]){
         // since the request is done (Success), we can add the html 
         const comment_html = COMMENT_HTML_TEMPLATE.replace(REPLACE_SYMBOL, comment);
-        addToHtml(USER_COMMENT_CONTAINER, comment_html); // Helper function
+        addToHtml(UPDATE_WORK_ITEM_USER_COMMENT, comment_html); // Helper function
     }
 
     // update link attribute

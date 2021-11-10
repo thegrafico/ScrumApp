@@ -92,6 +92,7 @@ const ATTR_WORK_ITEM_NAME = "data-workitem-name";
 
 // create work item submit btn
 const CREATE_WORK_ITEM_SUBMIT_BTN = "#create-work-item-submit-btn";
+const UPDATE_WORK_ITEM_USER_COMMENT = ".update-user-comment-container";
 
 const WORK_ITEM_ICONS = {
     "Story": {

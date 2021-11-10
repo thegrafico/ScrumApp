@@ -93,8 +93,23 @@ nav>a {
 
     .big-select{
         width: 25vw !important;
+    }      
+    .create-work-item-bg{
+        margin-bottom: 1% !important;
+        /* background-color: rgba(128, 128, 128, 0.2); */
     }
-        
+}
+
+.completedWorkItemsMsg{
+    font-size: 1.2em;
+}
+
+#sprint-board-container .open-existing-work-item-modal{
+    font-size: 1.2em !important;
+}
+
+.no-m-bt{
+    margin-bottom: 0%!important;
 }
 
 .hide-scroll{
@@ -106,7 +121,7 @@ nav>a {
 }
 
 .hide-y-scroll{
-    overflow-y: hidden;
+    overflow-y: hidden !important; 
 }
 
 .table thead{
@@ -357,4 +372,9 @@ nav>a {
 .hide-functional-scroll {
   -ms-overflow-style: none !important;  /* IE and Edge */
   scrollbar-width: none !important;  /* Firefox */
+}
+
+
+.workItemIcon{
+    font-size: 1.2em;
 }
