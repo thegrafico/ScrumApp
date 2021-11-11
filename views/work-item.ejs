@@ -368,12 +368,32 @@
                                 <div class="user-comments-container">
                                     <% if (workItem['comments'] && workItem['comments'].length > 0){%>
                                         
-                                        <% for (let comment of workItem['comments'].reverse()) {%>
-                                            <div>
-                                                <textarea name="comments" 
-                                                rows="4"
-                                                placeholder="Add a comment for this work item." 
-                                                class="bx-shadow addCommentBox"><%=comment%></textarea>
+                                        <% for (let userComment of workItem['comments'].reverse()) {%>
+                                            <div class="work-item-comment" id="<%=userComment['_id']%>">
+
+                                                <% if (userComment["author"].toString() === currentUser["_id"].toString()){ %>
+                                                    <div class="work-item-comment-buttons">
+                                                        <span role="button" class="removeCommentIcon" data-comment-id="<%=userComment['_id']%>" data-toggle="modal" data-target="#remove-confirmation-modal">
+                                                            <i class="fas fa-trash"></i>
+                                                        </span>
+                                                    </div>
+
+                                                    <div>
+                                                        <textarea name="comments" 
+                                                        rows="3"
+                                                        data-comment-id="<%=userComment['_id']%>"
+                                                        placeholder="Add a comment for this work item." 
+                                                        class="bx-shadow addCommentBox userCommentBox"><%=userComment["comment"]%></textarea>
+                                                    </div>
+                                                <%}else{%>
+                                                    <div>
+                                                        <textarea name="comments" 
+                                                        rows="3"
+                                                        disabled
+                                                        placeholder="Add a comment for this work item." 
+                                                        class="bx-shadow addCommentBox userCommentBox"><%=userComment["comment"]%></textarea>
+                                                    </div>
+                                                <%}%>    
                                             </div>
                                         <%}%>    
                                     <%}%>

@@ -106,7 +106,7 @@ $(function () {
 
             // Removing work items
             case REMOVE_OPTIONS["WORK_ITEMS"]:
-                await removeWorkItems(projectId, rowsChecked);
+                await removeWorkItems(rowsChecked);
                 updateWorkItemFeedback();
                 break;
             case REMOVE_OPTIONS["USERS"]:
@@ -117,6 +117,13 @@ $(function () {
                 break;
             case REMOVE_OPTIONS["SPRINTS"]:
                 await removeSprintManage(rowsChecked);
+                break;
+            case REMOVE_OPTIONS["WORK_ITEM_COMMENT"]:
+                let commentId = $(REMOVE_CONFIRMATION_HIDDEN_INPUT).val();
+                let workItemId = $(WORK_ITEM_ID).val();
+                await removeCommentFromWorkItem(workItemId, commentId);
+                // remove from the UI
+                $(`div #${commentId}`).remove();
                 break;
             default:
                 console.log("Invalid option to remove: ", elementToRemove);
@@ -132,6 +139,36 @@ $(function () {
     // TOGGLE THE FILTER
     $(FILTER_BTN).on("click", function() {
         toggleFilter()
+    });
+
+    // REMOVE COMMENT FROM WORK ITEM
+    $(document).on("click", REMOVE_COMMENT_WORK_ITEM_BTN, async function(){
+
+        const commentId = $(this).attr("data-comment-id");
+
+        // validate data
+        if (!commentId || _.isEmpty(commentId)){
+            $.notify("Opps, There was a problem deleting the comment from the work item");
+            return
+        }
+
+        let removeWorkItemsComment = {
+            title: "Removing Comment",
+            body: `Are you sure you want to remove this comment?`,
+            id: commentId,
+            option: REMOVE_OPTIONS["WORK_ITEM_COMMENT"]
+        };
+
+        setUpRemoveModal(removeWorkItemsComment);
+    });
+
+    $(WORK_ITEM_COMMENT_BOX).focusout(async function(){
+
+        let workItemId = $(WORK_ITEM_ID).val();
+        let commentId = $(this).attr("data-comment-id");
+        let comment = $(this).val();
+
+        await updateWorkItemComment(workItemId, commentId, comment);
     });
 
     updateWorkItemFeedback();

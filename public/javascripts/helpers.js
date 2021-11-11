@@ -1603,7 +1603,7 @@ function addTeamToTable(teamInfo) {
  * @param {String} workItemId 
  * @param {String} comment 
  */
-async function addCommentToWorkItem(projectId, workItemId, comment, numbeOfCommentSpan = NUMBER_OF_COMMENTS_SPAN) {
+async function addCommentToWorkItemDb(projectId, workItemId, comment, numbeOfCommentSpan = NUMBER_OF_COMMENTS_SPAN) {
 
     if (projectId == undefined || workItemId == undefined) {
         // TODO: add error message to the user
@@ -1611,38 +1611,49 @@ async function addCommentToWorkItem(projectId, workItemId, comment, numbeOfComme
         return;
     }
 
-    // link to make the request
-    const API_LINK_ADD_COMMENT = `/dashboard/api/${projectId}/addCommentToWorkItem/${workItemId}`;
-
     // check of comments
     if (comment.trim().length == 0) {
         console.error("Cannot add empty comment");
         return;
     }
 
-    // Data to make the request
-    const request_data = {
-        comment: comment.trim()
-    }
+    let {response, response_error} = await addCommentToWorkItem(workItemId, comment.trim());
 
-    let response_error = null;
-    const response = await make_post_request(API_LINK_ADD_COMMENT, request_data).catch(err => {
-        response_error = err;
-    });
+    if (!response_error) {
 
-    if (response) {
-        // since the request is done (Success), we can add the html 
-        const comment_html = COMMENT_HTML_TEMPLATE.replace(REPLACE_SYMBOL, comment);
+        if (!response["comment"]){
+            refreshPage();
+            return;
+        }
 
-        addToHtml(USER_COMMENT_CONTAINER, comment_html); // Helper function
+        let comment = response["comment"];
 
-        // update the number of comments
+        let commentTemplate = `
+        <div class="work-item-comment" id="${comment["_id"]}">
+            <div class="work-item-comment-buttons">
+                <span role="button" class="removeCommentIcon" data-comment-id="${comment["_id"]}" data-toggle="modal" data-target="#remove-confirmation-modal">
+                    <i class="fas fa-trash"></i>
+                </span>
+            </div>
+
+            <div>
+                <textarea name="comments" 
+                rows="3"
+                data-comment-id="${comment["_id"]}"
+                placeholder="Add a comment for this work item." 
+                class="bx-shadow addCommentBox">${comment["comment"]}</textarea>
+            </div>
+        </div>`;
+
+        $(USER_COMMENT_CONTAINER).prepend(commentTemplate);
+
+        // // update the number of comments
         let currentNumberOfComments = parseInt($(numbeOfCommentSpan).text().trim());
         $(numbeOfCommentSpan).text(++currentNumberOfComments);
 
         return true;
     } else {
-        $.notify(response_error.data.responseText, "error");
+        $.notify(response_error.data.responseJSON.msg, "error");
         return false;
     }
 }
@@ -1652,23 +1663,14 @@ async function addCommentToWorkItem(projectId, workItemId, comment, numbeOfComme
  * Remove the work item from the project
  * @param {Array} workItemsId - Array with all work item ids 
  */
-async function removeWorkItems(projectId, workItemsId) {
-    // TODO: maybe change this to the https: format? 
-    const API_LINK_REMOVE_WORK_ITEMS = `/dashboard/api/${projectId}/removeWorkItems`;
-
+async function removeWorkItems(workItemsId) {
+  
     if (!workItemsId || workItemsId.length == 0) {
         console.error("Cannot find the work items to remove");
         return;
     }
-    // console.log("Number of elements to remove: ", workItemsId.length);
-    const request_data = {
-        workItemsId
-    };
 
-    let response_error = null;
-    const response = await make_post_request(API_LINK_REMOVE_WORK_ITEMS, request_data).catch(err => {
-        response_error = err;
-    });
+    const {response, response_error} = await deleteWorkItems(workItemsId);
 
     if (response) {
         removeCheckedElement();
@@ -1733,7 +1735,7 @@ function addWorkItemEvents(element) {
 
         if ((comment && comment.trim().length > 0)) {
 
-            let commentWasAdded = addCommentToWorkItem(projectId, workItemId, comment.trim(), element["number_of_comments"]);
+            let commentWasAdded = addCommentToWorkItemDb(projectId, workItemId, comment.trim(), element["number_of_comments"]);
 
             // cleaning the dissusion val
             if (commentWasAdded) {

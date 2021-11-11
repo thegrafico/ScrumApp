@@ -165,6 +165,10 @@ const rmTag = ".rmTag";
 const BTN_CHANGE_WORK_ITEM_TYPE = ".btnType";
 const CURRENT_WORK_ITEM_TYPE = ".currentType";
 
+// REMOVE COMMENT FROM WORK ITEM
+const REMOVE_COMMENT_WORK_ITEM_BTN = ".removeCommentIcon";
+const WORK_ITEM_COMMENT_CONTAINER = ".work-item-comment";
+
 // WORK ITEM STATUS
 const BTN_CHANGE_WORK_ITEM_STATUS = ".btnWorkItemStatus";
 const CURRENT_WORK_ITEM_STATUS = ".currentWorkItemStatus";
@@ -211,6 +215,7 @@ const BTN_PLANING = "#Planing";
 const COMMENT_HTML_TEMPLATE = `<div> <textarea name="comments" class=" bx-shadow addCommentBox" rows="4" placeholder="Add a comment for this work item.">${REPLACE_SYMBOL}</textarea></div>`;
 const USER_COMMENT_CONTAINER = ".user-comments-container";
 const NUMBER_OF_COMMENTS_SPAN = "#numberOfCommentSpan";
+const WORK_ITEM_COMMENT_BOX = ".userCommentBox";
 
 // TAGS template for adding
 const ADD_TAG_TEMPLATE = `<span class="badge badge-secondary"> <input type="text" name="tags[]" autocomplete="off" value="${REPLACE_SYMBOL}" placeholder="Enter tag " class='update-work-item-tags'> <span aria-hidden="true" class="rmTag">&times;</span></span>`;
@@ -278,7 +283,8 @@ const REMOVE_OPTIONS = {
     USERS: "2",
     TEAMS: "3",
     SPRINTS: "4",
-    TEAM_USER: "5"
+    TEAM_USER: "5",
+    WORK_ITEM_COMMENT: "6",
 }
 
 //  ======= SPRINT

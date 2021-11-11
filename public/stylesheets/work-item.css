@@ -200,3 +200,36 @@
 .n-margin{
     margin-bottom: 1% !important;
 }
+
+/* COMMETNS */
+
+.work-item-comment-buttons i{
+    font-size: 1.2em;
+}
+
+.work-item-comment-buttons{
+    float: right;
+}
+
+/* COmments buttons */
+
+.save-btn-active-btn i {
+    color: #15aabf !important;
+}
+
+.removeCommentIcon{
+    color: #c44133;
+    padding-bottom: .5rem;
+}
+
+.removeCommentIcon:hover, .save-btn-active-btn:hover{
+    cursor: pointer;
+    opacity: .8;
+}
+
+/* END */
+
+textarea:disabled{
+    opacity: .7;
+    cursor: not-allowed;
+}

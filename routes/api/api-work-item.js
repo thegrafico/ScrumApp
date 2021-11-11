@@ -457,15 +457,16 @@ router.post("/api/:id/createWorkItem", middleware.isUserInProject, async functio
 /**
  * METHOD: POST - Add a comment to the work item
  */
-router.post("/api/:id/addCommentToWorkItem/:workItemId", middleware.isUserInProject, async function (req, res) {
+router.post("/api/:id/workItem/:workItemId/addComment", middleware.isUserInProject, async function (req, res) {
     
     console.log("Getting request to add a comment to a work item...");
     
-    // TODO: Verify if project exist and work item
     const projectId = req.params.id;
     const workItemId = req.params.workItemId;
+    const userId = req.user["_id"];
     
     let  { comment } = req.body;
+    let response = {};
 
     // string and not empty
     if (_.isString(comment) && !_.isEmpty(comment.trim())){
@@ -473,23 +474,111 @@ router.post("/api/:id/addCommentToWorkItem/:workItemId", middleware.isUserInProj
         // clean the comment in case
         comment = comment.trim();
 
-        // Add the comment to the DB
-        const result = await WorkItemCollection.updateOne({_id: workItemId}, 
-            { 
-                $push: { "comments": comment }
-            }
-        ).catch(err => console.error("Error updating comments: ", err));
-
-        if (!result){
-            res.status(400).send("Error adding the comment to the work item, Please try later.");
+        // look for work item
+        let workItem = await WorkItemCollection.findOne({projectId: projectId, _id: workItemId}).catch(err=>{
+            console.error("Error getting the work item");
+        });
+        console.log("WorkItem: ", workItem);
+        
+        // check if work item was found
+        if (!workItem){
+            console.error("Cannot find the work item");
+            response["msg"] = "Error adding the comment to the work item, Please try later.";
+            res.status(400).send(response);
             return;
-        }
+        }  
+
+        // add the comment to the work item
+        workItem["comments"].push({author: userId, comment});
+
+        workItem.save().then( (doc) => {
+
+            console.log("Comment was added to work item: ", doc);
+
+            let commentAdded = doc["comments"].filter(each => {
+                return (each["author"].toString() === userId.toString() && each["comment"] == comment)
+            })
+
+            response["comment"] = commentAdded[0];
+            response["msg"] = "Comment was added successfully!";
+            res.status(200).send(response);
+
+        }).catch(err => {
+            console.error("Error adding the comment:", err);
+            response["msg"] = "Oops, it seems there was a problem adding the comment to the work item.";
+            res.status(400).send(response);
+        });
+
     }else{
-        res.status(400).send("Comment is either empty or does not exist.");
+        console.error("Invalid comment for work item");
+        response["msg"] = "Comment is either empty or does not exist.";
+        res.status(400).send(response);
+        return;
+    }
+});
+
+/**
+ * METHOD: POST - Update comment for the work item
+ */
+router.post("/api/:id/workItem/:workItemId/updateComment", middleware.isUserInProject, async function (req, res) {
+    
+    console.log("Getting request to update a comment to a work item...");
+    
+    const projectId = req.params.id;
+    const workItemId = req.params.workItemId;
+    const userId = req.user["_id"];
+    
+    let  { comment, commentId} = req.body;
+    let response = {};
+
+    comment = (comment || "").trim();
+
+    if (!_.isString(commentId) || _.isEmpty(commentId)){
+        console.log("Invalid comment received");
+        response["msg"] = "Invalid comment received";
+        return res.status(400).send(response);
+    }
+
+    // Getting work item
+    let workItem = await WorkItemCollection.findOne({projectId, _id: workItemId}).catch(err => {
+        console.error("Error getting work item: ", err);
+    });
+
+    if (!workItem) {
+        console.log("Cannot find the work item");
+        response["msg"] = "Sorry, Cannot find the work item to update the comment";
+        return res.status(400).send(response);
+    }
+    let commentWasUpdated = false;
+    for (let userComment of workItem["comments"]){
+        if (userComment["author"].toString() === userId.toString() &&
+            userComment["_id"].toString() === commentId.toString() &&
+            userComment["comment"] != comment){
+                userComment["comment"] = comment;
+                commentWasUpdated = true;
+                break;
+        }
+    }
+
+    // update work item only if there was an update
+    if (commentWasUpdated){
+        
+        workItem.save().then((doc) => {
+            console.log("Comment was saved");
+            response["msg"] = "Comment updated.";
+            res.status(200).send(response);
+        }).catch(err => {
+            console.error("Error updating the comment: ", err);
+            response["msg"] = "Sorry, there was a problem updating the comment for the program.";
+            res.status(400).send(response);
+        });
+
         return;
     }
 
-    res.status(200).send("Comment was added successfully!");
+    console.log("Comment was not updated");
+    response["msg"] = "Comment not updated";
+    res.status(200).send(response);
 });
 
 
@@ -1370,6 +1459,58 @@ router.post("/api/:id/assignWorkItemToTeam/:teamId", middleware.isUserInProject,
         console.error("Error updating work items users: ", err);
         response["msg"] = "Sorry, it seems there was an error updating the work items. Please try later or refresh the page.";
         return res.status(400).send(response);
+    });
+});
+
+
+/**
+ * METHOD: POST - REMOVE COMMENT FROM WORK ITEM
+ */
+router.post("/api/:id/workItem/:workItemId/removeComment", middleware.isUserInProject, async function (req, res) {
+    
+    console.log("Getting request to remove comment from work item...");
+    
+    const projectId = req.params.id;
+    const workItemId = req.params.workItemId;
+    const userId = req.user["_id"];
+    
+    let  { commentId } = req.body;
+
+    let response = {workItemId, commentId};
+
+    // remove the comment
+    let workItem = await WorkItemCollection.findOne(
+        {projectId, _id: workItemId}
+    ).catch(err => {
+        console.error(err);
+    });
+
+    if (!workItem){
+        response['msg'] = "Sorry, Cannot find the work item to remove the comment.";
+        res.status(400).send(response);
+        return;
+    }
+
+    let comments = workItem["comments"];
+    let commentFound = false;
+    for (let comment of comments){
+        if (comment["author"].toString() === userId.toString() && comment["_id"].toString() === commentId){
+            commentFound = true;
+            break;
+        }
+    }
+
+    if (commentFound){
+        workItem["comments"].pull({_id: commentId});
+    }
+
+    workItem.save().then( () => {
+        response["msg"] = "Sucess";
+        res.status(200).send(response);
+    }).catch(err => {
+        console.log("Error saving changes in work item: ", err);
+        response["msg"] = "Sorry, it seems there was a problem removing the comment from the work item. Please try later.";
+        res.status(400).send(response);
     });
 });
 

@@ -86,10 +86,12 @@ let workItemSchema = new mongoose.Schema({
         trim: true,
         maxLength: MAX_LENGTH_DESCRIPTION,
     },
-    comments: {
-        type: [String],
-        // validate: [limitOfText, "{PATH} exceeds the limit of text a comment can have"]
-    },
+    comments: [
+        {
+            author: {type: ObjectId, ref: "User"},
+            comment: String,
+        }
+    ],
     tags: {
         type: [String],
         validate: [limitOfTags, "{PATH} exceeds the limit of elements"]
