@@ -64,19 +64,17 @@ async function populateWorkItemModal(workItemId){
         return;
     }
 
-    let workItemResponse = await getWorkItemData(workItemId).catch(err => {
-        console.error(err);
-    });
+    let {response, response_error} = await getWorkItemById(workItemId);
 
     // check for errors
-    if (workItemResponse["error"]){
-        $.notify(workItemResponse["error"].data.responseJSON.msg, "error");
+    if (response_error){
+        $.notify(response_error.data.responseJSON.msg, "error");
         return;
     }
 
-    const workItem = workItemResponse["response"]["workItem"];
-    const sprints = workItemResponse["response"]["sprints"];
-    const activeSprint = workItemResponse["response"]["activeSprint"] || "";
+    const workItem = response["workItem"];
+    const sprints = response["sprints"];
+    const activeSprint = response["activeSprint"] || "";
 
     if (_.isUndefined(workItem) || _.isNull(workItem)){
         $.notify("Sorry, Cannot find the work item information", "error");
@@ -157,8 +155,10 @@ async function populateWorkItemModal(workItemId){
     $(UPDATE_WORK_ITEM_USER_COMMENT).empty();
     for (let comment of workItem["comments"]){
         // since the request is done (Success), we can add the html 
-        const comment_html = COMMENT_HTML_TEMPLATE.replace(REPLACE_SYMBOL, comment);
-        addToHtml(UPDATE_WORK_ITEM_USER_COMMENT, comment_html); // Helper function
+        // const comment_html = COMMENT_HTML_TEMPLATE.replace(REPLACE_SYMBOL, comment);
+        // addToHtml(UPDATE_WORK_ITEM_USER_COMMENT, comment_html); // Helper function
+        addCommentToUI(comment, UPDATE_WORK_ITEM_USER_COMMENT);
+
     }
 
     // update link attribute
@@ -171,9 +171,6 @@ async function populateWorkItemModal(workItemId){
     // clean links as default
     cleanElement($(WORK_ITEM_MODALS["update"]["container"]));
     // check if work item has links
-
-    console.log(workItem);
-    console.log(workItem["relatedWorkItems"]);
 
     if (workItem["relatedWorkItems"] && Object.keys(workItem["relatedWorkItems"]).length > 0){
         console.log("related work item found");
@@ -257,36 +254,4 @@ function makeWorkItemUpdatableIfNotCompleted(workItemInputs, workItemIsCompleted
         }
         $(COMPLETED_WORK_ITEM_MESSAGE).addClass("d-none");
     }
-}
-
-/**
- * 
- * @param {String} workItemId - id of the work item 
- * @returns {object}
- */
-async function getWorkItemData(workItemId){
-    
-    let response = {error:null};
-    let projectId = getProjectId();
-
-    if (!_.isString(projectId) || _.isEmpty(projectId)){
-        $.notify("Sorry, Cannot find the Project information at this moment. Try later.", "error");
-        return;
-    }
-
-    const API_LINK_GET_WORK_ITEM= `/dashboard/api/${projectId}/getWorkItem/${workItemId}`;
-
-    let response_error = null;
-    let workItemResponse = await make_get_request(API_LINK_GET_WORK_ITEM).catch(err=> {
-        response_error = err;
-    });
-
-    if (workItemResponse){
-        response["response"] = workItemResponse;
-        return response;
-    }else{
-        response["error"] = response_error;
-        return response
-    }
-
 }

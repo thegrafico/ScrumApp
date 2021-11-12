@@ -21,7 +21,8 @@ const {
     WORK_ITEM_ICONS,
     capitalize,
     joinData,
-    sortByDate
+    sortByDate,
+    addUserNameToComment,
 } = require('../../dbSchema/Constanst');
 
 
@@ -50,8 +51,11 @@ router.get("/api/:id/getWorkItem/:workItemId", middleware.isUserInProject, async
     // Load work item specify data
     let workItem = await projectInfo.getWorkItem(workItemId).catch(err => {
         console.error("Error getting work items: ", err);
-    }) || [];
+    }) || {};
 
+    // get all users for this project -> expected an array
+    let users = await projectInfo.getUsers().catch(err => console.error("Error getting the users: ", err)) || [];
+    
 
     if (_.isUndefined(workItem) || _.isEmpty(workItem)){
         response["msg"] = "Sorry, There was a problem getting the work item information.";
@@ -59,6 +63,10 @@ router.get("/api/:id/getWorkItem/:workItemId", middleware.isUserInProject, async
     }
     
     workItem = workItem.toObject();
+
+    
+    // update the comments
+    workItem["comments"] = addUserNameToComment(workItem["comments"], users, req.user["_id"]);
 
     // ============ GETTING SPRINTS for the team of the work item =====
 
@@ -101,7 +109,7 @@ router.get("/api/:id/getWorkItem/:workItemId", middleware.isUserInProject, async
 /**
  * METHOD: GET - Get work item by itemId
  */
- router.get("/api/:id/getWorkItemByItemId/:workItemId", middleware.isUserInProject, async function (req, res) {
+router.get("/api/:id/getWorkItemByItemId/:workItemId", middleware.isUserInProject, async function (req, res) {
     console.log("Getting request to get work item by item id...");
 
     const projectId = req.params.id;
@@ -558,7 +566,20 @@ router.post("/api/:id/workItem/:workItemId/updateComment", middleware.isUserInPr
                 commentWasUpdated = true;
                 break;
         }
+
+        // console.log("===============");
+        // console.log(userComment["author"].toString() === userId.toString());
+        // console.log(userComment["_id"].toString() === commentId.toString());
+        // console.log(userComment["comment"] != comment);
+        // console.log(userComment["comment"], comment);
+        // console.log("===============")
+
     }
+
+
+
+    
+    console.log("commentWasUpdated", commentWasUpdated);
 
     // update work item only if there was an update
     if (commentWasUpdated){

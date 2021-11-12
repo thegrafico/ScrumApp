@@ -162,8 +162,9 @@ $(function () {
         setUpRemoveModal(removeWorkItemsComment);
     });
 
-    $(WORK_ITEM_COMMENT_BOX).focusout(async function(){
-
+    $(document).on("focusout", WORK_ITEM_COMMENT_BOX, async function(){
+        console.log("Updating work item");
+        
         let workItemId = $(WORK_ITEM_ID).val();
         let commentId = $(this).attr("data-comment-id");
         let comment = $(this).val();

@@ -1627,25 +1627,10 @@ async function addCommentToWorkItemDb(projectId, workItemId, comment, numbeOfCom
         }
 
         let comment = response["comment"];
+        comment["isMyComment"] = true;
 
-        let commentTemplate = `
-        <div class="work-item-comment" id="${comment["_id"]}">
-            <div class="work-item-comment-buttons">
-                <span role="button" class="removeCommentIcon" data-comment-id="${comment["_id"]}" data-toggle="modal" data-target="#remove-confirmation-modal">
-                    <i class="fas fa-trash"></i>
-                </span>
-            </div>
+        addCommentToUI(comment, USER_COMMENT_CONTAINER);
 
-            <div>
-                <textarea name="comments" 
-                rows="3"
-                data-comment-id="${comment["_id"]}"
-                placeholder="Add a comment for this work item." 
-                class="bx-shadow addCommentBox">${comment["comment"]}</textarea>
-            </div>
-        </div>`;
-
-        $(USER_COMMENT_CONTAINER).prepend(commentTemplate);
 
         // // update the number of comments
         let currentNumberOfComments = parseInt($(numbeOfCommentSpan).text().trim());
@@ -1658,6 +1643,69 @@ async function addCommentToWorkItemDb(projectId, workItemId, comment, numbeOfCom
     }
 }
 
+/**
+ * Add work item comment to the UI
+ * @param {Object} comment 
+ * @param {String} numbeOfCommentSpan 
+ * @param {String} container 
+ */
+function addCommentToUI(comment, container){
+
+    let commentTemplate = undefined;
+    
+    if (comment["isMyComment"]){
+        commentTemplate = `
+        <div class="work-item-comment" id="${comment["_id"]}">
+            
+            <div class="flex">
+    
+                <div class="work-item-comment-user-name">
+                    <span class="small">
+                        My comment
+                    </span>
+                </div>
+                
+                <div class="work-item-comment-buttons">
+                    <span role="button" class="removeCommentIcon" data-comment-id="${comment["_id"]}" data-toggle="modal" data-target="#remove-confirmation-modal">
+                        <i class="fas fa-trash"></i>
+                    </span>
+                </div>
+            </div>
+    
+            <div>
+                <textarea name="comments" 
+                rows="3"
+                data-comment-id="${comment["_id"]}"
+                placeholder="Add a comment for this work item." 
+                class="bx-shadow addCommentBox userCommentBox">${comment["comment"]}</textarea>
+            </div>
+        </div>`;
+    }else{
+        commentTemplate = `
+        <div class="work-item-comment" id="${comment["_id"]}">
+            <div>
+
+                <div class="flex">
+                
+                    <div class="work-item-comment-user-name">
+                        <span class="small">
+                            ${comment["userName"]}
+                        </span>
+                    </div>
+                </div>
+
+                <textarea name="comments" 
+                rows="3"
+                disabled
+                placeholder="Add a comment for this work item." 
+                class="bx-shadow addCommentBox">${comment["comment"]}</textarea>
+            </div>
+        </div>`;
+    }
+
+    $(container).prepend(commentTemplate);
+
+}
 
 /**
  * Remove the work item from the project

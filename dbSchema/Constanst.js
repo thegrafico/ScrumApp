@@ -882,3 +882,36 @@ function getRelationShipForWorkItem(relationship){
     return newRelationship;
 }
 module.exports.getRelationShipForWorkItem = getRelationShipForWorkItem;
+
+
+/**
+ * 
+ * @param {Array} comments - Work Item comments
+ * @param {Array} users - users of the projects 
+ * @param {String} userId - Id of the current User 
+ */
+function addUserNameToComment(comments, users, userId){
+    let formatedComments = [];
+    
+    for (let comment of comments){
+        let user = users.filter( each => {
+            return (each["id"] || "").toString() === (comment["author"] || "").toString();
+        })[0];
+        
+        let userName = "User not found";
+
+        if (user){
+            userName = user["name"];
+        }
+        let myComment = {...comment}
+        
+        myComment["userName"] = userName;
+        myComment["isMyComment"] = (comment["author"] || "").toString() === (userId || "").toString();
+        
+        formatedComments.push(myComment);
+    }
+
+    console.log(formatedComments);
+    return formatedComments;
+}
+module.exports.addUserNameToComment = addUserNameToComment;

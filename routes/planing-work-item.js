@@ -26,7 +26,8 @@ const {
     SPRINT_FORMAT_DATE,
     PAGES,
     joinData,
-    sortByDate
+    sortByDate,
+    addUserNameToComment,
 } = require('../dbSchema/Constanst');
 
 /**
@@ -129,6 +130,8 @@ router.get("/:id/planing/workitems/:workItemId", middleware.isUserInProject, asy
         req.flash("error", "Cannot the work item information.");
         return res.redirect("back");
     }
+
+    workItem = workItem.toObject();
     // ===================================================
 
     // set the links for the work item
@@ -138,6 +141,10 @@ router.get("/:id/planing/workitems/:workItemId", middleware.isUserInProject, asy
 
     // get all users for this project -> expected an array
     let users = await projectInfo.getUsers().catch(err => console.error("Error getting the users: ", err)) || [];
+    
+    // update the comments
+    workItem["comments"] = addUserNameToComment(workItem["comments"], users, req.user["_id"]);
+
 
     // get all the teams for this project
     let teams = [...projectInfo.teams];

@@ -233,3 +233,9 @@ textarea:disabled{
     opacity: .7;
     cursor: not-allowed;
 }
+
+.work-item-comment-user-name{
+    float: left;
+    opacity: .8;
+    
+}

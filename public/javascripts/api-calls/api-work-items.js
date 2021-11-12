@@ -82,6 +82,25 @@ async function getSimilarWorkItemsById(workItemItemId, limit=5){
 }
 
 /**
+ * Get work item by id
+ * @param {String} id - id of the work item 
+ * @returns 
+ */
+async function getWorkItemById(id){
+    
+    const projectId = getProjectId()
+
+    const API_LINK_GET_WORK_ITEM= `/dashboard/api/${projectId}/getWorkItem/${id}`;
+
+    let response_error = null;
+    let response = await make_get_request(API_LINK_GET_WORK_ITEM).catch(err=> {
+        response_error = err;
+    });
+
+    return {"response": response, "response_error": response_error};
+}
+
+/**
  * Get work item by item id
  * @param {String} itemId 
  * @returns 

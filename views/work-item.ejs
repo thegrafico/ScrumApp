@@ -372,10 +372,20 @@
                                             <div class="work-item-comment" id="<%=userComment['_id']%>">
 
                                                 <% if (userComment["author"].toString() === currentUser["_id"].toString()){ %>
-                                                    <div class="work-item-comment-buttons">
-                                                        <span role="button" class="removeCommentIcon" data-comment-id="<%=userComment['_id']%>" data-toggle="modal" data-target="#remove-confirmation-modal">
-                                                            <i class="fas fa-trash"></i>
-                                                        </span>
+
+                                                    <div class="flex">
+
+                                                        <div class="work-item-comment-user-name">
+                                                            <span class="small">
+                                                                My comment
+                                                            </span>
+                                                        </div>
+                                                        
+                                                        <div class="work-item-comment-buttons">
+                                                            <span role="button" class="removeCommentIcon" data-comment-id="<%=userComment['_id']%>" data-toggle="modal" data-target="#remove-confirmation-modal">
+                                                                <i class="fas fa-trash"></i>
+                                                            </span>
+                                                        </div>
                                                     </div>
 
                                                     <div>
@@ -387,6 +397,16 @@
                                                     </div>
                                                 <%}else{%>
                                                     <div>
+
+                                                        <div class="flex">
+                                                        
+                                                            <div class="work-item-comment-user-name">
+                                                                <span class="small">
+                                                                   <%=userComment["userName"]%>
+                                                                </span>
+                                                            </div>
+                                                        </div>
+
                                                         <textarea name="comments" 
                                                         rows="3"
                                                         disabled
