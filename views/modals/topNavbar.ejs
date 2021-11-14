@@ -226,34 +226,53 @@
 
                     <div class="dropdown-divider"></div>
 
+                    <!--  USER NOTIFICATIONS -->
+                    <div id="notification-container-parent">
 
-                    <a class="dropdown-item" href="#">
-                        <div class="circle-icon">
-                            <i class="far fa-comments"></i>
-                        </div>
-                        <span class="dropdown-text">
-                            Send us a message
-                        </span>
+                        <div class="container-fluid notification-container hide-functional-scroll">
+                          
+                            <% for (notification of myNotifications)  {%>
+                                <div class="notification-row mb-2" id="<%=notification['_id']%>">
 
-                    </a>                    
+                                    <div class="notification-user-initials" style="position: relative;">
+    
+                                        <!-- Sub Icon -->
+                                        <div class="notification-user-initials-circle-type">
+                                            <span>
+                                                <i class="<%=notification['icon']%> <%=notification['type']%>_ICON"></i>
+                                            </span>
+                                        </div>
+        
+                                        <div class="notification-user-initials-circle">
+                                            <span>
+                                                <%=notification['initials']%>
+                                            </span>
+                                        </div>
+                                        
+                                    </div>
+        
+                                    <div class="notification-body">
+                                        <span>
 
-                    <a class="dropdown-item" href="#">
-                        <div class="circle-icon">
-                            <i class="fas fa-cog"></i>  
+                                            <% if (notification['type'] ===  'PROJECT_INVITATION') { %>
+                                                
+                                                <span class="add-bold">
+                                                    <%=notification['from']['name']%>
+                                                </span>
+
+                                                <%=notification['notification']['message']%>
+                                            <%} else {%>
+                                                <%=notification['notification']['message']%>
+                                            <% } %>
+                                        </span>
+                                    </div>
+        
+                                </div>
+                            <% } %>
                         </div>
-                        <span class="dropdown-text">
-                            My configurations
-                        </span>
-                    </a> 
-                    <div class="dropdown-divider"></div>
-                    <a class="dropdown-item" href="http://localhost:3000/login/logout">
-                        <div class="circle-icon">
-                            <i class="fas fa-sign-out-alt"></i> 
-                        </div>
-                        <span class="dropdown-text">
-                            Logout
-                        </span>
-                    </a>
+                    </div>
+                    <!-- END USER NOTIFICATION -->
+
                 </div>
             </div>
         </div>

@@ -27,6 +27,8 @@ const SELECTED_USER_ID = "#updateUserId";
  */
 $(function (){
 
+    $(MODAL_REMOVE_USER_INPUT).select2();
+
     // BTN ADD USER
     $(MODAL_ADD_USER_BTN_SUBMIT).on("click", async function(event){
         let userEmail = $(MODAL_USER_EMAIl_INPUT).val().trim();

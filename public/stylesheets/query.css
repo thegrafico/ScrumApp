@@ -127,14 +127,19 @@ html, body{
     transform: rotate(180deg);
 }
 
+.userValue{
+    color: white;
+}
+
 .userValue:hover, .my-custon-select:hover, .select2-container--default:hover .select2-selection--single:hover{
-    color: rgba(255, 255, 255, 1);
+    color: white;
     box-shadow: 0 5px 15px rgba(74, 74, 75, 0.4);
 }
 
 
 .userValue:focus{
     outline: none;
+    color: white !important;
 }
 
 .custom-select:focus {
@@ -144,7 +149,6 @@ html, body{
 .userValue:disabled{
     opacity: .2;
     background-color: transparent;
-    color: unset;
     box-shadow: unset;
     cursor:unset;
 }

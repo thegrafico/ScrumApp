@@ -109,6 +109,7 @@ module.exports = {
             "/javascripts/api-calls/api-teams.js",
             "/javascripts/api-calls/api-users.js",
             "/javascripts/right-sidebar.js",
+            "/javascripts/dependecies/chartjs-plugin-labels.min.js",
         ]
     },
 
@@ -197,7 +198,6 @@ module.exports = {
             "/javascripts/modals/user-controller.js",
             "/javascripts/modals/team-controller.js",
             "/javascripts/modals/sprint-controller.js",
-            "/javascripts/modals/sprint-points-graph.js",
             "/javascripts/dependecies/col-resizable-min.js",
             "/javascripts/api-calls/api-sprints.js",
             "/javascripts/api-calls/api-work-items.js",

@@ -378,3 +378,8 @@ nav>a {
 .workItemIcon{
     font-size: 1.2em;
 }
+
+.feedbackWorkItemBtn:focus, #showPointsBtn:focus{
+    outline: none !important;
+    outline-color: transparent !important;
+}

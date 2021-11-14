@@ -141,6 +141,47 @@ app.use(function (req, res, next) {
 	res.locals.showCompletedWorkItems = false;
 	res.locals.showCreateWorkItemModal = false;
 
+	const userNotifications = [
+		{
+			_id: "1234567aksdhkajsdkj",
+			from: {name: "Alexander", "_id": "testId"},
+			to: {"_id": "myTestId"},
+			type: "PROJECT_INVITATION",
+			icon: "fas fa-folder",
+			initials: "AL",
+			notification: {
+				id: "projectId",
+				message: "Invited you the the project: Scrum App",
+			}
+		},
+		{
+			_id: "1234567aksdhkajsdkasdj",
+			from: {name: "Alexander", "_id": "testId"},
+			to: {"_id": "myTestId"},
+			type: "TEAM_ADDED",
+			icon: "fas fa-users",
+			initials: "RP",
+			notification: {
+				id: "teamId",
+				message: "You were added to the team: Team Awesome",
+			}
+		},
+
+		{
+			_id: "1234567aksdhkajsdkasdasasdj",
+			from: {name: "Alexander", "_id": "testId"},
+			to: {"_id": "myTestId"},
+			type: "ASSIGNED_WORK_ITEM",
+			icon: "far fa-plus-square",
+			initials: "WI",
+			notification: {
+				id: "workItemId",
+				message: "Alexander Avalo Assinged Work Item 2035 to you.",
+			}
+		},
+	];
+
+	res.locals.myNotifications = userNotifications;
 	next();
 });
 

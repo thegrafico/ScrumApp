@@ -209,6 +209,27 @@ const WORK_ITEM_RELATIONSHIP = {
     BLOCKING:       {value: 7, text: "Is Blocking",     title: "Bloking"}
 };
 module.exports.WORK_ITEM_RELATIONSHIP = WORK_ITEM_RELATIONSHIP;
+
+
+// NOTIFICATION
+const NOTIFICATION_TYPES = {
+    "PROJECT_INVITATION":       { // User was invited to the project
+        getMessage: (userFrom, projectName) => {
+            return `${userFrom} invited you to the project: ${projectName}`;
+        },
+        projectId: null,
+    }, 
+    "TEAM_ADDED":           {
+        getMessage: (teamName) => {
+            return `You were added to the team: ${teamName}`;
+        }
+    },   // user was added to a team
+    "MENTIONED":            {},   // user was mentioned
+    "ASSIGNED_WORK_ITEM":   {}, // work item was assigned to user
+    "WORK_ITEM_UPDATED":    {}, // Work item was updated (User assigned is notified) 
+}
+module.exports.NOTIFICATION_TYPES = NOTIFICATION_TYPES;
+
 // ===================================
 
 

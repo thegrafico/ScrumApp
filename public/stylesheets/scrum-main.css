@@ -550,7 +550,6 @@ td.off{
 
 .user-options-dropdown{
     width: 15vw; 
-    z-index: 999;
 }
 
 @media screen and (max-width: 2000px) {
@@ -663,7 +662,7 @@ td.off{
 
 .remove-relationship-btn{
     position: absolute;
-    right: 0;
+    right: .5rem;
     /* right: 1rem; */
 }
 .remove-relationship-btn i{

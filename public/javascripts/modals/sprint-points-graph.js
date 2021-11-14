@@ -7,6 +7,9 @@ $(function () {
 
     // default color of the text
     Chart.defaults.color = "white";
+    Chart.defaults.font.size = 12;
+    Chart.register(ChartDataLabels);
+
 
     $(BNT_SHOW_CHART).on("click", function(){
 
@@ -56,7 +59,7 @@ function getConfigChart(workItems){
             {
                 label: 'Total Points',
                 data: [workItems["total"]],
-                backgroundColor: 'white',
+                backgroundColor: '#d06800',
                 stack: 'Stack 0',
             },
             {
@@ -99,7 +102,21 @@ function getConfigChart(workItems){
                     text: "Points"
                 }
             }
-          }
+          },
+          plugins: {
+            datalabels: {
+                display: function(context) {
+                   return context.dataset.data[context.dataIndex] >= 1; // or >= 1 or ...
+                }
+            },
+            legend: {
+                position: 'top',
+            },
+            title: {
+                display: true,
+                text: 'Sprint Story Points'
+            }
+        }
         },
     };
 
