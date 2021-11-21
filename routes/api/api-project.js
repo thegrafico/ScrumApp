@@ -405,8 +405,6 @@ router.post("/api/addProjectToFavorite", async function (req, res) {
         res.status(400).send(response);
         return;
     }
-
-    console.log(userInfo["favoriteProjects"]);
     
     // check if the user can not add a favorite project 
     if (userInfo["favoriteProjects"].length > MAX_NUMBER_OF_FAVORITE_PROJECTS - 1){
@@ -421,7 +419,7 @@ router.post("/api/addProjectToFavorite", async function (req, res) {
     userInfo.save().then( () => {
         response["msg"] = "Project was added to your favorites.";
         let favProject = project.toObject();
-
+        favProject["isMyProject"] = userIsProjectOwner;
         setupProjectInitials(favProject);
         response["project"] = favProject;
         res.status(200).send(response);
@@ -485,6 +483,7 @@ router.post("/api/removeProjectFromFavorite", async function (req, res) {
     userInfo.save().then( () => {
         response["msg"] = "Project was removed from your favorites.";
         let favProject = project.toObject();
+        favProject["isMyProject"] = userIsProjectOwner;
         setupProjectInitials(favProject);
         response["project"] = favProject;
         res.status(200).send(response);

@@ -100,8 +100,12 @@
                                                 <% if (userFavoriteProjects[i]["author"].toString() == currentUser["_id"].toString()) { %>
 
                                                     <div class="pr-4 project-icons" style="text-align: right;">
-                                                        <span class="edit-project-btn" data-toggle="modal" data-target="#edit-project-modal" data-projectid="<%= userFavoriteProjects[i]._id %>"><i class="fas fa-edit"></i></span>
-                                                        <span class="remove-project-btn" data-toggle="modal" data-target="#remove-confirmation-modal" data-projectid="<%= userFavoriteProjects[i]._id %>"><i class="fas fa-trash"></i></span>
+                                                        <span class="edit-project-btn" data-toggle="modal" data-target="#edit-project-modal" data-projectid="<%= userFavoriteProjects[i]._id %>">
+                                                            <i class="fas fa-edit"></i>
+                                                        </span>
+                                                        <span class="remove-project-btn" data-toggle="modal" data-target="#remove-confirmation-modal" data-projectid="<%= userFavoriteProjects[i]._id %>">
+                                                            <i class="fas fa-trash"></i>
+                                                        </span>
                                                     </div>
                                                 <% } %>
                                             </div>
@@ -175,12 +179,6 @@
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="tab-pane fade" id="tabs-work-items">
-                                <p> 
-                                    Food truck fixie locavore, accusamus mcsweeney's marfa nulla single-origin coffee
-                                    squid. 
-                                </p>
                             </div>
                         </div>
                     </div>

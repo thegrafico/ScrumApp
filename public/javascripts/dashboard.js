@@ -277,8 +277,6 @@ $(function () {
             $.notify(response_error.data.responseJSON.msg, "error");
         }
     });
-    // ======================================
-
 
     // =============== EDIT PROJECT ==========
     $(document).on("click", EDIT_PROJECT_BTN, function(){
@@ -291,7 +289,7 @@ $(function () {
 
         // getting project name
         let projectName = $(`div#${projectId}`).find(PROJECT_TITLE_TEXT).text().trim();
-        let projectDescription = $(`div#${projectId}`).find(PROJECT_DESCRIPTION_TEXT).text();
+        let projectDescription = $(`div#${projectId}`).find(PROJECT_DESCRIPTION_TEXT).text().trim();
 
         // updating modal with project information
         $(EDIT_PROJECT_NAME).val(projectName);
@@ -351,7 +349,6 @@ $(function () {
             $.notify(response_error.data.responseJSON.msg, "error");
         }
     });
-    // ======================================
 
     // =============== FILTER PROJECT ==========
 
@@ -366,6 +363,8 @@ $(function () {
         filterProject(ROW_PROJECTS_CONTAINER, userInput);
         
     });
+
+    // =============== GO TO PROJECT ==========
 
     // GO TO PROJECT 
     $(document).on("click", GO_TO_PROJECT, function(){
@@ -410,7 +409,26 @@ function addProjectToUI(project, isFavorite){
 
     let projectTemplate = '';
 
+    // check if the user has permission to edit or remove the project. 
+    let addUpdateOptions = project["isMyProject"];
+
+    let editTemplate = '';
+
     if (isFavorite){
+        
+
+        if (addUpdateOptions){
+            editTemplate = `
+            <div class="pr-4 project-icons" style="text-align: right;">
+                <span class="edit-project-btn" data-toggle="modal" data-target="#edit-project-modal" data-projectid="${project["_id"]}">
+                    <i class="fas fa-edit"></i>
+                </span>
+                <span class="remove-project-btn" data-toggle="modal" data-target="#remove-confirmation-modal" data-projectid="${project["_id"]}">
+                    <i class="fas fa-trash"></i>
+                </span>
+            </div>`;
+        }
+
         projectTemplate = `
         <div id="${project["_id"]}" class="col-3 card text-white bg-dark mb-6 card-project add-shadow-box">             
         
@@ -441,16 +459,28 @@ function addProjectToUI(project, isFavorite){
                     ${project["description"]}
                 </p>
             </div>
-            <div class="pr-4 project-icons" style="text-align: right;">
-            <span class="edit-project-btn" data-projectid="${project["_id"]}"><i class="fas fa-edit"></i></span>
-            <span class="remove-project-btn" data-toggle="modal" data-target="#remove-confirmation-modal" data-projectid="${project["_id"]}"><i class="fas fa-trash"></i></span>
-            </div>
+            ${editTemplate}
         </div>`;
 
         // add to UI
         $(FAVORITE_PROJECTS_CONTAINER).append(projectTemplate);
         console.log("ADDING TO FAVORITE");
     }else{
+
+        if (addUpdateOptions){
+            editTemplate = `
+            <div class="col-2">
+                <div class="pr-4 project-icons project-icons-row" style="text-align: right;">
+                    <span class="edit-project-btn" data-toggle="modal" data-target="#edit-project-modal" data-projectid="${project["_id"]}">
+                        <i class="fas fa-edit"></i>
+                    </span>
+                    <span class="remove-project-btn" data-toggle="modal" data-target="#remove-confirmation-modal" data-projectid="${project["_id"]}">
+                        <i class="fas fa-trash"></i>
+                    </span>
+                </div>
+            </div>`;
+        }
+
         projectTemplate = `
         <div id="${project["_id"]}" class="row mb-4 add-shadow-box project-row">
 
@@ -493,17 +523,7 @@ function addProjectToUI(project, isFavorite){
                     </div>
                 </div>
             </div>
-
-            <div class="col-2">
-                <div class="pr-4 project-icons project-icons-row" style="text-align: right;">
-                    <span class="edit-project-btn" data-projectid="${project["_id"]}">
-                        <i class="fas fa-edit"></i>
-                    </span>
-                    <span class="remove-project-btn" data-toggle="modal" data-target="#remove-confirmation-modal" data-projectid="${project["_id"]}">
-                        <i class="fas fa-trash"></i>
-                    </span>
-                </div>
-            </div>
+            ${editTemplate}
         </div>`;
 
         $(ROW_PROJECTS_CONTAINER).append(projectTemplate);
