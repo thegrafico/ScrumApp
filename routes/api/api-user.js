@@ -14,6 +14,7 @@ const {
     sortByKey,
     NOTIFICATION,
     NOTIFICATION_STATUS,
+    ERROR_CODES,
     arrayToObject,
 } = require("../../dbSchema/Constanst");
 const notification = require("../../dbSchema/notification");
@@ -263,8 +264,16 @@ router.post("/api/:id/inviteUserToProject", middleware.isUserInProject, async fu
         return;
     }).catch( err => {
         console.error("Error sending the invitation to the user: ", err);
-        response["msg"] = "Opps, there was a problem sending the invitation to the user.";
-        res.status(200).send(response);
+        
+        let errMsg =  "Oops, there was a problem sending the invitation to the user.";
+        
+        // user already has an invitation
+        if (err.code === ERROR_CODES["DUPLICATE_RECORD"]){
+            errMsg = "This user already has one invitation from this project";
+        }
+
+        response["msg"] = errMsg;
+        res.status(400).send(response);
         return;
     });
 

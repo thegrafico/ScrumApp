@@ -5,6 +5,7 @@ const WorkItemCollection        = require("../../dbSchema/workItem");
 const ProjectCollection         = require("../../dbSchema/projects");
 const UserCollection            = require("../../dbSchema/user");
 const SprintCollection          = require("../../dbSchema/sprint");
+const NotificationCollection    = require("../../dbSchema/notification");
 
 const _                         = require("lodash");
 let router                      = express.Router();
@@ -22,7 +23,11 @@ const {
     capitalize,
     joinData,
     sortByDate,
+    NOTIFICATION,
+    NOTIFICATION_STATUS,
+    NOTIFICATION_TYPES,
     addUserNameToComment,
+    printError,
 } = require('../../dbSchema/Constanst');
 
 
@@ -275,14 +280,14 @@ router.post("/api/:id/createWorkItem", middleware.isUserInProject, async functio
     }
 
     if (userAssigned != UNASSIGNED._id) {
-        const _user = await UserCollection
-            .findOne({_id: userAssigned})
-            .catch(err => {
-                errors = err.reason
-                console.error("Cannot get the user: ", err);
-            });
 
-        // -- 
+        // Find the user information
+        const _user = await UserCollection.findOne({_id: userAssigned}).catch(err => {
+            errors = err.reason
+            console.error("Cannot get the user: ", err);
+        });
+
+        // check if the user was found
         if (_user){
             newWorkItem["assignedUser"] = {name: _user["fullName"],'id': userAssigned};
             addUserToTeam = true;
@@ -350,7 +355,6 @@ router.post("/api/:id/createWorkItem", middleware.isUserInProject, async functio
     let addRelationshipToOtherWorkItems = [];
 
     // LINKS - for relationship of the work item
-    console.log("LINKS: ", links);
     if (_.isArray(links)){
 
         // Check if empty
@@ -444,6 +448,26 @@ router.post("/api/:id/createWorkItem", middleware.isUserInProject, async functio
         });
     }
 
+    // send a notification to the user if was assigned to the work item
+    const currentUser = req["user"]["_id"];
+
+    // check if the current user is not the same that is assigning the work item
+    if (addUserToTeam && newWorkItem["assignedUser"]["id"] && newWorkItem["assignedUser"]["id"].toString() != currentUser.toString()){
+
+        let notification = {
+            from: currentUser,  
+            to: newWorkItem["assignedUser"]["id"],
+            type: NOTIFICATION["ASSIGNED_WORK_ITEM"],
+            referenceId: newWorkItem['_id'],
+            status: NOTIFICATION_STATUS['NEW'],
+            projectId: projectId,
+        }
+
+        await NotificationCollection.create(notification).catch( err => {
+            printError(`Error Creating the notification for the assigned work item: ${err}`);
+        });
+    }
+
     // get all the teams for this project
     let projectTeams = [...projectInfo.teams];
 
@@ -460,148 +484,6 @@ router.post("/api/:id/createWorkItem", middleware.isUserInProject, async functio
 
     res.status(200).send(response);
 });
-
-
-/**
- * METHOD: POST - Add a comment to the work item
- */
-router.post("/api/:id/workItem/:workItemId/addComment", middleware.isUserInProject, async function (req, res) {
-    
-    console.log("Getting request to add a comment to a work item...");
-    
-    const projectId = req.params.id;
-    const workItemId = req.params.workItemId;
-    const userId = req.user["_id"];
-    
-    let  { comment } = req.body;
-    let response = {};
-
-    // string and not empty
-    if (_.isString(comment) && !_.isEmpty(comment.trim())){
-        
-        // clean the comment in case
-        comment = comment.trim();
-
-        // look for work item
-        let workItem = await WorkItemCollection.findOne({projectId: projectId, _id: workItemId}).catch(err=>{
-            console.error("Error getting the work item");
-        });
-        console.log("WorkItem: ", workItem);
-        
-        // check if work item was found
-        if (!workItem){
-            console.error("Cannot find the work item");
-            response["msg"] = "Error adding the comment to the work item, Please try later.";
-            res.status(400).send(response);
-            return;
-        }  
-
-        // add the comment to the work item
-        workItem["comments"].push({author: userId, comment});
-
-        workItem.save().then( (doc) => {
-
-            console.log("Comment was added to work item: ", doc);
-
-            let commentAdded = doc["comments"].filter(each => {
-                return (each["author"].toString() === userId.toString() && each["comment"] == comment)
-            })
-
-            response["comment"] = commentAdded[0];
-            response["msg"] = "Comment was added successfully!";
-            res.status(200).send(response);
-
-        }).catch(err => {
-            console.error("Error adding the comment:", err);
-            response["msg"] = "Oops, it seems there was a problem adding the comment to the work item.";
-            res.status(400).send(response);
-        });
-
-    }else{
-        console.error("Invalid comment for work item");
-        response["msg"] = "Comment is either empty or does not exist.";
-        res.status(400).send(response);
-        return;
-    }
-});
-
-/**
- * METHOD: POST - Update comment for the work item
- */
-router.post("/api/:id/workItem/:workItemId/updateComment", middleware.isUserInProject, async function (req, res) {
-    
-    console.log("Getting request to update a comment to a work item...");
-    
-    const projectId = req.params.id;
-    const workItemId = req.params.workItemId;
-    const userId = req.user["_id"];
-    
-    let  { comment, commentId} = req.body;
-    let response = {};
-
-    comment = (comment || "").trim();
-
-    if (!_.isString(commentId) || _.isEmpty(commentId)){
-        console.log("Invalid comment received");
-        response["msg"] = "Invalid comment received";
-        return res.status(400).send(response);
-    }
-
-    // Getting work item
-    let workItem = await WorkItemCollection.findOne({projectId, _id: workItemId}).catch(err => {
-        console.error("Error getting work item: ", err);
-    });
-
-    if (!workItem) {
-        console.log("Cannot find the work item");
-        response["msg"] = "Sorry, Cannot find the work item to update the comment";
-        return res.status(400).send(response);
-    }
-    let commentWasUpdated = false;
-    for (let userComment of workItem["comments"]){
-        if (userComment["author"].toString() === userId.toString() &&
-            userComment["_id"].toString() === commentId.toString() &&
-            userComment["comment"] != comment){
-                userComment["comment"] = comment;
-                commentWasUpdated = true;
-                break;
-        }
-
-        // console.log("===============");
-        // console.log(userComment["author"].toString() === userId.toString());
-        // console.log(userComment["_id"].toString() === commentId.toString());
-        // console.log(userComment["comment"] != comment);
-        // console.log(userComment["comment"], comment);
-        // console.log("===============")
-
-    }
-
-
-
-    
-    console.log("commentWasUpdated", commentWasUpdated);
-
-    // update work item only if there was an update
-    if (commentWasUpdated){
-        
-        workItem.save().then((doc) => {
-            console.log("Comment was saved");
-            response["msg"] = "Comment updated.";
-            res.status(200).send(response);
-        }).catch(err => {
-            console.error("Error updating the comment: ", err);
-            response["msg"] = "Sorry, there was a problem updating the comment for the program.";
-            res.status(400).send(response);
-        });
-
-        return;
-    }
-
-    console.log("Comment was not updated");
-    response["msg"] = "Comment not updated";
-    res.status(200).send(response);
-});
-
 
 /**
  * METHOD: POST - Update work item
@@ -939,15 +821,18 @@ router.post("/api/:id/updateWorkItem/:workItemId", middleware.isUserInProject, a
     // update the Update field
     workItem["updatedAt"] = Date.now();
 
+    //  --- SAVING THE WORK ITEM DATA ----
     let updatedWorkItem = await workItem.save().catch(err => {
         console.error("Error saving the work item: ", err);
     });
 
+    // check if work item was saved
     if (_.isUndefined(updatedWorkItem) || _.isNull(updatedWorkItem)){
         response["msg"] = "Sorry, there was an error saving the changes to the work item.";
         res.status(400).send(response);
         return;
     }
+    // from this point to botton, is just setting other data from the work item
 
     // In case the user updates the relationship and removed some relationships
     await WorkItemCollection.removeRelationFromWorkItem(projectId, workItem["_id"], currentLinks, updateValues["links"]).catch(err => {
@@ -958,6 +843,24 @@ router.post("/api/:id/updateWorkItem/:workItemId", middleware.isUserInProject, a
     await WorkItemCollection.addRelationToWorkItem(projectId, addRelationshipToOtherWorkItems, workItem["_id"]).catch(err => {
         console.error("Error adding relationship to other work items: ", err);
     });
+
+    // check if the current user is not the same that is assigning the work item
+    const currentUser = req["user"]["_id"];
+    if (addUserToTeam && workItem["assignedUser"]["id"] && workItem["assignedUser"]["id"].toString() != currentUser.toString()){
+
+        let notification = {
+            from: currentUser,  
+            to: workItem["assignedUser"]["id"],
+            type: NOTIFICATION["ASSIGNED_WORK_ITEM"],
+            referenceId: workItem['_id'],
+            status: NOTIFICATION_STATUS['NEW'],
+            projectId: projectId,
+        }
+
+        await NotificationCollection.create(notification).catch( err => {
+            printError(`Error Creating the notification for the assigned work item: ${err}`);
+        });
+    }
 
     // ======== TO JOIN THE WORK ITEM WITH THE TEAMS =============
     updatedWorkItem = updatedWorkItem.toObject();
@@ -975,6 +878,142 @@ router.post("/api/:id/updateWorkItem/:workItemId", middleware.isUserInProject, a
     
     response["msg"] = "Work Item was updated successfully!";
     response["workItem"] = updatedWorkItem;
+    res.status(200).send(response);
+});
+
+
+/**
+ * METHOD: POST - Add a comment to the work item
+ */
+router.post("/api/:id/workItem/:workItemId/addComment", middleware.isUserInProject, async function (req, res) {
+    
+    console.log("Getting request to add a comment to a work item...");
+    
+    const projectId = req.params.id;
+    const workItemId = req.params.workItemId;
+    const userId = req.user["_id"];
+    
+    let  { comment } = req.body;
+    let response = {};
+
+    // string and not empty
+    if (_.isString(comment) && !_.isEmpty(comment.trim())){
+        
+        // clean the comment in case
+        comment = comment.trim();
+
+        // look for work item
+        let workItem = await WorkItemCollection.findOne({projectId: projectId, _id: workItemId}).catch(err=>{
+            console.error("Error getting the work item");
+        });
+        console.log("WorkItem: ", workItem);
+        
+        // check if work item was found
+        if (!workItem){
+            console.error("Cannot find the work item");
+            response["msg"] = "Error adding the comment to the work item, Please try later.";
+            res.status(400).send(response);
+            return;
+        }  
+
+        // add the comment to the work item
+        workItem["comments"].push({author: userId, comment});
+
+        workItem.save().then( (doc) => {
+
+            console.log("Comment was added to work item: ", doc);
+
+            let commentAdded = doc["comments"].filter(each => {
+                return (each["author"].toString() === userId.toString() && each["comment"] == comment)
+            })
+
+            response["comment"] = commentAdded[0];
+            response["msg"] = "Comment was added successfully!";
+            res.status(200).send(response);
+
+        }).catch(err => {
+            console.error("Error adding the comment:", err);
+            response["msg"] = "Oops, it seems there was a problem adding the comment to the work item.";
+            res.status(400).send(response);
+        });
+
+    }else{
+        console.error("Invalid comment for work item");
+        response["msg"] = "Comment is either empty or does not exist.";
+        res.status(400).send(response);
+        return;
+    }
+});
+
+/**
+ * METHOD: POST - Update comment for the work item
+ */
+router.post("/api/:id/workItem/:workItemId/updateComment", middleware.isUserInProject, async function (req, res) {
+    
+    console.log("Getting request to update a comment to a work item...");
+    
+    const projectId = req.params.id;
+    const workItemId = req.params.workItemId;
+    const userId = req.user["_id"];
+    
+    let  { comment, commentId} = req.body;
+    let response = {};
+
+    comment = (comment || "").trim();
+
+    if (!_.isString(commentId) || _.isEmpty(commentId)){
+        console.log("Invalid comment received");
+        response["msg"] = "Invalid comment received";
+        return res.status(400).send(response);
+    }
+
+    // Getting work item
+    let workItem = await WorkItemCollection.findOne({projectId, _id: workItemId}).catch(err => {
+        console.error("Error getting work item: ", err);
+    });
+
+    if (!workItem) {
+        console.log("Cannot find the work item");
+        response["msg"] = "Sorry, Cannot find the work item to update the comment";
+        return res.status(400).send(response);
+    }
+    let commentWasUpdated = false;
+    for (let userComment of workItem["comments"]){
+        if (userComment["author"].toString() === userId.toString() &&
+            userComment["_id"].toString() === commentId.toString() &&
+            userComment["comment"] != comment){
+                userComment["comment"] = comment;
+                commentWasUpdated = true;
+                break;
+        }
+
+        // console.log("===============");
+        // console.log(userComment["author"].toString() === userId.toString());
+        // console.log(userComment["_id"].toString() === commentId.toString());
+        // console.log(userComment["comment"] != comment);
+        // console.log(userComment["comment"], comment);
+        // console.log("===============")
+
+    }
+
+    // update work item only if there was an update
+    if (commentWasUpdated){
+        
+        workItem.save().then((doc) => {
+            console.log("Comment was saved");
+            response["msg"] = "Comment updated.";
+            res.status(200).send(response);
+        }).catch(err => {
+            console.error("Error updating the comment: ", err);
+            response["msg"] = "Sorry, there was a problem updating the comment for the program.";
+            res.status(400).send(response);
+        });
+
+        return;
+    }
+
+    console.log("Comment was not updated");
+    response["msg"] = "Comment not updated";
     res.status(200).send(response);
 });
 

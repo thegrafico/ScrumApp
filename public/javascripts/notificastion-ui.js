@@ -22,19 +22,20 @@ $(function () {
     $(NOTIFICATION_UI["row"]).on("click", async function(){
 
         const currentNotification = this;
-        const notificationId = $(currentNotification).attr("id"); 
+        const notificationId = $(currentNotification).attr("id");
 
         // get the type of the notification
         const currentNotificationType = $(currentNotification).attr("data-notification-type");
+        
+        // getting the project of the notification
+        const notificationProjectId = $(currentNotification).attr("data-notification-projectId");
 
         // open or do wathever depending on the type of the notification for the user
         switch (currentNotificationType) {
             case NOTIFICATION_TYPES["PROJECT_INVITATION"]:
 
-                const projectId = $(currentNotification).attr("data-notification-reference-id");
-
                 // populate hidden inputs in project invitation modal
-                $(PROJECT_INVITATION["projectIdHiddenInput"]).val(projectId);
+                $(PROJECT_INVITATION["projectIdHiddenInput"]).val(notificationProjectId);
                 $(PROJECT_INVITATION["NotificationIdHiddenInput"]).val(notificationId);
 
                 // clean the modal body
@@ -47,9 +48,14 @@ $(function () {
                 $(currentNotification).find(NOTIFICATION_UI["body"]).clone().appendTo(PROJECT_INVITATION["body"]);
                 break;
         
-            case NOTIFICATION_TYPES["TEAM_ADDED"]:
-                break;
             case NOTIFICATION_TYPES["ASSIGNED_WORK_ITEM"]:
+                const workItemId = $(currentNotification).attr("data-notification-reference-id");
+
+                let URL = `/dashboard/${notificationProjectId}/planing/workItems/${workItemId}`;
+
+                openInNewTab(URL);
+                break;
+            case NOTIFICATION_TYPES["TEAM_ADDED"]:
                 break;
             case NOTIFICATION_TYPES["MENTIONED"]:
                 break;
@@ -60,29 +66,8 @@ $(function () {
                 break;
         }
 
-        // getting the status of the current notification
-        const currentNotificationStatus = $(currentNotification).attr("data-notification-status");
-
-        // update the status of the notification if the status is new - (To Update the number of notifications)
-        if (currentNotificationStatus === NOTIFICATION_STATUS["NEW"]){
-            await updateNotificationStatus(notificationId, NOTIFICATION_STATUS['ACTIVE']);
-
-            // update the notification so the user don't udpate the status again
-            $(currentNotification).attr("data-notification-type", NOTIFICATION_STATUS['ACTIVE']);
-
-            // remove -1 from the current number of notifications
-            let newNumberOfNotifications = parseInt($(NUMBER_OF_NEW_NOTIFICATIONS).attr("data-n-notifications")) - 1;
-            
-            // update the current value in case of more notifications
-            $(NUMBER_OF_NEW_NOTIFICATIONS).attr("data-n-notifications", newNumberOfNotifications);
-
-            if (newNumberOfNotifications === 0){
-                $(NUMBER_OF_NEW_NOTIFICATIONS).addClass('d-none');
-            }else if (newNumberOfNotifications < 10){
-                $(NUMBER_OF_NEW_NOTIFICATIONS).text(newNumberOfNotifications);
-            }
-
-        }
+        await updateStatusForNotificationIfNew(currentNotification, notificationId);
+        
     });
 
     // ======== PROJECT INVITATION ==========
@@ -157,6 +142,35 @@ $(function () {
             $(NOTIFICATION_UI["emptyContainer"]).addClass("d-none");
         }
     }
-});
 
+    /**
+     * Update the status of the notification so the number of notification is updated for the user
+     * @param {HTMLBodyElement} uiNotification 
+     */
+    async function updateStatusForNotificationIfNew(uiNotification, notificationId){
+        // getting the status of the current notification
+        const currentNotificationStatus = $(uiNotification).attr("data-notification-status");
+
+        // update the status of the notification if the status is new - (To Update the number of notifications)
+        if (currentNotificationStatus === NOTIFICATION_STATUS["NEW"]){
+            await updateNotificationStatus(notificationId, NOTIFICATION_STATUS['ACTIVE']);
+
+            // update the notification so the user don't udpate the status again
+            $(uiNotification).attr("data-notification-type", NOTIFICATION_STATUS['ACTIVE']);
+
+            // remove -1 from the current number of notifications
+            let newNumberOfNotifications = parseInt($(NUMBER_OF_NEW_NOTIFICATIONS).attr("data-n-notifications")) - 1;
+            
+            // update the current value in case of more notifications
+            $(NUMBER_OF_NEW_NOTIFICATIONS).attr("data-n-notifications", newNumberOfNotifications);
+
+            if (newNumberOfNotifications === 0){
+                $(NUMBER_OF_NEW_NOTIFICATIONS).addClass('d-none');
+            }else if (newNumberOfNotifications < 10){
+                $(NUMBER_OF_NEW_NOTIFICATIONS).text(newNumberOfNotifications);
+            }
+
+        }
+    }
+});
 

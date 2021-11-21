@@ -228,8 +228,8 @@ const NOTIFICATION_TYPES = {
     },
     "MENTIONED":            {},   // user was mentioned
     "ASSIGNED_WORK_ITEM":   { // work item was assigned to user
-        getMessage: (userName, workItemItemId) => {
-            return `${userName} Assinged Work Item ${workItemItemId} to you.`;
+        getMessage: (projectName, workItemItemId) => {
+            return `${projectName}: Work Item ${workItemItemId} was assigned to you.`;
         },
         icon: "far fa-plus-square",
     }, 
@@ -246,6 +246,12 @@ const NOTIFICATION_STATUS = {
     "INACTIVE": "INACTIVE",
 };
 module.exports.NOTIFICATION_STATUS = NOTIFICATION_STATUS;
+
+// ====== ERROR CODES FROM MONGO =========
+const ERROR_CODES = {
+    "DUPLICATE_RECORD": 11000,
+}
+module.exports.ERROR_CODES = ERROR_CODES;
 
 // ===================================
 
@@ -974,3 +980,14 @@ function addUserNameToComment(comments, users, userId){
     return formatedComments;
 }
 module.exports.addUserNameToComment = addUserNameToComment;
+
+/**
+ * Print a error message to the console.
+ * @param {Any} msg 
+ */
+function printError(msg){
+    console.error("\n=======================");
+    console.error(msg);
+    console.error("=======================\n");
+}
+module.exports.printError = printError;

@@ -842,6 +842,7 @@ router.post("/api/declineProjectInvitation", async function (req, res) {
 
     // check if notification was found
     if (!notification){
+        console.log("NOTIFICATION ID:", notificationId);
         response["msg"] = "Sorry, It seems this project invitation was deleted.";
         res.status(400).send(response);
         return;

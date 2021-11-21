@@ -2329,10 +2329,19 @@ function getRelationShipForWorkItem(relationship){
  * @param {String} divId 
  * @returns {ChartJs}
  */
- function getChart(config, divId){
+function getChart(config, divId){
 
     let ctx = document.getElementById(divId).getContext('2d');
     
     return new Chart(ctx, config);
+}
+
+
+/**
+ * Open URL in new tab
+ * @param {String} url 
+ */
+function openInNewTab(url) {
+    window.open(url, '_blank').focus();
 }
 

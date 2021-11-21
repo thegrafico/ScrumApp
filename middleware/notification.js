@@ -38,33 +38,44 @@ module.exports.getUserNotifications = async (req, res, next) => {
     // sort notification
     myNotifications = sortByDate(myNotifications, "createdAt");
 
+    // notifications to send to the user;
+    let goodNotifications = [];
+
     let numberOfNewNotifications = 0;
-    
+
     for (let notification of myNotifications){
 
         if (notification["status"] === NOTIFICATION_STATUS["NEW"]){
             numberOfNewNotifications += 1;
         }
+        
+        let isGoodNotification = false;
 
         switch(notification['type']){
             case NOTIFICATION["PROJECT_INVITATION"]:
-                await setupProjectInvitationNotification(notification);
+                isGoodNotification = await setupProjectInvitationNotification(notification);
                 break;
             case NOTIFICATION["TEAM_ADDED"]:
                 break;
             case NOTIFICATION["MENTIONED"]:
                 break;
             case NOTIFICATION["ASSIGNED_WORK_ITEM"]:
+                isGoodNotification = await setupAssignedWorkItemNotification(notification);
                 break;
             case NOTIFICATION["WORK_ITEM_UPDATED"]:
                 break;
             default: 
                 break;
         }
+
+        // add the notification if the information was found
+        if (isGoodNotification){
+            goodNotifications.push(notification);
+        }
     }
 
     // to use it in the UI
-	res.locals.myNotifications = myNotifications;
+	res.locals.myNotifications = goodNotifications;
     res.locals.numberOfNotifications = numberOfNewNotifications;
 
     // console.log("My notifications are: ", myNotifications);
@@ -75,7 +86,7 @@ module.exports.getUserNotifications = async (req, res, next) => {
 /**
  * Setup the notification for project invitation
  * @param {Object} notification 
- * @returns {Void}
+ * @returns {Boolean}
  */
 async function setupProjectInvitationNotification(notification){
 
@@ -87,7 +98,7 @@ async function setupProjectInvitationNotification(notification){
 
     if (!project) {
         console.log("There is a problem in the notification section");
-        return;
+        return false;
     }
 
     const fromUser = await UserCollection.findById(notification["from"]).catch(err => {
@@ -96,7 +107,7 @@ async function setupProjectInvitationNotification(notification){
 
     if (!fromUser) {
         console.log("Cannot find the user who sent the project invitation");
-        return;
+        return false;
     }
 
     let message = NOTIFICATION_TYPES["PROJECT_INVITATION"]["getMessage"](project["title"]);
@@ -105,4 +116,40 @@ async function setupProjectInvitationNotification(notification){
     notification['message'] = message;
     notification['initials'] = getInitials(project["title"]);
     notification['icon'] = NOTIFICATION_TYPES["PROJECT_INVITATION"]["icon"];
+    return true;
+}
+
+/**
+ * Setup the notification for project invitation
+ * @param {Object} notification 
+ * @returns {Boolean}
+ */
+async function setupAssignedWorkItemNotification(notification){
+
+    // find the work item for the user
+    const workItem = await WorkItemCollection.findById(notification["referenceId"]).catch(err =>{
+        console.error("Error getting the work item from the project: ", err);
+    });
+
+    if (!workItem) {
+        console.log("Cannot find the work item");
+        return false;
+    }
+    
+    // find the project for this work item
+    const project = await ProjectCollection.findOne({_id: notification["projectId"]}).catch(err =>{
+        console.error("Error getting the project: ", err);
+    });
+
+    if (!project) {
+        console.log("There is a problem in the notification section");
+        return false;
+    }
+
+    let message = NOTIFICATION_TYPES["ASSIGNED_WORK_ITEM"]["getMessage"](project["title"], workItem["itemId"]);
+    
+    notification['message'] = message;
+    notification['initials'] = getInitials(workItem["title"]);
+    notification['icon'] = NOTIFICATION_TYPES["ASSIGNED_WORK_ITEM"]["icon"];
+    return true;
 }
