@@ -75,6 +75,8 @@ module.exports.setUserProjects = async (req, res, next) => {
         }
     }
 
+    req.user["projects"] = projects;
+
     // getting user favorite projects
     let userFavoriteProjects = projects.filter(each => {
         return req.user["favoriteProjects"].includes(each["_id"].toString());

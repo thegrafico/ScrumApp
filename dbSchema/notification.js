@@ -12,7 +12,7 @@ const mongoose                  = require("mongoose");
 
 const ObjectId = mongoose.Types.ObjectId;
 
-const { UNASSIGNED, NOTIFICATION_TYPES } = require('./Constanst');
+const { UNASSIGNED, NOTIFICATION_TYPES, NOTIFICATION_STATUS} = require('./Constanst');
 
 let notificationSchema = new mongoose.Schema({
 
@@ -35,11 +35,33 @@ let notificationSchema = new mongoose.Schema({
     type: {
         type: String,
         enum: Object.keys(NOTIFICATION_TYPES),
+        required: true,
     },
+
+    // to store either the project id, team id, work item id
+    // depending on the type. 
+    referenceId: {
+        type: ObjectId,
+        required: true,
+    },
+    status: {
+        type: String,
+        enum: Object.keys(NOTIFICATION_STATUS),
+        required: true,
+    },
+
+    // To store from where project this notification was sent
+    projectId: {
+        type: ObjectId,
+        required: true,
+    }
 
 }, {
     timestamps: true
 });
+
+// making the fields from, to, and refenceId unique. to avoid duplicates notification
+notificationSchema.index({ "from": 1, "to": 1, "referenceId": 1}, { "unique": true });
 
 
 

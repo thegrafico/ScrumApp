@@ -1,0 +1,40 @@
+<!-- Modal -->
+<div class="modal fade project-invitation-modal" id="project-invitation-modal" tabindex="-1" role="dialog" aria-labelledby="ModalCenterTitle"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalTitle">
+                    Project Invitation
+                    <i class="fas fa-paper-plane"></i>
+                </h5>
+                <button type="button" class="close close-modal" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+            <div class="modal-body">
+                <p id="project-invitation-body-text">
+
+                </p>
+            </div>
+
+            <div class="modal-footer">
+                <button id="decline-project-invitation-btn" type="button" class="btn btn-danger close-modal"
+                    data-dismiss="modal">Decline
+                </button>
+                
+                <button id="accept-project-invitation-btn" class="btn btn-success">
+                    Join Project
+                </button>
+            </div>
+
+            <!-- Dynamic data is loaded here -->
+            <div class="d-none">
+                <input type="hidden" name="projectId" id="project-id-invitation">
+                <input type="hidden" name="notificationId" id="project-invitation-notification-id">
+            </div>
+        </div>
+    </div>
+</div>

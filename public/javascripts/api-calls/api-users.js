@@ -56,8 +56,28 @@ async function inviteUserToProject(userEmail){
 
     const projectId = getProjectId();
 
-    const API_LINK_ADD_USER_TO_PROJECT = `/dashboard/api/${projectId}/addUserToProject`;
+    const API_LINK_INVITE_USER_TO_PROJECT = `/dashboard/api/${projectId}/inviteUserToProject`;
     let data = {"userEmail": userEmail};
+
+    let response_error = null;
+    let response = await make_post_request(API_LINK_INVITE_USER_TO_PROJECT, data).catch(err => {
+        response_error = err;
+    });
+
+    return {"response": response, "response_error": response_error};
+}
+
+/**
+ * Add user to project using the invitation id
+ * @param {String} notificationId - User notification
+ * @param {String} projectId - Id of the project
+ * @returns {Object} response, response_error
+ */
+ async function addUserToProject(projectId, notificationId){
+
+    const API_LINK_ADD_USER_TO_PROJECT = `/dashboard/api/addUserToProject`;
+
+    let data = { "projectId": projectId, "notificationId":notificationId};
 
     let response_error = null;
     let response = await make_post_request(API_LINK_ADD_USER_TO_PROJECT, data).catch(err => {

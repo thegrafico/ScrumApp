@@ -432,6 +432,24 @@ const USER_PRIVILEGES = {
 };
 // =========================
 
+// NOTIFICATIONS
+const NOTIFICATION_TYPES = {
+    "PROJECT_INVITATION": "PROJECT_INVITATION",
+    "TEAM_ADDED": "TEAM_ADDED",
+    "MENTIONED": "MENTIONED",
+    "ASSIGNED_WORK_ITEM": "ASSIGNED_WORK_ITEM",
+    "WORK_ITEM_UPDATED": "WORK_ITEM_UPDATED",
+}
+
+const NOTIFICATION_STATUS = {
+    "NEW": "NEW",
+    "ACTIVE": "ACTIVE",
+    "INACTIVE": "INACTIVE",
+};
+
+const NUMBER_OF_NEW_NOTIFICATIONS = "#number-of-notifications";
+// ========
+
 const NOTIFY = {
 
     isShowm: false,

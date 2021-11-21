@@ -25,6 +25,8 @@
     <%- include('sprints/update-sprint'); %>
 <% } %>
 
+<!-- Project invitation modal -->
+<%- include('project-invitation'); %>
 
 <!-- Delete work item confirmation modal -->
 <%- include('delete-confirmation'); %>
@@ -54,6 +56,10 @@
 <!-- GRAPH -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
+
+<!-- NOTIFICATION -->
+
+<script src="/javascripts/notificastion.js"></script>
 <!-- Add defaults for notify -->
 <script>
     $.notify.defaults({ "autoHideDelay": 4000, "position":"top center"});

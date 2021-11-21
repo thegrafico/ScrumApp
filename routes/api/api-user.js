@@ -4,6 +4,7 @@ const middleware                = require("../../middleware/auth");
 const projectCollection         = require("../../dbSchema/projects");
 const UserCollection            = require("../../dbSchema/user");
 const UserPrivilegeCollection   = require("../../dbSchema/userPrivilege");
+const NotificationCollection    = require("../../dbSchema/notification");
 const moment                    = require("moment");
 const _                         = require("lodash");
 let router                      = express.Router();
@@ -11,7 +12,11 @@ let router                      = express.Router();
 const {    
     USER_PRIVILEGES,
     sortByKey,
+    NOTIFICATION,
+    NOTIFICATION_STATUS,
+    arrayToObject,
 } = require("../../dbSchema/Constanst");
+const notification = require("../../dbSchema/notification");
 
 /**
  * METHOD: GET - fetch all users from project
@@ -104,14 +109,105 @@ router.get("/api/:id/getTeamUsers/:teamId", middleware.isUserInProject, async fu
 /**
  * METHOD: POST - ADD USERS TO Project
  */
-router.post("/api/:id/addUserToProject", middleware.isUserInProject, async function (req, res) {
+router.post("/api/addUserToProject", async function (req, res) {
     
     console.log("Getting request to add user to project...");
+    
+    const { notificationId, projectId } = req.body; 
+    const userId = req["user"]["_id"];
+    let response = {};
+    
+    // getting project
+    const projectInfo = await projectCollection.findById(projectId).catch(err => {
+        console.error(err);
+    });
+
+    // verify project
+    if (!projectInfo){
+        response["msg"] = "Sorry, it seems there was a problem finding the project you were invited.";
+        res.status(400).send(response);
+        return;
+    }
+
+    // check if the user is already in the project
+    if (projectInfo.isUserInProject(userId.toString())){
+        response["msg"] = "Oops, it seems you're part of the project already.";
+        res.status(400).send(response);
+        return;
+    }
+
+    let notification = await NotificationCollection.findById(notificationId).catch(err =>{
+        console.error("Error getting the notification: ", err);
+    });
+
+    if (!notification){
+        response["msg"] = "Sorry, cannot find the project invitation. it seems it was removed.";
+        res.status(400).send(response);
+        return;
+    }
+
+    // check if the user have a project invitation
+    if (notification["type"] != NOTIFICATION["PROJECT_INVITATION"]){
+        response["msg"] = "Oops, cannot add you to the project since you don't have an invitation.";
+        res.status(400).send(response);
+        return;
+    }
+
+    // check if the current user owns the notification
+    if (notification["to"].toString() != userId.toString()){
+        response["msg"] = "Sorry, It seems this project invitation does not belong to you.";
+        res.status(400).send(response);
+        return;
+    }
+
+    // adding the user to the project
+    projectInfo.users.push(userId);
+
+    let projectWasSaved = await projectInfo.save().catch( err => {
+        console.error(err);
+    });
+
+    if (_.isUndefined(projectWasSaved) || _.isNull(projectWasSaved)){
+        response["msg"] = "Sorry, there was a problem adding you to the project.";
+        res.status(400).send(response);
+        return;
+    }
+
+    await NotificationCollection.findByIdAndDelete(notificationId).catch(err =>{
+        console.error("Error deleting the project invitation: ", err);
+    });
+    
+    // ============================== PRIVILEGE ==============================
+    // add privilege to user
+    const newUserPrivilege = {
+        userId: userId,
+        projectId: projectId,
+        privilege: USER_PRIVILEGES["MEMBER"] // Default
+    } 
+
+    await UserPrivilegeCollection.create(newUserPrivilege).catch(err => {
+        console.error("Error saving the user privilege: ", err);
+    });
+
+    //======================================================================
+
+    console.log("User added to the project!");
+    // adding user to response
+    response["msg"] = "User added to the project";
+    res.status(200).send(response);
+});
+
+/**
+ * METHOD: POST - Invite USER TO PROJCT
+ */
+router.post("/api/:id/inviteUserToProject", middleware.isUserInProject, async function (req, res) {
+    
+    console.log("Getting request to invite user to project...");
 
     const projectId = req.params.id;
     
     let  { userEmail } = req.body; 
-    let response = { user: null};
+    let response = { user: userEmail};
     
     if (!_.isString(userEmail) || _.isEmpty(userEmail)){
         response["msg"] = "Invalid user was received.";
@@ -144,53 +240,34 @@ router.post("/api/:id/addUserToProject", middleware.isUserInProject, async funct
     }
 
     // verify if the user is already in the project
-    let isUserInProject = projectInfo.isUserInProject(userInfo._id.toString());
-
-    if  (isUserInProject){
+    if  (projectInfo.isUserInProject(userInfo._id.toString())){
         response["msg"] = "User is already in project!";
         res.status(200).send(response);
         return;
     }
 
-    // adding the user to the project
-    projectInfo.users.push(userInfo._id);
-
-    let projectWasSaved = await projectInfo.save().catch( err => {
-        console.error(err);
-    });
-
-    if (_.isUndefined(projectWasSaved) || _.isNull(projectWasSaved)){
-        response["msg"] = "Sorry, there was a problem adding the user to the project.";
-        res.status(400).send(response);
-        return;
-    }
+    const myUserId = req.user["_id"];
     
-    // ============================== PRIVILEGE ==============================
-    // add privilege to user
-    const newUserPrivilege = {
-        userId: userInfo["_id"],
+    let notification = {
+        from: myUserId,
+        to: userInfo["_id"],
+        type: NOTIFICATION["PROJECT_INVITATION"],
+        referenceId: projectId,
+        status: NOTIFICATION_STATUS['NEW'],
         projectId: projectId,
-        privilege: USER_PRIVILEGES["MEMBER"] // Default
-    } 
+    }
 
-    await UserPrivilegeCollection.create(newUserPrivilege).catch(err => {
-        console.error("Error saving the user privilege: ", err);
+    await NotificationCollection.create(notification).then((doc) => {
+        response["msg"] = "Invitation was succesfully sent to the user";
+        res.status(200).send(response);
+        return;
+    }).catch( err => {
+        console.error("Error sending the invitation to the user: ", err);
+        response["msg"] = "Opps, there was a problem sending the invitation to the user.";
+        res.status(200).send(response);
+        return;
     });
 
-    //======================================================================
-
-    // adding user to response
-    response = {
-        msg: "User was added to the project!",
-        user: {
-            fullName: userInfo["fullName"],
-            email: userInfo["email"],
-            privilege: USER_PRIVILEGES["MEMBER"],
-            id: userInfo["_id"]
-        }
-    };
-
-    res.status(200).send(response);
 });
 
 

@@ -16,6 +16,7 @@ module.exports = {
             "/javascripts/dependecies/bootstrap.bundle.min.js",
             "/javascripts/dashboard.js",
             "/javascripts/api-calls/api-project.js",
+            "/javascripts/api-calls/api-users.js",
         ]
     },
     // includes for statistics

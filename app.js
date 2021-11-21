@@ -11,6 +11,7 @@ const passport = require('passport');
 const LocalStrategy = require('passport-local');
 const User = require('./dbSchema/user');
 const middleware = require('./middleware/auth');
+const NotificationMiddleware = require('./middleware/notification');
 const dotenv = require('dotenv');
 const flash = require('connect-flash');
 const {
@@ -149,10 +150,8 @@ app.use(function (req, res, next) {
 			type: "PROJECT_INVITATION",
 			icon: "fas fa-folder",
 			initials: "AL",
-			notification: {
-				id: "projectId",
-				message: "Invited you the the project: Scrum App",
-			}
+			message: "Invited you the the project: Scrum App",
+			referenceId: "test",
 		},
 		{
 			_id: "1234567aksdhkajsdkasdj",
@@ -161,10 +160,9 @@ app.use(function (req, res, next) {
 			type: "TEAM_ADDED",
 			icon: "fas fa-users",
 			initials: "RP",
-			notification: {
-				id: "teamId",
-				message: "You were added to the team: Team Awesome",
-			}
+			message: "You were added to the team: Team Awesome",
+			referenceId: "test",
+
 		},
 
 		{
@@ -174,26 +172,26 @@ app.use(function (req, res, next) {
 			type: "ASSIGNED_WORK_ITEM",
 			icon: "far fa-plus-square",
 			initials: "WI",
-			notification: {
-				id: "workItemId",
-				message: "Alexander Avalo Assinged Work Item 2035 to you.",
-			}
+			message: "Alexander Avalo Assinged Work Item 2035 to you.",
+			referenceId: "test",
 		},
 	];
 
-	res.locals.myNotifications = userNotifications;
 	next();
 });
 
 // ==================== ROUTES =================
 app.use('/login', loginRoute);
 
-app.use('/', middleware.isUserLogin, middleware.setUserProjects, dashboardRoute); // main page
-app.use('/dashboard/', middleware.isUserLogin, middleware.setUserProjects, projectDetailRoute); // Statistiscs
-app.use('/dashboard/', middleware.isUserLogin, middleware.setUserProjects, planingworkItemRoute); // Work Item
-app.use('/dashboard/', middleware.isUserLogin, middleware.setUserProjects, planingBacklogRoute); // backlog
-app.use('/dashboard/', middleware.isUserLogin, middleware.setUserProjects, sprintRoutes); // sprint
-app.use('/dashboard/', middleware.isUserLogin, middleware.setUserProjects, queriesRoute); // Queries
+app.use('/', middleware.isUserLogin, middleware.setUserProjects, NotificationMiddleware.getUserNotifications, dashboardRoute); // main page
+app.use('/dashboard/', middleware.isUserLogin, middleware.setUserProjects, NotificationMiddleware.getUserNotifications, projectDetailRoute); // Statistiscs
+app.use('/dashboard/', middleware.isUserLogin, middleware.setUserProjects, NotificationMiddleware.getUserNotifications, planingworkItemRoute); // Work Item
+app.use('/dashboard/', middleware.isUserLogin, middleware.setUserProjects, NotificationMiddleware.getUserNotifications, planingBacklogRoute); // backlog
+app.use('/dashboard/', middleware.isUserLogin, middleware.setUserProjects, NotificationMiddleware.getUserNotifications, sprintRoutes); // sprint
+app.use('/dashboard/', middleware.isUserLogin, middleware.setUserProjects, NotificationMiddleware.getUserNotifications, queriesRoute); // Queries
+
+// MANAGE - routes
+app.use('/dashboard/', middleware.isUserLogin, NotificationMiddleware.getUserNotifications, manageRoute);
 
 // API - Route
 app.use('/dashboard/', middleware.isUserLogin, apiProjectRoute); // dashboard to show project
@@ -201,10 +199,6 @@ app.use('/dashboard/', middleware.isUserLogin, apiWorkItemRoute); // dashboard t
 app.use('/dashboard/', middleware.isUserLogin, apiUser); // User api routes
 app.use('/dashboard/', middleware.isUserLogin, apiSprint); // User api routes
 app.use('/dashboard/', middleware.isUserLogin, apiQuery); // User api routes
-
-
-// MANAGE - routes
-app.use('/dashboard/', middleware.isUserLogin, manageRoute);
 
 // ==================== ROUTES =================
 // catch 404 and forward to error handler

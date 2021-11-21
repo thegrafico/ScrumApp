@@ -214,21 +214,38 @@ module.exports.WORK_ITEM_RELATIONSHIP = WORK_ITEM_RELATIONSHIP;
 // NOTIFICATION
 const NOTIFICATION_TYPES = {
     "PROJECT_INVITATION":       { // User was invited to the project
-        getMessage: (userFrom, projectName) => {
-            return `${userFrom} invited you to the project: ${projectName}`;
+        getMessage: (projectName) => {
+            return `invited you to the project: ${projectName}`;
         },
+        icon: "fas fa-folder",
         projectId: null,
     }, 
     "TEAM_ADDED":           {
-        getMessage: (teamName) => {
+        getMessage: (teamName) => {   // user was added to a team
             return `You were added to the team: ${teamName}`;
-        }
-    },   // user was added to a team
+        },
+        icon: "fas fa-users",
+    },
     "MENTIONED":            {},   // user was mentioned
-    "ASSIGNED_WORK_ITEM":   {}, // work item was assigned to user
+    "ASSIGNED_WORK_ITEM":   { // work item was assigned to user
+        getMessage: (userName, workItemItemId) => {
+            return `${userName} Assinged Work Item ${workItemItemId} to you.`;
+        },
+        icon: "far fa-plus-square",
+    }, 
     "WORK_ITEM_UPDATED":    {}, // Work item was updated (User assigned is notified) 
 }
 module.exports.NOTIFICATION_TYPES = NOTIFICATION_TYPES;
+
+const NOTIFICATION = arrayToObject(Object.keys(NOTIFICATION_TYPES));
+module.exports.NOTIFICATION = NOTIFICATION;
+
+const NOTIFICATION_STATUS = {
+    "NEW": "NEW",
+    "ACTIVE": "ACTIVE",
+    "INACTIVE": "INACTIVE",
+};
+module.exports.NOTIFICATION_STATUS = NOTIFICATION_STATUS;
 
 // ===================================
 
@@ -857,16 +874,37 @@ module.exports.doesQueryValueMatch = doesQueryValueMatch;
  */
 function setupProjectInitials(project, colorIndex=3){
 
-    let title = project.title.split(" ");
-    if (title.length > 1) {
-        project["initials"] = title[0][0].toUpperCase() + title[1][0].toUpperCase();
-    } else {
-        project["initials"] = title[0][0].toUpperCase();
-    }
-
+    project["initials"] = getInitials(project.title);
     project["initialsColors"] = PROJECT_INITIALS_COLORS[colorIndex];
 }
 module.exports.setupProjectInitials = setupProjectInitials;
+
+/**
+ * Get first letter of each world inside str
+ * @param {String} str - String to get initials
+ */
+function getInitials(str, numberOfInitials=2){
+    let initials = "";
+
+    let strArray = str.split(" ");
+    if (strArray.length > 1) {
+
+        let limit =  ((numberOfInitials > strArray.length))?  strArray.length :numberOfInitials;
+
+        for (let i = 0; i < limit; i++) {
+            initials += strArray[i][0].toUpperCase();
+        }
+    } else {
+        let limit =  ((numberOfInitials > str.length))?  str.length :numberOfInitials;
+
+        for (let i = 0; i < limit; i++) {
+            initials += str[i].toUpperCase();
+        }
+    }
+
+    return initials;
+}
+module.exports.getInitials = getInitials;
 
 
 /**

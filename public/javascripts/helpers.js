@@ -1202,8 +1202,8 @@ function updateHtml(currentPage, updateType, valueToUpdate, inputType, others = 
                     let teamSelected = $(WORK_ITEM["team"]).val();
 
                     // if the team is not the same of the sprint created, then ignored
-                    if (teamSelected.toString() != others["sprint"]["teamId"].toString()){
-                        break
+                    if (teamSelected != others["sprint"]["teamId"].toString()){
+                        break;
                     }
                 }
 

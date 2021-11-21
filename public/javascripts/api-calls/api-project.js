@@ -114,3 +114,44 @@ async function updateProjectStatus(projectId, status) {
 
     return {response, response_error};
 }
+
+
+/**
+ * Decline project invitation
+ * @param {String} projectId 
+ * @param {String} notificationId 
+ * @returns {Object} - response, response_error
+ */
+async function declineProjectInvitation(projectId, notificationId){
+    const API_LINK_DECLINE_PROJECT_INVITATION = `/dashboard/api/declineProjectInvitation`;
+
+    const requestData = {"notificationId": notificationId, "projectId": projectId};
+
+    let response_error = undefined;
+    const response = await make_post_request(API_LINK_DECLINE_PROJECT_INVITATION,requestData).catch(err => {
+        response_error = err;
+    });
+
+    return {"response": response, "response_error": response_error};
+}
+
+
+/**
+ * Update notification status
+ * @param {String} notificationId 
+ * @param {String} status 
+ * @returns 
+ */
+async function updateNotificationStatus(notificationId, status){
+
+    const API_LINK_UPDATE_NOTIFICATION_STATUS = `/dashboard/api/updateNotificationStatus`;
+
+    const requestData = {"notificationId": notificationId, "status": status};
+
+    let response_error = undefined;
+    const response = await make_post_request(API_LINK_UPDATE_NOTIFICATION_STATUS,requestData).catch(err => {
+        response_error = err;
+    });
+
+    return {"response": response, "response_error": response_error};
+}
