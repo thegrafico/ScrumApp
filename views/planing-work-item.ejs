@@ -1,17 +1,17 @@
-<%- include('modals/header'); %>
+<%- include('templates/header'); %>
 
 <body>
 
-    <%- include('modals/topNavbar'); %>
+    <%- include('templates/top-navbar'); %>
 
     <div class="wrapper d-flex align-items-stretch" >
 
-        <%- include('modals/sideNavbar'); %>
+        <%- include('templates/project-sidebar'); %>
 
         <!-- Page Content  -->
         <div id="content" class="p-4 p-md-5">
 
-            <%- include('modals/titleOptionsMenu'); %>
+            <%- include('templates/title-options-menu'); %>
 
             <div class="container-fluid statistics-boxs">
                 <nav class="navbar navbar-expand-lg navbar-dark bg-dark pb-1">
@@ -54,7 +54,7 @@
                     <!-- INCLUDE FILTER DIV HERE -->
                 </nav>
 
-                <%- include('modals/filter'); %>
+                <%- include('templates/filter'); %>
             </div>
 
             <div class="p-4 hide-functional-scroll" id="table-container">
@@ -154,7 +154,7 @@
 
         </div>
 
-        <%- include('modals/right-sidebar-menu'); %>
+        <%- include('templates/right-sidebar-menu'); %>
 
        
         <input type="hidden" name="projectId" id="projectId" value="<%=projectId%>">
@@ -165,4 +165,4 @@
     <%- include('modals/workItemSubMenu/assign-to-user'); %>
     <%- include('modals/workItemSubMenu/assign-to-team'); %>
 
-<%- include('modals/footer'); %>
+<%- include('templates/footer'); %>

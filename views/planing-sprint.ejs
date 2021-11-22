@@ -1,17 +1,17 @@
-<%- include('modals/header'); %>
+<%- include('templates/header'); %>
 
 <body>
 
-    <%- include('modals/topNavbar'); %>
+    <%- include('templates/top-navbar'); %>
 
     <div class="wrapper d-flex align-items-stretch">
 
-        <%- include('modals/sideNavbar'); %>
+        <%- include('templates/project-sidebar'); %>
 
         <!-- Page Content  -->
         <div id="content" class="p-4 p-md-5">
 
-            <%- include('modals/titleOptionsMenu'); %>
+            <%- include('templates/title-options-menu'); %>
 
             <div class="container-fluid statistics-boxs">
                 <nav class="navbar navbar-expand-lg navbar-dark bg-dark pb-2">
@@ -123,7 +123,7 @@
                     <!-- INCLUDE FILTER DIV HERE -->
                 </nav>
 
-                <%- include('modals/filter'); %>
+                <%- include('templates/filter'); %>
             </div>
 
             <div class="p-4 hide-functional-scroll" id="table-container">
@@ -230,7 +230,7 @@
             </div>
         </div>
 
-        <%- include('modals/right-sidebar-menu'); %>
+        <%- include('templates/right-sidebar-menu'); %>
 
         <input type="hidden" name="projectId" id="projectId" value="<%=projectId%>">
         <input type="hidden" name="currentTab" id="currentTab" value="<%=activeTab%>">
@@ -238,4 +238,4 @@
 
     <%- include('./modals/sprints/show-points-graph'); %>
 
-<%- include('modals/footer'); %>
+<%- include('templates/footer'); %>

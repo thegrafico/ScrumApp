@@ -1,0 +1,98 @@
+<div class="nav-item dropdown user-notifications-container">
+
+    <!-- NUMBER OF NOTIFICATIONS -->
+    <% if (numberOfNotifications === 0) { %>
+        <span id="number-of-notifications" class="d-none" data-n-notifications="<%=numberOfNotifications%>">
+
+    <% } else { %>
+        <span id="number-of-notifications" data-n-notifications="<%=numberOfNotifications%>">                
+    <% } %>
+        <% if (numberOfNotifications > 9) { %>
+            9+
+        <% } else { %>
+            <%=numberOfNotifications%>
+        <% }%>
+    </span>
+    <!-- END OF NUMBER OF NOTIFICATIONS -->
+
+    <!-- NOTIFICATIONS ICON BTN -->
+    <a class="open-user-menu-options p-2" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+        <i class="fas fa-bell pt-1"></i>              
+    </a>
+
+    <div class="user-options-dropdown dropdown-menu dropdown-menu-right" onclick="event.stopPropagation()" style="z-index: 1000000;">
+
+        <div class="container-fluid">
+            
+           <div class="row" style="margin: 0; padding:0; width: 100%;">
+                <span class="notification-title">Notifications</span>
+           </div>
+        </div>
+
+        <div class="dropdown-divider"></div>
+
+        <!--  USER NOTIFICATIONS -->
+        <div id="notification-container-parent">
+
+            <div class="container-fluid notification-container hide-functional-scroll">
+              
+                <% for (notification of myNotifications)  {%>
+
+                    <div class="notification-row mb-2 <%=notification['status']%>" id="<%=notification['_id']%>" 
+                        data-notification-type="<%=notification['type']%>" 
+                        data-notification-reference-id="<%=notification['referenceId']%>"
+                        data-notification-status="<%=notification['status']%>"
+                        data-notification-projectId="<%=notification['projectId']%>">
+
+                        <div class="notification-user-initials" style="position: relative;">
+
+                            <div class="notification-user-initials-circle-type">
+                                <span>
+                                    <i class="<%=notification['icon']%> <%=notification['type']%>_ICON"></i>
+                                </span>
+                            </div>
+
+                            <div class="notification-user-initials-circle">
+                                <span>
+                                    <%=notification['initials']%>
+                                </span>
+                            </div>
+                            
+                        </div>
+
+                        <div class="notification-body">
+                            <span>
+
+                                <% if (notification['type'] ===  'PROJECT_INVITATION') { %>
+                                    
+                                    <span class="add-bold">
+                                        <%=notification['from']['name']%>
+                                    </span>
+
+                                    <%=notification['message']%>
+                                <%} else {%>
+                                    <%=notification['message']%>
+                                <% } %>
+                            </span>
+                        </div>
+                    </div>
+                <% } %>
+
+                <!-- If notifications are empty -->
+                
+                <% if (myNotifications.length > 0){ %>
+                    <div class="empty-notification-container d-none">
+                <% }else { %>
+                    <div class="empty-notification-container">
+                <% } %>
+                    <span>
+                        It seems you don't have any notification yet... <i class="fas fa-paper-plane"></i>
+                    </span>
+                </div>
+                <!-- END NOTIFICATION EMPTY -->
+            </div>
+        </div>
+        <!-- END USER NOTIFICATION -->
+
+    </div>
+</div>

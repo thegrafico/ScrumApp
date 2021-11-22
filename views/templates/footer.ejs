@@ -2,34 +2,34 @@
 
 <!-- User Modals -->
 <% if (addUserModal) { %>
-    <%- include('user/add-user-project'); %>
-    <%- include('user/remove-user-project'); %>
+    <%- include('../modals/user/add-user-project'); %>
+    <%- include('../modals/user/remove-user-project'); %>
 <% } %>
 
 <% if (showCreateWorkItemModal) { %>
     <!-- Modal for creating work item -->
-    <%- include('./create-work-item'); %>
-    <%- include('./show-work-item-modal'); %>
+    <%- include('../modals/create-work-item'); %>
+    <%- include('../modals/show-work-item-modal'); %>
 <% } %>
 
 <!-- team Modals -->
 <% if (assignedUsers && projectTeams) { %>
-    <%- include('team/create-team'); %>
-    <%- include('team/delete-team'); %>
+    <%- include('../modals/team/create-team'); %>
+    <%- include('../modals/team/delete-team'); %>
 <% } %>
 
 <!-- Sprints -->
 <% if (sprints) { %>
-    <%- include('sprints/create-sprint'); %>
-    <%- include('sprints/remove-sprint'); %>
-    <%- include('sprints/update-sprint'); %>
+    <%- include('../modals/sprints/create-sprint'); %>
+    <%- include('../modals/sprints/remove-sprint'); %>
+    <%- include('../modals/sprints/update-sprint'); %>
 <% } %>
 
 <!-- Project invitation modal -->
-<%- include('project-invitation'); %>
+<%- include('../modals/project-invitation'); %>
 
 <!-- Delete work item confirmation modal -->
-<%- include('delete-confirmation'); %>
+<%- include('../modals/delete-confirmation'); %>
 
 <input type="hidden" id="current-page" name="currentPage" value="<%=currentPage%>">
 <input type="hidden" id="sprint-time-period" name="sprintTimePeriod" value="<%=sprintDefaultTimePeriod%>">

@@ -1,0 +1,57 @@
+<div class="nav-item dropdown">
+                
+    <a class="open-user-menu-options p-2" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+        <i class="fas fa-user triangle-icon"></i>
+    </a>
+
+    <div class="user-options-dropdown dropdown-menu dropdown-menu-right" onclick="event.stopPropagation()">
+
+        <div class="container-fluid">
+            
+           <div class="row" style="margin: 0; padding:0; width: 100%;">
+
+                <div class="col-3 picture-container">
+                    <div class="user-options-icon-profile" style="padding: 0; margin: 0;">
+                        <span></span>
+                    </div>
+                </div>
+
+                <div class="col pt-2">
+                    <span class="options-user-name"><%=currentUser["fullName"]%></span> <br>
+                    <small class="add-opacity options-view-profile-link">View my profile</small>
+                </div>
+           </div>
+        </div>
+
+        <div class="dropdown-divider"></div>
+
+
+        <a class="dropdown-item" href="#">
+            <div class="circle-icon">
+                <i class="far fa-comments"></i>
+            </div>
+            <span class="dropdown-text">
+                Send us a message
+            </span>
+
+        </a>                    
+
+        <a class="dropdown-item" href="#">
+            <div class="circle-icon">
+                <i class="fas fa-cog"></i>  
+            </div>
+            <span class="dropdown-text">
+                My configurations
+            </span>
+        </a> 
+        <div class="dropdown-divider"></div>
+        <a class="dropdown-item" href="/login/logout">
+            <div class="circle-icon">
+                <i class="fas fa-sign-out-alt"></i> 
+            </div>
+            <span class="dropdown-text">
+                Logout
+            </span>
+        </a>
+    </div>
+</div>

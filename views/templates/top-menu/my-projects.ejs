@@ -1,0 +1,77 @@
+<div class="nav-item dropdown">
+
+    <a class="nav-link dropdown-toggle" 
+    data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+        Projects
+    </a>
+    
+    <div class="user-options-dropdown dropdown-menu" onclick="event.stopPropagation()" 
+    style="z-index: 10000000;">
+        
+        <!-- FAVORITES -->
+
+        <% if (userFavoriteProjects && userFavoriteProjects.length > 0){ %>
+
+            <div class="container-fluid mb-2">
+                
+                <div class="row" style="margin: 0; padding:0; width: 100%;">
+                    <span class="notification-title small-title">Favorites</span>
+                </div>
+            </div>
+            
+            <% for( let project of userFavoriteProjects) { %>
+            
+                <a class="dropdown-item med-title" href="/dashboard/<%=project['_id']%>" style="width: 100%;">
+                    <div class="circle-icon normal-title">
+                        <%=project["initials"]%>
+                    </div>
+
+                    <span class="dropdown-text normal-title">
+                        <%=project["title"]%>
+                    </span>
+
+                    <span class="favorite-icon-container">
+                        <i class="fas fa-star favoriteIconAct"></i>
+                    </span>
+                </a>
+
+            <%}%>
+        <%}%>
+            
+        <!--  END FAVORITE -->
+        
+        <% if (userProjects && userProjects.length > 0){ %>
+
+        <!-- RECENTS -->
+        <div class="container-fluid mt-2 mb-2">
+            
+            <div class="row" style="margin: 0; padding:0; width: 100%;">
+                <span class="notification-title small-title">Recents</span>
+            </div>
+        </div>
+
+            <% for( let i = 0; i < userProjects.length; i++) { %>
+
+                <a class="dropdown-item med-title" href="/dashboard/<%=userProjects[i]['_id']%>" style="width: 100%;">
+                    <div class="circle-icon normal-title">
+                        <%=userProjects[i]["initials"]%>
+                    </div>
+
+                    <span class="dropdown-text normal-title">
+                        <%=userProjects[i]["title"]%>
+                    </span>
+                </a>
+
+                <!-- Just show two projects -->
+                <% if (i > 0) {break;} %>
+            <%}%>
+        <%}%>
+
+        <div class="dropdown-divider"></div>
+        <a class="dropdown-item med-title" href="/">
+            <i class="fas fa-columns"></i> Dashboard
+        </a>
+
+        <!-- END RECENTS -->
+    </div>
+</div>

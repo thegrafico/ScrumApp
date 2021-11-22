@@ -1,10 +1,10 @@
-<%- include('modals/header'); %>
+<%- include('templates/header'); %>
 
-<%- include('modals/topNavbar'); %>
+<%- include('templates/top-navbar'); %>
 
     <div class="wrapper d-flex align-items-stretch">
 
-        <%- include('modals/sideNavbar'); %>
+        <%- include('templates/project-sidebar'); %>
 
         <!-- Page Content  -->
         <div id="content" class="p-4 p-md-5">
@@ -425,11 +425,11 @@
             </div>
         </div>
 
-        <%- include('modals/right-sidebar-menu'); %>
+        <%- include('templates/right-sidebar-menu'); %>
 
     </div>
 
     <input type="hidden" name="projectId" id="projectId" value="<%=projectId%>">
     <input type="hidden" name="workItemId" id="workItemId" value="<%=workItem['_id']%>">
     <input type="hidden" name="currentTab" id="currentTab" value="<%=activeTab%>">
-<%- include('modals/footer'); %>
+<%- include('templates/footer'); %>

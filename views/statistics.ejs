@@ -1,15 +1,15 @@
-<%- include('modals/header'); %>
+<%- include('templates/header'); %>
 
-    <%- include('modals/topNavbar'); %>
+    <%- include('templates/top-navbar'); %>
 
     <div class="wrapper d-flex align-items-stretch">
 
-        <%- include('modals/sideNavbar'); %>
+        <%- include('templates/project-sidebar'); %>
 
         <!-- Page Content  -->
         <div id="content" class="p-4 p-md-5">
 
-            <%- include('modals/titleOptionsMenu'); %>
+            <%- include('templates/title-options-menu'); %>
 
             <div class="container-fluid statistics-boxs">
                 <div class="row project-main-status-container">
@@ -144,4 +144,4 @@
         <input type="hidden" name="currentTab" id="currentTab" value="<%=activeTab%>">
     </div>
     
-<%- include('modals/footer'); %>
+<%- include('templates/footer'); %>

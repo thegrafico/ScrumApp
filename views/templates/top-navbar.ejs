@@ -1,0 +1,99 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <a class="navbar-brand" href="#"> <i class="fas fa-meteor"></i></a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarColor02"
+        aria-controls="navbarColor02" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarColor02">
+        <ul class="navbar-nav mr-auto">
+            
+            <li class="nav-item active">
+                <a class="nav-link" href="/">
+                    <h4>Scrum App</h4>
+                    <span class="sr-only">(current)</span>
+                </a>
+            </li>
+
+            <% if (projectId != undefined) { %>
+
+           <li class="nav-item topNavMenuContainer">
+                <div class="collapse navbar-collapse" id="topNavbarOptions" style="margin-top: 0; padding-top: 0;">
+                    <ul class="navbar-nav me-auto top-navbar-menu">
+                        
+                        <!-- PROJECTS  -->
+                        <li class="nav-item dropdown">
+                            <%- include('../templates/top-menu/my-projects'); %>
+                        </li>
+                        <!-- EDN PROJECTS -->
+
+                        <!-- Users -->
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Users</a>
+                            <div class="dropdown-menu">
+                                <a class="dropdown-item" href="#" data-toggle="modal" data-target=".add-user-project-modal">Add User</a>
+                                <a class="dropdown-item" href="#" data-toggle="modal" data-target=".delete-user-modal">Remove User</a>
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item" href="/dashboard/<%=projectId%>/manageUsers/">Manage Privilege</a>
+                            </div>
+                        </li>
+
+                        <!-- Teams -->
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Teams</a>
+                            <div class="dropdown-menu">
+                                <a class="dropdown-item" href="#" data-toggle="modal" data-target=".create-team-modal">Create Team</a>
+                                <a class="dropdown-item" href="#" data-toggle="modal" data-target=".delete-team-modal">Remove Team</a>
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item" href="/dashboard/<%=projectId%>/manageTeam/">Manage Team</a>
+                            </div>
+                        </li>
+
+                        <!-- Sprints -->
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Sprints</a>
+                            <div class="dropdown-menu">
+                            <a class="dropdown-item" href="#" data-toggle="modal" data-target=".create-sprint-modal">Create Sprint</a>
+                            <a class="dropdown-item" href="#" data-toggle="modal" data-target=".remove-sprint-modal">Remove Sprint</a>
+                            <div class="dropdown-divider"></div>
+                                <a class="dropdown-item" href="/dashboard/<%=projectId%>/manageSprints/">Manage Sprints</a>
+                            </div>
+                        </li>
+
+                        <!-- MY WORK ITEMS -->
+                        <li class="nav-item dropdown">
+                            <%- include('../templates/top-menu/my-work-items'); %>
+                        </li>
+                        <!-- END WORK ITEMS -->
+
+                        <!-- Create work item btn -->
+                        <% if (showCreateWorkItemModal){ %>
+                            <li class="nav-item">
+                                <a class="nav-link"
+                                href="#" role="button" 
+                                aria-haspopup="true"
+                                id="createWorkItem"
+                                data-toggle="modal"
+                                data-target=".createNewItemModal"
+                                aria-expanded="false">
+                                <i class="fas fa-plus addIcon"></i> Work Item</a>
+                            </li>
+                        <% } %>                        
+                    </ul>
+                </div>
+           </li >
+
+           <% } %>
+        </ul>
+
+        <!-- NOTIFICATIONS -->
+        <div class="user-options-icon mr-4">
+            <%- include('../templates/top-menu/notifications'); %>
+        </div>
+
+        <!-- USER OPTIONS -->
+        <div class="user-options-icon mr-4">
+            <%- include('../templates/top-menu/user-options'); %>            
+        </div>
+    </div>
+</nav>
