@@ -22,6 +22,8 @@
     <!-- <% } %> -->
     <link rel="stylesheet" href="/stylesheets/app-font.css">
     <link rel="stylesheet" href="/stylesheets/user-notification.css">
+    <link rel="stylesheet" href="/stylesheets/loader.css">
+
 
 
 </head>
@@ -40,3 +42,7 @@
         <input type="hidden" name="successFeedback" id="success-feedback-msg" value="<%=success%>">
     </div>
 <% } %>
+
+<div class='spinner-wrapper d-none' id="loader-container">
+    <div class="" id="loader-element"></div>
+</div>

@@ -168,6 +168,9 @@ function addToHtml(containerId, html) {
  */
 function make_post_request(link, data) {
     return new Promise((resolve, reject) => {
+
+        showLoader();
+
         const response = $.post(link, data,
                 function () {
                     console.log("Sent!");
@@ -183,6 +186,7 @@ function make_post_request(link, data) {
                     status
                 });
             }).always(function () {
+                hideLoader();
                 console.log("Finished Post request");
             });
     });
@@ -196,6 +200,7 @@ function make_post_request(link, data) {
  */
 function make_get_request(link) {
     return new Promise((resolve, reject) => {
+        showLoader();
         const response = $.get(link,
                 function () {})
             .done(function (data, status) {
@@ -206,8 +211,20 @@ function make_get_request(link) {
                     data,
                     status
                 });
-            }).always(function () {});
+            }).always(function () {
+                hideLoader();
+            });
     });
+}
+
+function showLoader () {
+    $(LOADER["element"]).addClass(LOADER["spinner"]);
+    $(LOADER["container"]).removeClass("d-none");
+}
+
+function hideLoader (){
+    $(LOADER["element"]).removeClass(LOADER["spinner"]);
+    $(LOADER["container"]).addClass("d-none");
 }
 
 // TODO: Implement timeout on Promise

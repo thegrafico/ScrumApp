@@ -450,6 +450,8 @@ const NOTIFICATION_STATUS = {
 const NUMBER_OF_NEW_NOTIFICATIONS = "#number-of-notifications";
 // ========
 
+const LOADER = {container: "#loader-container", element: "#loader-element", spinner: "spinner"}
+
 const NOTIFY = {
 
     isShowm: false,

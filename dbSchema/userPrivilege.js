@@ -22,7 +22,7 @@ let userPrivilege = new mongoose.Schema({
     },
     projectId: {
         type: ObjectId,
-        ref: "User",
+        ref: "Projects",
         index: true
     },
     privilege: {

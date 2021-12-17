@@ -188,33 +188,33 @@ async function createWorkItem(){
 async function seedDB() {
   // ==================== CLEAN THE DB ==================== 
   // createTest();
-  // console.log("===================");
-  // // remove work items
-  // let result = await workItemCollection.deleteMany({});
-  // console.log("work Item removed!: ", result);
+  console.log("===================");
+  // remove work items
+  let result = await workItemCollection.deleteMany({});
+  console.log("work Item removed!: ", result);
 
-  // workItemCollection.counterReset('sequence', function(err) {console.log("Counter reset")});
+  workItemCollection.counterReset('sequence', function(err) {console.log("Counter reset")});
 
-  // // remove all sprint from a project
-  // result = await sprintCollection.deleteMany({});
-  // console.log("Sprint removed!: ", result);
+  // remove all sprint from a project
+  result = await sprintCollection.deleteMany({});
+  console.log("Sprint removed!: ", result);
 
-  // // remove projects
-  // result = await projectCollection.deleteMany({});
-  // console.log("Project removed!: ", result);
+  // remove projects
+  result = await projectCollection.deleteMany({});
+  console.log("Project removed!: ", result);
 
-  // // await projectCollection.deleteOne({_id: INDIVIDUAL_PROJECT});
+  // await projectCollection.deleteOne({_id: INDIVIDUAL_PROJECT});
 
-  // // remove users
-  // result = await userCollection.deleteMany({});
-  // console.log("Users removed!: ", result);
-  // console.log("===================");
+  // remove users
+  result = await userCollection.deleteMany({});
+  console.log("Users removed!: ", result);
+  console.log("===================");
 
-  // // reset counter to 0
+  // reset counter to 0
 
-  // // ======================================================
+  // ======================================================
 
-  // const usersId = await addUsersToDB();
+  const usersId = await addUsersToDB();
 
   // // add one project with a specify id to the user: for testing
   // await createProjectForUser(usersId[0], INDIVIDUAL_PROJECT).catch(err => console.log("Error Creating project for user: ", err));

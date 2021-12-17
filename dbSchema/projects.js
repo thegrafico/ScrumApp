@@ -29,11 +29,9 @@ let projectSchema = new mongoose.Schema({
     },
     users: [{type: ObjectId, ref: "User"}],
     teams: [{
-        name: {type: String, required:true, unique: true}, 
+        name: {type: String, default: null}, 
         users: [{type: ObjectId, ref: "User"}],
     }],
-
-    sprints: [{type: ObjectId, ref: "Sprint"}],
 }, {
     timestamps: true
 });
