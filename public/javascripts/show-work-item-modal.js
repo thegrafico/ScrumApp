@@ -10,7 +10,7 @@ $(function () {
 
 
     // OPEN MODAL AND POPULATE DATA
-    $(document).on("click", OPEN_WORK_ITEM_MODAL, function(event){
+    $(document).on("click", OPEN_WORK_ITEM_MODAL, async function(event){
         // check if the ctrl key is pressed while the element is also pressed
         let ctrlIsPressed = event.metaKey | event.ctrlKey;
         // Open the modal if the user is not pressing clrt
@@ -24,7 +24,7 @@ $(function () {
             // need update this in order to send the reques to the good URL
             $(WORK_ITEM_ID).val(workItemId);
 
-            populateWorkItemModal(workItemId);
+            await populateWorkItemModal(workItemId);
 
             $(WORK_ITEM_MODAL).modal("toggle");
         }

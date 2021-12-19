@@ -41,7 +41,8 @@ let projectSchema = new mongoose.Schema({
  * @returns {Array} - array of object  -> [{name, id}]
  */
 projectSchema.methods.getUsers = async function() {
-
+    console.log("Getting users");
+    
     // modal to get the user info ==> [{name, id}]
     let usersArr = [];
 

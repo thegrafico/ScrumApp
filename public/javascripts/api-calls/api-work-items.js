@@ -66,15 +66,16 @@ async function createWorkItem(workItemData){
  * Get work items with similar id if available
  * @param {String} workItemItemId 
  * @param {Number} limit - max number of work items to retreived
+ * @param {Boolean} loadLoader - since we're making a request each time user is typing, do not load the loader into the UI as default
  * @returns 
  */
-async function getSimilarWorkItemsById(workItemItemId, limit=5){
+async function getSimilarWorkItemsById(workItemItemId, limit=5, loadLoader = false){
     
     const projectId = getProjectId();
     const API_LINK_GET_SIMILAR_WORK_ITEMS = `/dashboard/api/${projectId}/getSimilarWorkItems?id=${workItemItemId}&limit=${limit}`;
 
     let response_error = null;
-    const response = await make_get_request(API_LINK_GET_SIMILAR_WORK_ITEMS).catch(err=> {
+    const response = await make_get_request(API_LINK_GET_SIMILAR_WORK_ITEMS, loadLoader).catch(err=> {
         response_error = err;
     });
 

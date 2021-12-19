@@ -17,6 +17,8 @@ const middleware            = require("../middleware/auth");
 let router                  = express.Router();
 const { statisticsPath }    = require("../middleware/includes");
 
+const {performance} = require('perf_hooks');
+
 const {
     UNASSIGNED,
     PAGES,
@@ -34,27 +36,22 @@ const {
  * METHOD: GET - show the main page for projects
  */
 router.get("/:id", middleware.isUserInProject, async function (req, res) {
+    console.log("GET START - Staticstics");
 
+    let start = performance.now();
+ 
     let projectId = req.params.id;
 
-    // getting project
-    let projectInfo = await projectCollection.findById(projectId).catch(err => {
-        console.log("Error is: ", err.reason);
-    });
-
-    if (_.isUndefined(projectInfo) || _.isEmpty(projectInfo)) {
-        req.flash("error", "Cannot the project information.");
-        return res.redirect('/');
-    }
+    const project = req.currentProject;
 
     // getting users from project
-    let users = await projectInfo.getUsers().catch(err => console.log(err)) || [];
+    let users = await project.getUsers().catch(err => console.log(err)) || [];
     
     // getting the teams
-    let teams = [...projectInfo.teams];
+    let teams = [...project.teams];
 
     // getting data for charts
-    const workItems = await projectInfo.getWorkItems().catch(err => {
+    const workItems = await project.getWorkItems().catch(err => {
         console.error("Error getting project work items: ", err);
     }) || [];
 
@@ -72,13 +69,13 @@ router.get("/:id", middleware.isUserInProject, async function (req, res) {
 
     // populating params
     let params = {
-        "title": (projectInfo["title"] + " - Statistics"),
-        "project": projectInfo,
+        "title": (project["title"] + " - Statistics"),
+        "project": project,
         "projectId": projectId,
         "projectStatus": STATUS,
         "statusWorkItem": WORK_ITEM_STATUS_COLORS,
         "priorityPoints":PRIORITY_POINTS,
-        "creationDate": formatDate(projectInfo["createdAt"]),
+        "creationDate": formatDate(project["createdAt"]),
         "currentSprint": "Not sprint found",
         "activeTab": "Statistics",
         "tabTitle": "Statistics",
@@ -92,10 +89,15 @@ router.get("/:id", middleware.isUserInProject, async function (req, res) {
         "pieData": pieData,
     };
 
-    params["projectOwner"] = await getProjectOwnerNameById(projectInfo["author"]);
-    params["numberOfMemberText"] = await getNumberOfUsers(projectInfo.users);
-    params["numberOfMember"] = projectInfo.users.length;
+    params["projectOwner"] = await getProjectOwnerNameById(project["author"]);
+    params["numberOfMemberText"] = await getNumberOfUsers(project.users);
+    params["numberOfMember"] = project.users.length;
 
+
+       
+    let end = performance.now();
+    console.log(`Execution time: ${end - start} ms`);
+    console.log("GET END - Staticstics");
 
     res.render("statistics", params);
 });

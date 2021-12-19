@@ -63,7 +63,6 @@ $(function () {
         // disabled the submit button if there is not a valid work item id (Number)
         // $(RIGHT_SIDEBAR_SUBMIT_BTN).attr("disabled", !isNumber);
 
-
         // do not continue if not a number
         if (!isNumber){
             // clean the data list

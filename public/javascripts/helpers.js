@@ -168,12 +168,11 @@ function addToHtml(containerId, html) {
  */
 function make_post_request(link, data) {
     return new Promise((resolve, reject) => {
-
         showLoader();
 
         const response = $.post(link, data,
                 function () {
-                    console.log("Sent!");
+                    console.log("Sent POST!");
                 })
             .done(function (data, status) {
                 // console.log(data, status);
@@ -195,14 +194,19 @@ function make_post_request(link, data) {
 /**
  * Send a GET request to the backend
  * @param {String} link - Link where the request goes
- * @param {Object} data - Object with the data to be send
- * @returns {Promise} True if the request was sent successfully
+ * @param {Boolean} loadLoader - True if loader must be shown to the user
+ * @returns {Promise} data if the request was sent successfully
  */
-function make_get_request(link) {
+function make_get_request(link, loadLoader = true) {
+
     return new Promise((resolve, reject) => {
-        showLoader();
+
+        if (loadLoader){ showLoader(); }
+
         const response = $.get(link,
-                function () {})
+                function () {
+                    console.log("Sent GET!");
+                })
             .done(function (data, status) {
                 return resolve(data, status);
             })
@@ -212,10 +216,38 @@ function make_get_request(link) {
                     status
                 });
             }).always(function () {
-                hideLoader();
+                if (loadLoader){ hideLoader();}
+                console.log("Finished GET request");
             });
     });
 }
+
+/**
+ * Send a GET request to the backend
+ * @param {String} link - Link where the request goes
+ * @param {Object} data - Object with the data to be send
+ * @returns {Promise} True if the request was sent successfully
+ */
+//  function axio_make_get_request(link) {
+
+//     // Make a request for a user with a given ID
+//     axios.get(link)
+//         .then(function (response) {
+//             // handle success
+//             console.log(response);
+//             return 
+//         })
+//         .catch(function (error) {
+//             // handle error
+//             console.log(error);
+//         })
+//         .then(function () {
+//             // always executed
+//             console.log("Finished get request");
+//         });
+// }
+
+
 
 function showLoader () {
     $(LOADER["element"]).addClass(LOADER["spinner"]);

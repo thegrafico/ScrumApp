@@ -42,6 +42,7 @@ module.exports.isUserInProject = async (req, res, next) => {
     res.locals.userWorkItems = userWorkItems;
 
     if (userProjects && userProjects.length > 0){
+        req.currentProject = userProjects[0];
         next();
         return;
     }

@@ -39,18 +39,10 @@ router.get("/api/:id/getWorkItem/:workItemId", middleware.isUserInProject, async
     console.log("Getting request to get work item...");
 
     const projectId = req.params.id;
-    const workItemId = req.params.workItemId;
+    const workItemId = req.params.workItemId;    
+    const projectInfo = req.currentProject;
+
     let response = {};
-
-    // verify is the project exists
-    let projectInfo = await ProjectCollection.findOne({_id: projectId}).catch(err => {
-        console.log("Error is: ", err.reason);
-    });
-
-    if (_.isUndefined(projectInfo) || _.isEmpty(projectInfo)) {
-        response["msg"] = "Sorry, There was a problem getting the project information.";
-        return res.status(400).send(response);
-    }
 
     // ============== CHECK WORK ITEM INFO ==============
     // Load work item specify data
@@ -60,7 +52,6 @@ router.get("/api/:id/getWorkItem/:workItemId", middleware.isUserInProject, async
 
     // get all users for this project -> expected an array
     let users = await projectInfo.getUsers().catch(err => console.error("Error getting the users: ", err)) || [];
-    
 
     if (_.isUndefined(workItem) || _.isEmpty(workItem)){
         response["msg"] = "Sorry, There was a problem getting the work item information.";
@@ -69,7 +60,6 @@ router.get("/api/:id/getWorkItem/:workItemId", middleware.isUserInProject, async
     
     workItem = workItem.toObject();
 
-    
     // update the comments
     workItem["comments"] = addUserNameToComment(workItem["comments"], users, req.user["_id"]);
 

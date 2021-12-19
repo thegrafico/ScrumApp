@@ -35,6 +35,7 @@ module.exports = {
             "/javascripts/api-calls/api-teams.js",
             "/javascripts/api-calls/api-users.js",
             "/javascripts/api-calls/api-project.js",
+            "/javascripts/dependecies/chart.min.js",
             "/javascripts/dependecies/chartjs-plugin-labels.min.js",
 
         ]
@@ -110,6 +111,7 @@ module.exports = {
             "/javascripts/api-calls/api-teams.js",
             "/javascripts/api-calls/api-users.js",
             "/javascripts/right-sidebar.js",
+            "/javascripts/dependecies/chart.min.js",
             "/javascripts/dependecies/chartjs-plugin-labels.min.js",
         ]
     },
@@ -123,6 +125,7 @@ module.exports = {
             "/javascripts/planning-backlog.js",
             "/javascripts/planning-sprint.js",
             "/javascripts/dependecies/bootstrap.bundle.min.js",
+            "/javascripts/dependecies/chart.min.js",
             "/javascripts/create-work-item-modal.js",
             "/javascripts/modals/user-controller.js",
             "/javascripts/modals/team-controller.js",
