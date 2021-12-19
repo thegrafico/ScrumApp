@@ -114,6 +114,7 @@ router.post("/:id/addmember", middleware.isUserInProject, async function (req, r
     if (!validator.isEmail(userEmail)) return res.redirect("back");
 
     const projectId = req.params.id;
+    const currentProject = req.currentProject;
 
     let userId = await getUserIdByEmail(userEmail).catch(err => {
         console.error(err)
@@ -122,14 +123,6 @@ router.post("/:id/addmember", middleware.isUserInProject, async function (req, r
     if (_.isUndefined(userId) || _.isNull(userId)) {
         // TODO: add flash message 
         return res.redirect("back");
-    }
-
-    // TODO: Verify if working
-    const currentProject = await projectCollection.findById(projectId).catch(err=> console.error("Error getting the project to add the user: ", err));
-    
-    if (_.isUndefined(currentProject) || _.isNull(currentProject)) {
-        // TODO: add flash message to the user
-        res.redirect("back");
     }
 
     // if the user does not exists, add it

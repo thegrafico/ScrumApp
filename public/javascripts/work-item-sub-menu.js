@@ -228,6 +228,7 @@ $(function() {
         // close modal if success
         if (workItemsWereMoved){
             $(`${MOVE_TO_SPRINT_MODAL} .close`).click();
+            showFeedbackCheckedElements(0);
         }
 
     });
@@ -246,6 +247,8 @@ $(function() {
         }else{
             moveWorkItemToSprint([workItemId], UNNASIGNED_VALUE);
         }
+
+        showFeedbackCheckedElements(0);
     }); 
     
 });

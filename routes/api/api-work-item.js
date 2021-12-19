@@ -1322,6 +1322,11 @@ router.post("/api/:id/removeWorkItems", middleware.isUserInProject, async functi
             if (_.isNull(result) || _.isUndefined(result)){
                 error_removing = true;
             }
+
+            await NotificationCollection.removeNotification(projectId, workItemId).catch(err => {
+                console.log("Error removing notification from deleted work item: ", err);
+            });
+
         }
 
         if (error_removing){

@@ -65,4 +65,36 @@ notificationSchema.index({ "from": 1, "to": 1, "referenceId": 1}, { "unique": tr
 
 
 
+/**
+ * Remove notification by projectid and referenceId
+ * @param {String} projectId 
+ * @param {String} referenceId 
+ * @returns {Promise}
+ */
+ notificationSchema.statics.removeNotification = async function(projectId, referenceId) {
+
+    const father = this;
+    return new Promise( async function (resolve, reject){
+
+        if (!projectId || !referenceId){
+            return reject("Invalid parameters passed.");
+        }
+
+        let error = null;
+        const query = { "projectId": projectId, "referenceId": referenceId}
+        
+        await father.findOneAndDelete(query).catch(err => {
+            error = err;
+        })
+       
+        if (error){
+            return reject("Sorry, There was a problem removing the notification");
+        }
+
+        console.log("Notification for work item was removed!");
+        return resolve(true);
+    });
+};
+
+
 module.exports = mongoose.model("Notification", notificationSchema);

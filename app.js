@@ -44,6 +44,7 @@ const apiWorkItemRoute = require("./routes/api/api-work-item");
 const apiUser = require("./routes/api/api-user");
 const apiSprint = require("./routes/api/api-sprint");
 const apiQuery = require("./routes/api/api-query");
+const apiNotification = require("./routes/api/api-notification");
 
 
 // App object 
@@ -194,11 +195,13 @@ app.use('/dashboard/', middleware.isUserLogin, middleware.setUserProjects, Notif
 app.use('/dashboard/', middleware.isUserLogin, NotificationMiddleware.getUserNotifications, manageRoute);
 
 // API - Route
-app.use('/dashboard/', middleware.isUserLogin, apiProjectRoute); // dashboard to show project
-app.use('/dashboard/', middleware.isUserLogin, apiWorkItemRoute); // dashboard to show project
-app.use('/dashboard/', middleware.isUserLogin, apiUser); // User api routes
-app.use('/dashboard/', middleware.isUserLogin, apiSprint); // User api routes
-app.use('/dashboard/', middleware.isUserLogin, apiQuery); // User api routes
+app.use('/dashboard/', middleware.isUserLogin, apiProjectRoute); 
+app.use('/dashboard/', middleware.isUserLogin, apiWorkItemRoute); 
+app.use('/dashboard/', middleware.isUserLogin, apiUser); 
+app.use('/dashboard/', middleware.isUserLogin, apiSprint); 
+app.use('/dashboard/', middleware.isUserLogin, apiQuery); 
+app.use('/dashboard/', middleware.isUserLogin, apiNotification); 
+
 
 // ==================== ROUTES =================
 // catch 404 and forward to error handler
