@@ -596,6 +596,7 @@ td.off{
 
 .notification-title{
     font-size: 1.5em;
+    opacity: .6 !important;
 }
 
 .trash-btn:focus{

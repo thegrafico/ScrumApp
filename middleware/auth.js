@@ -34,13 +34,6 @@ module.exports.isUserInProject = async (req, res, next) => {
         console.error("Error finding the user: ", err);
     });
 
-    // TODO: move this from here
-    const userWorkItems = await WorkItemCollection.getUserWorkItems(projectId, req.user["_id"]).catch(err => {
-        console.error("Error: ", err);
-    }) || [];
-
-    res.locals.userWorkItems = userWorkItems;
-
     if (userProjects && userProjects.length > 0){
         req.currentProject = userProjects[0];
         next();

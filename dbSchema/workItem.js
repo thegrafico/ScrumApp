@@ -139,14 +139,28 @@ workItemSchema.statics.getUserWorkItems = async function(projectId, userId, numb
         }
 
         let error = null;
-        let userWorkItems = await father.find({
+        let queryParams = {
             "projectId": projectId, 
             "assignedUser.id": userId,
             "status": {$in: [WORK_ITEM_STATUS["New"], WORK_ITEM_STATUS["Active"], WORK_ITEM_STATUS["Review"]]}
-        }).limit(numberOfRecords).catch( err => {
-            console.error("Error getting user work items: ", err);
-            error = err;
-        }) || [];
+        }
+
+        let userWorkItems = [];
+
+        // get betwen 1 and 100 records
+        if (numberOfRecords > 0 && numberOfRecords <= 100){
+            userWorkItems= await father.find(queryParams).limit(numberOfRecords).catch( err => {
+                console.error("Error getting user work items: ", err);
+                error = err;
+            }) || [];
+        }else{
+
+            // get all records for the user
+            userWorkItems= await father.find(queryParams).catch( err => {
+                console.error("Error getting user work items: ", err);
+                error = err;
+            }) || [];
+        }
 
         if (error){
             return reject("Sorry, There was a problem getting the work items for the user.");

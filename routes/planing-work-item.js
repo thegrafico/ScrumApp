@@ -35,17 +35,14 @@ const {
  */
 router.get("/:id/planing/workitems", middleware.isUserInProject, async function (req, res) {
 
-    let projectId = req.params.id;
+    const projectId = req.params.id;
 
-    // verify is the project exists
-    let projectInfo = await projectCollection.findOne({_id: projectId}).catch(err => {
-        console.error("Error is: ", err.reason);
-    });
+    const projectInfo = req.currentProject;
 
-    if (_.isUndefined(projectInfo) || _.isEmpty(projectInfo)) {
-        req.flash("error", "Cannot find the project you're looking for.");
-        return res.redirect('/');
-    }
+    let { showOnlyMine } = req.query;
+
+    // show only work items for the current user
+    showOnlyMine = (showOnlyMine === 'true');
 
     // get all the teams for this project
     let teams = [...projectInfo.teams];
@@ -57,9 +54,22 @@ router.get("/:id/planing/workitems", middleware.isUserInProject, async function 
     let users = await projectInfo.getUsers().catch(err => console.error(err)) || [];
 
     // LOADING TABLE WORK ITEMS. We're not showing completed, deleted and abandoned
-    let workItems = await WorkItemCollection.find({projectId, status: {$in: MAIN_WORK_ITEMS_TO_SHOW}}).catch(err => 
-        console.error("Error getting work items: ", err)
-    ) || [];
+    let workItems = [];
+    
+    // load just the current user work items
+    if (showOnlyMine) {
+
+        // 0 because we want to fetch all user work items
+        workItems = await WorkItemCollection.getUserWorkItems(projectId, req.user["_id"], 0).catch(err => {
+            console.error("Error getting user work items: ", err);
+        });
+
+    // load all project work items
+    }else{
+        workItems =  await WorkItemCollection.find({projectId, status: {$in: MAIN_WORK_ITEMS_TO_SHOW}}).catch(err => 
+            console.error("Error getting work items: ", err)
+        ) || [];
+    }
 
     // sorting the work items. SORT
     workItems = sortByDate(workItems, "createdAt");
@@ -81,8 +91,8 @@ router.get("/:id/planing/workitems", middleware.isUserInProject, async function 
         "title": (projectInfo["title"] + " - Work Items"),
         "project": projectInfo,
         "projectId": projectId,
-        "activeTab": "WorkItem,Planing",
-        "tabTitle": "Work Items",
+        "activeTab": (showOnlyMine ? "MyWorkItems" : "WorkItem"),
+        "tabTitle": (showOnlyMine ? "My Work Items" : "Work Items"),
         "currentPage": PAGES.WORK_ITEMS,
         "assignedUsers": users,
         "statusWorkItem": WORK_ITEM_STATUS_COLORS,
