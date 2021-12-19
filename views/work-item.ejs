@@ -318,7 +318,8 @@
                                                             
                                                             <a href="<%=relatedWorkItem['_id']%>">    
                                                                 <span class="work-item-relationship-id">
-                                                                    <i class="fas fa-book-open cl-blue"></i>
+                                                                    <i class="fas <%=workItemType[relatedWorkItem['type']].icon%>"></i>
+
                                                                     <span class="related-workitem-item-id"> <%=relatedWorkItem['itemId']%> </span>
                                                                 </span>
                     

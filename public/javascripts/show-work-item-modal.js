@@ -172,8 +172,8 @@ async function populateWorkItemModal(workItemId){
     cleanElement($(WORK_ITEM_MODALS["update"]["container"]));
     // check if work item has links
 
+    // Add related work items
     if (workItem["relatedWorkItems"] && Object.keys(workItem["relatedWorkItems"]).length > 0){
-        console.log("related work item found");
         for (let relationKey of Object.keys(workItem["relatedWorkItems"])){
             // add to modad
             addRelationshipToWorkItemModal(
