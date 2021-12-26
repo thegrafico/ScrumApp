@@ -160,6 +160,7 @@ router.post("/api/createProject", async function (req, res) {
             project["initials"] = name[0][0].toUpperCase();
         }
         project["initialsColors"] = PROJECT_INITIALS_COLORS[0];
+        project["isMyProject"] = true;
 
         response["project"] = project;
         response["msg"] = "Project created.";

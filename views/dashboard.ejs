@@ -54,65 +54,92 @@
                     </div>
                 </div>
 
+                <!-- EMPTY PROJECT MESSAGE -->
+
+                <% if (userFavoriteProjects.length === 0 && userProjects.length === 0){ %>
+                    <div class="row" id="empty-projects-container-message">
+                
+                <% }else { %>
+                    <div class="row" id="empty-projects-container-message" style="display: none;">
+               <% } %>
+                        <div class="container" style="margin-left: 10%;">
+                            <div class="alert alert-secondary" role="alert">
+                                <h4 class="alert-heading">Oops! <i class="fas fa-rocket"></i></h4>
+                                <p>It seems you don't have any project yet. </p>
+                                <hr>
+                                <button 
+                                    type="button" 
+                                    id="create-project-btn"
+                                    class="btn btn-primary"
+                                    data-toggle="modal" 
+                                    data-target="#create-project-modal">
+                                        <i class="far fa-plus-square"></i>  Create Project
+                                    </button>
+                            </div>
+                        </div>
+                    </div>
+
                 <!-- Tabs UI -->
                 <div class="row">
 
                     <div class="col-12">
 
                         <div id="myTabContent" class="tab-content">
+                                
                             <div class="tab-pane fade active show" id="tabs-projects">
                                 <div class="container-fluid">
-
                                     <!-- FAVORITE PROJETS -->
-
                                     <div class="row pl-3" id="favorite-projects-container">
-                                    <% if (userFavoriteProjects.length > 0){ %>
+                                        <% if (userFavoriteProjects.length > 0){ %>
 
-                                        <% for(let i = 0; i < numberOfFavoriteProjects; i++){ %>
-                                            <div id="<%= userFavoriteProjects[i]._id %>" class="col-3 card text-white project-container bg-dark mb-6 card-project add-shadow-box">
+                                            <% for(let i = 0; i < numberOfFavoriteProjects; i++){ %>
+                                                <div id="<%= userFavoriteProjects[i]._id %>" class="col-3 card text-white project-container bg-dark mb-6 card-project add-shadow-box">
 
-                                                <div class="favorite-icon-project-container remove-favorite-container">
-                                                    <span class="favorite-icon-container remove-project-favorite-btn" 
-                                                    data-projectid="<%= userFavoriteProjects[i]._id %>"
-                                                    data-projectname="<%= userFavoriteProjects[i]['title']%>"
-                                                    data-toggle="modal" 
-                                                    data-target="#remove-project-favorite-modal">
-                                                        <i class="fas fa-star favoriteIconAct"></i>
-                                                    </span>
-                                                </div>
+                                                    <div class="favorite-icon-project-container remove-favorite-container">
+                                                        <span class="favorite-icon-container remove-project-favorite-btn" 
+                                                        data-projectid="<%= userFavoriteProjects[i]._id %>"
+                                                        data-projectname="<%= userFavoriteProjects[i]['title']%>"
+                                                        data-toggle="modal" 
+                                                        data-target="#remove-project-favorite-modal">
+                                                            <i class="fas fa-star favoriteIconAct"></i>
+                                                        </span>
+                                                    </div>
 
-                                                <div class="card-body">
+                                                    <div class="card-body">
 
-                                                    <div class="initals-container card-initials pr-2 go-to-project mb-2" data-projectid="<%= userFavoriteProjects[i]._id %>">
+                                                        <div class="initals-container card-initials pr-2 go-to-project mb-2" data-projectid="<%= userFavoriteProjects[i]._id %>">
 
-                                                        <div class="pt-2">
-                                                            <span class="span-initials" style="background-color: <%= userFavoriteProjects[i]['initialsColors']%>;">
-                                                                <%= userFavoriteProjects[i]["initials"]%>
+                                                            <div class="pt-2">
+                                                                <span class="span-initials" style="background-color: <%= userFavoriteProjects[i]['initialsColors']%>;">
+                                                                    <%= userFavoriteProjects[i]["initials"]%>
+                                                                </span>
+                                                            </div>
+                                                        </div>
+                                                        
+                                                        <h4 class="card-title go-to-project project-name" data-projectid="<%= userFavoriteProjects[i]._id %>">
+                                                            <%= userFavoriteProjects[i].title %>
+                                                        </h4>
+                                                        <p class="card-text project-description description-color"><%= userFavoriteProjects[i].description %></p>
+                                                    </div>
+                                                    <% if (userFavoriteProjects[i]["author"].toString() == currentUser["_id"].toString()) { %>
+
+                                                        <div class="pr-4 project-icons" style="text-align: right;">
+                                                            <span class="edit-project-btn" data-toggle="modal" data-target="#edit-project-modal" data-projectid="<%= userFavoriteProjects[i]._id %>">
+                                                                <i class="fas fa-edit"></i>
+                                                            </span>
+                                                            <span class="remove-project-btn" data-toggle="modal" data-target="#remove-confirmation-modal" data-projectid="<%= userFavoriteProjects[i]._id %>">
+                                                                <i class="fas fa-trash"></i>
                                                             </span>
                                                         </div>
-                                                    </div>
-                                                    
-                                                    <h4 class="card-title go-to-project project-name" data-projectid="<%= userFavoriteProjects[i]._id %>">
-                                                        <%= userFavoriteProjects[i].title %>
-                                                    </h4>
-                                                    <p class="card-text project-description description-color"><%= userFavoriteProjects[i].description %></p>
+                                                    <% } %>
                                                 </div>
-                                                <% if (userFavoriteProjects[i]["author"].toString() == currentUser["_id"].toString()) { %>
-
-                                                    <div class="pr-4 project-icons" style="text-align: right;">
-                                                        <span class="edit-project-btn" data-toggle="modal" data-target="#edit-project-modal" data-projectid="<%= userFavoriteProjects[i]._id %>">
-                                                            <i class="fas fa-edit"></i>
-                                                        </span>
-                                                        <span class="remove-project-btn" data-toggle="modal" data-target="#remove-confirmation-modal" data-projectid="<%= userFavoriteProjects[i]._id %>">
-                                                            <i class="fas fa-trash"></i>
-                                                        </span>
-                                                    </div>
-                                                <% } %>
-                                            </div>
+                                            <% } %>
                                         <% } %>
-                                    <% } %>
 
                                     </div>
+
+
+                                    
 
                                     <!-- REMAINING PROJECTS -->
                                     <div class="row n-mb" style="width: 100% !important;">
@@ -177,6 +204,7 @@
                                             <% } %>
 
                                         </div>
+
                                     </div>
                                 </div>
                             </div>

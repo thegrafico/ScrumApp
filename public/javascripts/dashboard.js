@@ -39,6 +39,9 @@ const FILTER_PROJECTS_INPUT = "#filter-projects";
 
 const MAX_NUMBER_OF_FAVORITE_PROJECTS = 3;
 
+// DEFAULT MESSAGE WHEN EMPTY PROJECT
+const EMPTY_PROJECT_CONTAINER = "#empty-projects-container-message";
+
 
 // FAVORITE PROJECTS
 const PROJECT_FAVORITE = {
@@ -214,6 +217,8 @@ $(function () {
             addProjectToUI(response["project"], false);
 
             closeModal(CREATE_PROJECT_MODAL);
+
+            $(EMPTY_PROJECT_CONTAINER).hide();
         }else{
             $.notify(response_error.data.responseJSON.msg, "error");
         }
@@ -272,6 +277,12 @@ $(function () {
 
             // close modal
             closeModal(REMOVE_CONFIRMATION_MODAL);
+
+            const thereIsNotProject = $(".project-container").length === 0;
+            console.log("thereIsNotProject", thereIsNotProject);
+            if (thereIsNotProject) {
+                $(EMPTY_PROJECT_CONTAINER).show();
+            }
 
         }else{
             $.notify(response_error.data.responseJSON.msg, "error");
@@ -430,7 +441,7 @@ function addProjectToUI(project, isFavorite){
         }
 
         projectTemplate = `
-        <div id="${project["_id"]}" class="col-3 card text-white bg-dark mb-6 card-project add-shadow-box">             
+        <div id="${project["_id"]}" class="col-3 card text-white project-container bg-dark mb-6 card-project add-shadow-box">             
         
             <div class="favorite-icon-project-container remove-favorite-container">
                 <span class="favorite-icon-container remove-project-favorite-btn" 
@@ -482,7 +493,7 @@ function addProjectToUI(project, isFavorite){
         }
 
         projectTemplate = `
-        <div id="${project["_id"]}" class="row mb-4 add-shadow-box project-row">
+        <div id="${project["_id"]}" class="row mb-4 project-container add-shadow-box project-row">
 
             <div class="favorite-icon-project-container make-project-favorite-container">
                 <span 
