@@ -675,3 +675,7 @@ td.off{
 .related-workitem{
     width: 80% !important;
 }
+
+.disabled:hover{
+    cursor: not-allowed;
+}

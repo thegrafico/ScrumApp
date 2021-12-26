@@ -37,7 +37,7 @@ module.exports = {
             "/javascripts/api-calls/api-project.js",
             "/javascripts/dependecies/chart.min.js",
             "/javascripts/dependecies/chartjs-plugin-labels.min.js",
-
+            "/javascripts/services/modal-confirmation.js",
         ]
     },
     planigWorkItemPath: {

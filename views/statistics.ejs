@@ -101,8 +101,8 @@
 
                                         <div class="col">
                                             <span>
-                                                <a href="#" id="viewPerformancesBtn"> 
-                                                    Performances <i class="fas fa-chart-pie memberCardIcon"></i> 
+                                                <a href="#" id="leave-project-btn"> 
+                                                    Leave project <i class="fas fa-door-open memberCardIcon"></i>
                                                 </a>
                                             </span>
                                         </div>
@@ -143,5 +143,28 @@
         <input type="hidden" name="projectId" id="projectId" value="<%=projectId%>">
         <input type="hidden" name="currentTab" id="currentTab" value="<%=activeTab%>">
     </div>
+
+
+<!-- Modal -->
+<div class="modal fade" id="confirmation-modal" tabindex="-1" role="dialog" aria-labelledby="Confirmation Modal"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="confirmation-modal-title">Confirmation</h5>
+                <button type="button" class="close" onclick="$('#confirmation-modal').modal('hide');" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+               <p id="confirmation-modal-message"></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="confirmation-btn-cancel"  class="btn btn-secondary" onclick="$('#confirmation-modal').modal('hide');">No</button>
+                <button type="button" id="confirmation-btn-confirm" class="btn btn-primary">Yes</button>
+            </div>
+        </div>
+    </div>
+</div>
     
 <%- include('templates/footer'); %>

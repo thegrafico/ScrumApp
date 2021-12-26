@@ -217,7 +217,7 @@ projectSchema.methods.getWorkItemByItemId = async function(itemId) {
  */
 projectSchema.methods.isUserInProject = function(userId) {
 
-    if (_.isEmpty(userId) || !_.isString(userId)){
+    if (!userId){
         console.error("Parameter is either empty or is not a String");
         return false;
     }

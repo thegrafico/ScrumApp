@@ -38,7 +38,10 @@ const defaultWorkItem = workItemStatus.filter(key => WORK_ITEM_STATUS_COLORS[key
 const ObjectId = mongoose.Schema.ObjectId;
 
 let workItemSchema = new mongoose.Schema({
-    itemId: Number,
+    itemId: {
+        type: Number, 
+        unique: true
+    },
     title: {
         type: String,  //const MAX_LENGTH_TITLE = 80;
         required: true,

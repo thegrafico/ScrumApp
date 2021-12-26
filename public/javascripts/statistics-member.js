@@ -49,6 +49,27 @@ $(function () {
             $.notify(response_error.data.responseJSON.msg, "error");
         }
     });
+
+    // LEAVE PROJECT
+    $("#leave-project-btn").on("click", async function() {
+
+        const leaveProjectMessage = "Are you sure you want to leave this project? this operation cannot be undone."
+
+        // wait until modal is confirm
+        const userConfirmation = await ModalConfirmation.confirm(CONFIRMATION_TYPES.DANGER, leaveProjectMessage);
+
+        // close if the user does not confirm the modal
+        if (!userConfirmation){return;}
+
+        let {response, response_error} =  await leaveCurrentProject().catch(err => {});
+        
+        if (response){
+            // Simulate a mouse click:
+            window.location.href = "/";
+            return;
+        }
+        $.notify("Oops, There was a problem leaving the project. Please try later.", "error");
+    });
 });
 
 function getBreakdownData(){

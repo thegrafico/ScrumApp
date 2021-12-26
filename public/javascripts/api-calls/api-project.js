@@ -155,3 +155,23 @@ async function updateNotificationStatus(notificationId, status){
 
     return {"response": response, "response_error": response_error};
 }
+
+/**
+ * Update notification status
+ * @param {String} notificationId 
+ * @param {String} status 
+ * @returns 
+ */
+ async function leaveCurrentProject(){
+    
+    const projectId = getProjectId();
+
+    const API_LINK_LEAVE_PROJECT = `/dashboard/api/${projectId}/leaveProject`;
+
+    let response_error = undefined;
+    const response = await make_post_request(API_LINK_LEAVE_PROJECT).catch(err => {
+        response_error = err;
+    });
+
+    return {"response": response, "response_error": response_error};
+}

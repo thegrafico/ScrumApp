@@ -809,4 +809,30 @@ router.post("/api/:id/editTeam/:teamid", middleware.isUserInProject, async funct
     res.status(200).send(response);
 });
 
+/**
+ * METHOD: POST - LEAVE PROJECT
+ */
+ router.post("/api/:id/leaveProject", middleware.isUserInProject, async function (req, res) {
+    
+    const currentUserId = req.user["_id"];
+    const currentProject = req.currentProject;
+
+    let response = {};
+
+    // remove all sprints from this team
+    currentProject.removeUser(currentUserId).then( async () => {
+        
+        response["msg"] = "User was removed from project.";
+        res.status(200).send(response);
+        return;
+
+    }).catch(err => {
+        console.error("Error Removing user from current project: ", err);
+        response["msg"] = "Oops, There was a problem leaving the current project. Please try later";
+        res.status(400).send(response);
+        return;
+    });
+    
+});
+
 module.exports = router;
