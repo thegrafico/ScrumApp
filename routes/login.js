@@ -40,10 +40,8 @@ router.post("/", passport.authenticate("local", {
  * METHOD: GET - show the main page for projects
  */
 router.get("/logout", async function (req, res) {
-
-  console.log("Loggin out");
   req.logOut();
-  res.redirect('/');
+  res.redirect('/login');
 });
 
 
