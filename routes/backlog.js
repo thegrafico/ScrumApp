@@ -20,32 +20,21 @@ const {
     UNASSIGNED, 
     UNASSIGNED_SPRINT,
     UNASSIGNED_USER,
-    WORK_ITEM_ICONS,
     WORK_ITEM_STATUS_COLORS,
     PRIORITY_POINTS,
     PAGES,
     sortByDate
 } = require('../dbSchema/Constanst');
 
-// ===================================================
-
 
 /**
  * METHOD: GET - show the main page for projects
  */
-router.get("/:id/planing/backlog", middleware.isUserInProject, async function (req, res) {
+router.get("/:id/backlog", middleware.isUserInProject, async function (req, res) {
 
     let projectId = req.params.id;
-
-    // verify is the project exists
-    let projectInfo = await projectCollection.findOne({_id: projectId}).catch(err => {
-        console.error("Error is: ", err.reason);
-    });
-
-    if (_.isUndefined(projectInfo) || _.isEmpty(projectInfo)) {
-        req.flash("error", "Cannot find the project you're looking for.");
-        return res.redirect('/');
-    }    
+    
+    const projectInfo = req.currentProject;
 
     // get all the teams for this project
     let teams = [...projectInfo.teams];

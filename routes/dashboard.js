@@ -6,22 +6,12 @@
 
 // ============= CONST AND DEPENDENCIES =============
 const express = require("express");
-const valid = require("validator");
-const _ = require("lodash");
-let projectCollection = require("../dbSchema/projects");
-const {
-    dashboardPath
-} = require("../middleware/includes");
+
+const {dashboardPath} = require("../middleware/includes");
 let router = express.Router();
 
+const { MAX_NUMBER_OF_FAVORITE_PROJECTS} = require("../dbSchema/Constanst");
 
-const {
-    PROJECT_INITIALS_COLORS,
-    MAX_NUMBER_OF_FAVORITE_PROJECTS,
-    setupProjectInitials,
-} = require("../dbSchema/Constanst");
-
-const BASE_ROUTE = 'dashboard';
 // ===================================================
 
 
@@ -43,7 +33,7 @@ router.get("/", async function (req, res) {
         sprints: [],
         currentPage: undefined,
         createProjectFormRedirect: "/",
-        project_rediret: BASE_ROUTE,
+        project_rediret: 'dashboard',
         stylesPath: dashboardPath["styles"],
         scriptsPath: dashboardPath["scripts"],
         numberOfFavoriteProjects: LIMIT_NUMBER_OF_FAVORITE_PROJECTS,
@@ -52,39 +42,5 @@ router.get("/", async function (req, res) {
 
     res.render("dashboard", params);
 });
-
-
-/**
- * Get all projects the user is
- * @param {*} userId - id of the user
- */
-function getProjectsForUser(userId) {
-    return new Promise(async function (resolve, rejected) {
-
-        // find all projects user is
-        let userProjects = await projectCollection.find({
-            users: userId
-        }).catch(err => {
-            console.error("Error getting the projects for the user: ", err);
-        });
-
-        if (!userProjects || userProjects.length == 0) {
-            rejected("Response is empty, cannot get the project for the user");
-            return;
-        }
-
-        resolve(userProjects);
-    });
-
-}
-
-/**
- * Validate if the param sent by the form are valid
- * @param {String} name - title of the project
- * @param {String} desc - description of the project 
- */
-function projectParamsAreValid(name, desc) {
-    return (valid.isEmpty(name) || !valid.isAlphanumeric(valid.blacklist(name, ' ')) || name.length > 50 || valid.isEmpty(desc) || desc.length > 500);
-}
 
 module.exports = router;

@@ -29,14 +29,14 @@ dotenv.config({
 });
 
 // ======== ROUTES ===============
-const loginRoute = require('./routes/login');
-const dashboardRoute = require('./routes/dashboard');
-const projectDetailRoute = require("./routes/statistics");
-const planingBacklogRoute = require("./routes/planing-backlog");
-const planingworkItemRoute = require("./routes/planing-work-item");
-const sprintRoutes = require("./routes/sprint-route");
-const manageRoute = require("./routes/manage-routes");
-const queriesRoute = require("./routes/queries");
+const LoginRoute = require('./routes/login');
+const DashboardRoute = require('./routes/dashboard');
+const ProjectDetailRoute = require("./routes/statistics");
+const BacklogRoute = require("./routes/backlog");
+const WorkItemsRoute = require("./routes/work-items");
+const SprintRoutes = require("./routes/sprint-route");
+const ManageRoute = require("./routes/manage-routes");
+const QueriesRoute = require("./routes/queries");
 
 // API ROUTES
 const apiProjectRoute = require("./routes/api/api-project");
@@ -143,56 +143,21 @@ app.use(function (req, res, next) {
 	res.locals.showCompletedWorkItems = false;
 	res.locals.showCreateWorkItemModal = false;
 
-	const userNotifications = [
-		{
-			_id: "1234567aksdhkajsdkj",
-			from: {name: "Alexander", "_id": "testId"},
-			to: {"_id": "myTestId"},
-			type: "PROJECT_INVITATION",
-			icon: "fas fa-folder",
-			initials: "AL",
-			message: "Invited you the the project: Scrum App",
-			referenceId: "test",
-		},
-		{
-			_id: "1234567aksdhkajsdkasdj",
-			from: {name: "Alexander", "_id": "testId"},
-			to: {"_id": "myTestId"},
-			type: "TEAM_ADDED",
-			icon: "fas fa-users",
-			initials: "RP",
-			message: "You were added to the team: Team Awesome",
-			referenceId: "test",
-
-		},
-
-		{
-			_id: "1234567aksdhkajsdkasdasasdj",
-			from: {name: "Alexander", "_id": "testId"},
-			to: {"_id": "myTestId"},
-			type: "ASSIGNED_WORK_ITEM",
-			icon: "far fa-plus-square",
-			initials: "WI",
-			message: "Alexander Avalo Assinged Work Item 2035 to you.",
-			referenceId: "test",
-		},
-	];
-
 	next();
 });
 
 // ==================== ROUTES =================
-app.use('/login', loginRoute);
+app.use('/login', LoginRoute);
 
-app.use('/', middleware.isUserLogin, middleware.setUserProjects, NotificationMiddleware.getUserNotifications, dashboardRoute); // main page
-app.use('/dashboard/', middleware.isUserLogin, middleware.setUserProjects, NotificationMiddleware.getUserNotifications, projectDetailRoute); // Statistiscs
-app.use('/dashboard/', middleware.isUserLogin, middleware.setUserProjects, NotificationMiddleware.getUserNotifications, planingworkItemRoute); // Work Item
-app.use('/dashboard/', middleware.isUserLogin, middleware.setUserProjects, NotificationMiddleware.getUserNotifications, planingBacklogRoute); // backlog
-app.use('/dashboard/', middleware.isUserLogin, middleware.setUserProjects, NotificationMiddleware.getUserNotifications, sprintRoutes); // sprint
-app.use('/dashboard/', middleware.isUserLogin, middleware.setUserProjects, NotificationMiddleware.getUserNotifications, queriesRoute); // Queries
+app.use('/', middleware.isUserLogin, middleware.setUserProjects, NotificationMiddleware.getUserNotifications, DashboardRoute); // main page
+app.use('/dashboard/', middleware.isUserLogin, middleware.setUserProjects, NotificationMiddleware.getUserNotifications, ProjectDetailRoute); // Statistiscs
+app.use('/dashboard/', middleware.isUserLogin, middleware.setUserProjects, NotificationMiddleware.getUserNotifications, WorkItemsRoute); // Work Item
+app.use('/dashboard/', middleware.isUserLogin, middleware.setUserProjects, NotificationMiddleware.getUserNotifications, BacklogRoute); // backlog
+app.use('/dashboard/', middleware.isUserLogin, middleware.setUserProjects, NotificationMiddleware.getUserNotifications, SprintRoutes); // sprint
+app.use('/dashboard/', middleware.isUserLogin, middleware.setUserProjects, NotificationMiddleware.getUserNotifications, QueriesRoute); // Queries
 
 // MANAGE - routes
-app.use('/dashboard/', middleware.isUserLogin, NotificationMiddleware.getUserNotifications, manageRoute);
+app.use('/dashboard/', middleware.isUserLogin, NotificationMiddleware.getUserNotifications, ManageRoute);
 
 // API - Route
 app.use('/dashboard/', middleware.isUserLogin, apiProjectRoute); 

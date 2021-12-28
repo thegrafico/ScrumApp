@@ -287,11 +287,6 @@ $(function (){
 
         removeClassToElement(SPAN_ID_USER_LIST, "text-danger");
     });
-
-    // ============= EDIT TEAM ===========
-
-   
-    
   
     // ============== VIEW USERS ==============
 

@@ -10,7 +10,6 @@ const _                         = require("lodash");
 const moment                    = require('moment');
 const projectCollection         = require("../dbSchema/projects");
 const SprintCollection          = require("../dbSchema/sprint");
-const OrderSprintCollection     = require("../dbSchema/sprint-order");
 const workItemCollection        = require("../dbSchema/workItem");
 const middleware                = require("../middleware/auth");
 let router                      = express.Router();
@@ -23,7 +22,6 @@ const {
     UNASSIGNED, 
     UNASSIGNED_SPRINT,
     UNASSIGNED_USER,
-    WORK_ITEM_ICONS,
     WORK_ITEM_STATUS_COLORS,
     PRIORITY_POINTS,
     WORK_ITEM_STATUS,
@@ -315,22 +313,14 @@ router.get("/:id/sprint/board", middleware.isUserInProject, async function (req,
 /**
  * METHOD: GET - Sprint planning
  */
-router.get("/:id/planing/sprint", middleware.isUserInProject, async function (req, res) {
+router.get("/:id/sprint", middleware.isUserInProject, async function (req, res) {
 
     const projectId = req.params.id;
 
     // check if there is a sprint id to look for
     let { sprintId }  = req.query;
 
-    // verify is the project exists
-    let projectInfo = await projectCollection.findOne({_id: projectId}).catch(err => {
-        console.log("Error is: ", err.reason);
-    });
-
-    if (_.isUndefined(projectInfo) || _.isEmpty(projectInfo)) {
-        req.flash("error", "Cannot find the project you're looking for.");
-        return res.redirect('/');
-    }
+    const projectInfo = req.currentProject;
 
     // get all users for this project -> expected an array
     let users = await projectInfo.getUsers().catch(err => console.log(err)) || [];

@@ -490,7 +490,7 @@ function appendToWotkItemTable(workItems, index = null, showIfSprint = true, rem
         // TITLE
         let title = `
             <td class="openStory">
-                <a href="/dashboard/${workItem["projectId"]}/planing/workitems/${workItem['_id']}" class="open-existing-work-item-modal" target="_blank" rel="${workItem['_id']}">
+                <a href="/dashboard/${workItem["projectId"]}/workitems/${workItem['_id']}" class="open-existing-work-item-modal" target="_blank" rel="${workItem['_id']}">
                     <i class="fas  ${WORK_ITEM_ICONS[workItems[i]['type']].icon}"></i> 
                     <span> ${workItem['title']} </span>
                 </a> 
@@ -687,7 +687,7 @@ function addWorkItemToBoard(workItem, index) {
         tags = "<td class='tags-td'>   </td>"
     }
 
-    const link = `/dashboard/${projectId}/planing/workitems/${id}`;
+    const link = `/dashboard/${projectId}/workitems/${id}`;
 
     let workItemBoardTemplate = `
     

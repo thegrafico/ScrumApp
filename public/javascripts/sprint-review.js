@@ -948,7 +948,7 @@ async function getSprintReview(sprintId, teamSelector){
     const teamId = $(teamSelector).val();
 
     // update the "got to sprint" link
-    let newLinkOpenSprint = `/dashboard/${projectId}/planing/sprint?sprintId=${sprintId}`;
+    let newLinkOpenSprint = `/dashboard/${projectId}/sprint?sprintId=${sprintId}`;
     updateLinkHref(GO_TO_SPRINT_LINK, newLinkOpenSprint);
 
     // validate data

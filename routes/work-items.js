@@ -7,7 +7,6 @@
 // ============= CONST AND DEPENDENCIES =============
 const express                   = require("express");
 const _                         = require("lodash");
-const STATUS                    = require('../dbSchema/Constanst').projectStatus;
 const moment                    = require('moment');
 const projectCollection         = require("../dbSchema/projects");
 const sprintCollection          = require("../dbSchema/sprint");
@@ -19,11 +18,9 @@ const {
     UNASSIGNED, 
     UNASSIGNED_SPRINT,
     UNASSIGNED_USER,
-    WORK_ITEM_ICONS,
     WORK_ITEM_STATUS_COLORS,
     MAIN_WORK_ITEMS_TO_SHOW,
     PRIORITY_POINTS,
-    SPRINT_FORMAT_DATE,
     PAGES,
     joinData,
     sortByDate,
@@ -33,7 +30,7 @@ const {
 /**
  * METHOD: GET - show the main page for projects
  */
-router.get("/:id/planing/workitems", middleware.isUserInProject, async function (req, res) {
+router.get("/:id/workitems", middleware.isUserInProject, async function (req, res) {
 
     const projectId = req.params.id;
 
@@ -108,13 +105,13 @@ router.get("/:id/planing/workitems", middleware.isUserInProject, async function 
         "showCreateWorkItemModal": true,
     };
 
-    res.render("planing-work-item", params);
+    res.render("work-items", params);
 });
 
 /**
  * METHOD: GET - show the main page for projects
  */
-router.get("/:id/planing/workitems/:workItemId", middleware.isUserInProject, async function (req, res) {
+router.get("/:id/workitems/:workItemId", middleware.isUserInProject, async function (req, res) {
 
     const projectId = req.params.id;
     const workItemId = req.params.workItemId;

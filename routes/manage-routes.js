@@ -10,7 +10,6 @@ const _                         = require("lodash");
 const moment                    = require('moment');
 const projectCollection         = require("../dbSchema/projects");
 const SprintCollection          = require("../dbSchema/sprint");
-const workItemCollection        = require("../dbSchema/workItem");
 const middleware                = require("../middleware/auth");
 let router                      = express.Router();
 const { managePath }           = require("../middleware/includes");
@@ -19,17 +18,13 @@ const { managePath }           = require("../middleware/includes");
 const {
     PAGES,
     UNASSIGNED, 
-    WORK_ITEM_ICONS,
     WORK_ITEM_STATUS_COLORS,
     PRIORITY_POINTS,
-    UNASSIGNED_SPRINT,
     UNASSIGNED_USER,
-    SPRINT_FORMAT_DATE,
     sortByDate,
     USER_PRIVILEGES,
 } = require('../dbSchema/Constanst');
 
-// ===================================================
 
 /**
  * METHOD: GET - SHOW USERS manages

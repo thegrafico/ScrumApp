@@ -11,7 +11,6 @@ const validator             = require("validator");
 const STATUS                = require('../dbSchema/Constanst').projectStatus;
 const moment                = require('moment');
 const projectCollection     = require("../dbSchema/projects");
-const SprintCollection       = require("../dbSchema/sprint");
 const userCollection        = require("../dbSchema/user");
 const middleware            = require("../middleware/auth");
 let router                  = express.Router();
@@ -24,7 +23,6 @@ const {
     PAGES,
     UNASSIGNED_USER,
     WORK_ITEM_STATUS_COLORS,
-    WORK_ITEM_ICONS,
     WORK_ITEM_STATUS,
     PRIORITY_POINTS,
     getNumberOfElements,
@@ -102,81 +100,6 @@ router.get("/:id", middleware.isUserInProject, async function (req, res) {
     res.render("statistics", params);
 });
 
-/**
- * METHOD: POST - send a project invite to an user 
- * // TODO: verify if the person adding another user is the scrum master or product owner
- */
-router.post("/:id/addmember", middleware.isUserInProject, async function (req, res) {
-
-    const { userEmail } = req.body;
-
-    // validate email
-    if (!validator.isEmail(userEmail)) return res.redirect("back");
-
-    const projectId = req.params.id;
-    const currentProject = req.currentProject;
-
-    let userId = await getUserIdByEmail(userEmail).catch(err => {
-        console.error(err)
-    });
-
-    if (_.isUndefined(userId) || _.isNull(userId)) {
-        // TODO: add flash message 
-        return res.redirect("back");
-    }
-
-    // if the user does not exists, add it
-    if (!currentProject.users.includes(userId)){
-        await currentProject.users.push(userId);
-        await currentProject.save();
-        console.log("User added to the project");
-    }else{
-        console.log("User already exists");
-    }
-    res.redirect("back");
-});
-
-/**
- * METHOD: POST - send a project invite to an user 
- * // TODO: verify if the person adding another user is the scrum master or product owner
- */
-router.post("/:id/removemember", middleware.isUserInProject, async function (req, res) {
-
-    const { emailToRemove } = req.body;
-
-    // validate email
-    // TODO: add flash message to the user
-    if (!validator.isEmail(emailToRemove)) return res.redirect("back");
-
-    const projectId = req.params.id;
-
-    // TODO: find userid by email. then add the user to the new project
-    let userId = await getUserIdByEmail(emailToRemove).catch(err => {
-        console.error(err)
-    })
-
-    if (_.isUndefined(userId) || userId == null) {
-        // TODO: add flash message 
-        return res.redirect("back");
-    }
-
-    const currentProject = await projectCollection.findById(projectId).catch(err=> console.error("Error getting the project to remove the user: ", err));
-
-    if (_.isUndefined(currentProject) || _.isNull(currentProject)) {
-        // TODO: add flash message to the user
-        res.redirect("back");
-    }
-
-    if (currentProject.users.includes(userId)){
-        await currentProject.users.pull({_id: userId});
-        await currentProject.save();
-        console.log("user removed");
-    }else{
-        console.log("Cannot remove a user that does not exists");
-    }
-
-    res.redirect("back");
-});
 
 /**
  * METHOD: POST - send a project invite to an user 

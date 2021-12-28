@@ -51,7 +51,7 @@ $(function () {
             case NOTIFICATION_TYPES["ASSIGNED_WORK_ITEM"]:
                 const workItemId = $(currentNotification).attr("data-notification-reference-id");
 
-                let URL = `/dashboard/${notificationProjectId}/planing/workItems/${workItemId}`;
+                let URL = `/dashboard/${notificationProjectId}/workitems/${workItemId}`;
 
                 openInNewTab(URL);
                 break;

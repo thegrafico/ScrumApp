@@ -235,7 +235,7 @@ function addRelationshipToWorkItemModal(relatedWorkItems, relationship, containe
 
             <div class="work-item-relationship-name-container">
                 
-                <a href="/dashboard/${projectId}/planing/workItems/${workItem['_id']}">    
+                <a href="/dashboard/${projectId}/workitems/${workItem['_id']}">    
                     <span class="work-item-relationship-id">
                         <i class="fas ${WORK_ITEM_ICONS[workItem['type']].icon}"></i>
                         <span class="related-workitem-item-id"> 
