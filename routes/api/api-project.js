@@ -24,6 +24,8 @@ const {
     projectStatus,
     containsSymbols,
     setupProjectInitials,
+    validateString,
+    printError,
 } = require('../../dbSchema/Constanst');
 
 // ================= GET REQUEST ==============
@@ -502,72 +504,54 @@ router.post("/api/removeProjectFromFavorite", async function (req, res) {
  * METHOD: POST - Create team
  */
 router.post("/api/:id/newTeam", middleware.isUserInProject, async function (req, res) {
+    console.log("Getting request to add new team to project...");
 
-    // validate project
-    let project = await ProjectCollection.findById(req.params.id).catch(err => {
-        console.error("Error getting the project: ", err);
-    });
-
-    if (_.isUndefined(project) || _.isEmpty(project)){
-        res.status(500).send("Error getting the project information. Please refresh the page and try again.");
-        return;
-    }
-
+    const project = req.currentProject;
+    
     // Getting data from user
     let {
         teamName,
-        teamUsers,
+        teamInitials,
     } = req.body;
 
     let response = {team: null};
     let error_message = null;
 
     // first verify that team Name is string || not undefined or null
-    if (!_.isString(teamName)) {
-        response["msg"] = "The name of the team is undefined.";
+    if (!_.isString(teamName) || !_.isString(teamInitials)) {
+        response["msg"] = "Either the name of the team or the initials are empty.";
         res.status(400).send(response);
         return;
     }
     
-    // clean the name
-    teamName = teamName.trim()
+    teamName = teamName.trim();
+    teamInitials = teamInitials.trim(); 
 
-    // Validating team name
-    if (_.isEmpty(teamName)){
-        error_message = "Team Name cannot be empty.";
-    }else if( !(/^[a-zA-Z\s]+$/.test(teamName)) ){
-        error_message = "Teman Name cannot include symbols and numbers.";
-    }else if(teamName.length < TEAM_NAME_LENGHT_MIN_LIMIT){
-        error_message = "Team name to short.";
-    }else if(teamName.length > TEAM_NAME_LENGHT_MAX_LIMIT){
-        error_message = "Team name is to big.";
-    }
+    const teamNameValidation = validateString(teamName, TEAM_NAME_LENGHT_MIN_LIMIT, TEAM_NAME_LENGHT_MAX_LIMIT, true, false);
+    const teamInitialsValidation = validateString(teamInitials, TEAM_NAME_LENGHT_MIN_LIMIT, TEAM_NAME_LENGHT_MIN_LIMIT, true, true);
 
-    if (error_message){
-        response["msg"] = error_message;
+    if (!teamNameValidation.isValid){
+        printError(`Team name: ${teamNameValidation.reason}`);
+        response["msg"] = "Invalid team name";
         res.status(400).send(response);
         return;
     }
 
-    let nameIsInProject = false;
-
-    for(let i =  0; i < project.teams.length; i ++){
-        const pTeam = project.teams[i];
-
-        if (pTeam["name"].toLowerCase() === teamName.toLowerCase()){
-            nameIsInProject = true;
-            break;
-        }
+    if (!teamInitialsValidation.isValid){
+        printError(`Team Initials: ${teamNameValidation.reason}`);
+        response["msg"] = "Invalid team initials";
+        res.status(400).send(response);
+        return;
     }
 
-    if (nameIsInProject){
+    if (project.isTeamNameInProject(teamName)){
         response["msg"] = "A team with the same name already exist. (Case sensitive is ignored).";
         res.status(400).send(response);
         return;
     }
     
-    // TODO: update users when functionality is completed. For now is just empty string
-    project.teams.push({"name": teamName, users: []}); 
+    // add team to projects
+    project.teams.push({"name": teamName, users: [], initials: teamInitials}); 
     
     let team = project.teams.filter( each => { return each["name"] === teamName})[0];
    
@@ -583,7 +567,7 @@ router.post("/api/:id/newTeam", middleware.isUserInProject, async function (req,
     }
 
     response["msg"] = "Successfully added team to the project.";
-    response["team"] = { name: teamName, id: team["_id"], users: team["users"]};
+    response["team"] = { name: teamName, id: team["_id"], users: team["users"], initials: teamInitials};
 
     res.status(200).send(response);
 });
@@ -711,103 +695,78 @@ router.post("/api/:id/deleteTeams", middleware.isUserInProject, async function (
  */
 router.post("/api/:id/editTeam/:teamid", middleware.isUserInProject, async function (req, res) {
 
-    const projectId = req.params.id;
     const teamId = req.params.teamid;
 
     // validate project
-    let project = await ProjectCollection.findById(projectId).catch(err => {
-        console.error("Error getting the project: ", err);
-    });
+    const project = req.currentProject;
 
-    if (_.isUndefined(project) || _.isEmpty(project)){
-        response["msg"] = "Error getting the project information. Please refresh the page and try again.";
-        res.status(400).send(response);
-        return;
-    }
-
-    if (!project.isTeamInProject){
+    if (!project.isTeamInProject(teamId)){
         response["msg"] = "Oops, it seems this team does not belong to the project";
         res.status(400).send(response);
         return;
     }
 
     // Getting data from user
-    let { name } = req.body;
+    let { name, initials } = req.body;
 
     let response = {};
-    let error_message = null;
 
     // first verify that team Name is string || not undefined or null
-    if (_.isUndefined(name)) {
-        response["msg"] = "The name of the team cannot be empty.";
+    if (!name || !initials) {
+        response["msg"] = "Either team name or initials is empty";
         res.status(400).send(response);
         return;
     }
     
     // clean the name
-    name = name.trim()
+    name = name.trim();
+    initials = initials.trim();
 
-    // Validating team name
-    if (_.isEmpty(name)){
-        error_message = "Team name cannot be empty.";
-    }else if( !(/^[a-zA-Z\s]+$/.test(name)) ){
-        error_message = "Team name cannot include symbols and numbers.";
-    }else if(name.length < TEAM_NAME_LENGHT_MIN_LIMIT){
-        error_message = "Team name to short.";
-    }else if(name.length > TEAM_NAME_LENGHT_MAX_LIMIT){
-        error_message = "Team name is to long.";
-    }
+    const teamNameValidation = validateString(name, TEAM_NAME_LENGHT_MIN_LIMIT, TEAM_NAME_LENGHT_MAX_LIMIT, true, false);
+    const teamInitialsValidation = validateString(initials, TEAM_NAME_LENGHT_MIN_LIMIT, TEAM_NAME_LENGHT_MIN_LIMIT, true, true);
 
-    if (error_message){
-        response["msg"] = error_message;
+    if (!teamNameValidation.isValid){
+        printError(`Team name: ${teamNameValidation.reason}`);
+        response["msg"] = "Invalid team name";
         res.status(400).send(response);
         return;
     }
 
-    let nameIsInProject = false;
-
-    for(let i =  0; i < project.teams.length; i ++){
-        const pTeam = project.teams[i];
-
-        if (pTeam["name"].toLowerCase() === name.toLowerCase()){
-            nameIsInProject = true;
-            break;
-        }
+    if (!teamInitialsValidation.isValid){
+        printError(`Team Initials: ${teamNameValidation.reason}`);
+        response["msg"] = "Invalid team initials";
+        res.status(400).send(response);
+        return;
     }
 
-    // check if the name already exist in project
-    if (nameIsInProject){
+    if (project.isTeamNameInProject(name, teamId)){
         response["msg"] = "A team with the same name already exist. (Case sensitive is ignored).";
         res.status(400).send(response);
         return;
     }
 
-    // updating name of the team
+    // updating name of the team and initials
     for(let i =  0; i < project.teams.length; i ++){
         const pTeam = project.teams[i];
 
         if (pTeam["_id"] == teamId){
             project.teams[i]["name"] = name;
-            console.log("Team name updated");
+            project.teams[i]["initials"] = initials;
+            console.log("Team was updated!");
             break;
         }
     }
     
-    await project.save().catch(err => {
-        error_message = err;
-        console.log("Error adding the team to the project: ", err);
-    });
-
-    if (error_message){
-        response["msg"] = `Error updating team name: ${error_message}`;
+    project.save().then( () => {
+        response["msg"] = "Team successfully updated";
+        response["team"] = { name: name, id: teamId, initials: initials};
+        res.status(200).send(response);
+    }).catch(err => {
+        printError(`Error adding the team to the project: ${err}`)
+        response["msg"] = `Oops, There was a problem updating the team: ${name}`;
         res.status(400).send(response);
         return;
-    }
-
-    response["msg"] = "Successfully updated team name";
-    response["team"] = { name: name, id: teamId};
-
-    res.status(200).send(response);
+    });
 });
 
 /**

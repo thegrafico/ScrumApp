@@ -1,15 +1,22 @@
 
-// id of the form 
-const FORM_ID_CREATE_TEAM = "#createTeamForm";
+// CREATE TEAM
 const CREATE_TEAM_MODAL_ID = ".create-team-modal";
-const CREATE_TEAM_SUBMIT_BTN = "#create-team-submit-btn";
+const OPEN_CREATE_TEAM_MODAL = ".open-create-team-modal"
 
 const INPUT_TEAM_NAME = "#teamName";
-const INPUT_TEAM_USERS = "#listOfUsers";
-const INPUT_TEAM_LIST_OF_USERS = ".teamUserList";
+const INPUT_TEAM_INITIALS = "#teamInitials";
+
+// submit btns
+const BTN_SUBMIT_CREATE_TEAM = "#create-team-submit-btn";
+const BTN_SUBMIT_EDIT_TEAM = "#edit-team-submit-btn";
+
+// Modal Titles for create and edit
+const MODAL_CREATE_TEAM_TITLE = "#title-new-team";
+const MODAL_EDIT_TEAM_TITLE = "#title-edit-team";
+
+// Span errors
 const SPAN_ID_TEAM_NAME = "#teamNameSpanError";
 const SPAN_ID_USER_LIST = "#teamUsersSpanError";
-const INPUT_SUBMIT_TEAM = "#create-team-submit-btn";
 
 const CLOSE_BTN_CREATE_TEAM = "#closeCreateTeamBtn";
 const CLOSE_BTN_DELETE_TEAM = "#closeRemoveTeamBtn";
@@ -21,15 +28,15 @@ const TEAM_NAME_LENGHT_MIN_LIMIT = 3;
 const SELECT_USERS_PROJECT_INPUT = "#project-user-select";
 
 // Selected team for modals
-const CURRENT_SELECTED_TEAM = "#currentSelectedTeam";
+const CURRENT_SELECTED_TEAM = "#current-selected-team";
 
 // TEAM TABLE
 const ROW_TEAM_NAME = ".row-team-name";
+const ROW_TEAM_INITIALS = ".row-team-initials";
 
 // EDIT TEAM
 const OPEN_EDIT_TEAM_MODAL = ".btn-update-team-modal-open";
 const EDIT_TEAM_NAME_INPUT = "#team-name-input";
-const BTN_SUBMIT_EDIT_TEAM = "#edit-team-btn-submit";
 
 // VIEW USER TEAMS
 const VIEW_TEAM_USERS_MODAL = "#view-team-users-modal";
@@ -60,15 +67,14 @@ $(function (){
     $(SELECT_TEAM_TO_ADD_USER_INPUT).select2();
     $(SELECT_USER_TO_ADD_TO_TEAM_INPUT).select2();
 
-    // BTN when the user submit the form information to create a new user
-    $(CREATE_TEAM_SUBMIT_BTN).on("click", async function(event){
-        
+    // CREATE NEW TEAM
+    $(BTN_SUBMIT_CREATE_TEAM).on("click", async function(event){
+       
         // remove the default from the form so we can control when to submit the information. 
         event.preventDefault();
 
-        // TODO: verify team name is not already taken in the project
         const teamName = $(INPUT_TEAM_NAME).val().trim();
-        const userId = $(INPUT_TEAM_USERS).attr('id').trim();
+        const teamInitials = $(INPUT_TEAM_INITIALS).val().trim();
 
         // string, not empty and just letters
         const {isValid, reason} = validateTeamName(teamName);
@@ -78,7 +84,14 @@ $(function (){
             return;
         }
 
-        const {response, response_error} = await createTeam(teamName);
+        const initialsValidation = validateTeamName(teamInitials, 3, 3);
+
+        if (!initialsValidation.isValid){
+            addSClassToElement(SPAN_ID_USER_LIST, "text-danger");
+            return;
+        }
+
+        const {response, response_error} = await createTeam(teamName, teamInitials);
 
         // Success message
         if (!response_error){
@@ -100,6 +113,102 @@ $(function (){
         }else{ // error messages
             $.notify(response_error.data.responseJSON.msg, "error");
         }
+    });
+
+    // EDIT TEAM
+    $(BTN_SUBMIT_EDIT_TEAM).on("click", async function(e){
+        e.preventDefault();
+
+        const teamName = $(INPUT_TEAM_NAME).val().trim();
+        const teamInitials = $(INPUT_TEAM_INITIALS).val().trim();
+
+        // getting team id in order to make the request
+        const teamId = $(CURRENT_SELECTED_TEAM).val();
+
+        // check teamId
+        if (_.isUndefined(teamId) || _.isEmpty(teamId)){
+            $.notify("Sorry, There was a problem getting information for the team. Please later");
+            return;
+        }
+
+        // string, not empty and just letters
+        const nameValidation = validateTeamName(teamName);
+        const initialsValidation = validateTeamName(teamInitials, 3, 3);
+
+        if (!nameValidation.isValid){
+            showErrSpanMessage(SPAN_ID_TEAM_NAME, nameValidation.reason);
+            return;
+        }
+
+        if (!initialsValidation.isValid){
+            addSClassToElement(SPAN_ID_USER_LIST, "text-danger");
+            return;
+        }
+
+        const {response, response_error} = await editTeam(teamId, {"name": teamName, "initials": teamInitials});
+
+        if (!response_error){
+
+            // update row with team name
+            $(`tr#${teamId} ${ROW_TEAM_NAME}`).text(teamName);
+            $(`tr#${teamId} ${ROW_TEAM_INITIALS}`).text(teamInitials);
+
+            // update modal for delete team 
+            $(`${DELETE_TEAM_SELECT_INPUT} option[value="${teamId}"]`).text(teamName);
+
+            $.notify(response.msg, "success");
+
+        }else{
+            $.notify(response_error.data.responseJSON.msg, "error");
+        }
+
+    });
+
+    // CREATE TEAM - OPEN MODAL
+    $(document).on("click", OPEN_CREATE_TEAM_MODAL, function(){       
+        
+        // toggle title for modal
+        $(MODAL_EDIT_TEAM_TITLE).hide();
+        $(MODAL_CREATE_TEAM_TITLE).show();
+        
+        // toggle button for submit
+        $(BTN_SUBMIT_EDIT_TEAM).hide();
+        $(BTN_SUBMIT_CREATE_TEAM).show();
+
+        // since this is to open the modal. update the hidden input in order to get the team id
+        $(CURRENT_SELECTED_TEAM).val('');
+    });
+
+    // EDIT TEAM - OPEN MODAL
+    $(document).on("click", OPEN_EDIT_TEAM_MODAL, function(){
+
+        let tableRow = $(this).parent().parent();
+
+        const teamId = $(tableRow).attr("id");
+
+        // getting team name
+        const teamName = $(tableRow).find(ROW_TEAM_NAME).text().trim() || "";
+        const teamInitials = $(tableRow).find(ROW_TEAM_INITIALS).text().trim() || "";
+
+        $(INPUT_TEAM_NAME).val(teamName);
+        $(INPUT_TEAM_INITIALS).val(teamInitials);
+        
+        // toggle title for modal
+        $(MODAL_EDIT_TEAM_TITLE).show();
+        $(MODAL_CREATE_TEAM_TITLE).hide();
+        
+        // toggle button for submit
+        $(BTN_SUBMIT_EDIT_TEAM).show();
+        $(BTN_SUBMIT_CREATE_TEAM).hide();
+
+        // since this is to open the modal. update the hidden input in order to get the team id
+        $(CURRENT_SELECTED_TEAM).val(teamId);
+    });
+
+    // clean the project modal
+    $(CREATE_TEAM_MODAL_ID).on('show.bs.modal', function (e) {
+        $(INPUT_TEAM_NAME).val('');
+        $(INPUT_TEAM_INITIALS).val('');
     });
 
     // ================= DELETE TEAM EVENTS ================
@@ -128,47 +237,6 @@ $(function (){
         }
     });
 
-    // Team Name field
-    $(INPUT_TEAM_NAME).keyup(function(){
-        
-        // get user selected name
-        const teamName = $(this).val().trim();
-
-        const {isValid, reason} = validateTeamName(teamName);
-
-        if (!isValid){
-            showErrSpanMessage(SPAN_ID_TEAM_NAME, reason);
-            return;
-        }
-
-        hideErrSpanMessage(SPAN_ID_TEAM_NAME);
-    });
-
-    // User field
-    $(INPUT_TEAM_USERS).on("change",function(){
-        
-        // get user selected name
-        const userName = $(this).val().trim().toLowerCase();
-
-        // getting all usernames
-        const all_users = $(INPUT_TEAM_LIST_OF_USERS).map((_,element) => element.value.trim().toLowerCase()).get().filter( element => {
-            return !_.isEmpty(element);
-        });
-
-        if (!all_users.includes(userName)){
-            showErrSpanMessage(SPAN_ID_USER_LIST, "It looks like that user does not exits.");
-            return;
-        }
-
-        hideErrSpanMessage(SPAN_ID_USER_LIST);
-    });
-    
-    // clean the project modal
-    $(CREATE_TEAM_MODAL_ID).on('show.bs.modal', function (e) {
-        $(INPUT_TEAM_NAME).val('');
-        $(INPUT_TEAM_USERS).val('');     
-    });
-
     // TRASH BTN EVENT 
     $(TRASH_BTN_MANAGE).on("click", async function(){
 
@@ -185,88 +253,46 @@ $(function (){
         setUpRemoveModal(removeData);
     });
 
+    // ================= INPUTS EVENTS ================
+    // Team Name field
+    $(INPUT_TEAM_NAME).keyup(function(){
+        
+        // get user selected name
+        const teamName = $(this).val().trim();
+
+        const {isValid, reason} = validateTeamName(teamName);
+        
+        $(INPUT_TEAM_INITIALS).val( getTeamInitials(teamName) )
+
+        if (!isValid){
+            showErrSpanMessage(SPAN_ID_TEAM_NAME, reason);
+            return;
+        }
+
+        
+        hideErrSpanMessage(SPAN_ID_TEAM_NAME);
+    });
+
+    // Team Initials field
+    $(INPUT_TEAM_INITIALS).keyup(function(){
+
+        let teamInitials = $(this).val();
+
+        const {isValid, reason} = validateTeamName(teamInitials, 3, 3);
+
+        if (!isValid){
+            addSClassToElement(SPAN_ID_USER_LIST, "text-danger");
+            return;
+        }
+
+        removeClassToElement(SPAN_ID_USER_LIST, "text-danger");
+    });
+
     // ============= EDIT TEAM ===========
 
-    // Submit the team changes - until now is just updating the name
-    $(BTN_SUBMIT_EDIT_TEAM).on("click", async function(){
-
-        const newTeamName = $(EDIT_TEAM_NAME_INPUT).val().trim();
-
-        // check name
-        if (_.isUndefined(newTeamName) || _.isEmpty(newTeamName)){
-            $.notify("Sorry, The name for the team cannot be empty");
-            return;
-        }
-
-        error_message = null;
-        if (_.isEmpty(newTeamName)){
-            error_message = "Team name cannot be empty.";
-        }else if( !(/^[a-zA-Z\s]+$/.test(newTeamName)) ){
-            error_message = "Team name cannot include symbols and numbers.";
-        }else if(newTeamName.length < TEAM_NAME_LENGHT_MIN_LIMIT){
-            error_message = "Team name to short.";
-        }else if(newTeamName.length > TEAM_NAME_LENGHT_MAX_LIMIT){
-            error_message = "Team name is to long.";
-        }
-
-        if (error_message){
-            $.notify(error_message);
-            showErrorBounceAnimation(EDIT_TEAM_NAME_INPUT);
-            return;
-        }
-
-        // check len
-        if(newTeamName.length < TEAM_NAME_LENGHT_MIN_LIMIT){
-            $.notify("Sorry, The name for the team is to short");
-            return;
-        }else if (newTeamName.length > TEAM_NAME_LENGHT_MAX_LIMIT){
-            $.notify("Sorry, The name for the team is to long");
-            return;
-        }
-
-        // getting project id and team id in order to make the request
-        const teamId =  $(CURRENT_SELECTED_TEAM).val();
-
-        // check data
-        if (_.isUndefined(teamId) || _.isEmpty(teamId)){
-            $.notify("Sorry, There was a problem getting information for the team. Please later");
-            return;
-        }
-
-        const {response, response_error} = await editTeam(teamId, {name: newTeamName});
-
-        if (!response_error){
-
-            // update row with team name
-            $(`tr#${teamId} .row-team-name`).text(newTeamName);
-
-            // update modal for delete team 
-            $(`${DELETE_TEAM_SELECT_INPUT} option[value="${teamId}"]`).text(newTeamName);
-
-            $.notify(response.msg, "success");
-
-        }else{
-            $.notify(response_error.data.responseJSON.msg, "error");
-        }
-
-    });
-
-    // Edit team name
-    $(document).on("click", OPEN_EDIT_TEAM_MODAL, function(){
-
-        let tableRow = $(this).parent().parent();
-
-        const teamId = $(tableRow).attr("id");
-
-        // getting team name
-        let teamName = $(tableRow).find(ROW_TEAM_NAME).text().trim() || "";
-
-        $(EDIT_TEAM_NAME_INPUT).val(teamName);
-
-        // since this is to open the modal. update the hidden input in order to get the team id
-        $(CURRENT_SELECTED_TEAM).val(teamId);
-    });
-
+   
+    
+  
     // ============== VIEW USERS ==============
 
     // before the modal is open
@@ -507,7 +533,7 @@ async function removeTeamManage(teamIds){
  * @param {String} name - name of the team
  * @returns {Object} - {isValid: Boolean, reason: String or null}
  */
-function validateTeamName(name){
+function validateTeamName(name, minLimit=TEAM_NAME_LENGHT_MIN_LIMIT, maxLimit= TEAM_NAME_LENGHT_MAX_LIMIT){
 
     let error_message = null;
 
@@ -515,12 +541,31 @@ function validateTeamName(name){
     if (_.isEmpty(name)){
         error_message = "Name cannot be empty";
     }else if( !(/^[a-zA-Z\s]+$/.test(name)) ){
-        error_message = "Name cannot include symbols and numbers";
-    }else if(name.length < TEAM_NAME_LENGHT_MIN_LIMIT){
-        error_message = "Message is to short";
-    }else if(name.length > TEAM_NAME_LENGHT_MAX_LIMIT){
+        error_message = "Name cannot include symbols and numbers.";
+    }else if(name.length < minLimit){
+        error_message = "Message is to short.";
+    }else if(name.length > maxLimit){
         error_message = "Name is to big.";
+    }else if (minLimit === maxLimit && name.length != minLimit){
+        error_message = "Name is out of bounds.";
     }
 
     return {"isValid": error_message == null, "reason": error_message};
+}
+
+function getTeamInitials (teamName) {
+
+    // by default take the three first letters of the team name as initials
+    let initials = "";
+
+    for (const letter of teamName){
+        
+        if (letter === ' '){ continue;}
+
+        initials += letter;
+
+        if (initials.length === 3) { break; }
+    }
+
+    return initials.toUpperCase();
 }

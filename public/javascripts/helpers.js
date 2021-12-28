@@ -1624,12 +1624,17 @@ function addTeamToTable(teamInfo) {
     </td>`;
 
 
+    let td_team_initials = `
+    <td class="row-team-initials">
+        ${teamInfo["initials"]}
+    </td>`;
+
     let td_edit_team = `
     <td class="column-edit-team">
         <button 
             class="btn btn-warning edit-user-team-btn btn-update-team-modal-open"  
             data-toggle="modal" 
-            data-target=".edit-team-modal">
+            data-target=".create-team-modal">
             <i class="fas fa-user-edit"></i>
         </button>
     </td>`;
@@ -1639,6 +1644,7 @@ function addTeamToTable(teamInfo) {
         ${td_checkbox}
         ${td_name}
         ${td_view_users}
+        ${td_team_initials}
         ${td_edit_team}
     </tr>`;
 
@@ -1655,8 +1661,7 @@ function addTeamToTable(teamInfo) {
 async function addCommentToWorkItemDb(projectId, workItemId, comment, numbeOfCommentSpan = NUMBER_OF_COMMENTS_SPAN) {
 
     if (projectId == undefined || workItemId == undefined) {
-        // TODO: add error message to the user
-        alert("Error getting the paramenters to add the comment to work item");
+        $.notify("Oops, there is a problem getting work item information", "error");
         return;
     }
 
@@ -1679,7 +1684,6 @@ async function addCommentToWorkItemDb(projectId, workItemId, comment, numbeOfCom
         comment["isMyComment"] = true;
 
         addCommentToUI(comment, USER_COMMENT_CONTAINER);
-
 
         // // update the number of comments
         let currentNumberOfComments = parseInt($(numbeOfCommentSpan).text().trim());
@@ -2193,15 +2197,24 @@ function showErrorBounceAnimation(selector, seconds = 1) {
 
     // since setTimeOut works on miliseconds
     seconds = seconds * 1000;
+    const cssClass = "bounce";
 
     // change the css for the operator 
-    $(selector).addClass("bounce");
+    addSClassToElement(selector, cssClass);
 
     setTimeout(function () {
         //remove the class so animation can occur as many times as user triggers event, delay must be longer than the animation duration and any delay.
-        $(selector).removeClass("bounce");
+        removeClassToElement(selector, cssClass);
     }, seconds);
 
+}
+
+function addSClassToElement(selector, cssClass){
+    $(selector).addClass(cssClass);
+}
+
+function removeClassToElement(selector, cssClass){
+    $(selector).removeClass(cssClass);
 }
 
 

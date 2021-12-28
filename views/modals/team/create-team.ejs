@@ -1,12 +1,25 @@
-<!-- Modal -->
 <div class="modal fade create-team-modal" id="create-team-modal" tabindex="-1" role="dialog" aria-labelledby="ModalCenterTitle" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
 
         <div class="modal-content">
             
             <form method="POST" id="createTeamForm">
+                <input type="hidden" name="currentSelectedTeam" id="current-selected-team">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="modalTitle">Create New Team </h5> &nbsp; &nbsp; <i class="fas fa-users"></i>
+                    <h5 class="modal-title" id="modalTitle">
+
+                        <span id="title-new-team" style="display: none;">
+                            Create New Team                            
+                            &nbsp; &nbsp; <i class="fas fa-users"></i>
+                        </span>
+
+                        <span id="title-edit-team" style="display: none;">
+                            Edit Team                           
+                            &nbsp; &nbsp; <i class="fas fa-user-friends formatIcon"></i> 
+                        </span>
+                        
+                    </h5>
+                    
                     <button type="button" id="closeCreateTeamBtn" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span> 
                     </button>
@@ -15,21 +28,20 @@
                 <div class="modal-body">
 
                     <fieldset>
+                        
+                        <!-- Team Name -->
                         <div class="form-group">
                             <label for="teamName">  <span style="color:red;">*</span> Name</label>
-                            <input type="text" class="form-control" name="teamName"  id="teamName" aria-describedby="nameHelp" placeholder="Enter name">
+                            <input type="text" class="form-control" name="teamName"  id="teamName" aria-describedby="nameHelp" placeholder="Team name">
                             <small id="teamNameSpanError" class="text-danger invisible">Invalid option, please try again.</small>
                         </div>
-                        <!-- TODO: make it possible to add multiple users -->
+                        
+                        <!-- Team Initials -->
                         <div class="form-group">
-                            <label for="teamUsers">Add user</label><br>
-                            <input list="listUsers" name="teamUsers"  id="listOfUsers" class="form-control" placeholder="Type user name">
-                            <datalist id="listUsers">
-                                <% for(let i = 0; i < assignedUsers.length; i++){%>
-                                    <option class="teamUserList" value="<%=assignedUsers[i]['name']%>" id="<%=assignedUsers[i]['id']%>">
-                                <% } %>
-                            </datalist>
-                            <small id="teamUsersSpanError" class="text-danger invisible">Invalid option, please try again.</small>
+                            <label for="teamUsers">Initials</label>
+                            <br>
+                            <input type="text" name="teamInitials" id="teamInitials" class="form-control" placeholder="E.x jQMC, SUP, PER">
+                            <small id="teamUsersSpanError" class="text-info">Initals must be three letters long.</small>
                         </div>
 
                     </fieldset>
@@ -37,10 +49,12 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                    <button id="create-team-submit-btn" type="submit" value="submit" class="btn btn-primary">Create Team</button>
+                    <button id="create-team-submit-btn" type="submit" value="submit" class="btn btn-primary" style="display: none;">Create Team</button>
+                    <button id="edit-team-submit-btn" type="submit" value="submit" class="btn btn-success" style="display: none;">Update</button>
                 </div>
             </form>
 
         </div>
     </div>
 </div>
+

@@ -29,7 +29,8 @@ let projectSchema = new mongoose.Schema({
     },
     users: [{type: ObjectId, ref: "User"}],
     teams: [{
-        name: {type: String, default: null}, 
+        name: {type: String, default: null},
+        initials: {type: String, default: null},
         users: [{type: ObjectId, ref: "User"}],
     }],
 }, {
@@ -522,7 +523,6 @@ projectSchema.methods.isProjectAuthor = function(userid) {
 };
 
 
-
 /**
  * Remove team from project
  * @param {String} teamId - team id
@@ -567,6 +567,7 @@ projectSchema.methods.removeTeam = async function(teamId) {
 
     });
 };
+
 
 /**
  * Remove teams from project
@@ -621,5 +622,67 @@ projectSchema.methods.removeTeams = async function(teamsId) {
 
     });
 };
+
+
+/**
+ * get team initials
+ * @param {String} teamName - name of the team
+ * @param {String} teamId - id of the team
+ * @returns {Boolean} - true if name is on project
+ */
+projectSchema.methods.isTeamNameInProject = function(teamName, teamId = null) {
+    
+    if (!teamName || !_.isString(teamName)){
+        return false;
+    }
+
+    const project = this;
+
+    let nameIsInProject = false;
+
+    for(let team of project["teams"]){
+
+        // to exclude the current element if id is available
+        if (teamId && teamId === team["_id"].toString()){continue;}
+        
+        if (team["name"].toLowerCase() === teamName.toLowerCase()){
+            nameIsInProject = true;
+            break;
+        }
+    }
+
+    return nameIsInProject;
+};
+
+/**
+ * get team initials
+ * @param {String} teanName - name of the team
+ * @returns {String} - Team initials 
+ */
+projectSchema.statics.getTeamInitials = function(teamName) {
+    
+    if (!teamName || !_.isString(teamName)){
+        // TODO: return project initials
+        return "";
+    }
+
+    // initials shall be only three letters long
+    if (teamName.length < 3) { return ""}
+
+    // by default take the three first letters of the team name as initials
+    let initials = "";
+
+    for (const letter of teamName){
+        
+        if (letter === ' '){ continue;}
+
+        initials += letter;
+
+        if (initials.length === 3) { break; }
+    }
+
+    return initials.toUpperCase();
+};
+
 
 module.exports = mongoose.model("Projects", projectSchema);

@@ -25,10 +25,9 @@
                             </li>
 
                             <li class="nav-item">
-                                <a class="nav-link"
+                                <a class="nav-link open-create-team-modal"
                                     href="#"
                                     role="button"
-                                    id="open-create-team-modal"
                                     data-toggle="modal" 
                                     data-target=".create-team-modal">
                                     <i class="fas fa-plus addIcon"></i> Create Team
@@ -74,6 +73,7 @@
                             <th class="tableCheckBoxRowHeader">Check</th>
                             <th class="column-edit-team" scope="col">Name</th>
                             <th scope="col">Number of user</th>
+                            <th scope="col">Initials</th>
                             <th scope="col">Edit</th>
                         </tr>
                     </thead>
@@ -100,14 +100,19 @@
                                     </button>
                                 </td>
 
+                                <td class="row-team-initials">
+                                    <%=team["initials"]%>
+                                </td>
+
                                 <!-- EDIT TEAM -->
                                 <td class="column-edit-team">
                                     <button 
                                         class="btn btn-warning edit-user-team-btn btn-update-team-modal-open"  
                                         data-toggle="modal" 
-                                        data-target=".edit-team-modal">
+                                        data-target=".create-team-modal">
                                         <i class="fas fa-user-edit"></i>
                                     </button>
+                                    <!-- data-target=".edit-team-modal" -->
                                 </td>
                             </tr>
                         <%}%>
@@ -117,15 +122,10 @@
         </div>
         <input type="hidden" name="projectId" id="projectId" value="<%=projectId%>">
         <input type="hidden" name="currentTab" id="currentTab" value="<%=activeTab%>">
-        <input type="hidden" name="currentSelectedTeam" id="currentSelectedTeam">
-
     </div>
 
 
     <%- include('modals/team/add-user-team'); %>
-    <%- include('modals/team/edit-team'); %>
     <%- include('modals/team/view-team-users'); %>
-
-
 
 <%- include('templates/footer'); %>

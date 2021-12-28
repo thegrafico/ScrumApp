@@ -991,3 +991,35 @@ function printError(msg){
     console.error("=======================\n");
 }
 module.exports.printError = printError;
+
+
+/**
+ * Validate if the string is valid in len and if the string includes symbols and numbers
+ * @param {String} str 
+ * @param {Number} minLen 
+ * @param {Number} maxLen 
+ * @param {Boolean} checkSymbols 
+ * @param {Boolean} checkSpaces 
+ */
+function validateString(str, minLen, maxLen, checkSymbols, checkSpaces){
+
+    let errorMessage = null;
+
+    // Validating team name
+    if (_.isEmpty(str)){
+        errorMessage = "empty";
+    }else if(checkSymbols && !(/^[a-zA-Z\s]+$/.test(str)) ){
+        errorMessage = "contains numbers or symbols";
+    }else if(str.length < minLen){
+        errorMessage = "to short";
+    }else if(str.length > maxLen){
+        errorMessage = "to big";
+    }else if (minLen === maxLen && str.length != minLen){
+        errorMessage = "is out of bounds";
+    }else if (checkSpaces && str.includes(' ')){
+        errorMessage = "Includes spaces";
+    }
+
+    return {isValid: errorMessage == null, reason: errorMessage};
+}
+module.exports.validateString = validateString;

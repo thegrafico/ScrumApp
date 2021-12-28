@@ -46,14 +46,15 @@ async function deleteTeamsFromProject(teamsId){
 /**
  * Create new team
  * @param {String} name - name of the team
+ * @param {String} initials - Team initials
  * @returns {Object} - response, response_error
  */
-async function createTeam(name){
+async function createTeam(name, initials){
     
     // Request var
     const projectId = getProjectId();
     const API_LINK_CREATE_TEAM = `/dashboard/api/${projectId}/newTeam`;
-    const data = {"teamName": name};
+    const data = {"teamName": name, "teamInitials": initials};
 
     let response_error = null;
     const response = await make_post_request(API_LINK_CREATE_TEAM, data).catch(err => {
@@ -78,7 +79,7 @@ async function editTeam(teamId, update){
     const API_LINK_EDIT_TEAM = `/dashboard/api/${projectId}/editTeam/${teamId}`;
 
     let response_error = undefined;
-    const response = await make_post_request(API_LINK_EDIT_TEAM, {name: update["name"]}).catch(err => {
+    const response = await make_post_request(API_LINK_EDIT_TEAM, {name: update["name"], initials: update["initials"]}).catch(err => {
         response_error = err;
     });
 

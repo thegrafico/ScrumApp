@@ -66,10 +66,6 @@
     width: 5% !important;
 }
 
-.team-table th{
-    width: 33% !important;
-}
-
 .nav-link:focus, select:focus, .form-group:focus, button:focus, .column-edit-team, .btn-warning:focus{
     outline: none !important;
 }
