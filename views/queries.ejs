@@ -6,7 +6,7 @@
 
     <div class="wrapper d-flex align-items-stretch">
 
-        <%- include('templates/project-sidebar'); %>
+        <%- include('templates/left-sidebar'); %>
 
         <!-- Page Content  -->
         <div id="content" class="p-4 p-md-5">
@@ -254,9 +254,6 @@
         </div>
 
         <%- include('templates/right-sidebar-menu'); %>
-
-        <input type="hidden" name="projectId" id="projectId" value="<%=projectId%>">
-        <input type="hidden" name="currentTab" id="currentTab" value="<%=activeTab%>">
 
         <script>
             const users = <%- JSON.stringify(assignedUsers) %>;

@@ -1,0 +1,14 @@
+<!-- Sub MENU -->
+<td class="tdWorkItemSubMenu">
+    
+    <span class="btn btn-outline-info workItemOpenSubMenu" data-bs-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+        <i class="fas fa-ellipsis-v workItemSubMenuIcon"></i>
+    </span>
+    
+    <div id="workItemSubMenu" class="dropdown-menu " data-bs-popper="none">
+        
+        <a class="dropdown-item subMenuItem subMenuAssignTeam subMenuMoveToSprint" data-toggle="modal" data-target="#move-to-sprint-modal" href="#" id="<%=workItems[i]['_id']%>">
+            Move to sprint...
+        </a>
+    </div>
+</td>

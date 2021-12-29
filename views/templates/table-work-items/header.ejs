@@ -1,0 +1,51 @@
+<tr class="tableHeader">
+    
+    <!-- Checkbox toggle -->
+    <th class="tableCheckBoxRowHeader"> 
+        <input type="checkbox" name="checkAll" id="checkAllTableRow"/>
+        <span class="d-none">checkbox</span>
+    </th>
+
+    <!-- ORDER -->
+    <% if (currentPage === "sprintPlaning"){ %>
+        <th class="orderColumn">Order</th>
+    <%}%>
+    
+    <!-- ID -->
+    <th scope="col" class="tableColumnID">ID</th>
+    
+    <!-- TYPE -->
+    <th scope="col" class="d-none">Type</th>
+    
+    <!-- TITLE -->
+    <th scope="col" class="col-title">Title</th>
+    
+    <!-- SUB-MENU -->
+    <th scope="col" class="thworkItemSubMenu"> <span class="d-none">submenu</span> </th>
+    
+    <!-- USER -->
+    <th scope="col" class="col-assigned-user">Assigned</th>
+    
+    <!-- STATUS -->
+    <th scope="col">State</th>
+    
+    <% if (currentPage === "workItems"){ %>
+        <!-- TEAM -->
+        <th scope="col">Team</th>
+        
+        <!-- SPRINT -->
+        <th scope="col">Iteration</th>
+    <%}%>
+
+    
+    <!-- TAGS -->
+    <th scope="col">Tags</th>
+    
+    <!-- COMMENTS -->
+    <th scope="col">Comments</th>
+
+    <!-- POINTS -->
+    <% if (currentPage === "sprintPlaning"){ %>
+        <th scope="col" class="col-story-points">Points</th>
+    <%}%>
+</tr>

@@ -1,0 +1,7 @@
+<td class="tags-td"> 
+    <% if (workItems[i]["tags"].length > 0)  {%>
+        <% workItems[i]["tags"].forEach(each => { %>
+            <span class="btn btn-info disabled btn-sm tags-container"><%=each%> </span>
+        <% }); %>
+    <% } %>
+</td>

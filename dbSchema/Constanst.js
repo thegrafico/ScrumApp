@@ -10,6 +10,13 @@ module.exports.UNASSIGNED = {
     selected: true
 };
 
+module.exports.UNASSIGNED_TEAM = {
+    name: "unassigned",
+    _id: "0",
+    selected: true,
+    initials: "SCRUM"
+};
+
 module.exports.UNASSIGNED_SPRINT = {
     name: "unassigned",
     _id: "0",

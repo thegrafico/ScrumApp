@@ -11,7 +11,6 @@ const _                         = require("lodash");
 let router                      = express.Router();
 
 const {
-    UNASSIGNED_USER,
     UNASSIGNED,
     MAX_LENGTH_TITLE,
     MAX_LENGTH_DESCRIPTION,
@@ -25,7 +24,7 @@ const {
     sortByDate,
     NOTIFICATION,
     NOTIFICATION_STATUS,
-    NOTIFICATION_TYPES,
+    UNASSIGNED_TEAM,
     addUserNameToComment,
     printError,
 } = require('../../dbSchema/Constanst');
@@ -466,12 +465,12 @@ router.post("/api/:id/createWorkItem", middleware.isUserInProject, async functio
 
     newWorkItem = newWorkItem.toObject();
     // Create new key (team/sprint) to store the work item team
-    joinData([newWorkItem], projectTeams, "teamId", "equal", "_id", "team", UNASSIGNED);
+    joinData([newWorkItem], projectTeams, "teamId", "equal", "_id", "team", UNASSIGNED_TEAM, true);
     joinData([newWorkItem], projectSprints, "_id", "is in", "tasks", "sprint", UNASSIGNED_SPRINT);
 
     response["msg"] = "Success";
     response["workItem"] = newWorkItem;
-
+    console.log(response["workItem"]);
     res.status(200).send(response);
 });
 
@@ -484,21 +483,9 @@ router.post("/api/:id/updateWorkItem/:workItemId", middleware.isUserInProject, a
     
     const projectId = req.params.id;
     const workItemId = req.params.workItemId;
+    const project = req.currentProject;
     let response = {};
 
-    // =========== Validate project exist =================
-    
-    const project = await ProjectCollection.findById(projectId).catch(err => {
-        console.error("Error getting the project info: ", err);
-    });
-
-    // verify project is good.
-    if (_.isUndefined(project) || _.isEmpty(project)){
-        response["msg"] = "Error getting the project information. Try later";
-        res.status(400).send(response);
-        return;
-    }
-    
     // =========== Validate Work Item exist =================
     
     const workItem = await WorkItemCollection.findById(workItemId).catch ( err =>{
@@ -511,14 +498,13 @@ router.post("/api/:id/updateWorkItem/:workItemId", middleware.isUserInProject, a
         res.status(400).send(response);
         return;
     }
+
     // Validate work item belong to this project id
     if (workItem.projectId != projectId){
         response["msg"] = "This work item does not belong to the project.";
         res.status(400).send(response);
         return;
     }
-
-
     // ======================================================
 
     // waiting for this params. Anything that cames undefined was not sent
@@ -862,7 +848,7 @@ router.post("/api/:id/updateWorkItem/:workItemId", middleware.isUserInProject, a
     let sprints = await SprintCollection.find({projectId}).catch(err => console.error(err)) || [];
     
     // Create new key (team/sprint) to store the work item team
-    joinData([updatedWorkItem], teams, "teamId", "equal", "_id", "team", UNASSIGNED);
+    joinData([updatedWorkItem], teams, "teamId", "equal", "_id", "team", UNASSIGNED_TEAM, true);
     joinData([updatedWorkItem], sprints, "_id", "is in", "tasks", "sprint", UNASSIGNED_SPRINT);
     // ============================================================ 
     

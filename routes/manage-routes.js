@@ -70,7 +70,7 @@ router.get("/:id/manageUsers", middleware.isUserInProject, async function (req, 
         "userPrivilege": USER_PRIVILEGES,
     };
 
-    res.render("manage-users", params);
+    res.render("manage/users", params);
 });
 
 /**
@@ -113,7 +113,7 @@ router.get("/:id/manageTeam", middleware.isUserInProject, async function (req, r
         "priorityPoints":PRIORITY_POINTS,
     };
 
-    res.render("manage-teams", params);
+    res.render("manage/teams", params);
 });
 
 /**
@@ -191,8 +191,8 @@ router.get("/:id/manageSprints", middleware.isUserInProject, async function (req
         "statusWorkItem": WORK_ITEM_STATUS_COLORS,
         "priorityPoints":PRIORITY_POINTS,
     };
-
-    res.render("manage-sprints", params);
+    
+    res.render("manage/sprints", params);
 });
 
 module.exports = router;

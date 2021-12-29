@@ -18,10 +18,12 @@ const {
     UNASSIGNED, 
     UNASSIGNED_SPRINT,
     UNASSIGNED_USER,
+    UNASSIGNED_TEAM,
     WORK_ITEM_STATUS_COLORS,
     PRIORITY_POINTS,
     PAGES,
-    sortByDate
+    sortByDate,
+    joinData
 } = require('../dbSchema/Constanst');
 
 
@@ -30,8 +32,7 @@ const {
  */
 router.get("/:id/backlog", middleware.isUserInProject, async function (req, res) {
 
-    let projectId = req.params.id;
-    
+    const projectId = req.params.id;
     const projectInfo = req.currentProject;
 
     // get all the teams for this project
@@ -77,6 +78,9 @@ router.get("/:id/backlog", middleware.isUserInProject, async function (req, res)
     // sorting sprint by date
     sprints = sortByDate(sprints, "startDate");
 
+    // Add team to work item to be able to has the work item id
+    joinData(workItems, teams, "teamId", "equal", "_id", "team", UNASSIGNED_TEAM, true);
+
     // adding defaults
     teams.unshift(UNASSIGNED);
     users.unshift(UNASSIGNED_USER);
@@ -104,7 +108,7 @@ router.get("/:id/backlog", middleware.isUserInProject, async function (req, res)
         "showCreateWorkItemModal": true,
     };
 
-    res.render("planing-backlog", params);
+    res.render("backlog", params);
 });
 
 module.exports = router;

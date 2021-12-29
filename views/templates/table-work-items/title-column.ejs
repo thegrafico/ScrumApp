@@ -1,0 +1,11 @@
+<td class="openStory">
+    <a href="/dashboard/<%=projectId%>/workitems/<%=workItems[i]['team']['initials'] || 'SCRUM'%>-<%=workItems[i]['itemId']%>" class="open-existing-work-item-modal" rel="<%=workItems[i]['_id']%>">
+        <span class="table-icon"> 
+            <i class="fas <%=workItemType[workItems[i]['type']].icon%>"></i> 
+        </span>  
+        
+        <span>
+            <%=workItems[i]["title"]%> 
+        </span>
+    </a> 
+</td>

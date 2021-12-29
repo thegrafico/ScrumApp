@@ -1,4 +1,9 @@
 <!-- ========= MODALS =========  -->
+<% if (projectId) { %>
+    <input type="hidden" name="projectId" id="projectId" value="<%=projectId%>">
+    <input type="hidden" name="currentTab" id="currentTab" value="<%=activeTab%>">
+<% } %>
+
 
 <!-- User Modals -->
 <% if (addUserModal) { %>
@@ -34,7 +39,6 @@
 <input type="hidden" id="current-page" name="currentPage" value="<%=currentPage%>">
 <input type="hidden" id="sprint-time-period" name="sprintTimePeriod" value="<%=sprintDefaultTimePeriod%>">
 <input type="hidden" id="current-user-id" name="userId" value="<%=currentUser['_id']%>">
-
 
 <!-- ==========================  -->
 

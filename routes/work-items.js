@@ -110,12 +110,12 @@ router.get("/:id/workitems", middleware.isUserInProject, async function (req, re
 router.get("/:id/workitems/:workItemId", middleware.isUserInProject, async function (req, res) {
 
     const projectId = req.params.id;
-    const workItemId = req.params.workItemId;
     const projectInfo = req.currentProject;
+    const workItemId = (req.params.workItemId.split("-")[1]).trim();
 
     // ============== CHECK WORK ITEM INFO ==============
     // Load work item specify data
-    let workItem = await projectInfo.getWorkItem(workItemId).catch(err => {
+    let workItem = await projectInfo.getWorkItemByItemId(workItemId).catch(err => {
         console.error("Error getting work items: ", err);
     }) || {};
 

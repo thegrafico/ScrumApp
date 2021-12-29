@@ -1,0 +1,19 @@
+<td class="tdWorkItemSubMenu">
+
+    <span class="btn btn-outline-info workItemOpenSubMenu" data-bs-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+        <i class="fas fa-ellipsis-v workItemSubMenuIcon"></i>
+    </span>
+
+    <div id="workItemSubMenu" class="dropdown-menu " data-bs-popper="none">
+
+        <a class="dropdown-item subMenuItem subMenuAssignUser"  data-toggle="modal" data-target="#assign-to-user-modal" href="#" id="<%=workItems[i]['_id']%>">
+            Assign to a user <i class="fas fa-user-astronaut"></i>
+        </a>
+
+        <div class="dropdown-divider"></div>
+
+        <a class="dropdown-item subMenuItem subMenuAssignTeam" data-toggle="modal" data-target="#assign-to-team-modal" href="#" id="<%=workItems[i]['_id']%>">
+            Assign to a team <i class="fas fa-users"></i>
+        </a>
+    </div>
+</td>

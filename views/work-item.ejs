@@ -4,7 +4,7 @@
 
     <div class="wrapper d-flex align-items-stretch">
 
-        <%- include('templates/project-sidebar'); %>
+        <%- include('templates/left-sidebar'); %>
 
         <!-- Page Content  -->
         <div id="content" class="p-4 p-md-5">
@@ -430,7 +430,5 @@
 
     </div>
 
-    <input type="hidden" name="projectId" id="projectId" value="<%=projectId%>">
     <input type="hidden" name="workItemId" id="workItemId" value="<%=workItem['_id']%>">
-    <input type="hidden" name="currentTab" id="currentTab" value="<%=activeTab%>">
 <%- include('templates/footer'); %>

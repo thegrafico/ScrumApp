@@ -6,7 +6,7 @@
 
     <div class="wrapper d-flex align-items-stretch">
 
-        <%- include('templates/project-sidebar'); %>
+        <%- include('templates/left-sidebar'); %>
 
         <!-- Page Content  -->
         <div id="content" class="p-4 p-md-5">
@@ -80,20 +80,7 @@
             <div class="p-4 hide-functional-scroll" id="table-container">
                 <table class="table table-hover" id="workItemTable">
                     <thead>
-                        <tr class="tableHeader">
-                            <th class="tableCheckBoxRowHeader"> 
-                                <input type="checkbox" name="checkAll" id="checkAllTableRow"/>
-                                <span class="d-none">checkbox</span>
-                            </th>
-                            <th scope="col" class="tableColumnID">ID</th>
-                            <th class="d-none" scope="col">Type</th>
-                            <th class="col-title"  scope="col">Title</th>
-                            <th scope="col" class="thworkItemSubMenu"> <span class="d-none">submenu</span> </th>
-                            <th scope="col">Assigned</th>
-                            <th scope="col">State</th>
-                            <th scope="col">Tags</th>
-                            <th scope="col">Comments</th>
-                        </tr>
+                        <%- include('templates/table-work-items/header'); %>
                     </thead>
                     <tbody class="backlog-table-body">
                         <% for (let i = 0, order = 1; i < workItems.length; ++i) {%>
@@ -103,61 +90,31 @@
                                 <tr class="rowValues" id="<%=workItems[i]['_id']%>">
                                     
                                     <!-- Checkbox -->
-                                    <td class="tableCheckBoxRowElement"> 
-                                        <label for="checkboxRowElement" class="invisible labelcheckbox"> 
-                                            <input type="checkbox" name="checkboxWorkItem[]" value="<%=workItems[i]['_id']%>" class="checkboxRowElement" />
-                                        </label> 
-                                    </td> 
+                                    <%- include('templates/table-work-items/toggle-checkbox', {i}); %>
                                     
                                     <!-- ID -->
-                                    <td class="tableColumnID"> <%=workItems[i]["itemId"]%></td>
+                                    <%- include('templates/table-work-items/id-column', {i}); %>
                                     
                                     <!-- Type - HIDDEN -->
-                                    <td class="d-none" > <i class="fas <%=workItemType[workItems[i]['type']].icon%>"></i> <%=workItems[i]["type"]%></td>
+                                    <%- include('templates/table-work-items/type-column', {i}); %>
                                     
                                     <!--  TITLE -->
-                                    <td class="openStory"> 
-                                        <a href="workitems/<%=workItems[i]['_id']%>" class="open-existing-work-item-modal" rel="<%=workItems[i]['_id']%>">  
-                                            <span class="table-icon"> <i class="fas <%=workItemType[workItems[i]['type']].icon%>"></i> </span>  <%=workItems[i]["title"]%> 
-                                        </a> 
-                                    </td>
-
-                                    <!-- Sub MENU -->
-                                    <td class="tdWorkItemSubMenu">
-                                        <span class="btn btn-outline-info workItemOpenSubMenu" data-bs-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-                                            <i class="fas fa-ellipsis-v workItemSubMenuIcon"></i>
-                                        </span>
-                                        <div id="workItemSubMenu" class="dropdown-menu " data-bs-popper="none">
-                                            
-                                            <a class="dropdown-item subMenuItem subMenuAssignTeam subMenuMoveToSprint" data-toggle="modal" data-target="#move-to-sprint-modal" href="#" id="<%=workItems[i]['_id']%>">
-                                                Move to sprint...
-                                            </a>
-                                        </div>
-                                    </td>
+                                    <%- include('templates/table-work-items/title-column', {i}); %>
+                                    
+                                    <!-- SUB MENU - BACKLOG -->
+                                    <%- include('templates/table-work-items/sub-menu/backlog', {i}); %>
                                     
                                     <!-- ASSIGNED -->
-                                    <td> 
-                                        <i class="fas fa-user-astronaut"></i> 
-                                        <span class="userName <%=workItems[i]['assignedUser']['id']%>">
-                                            <%=workItems[i]["assignedUser"]["name"]%>
-                                        </span>
-                                    </td>
+                                    <%- include('templates/table-work-items/user-column', {i}); %>
                                     
                                     <!-- STATUS -->
-                                    <td><i class="fa fa-circle <%=workItems[i]['status']%>Color" aria-hidden="true"></i> <%=workItems[i]["status"]%></td>
-
+                                    <%- include('templates/table-work-items/status-column', {i}); %>
 
                                     <!-- TAGS -->
-                                    <td class="tags-td"> 
-                                        <% if (workItems[i]["tags"].length > 0)  {%>
-                                            <% workItems[i]["tags"].forEach(each => { %>
-                                                <span class="btn btn-info disabled btn-sm tags-container"><%=each%></span>
-                                            <% }); %>
-                                        <% } %>
-                                    </td>
+                                    <%- include('templates/table-work-items/tags-column', {i}); %>
 
                                     <!-- COMMENTS -->
-                                    <td class="table-comments-column"><span>  <i class="fas fa-comments"></i>  <%=workItems[i]["comments"].length%></span> </td>
+                                    <%- include('templates/table-work-items/comments-column', {i}); %>
                                 </tr>
                             <%}%>
                         <%}%>
@@ -167,10 +124,6 @@
         </div>
 
         <%- include('templates/right-sidebar-menu'); %>
-
-
-        <input type="hidden" name="projectId" id="projectId" value="<%=projectId%>">
-        <input type="hidden" name="currentTab" id="currentTab" value="<%=activeTab%>">
     </div>
 
     <%- include('modals/workItemSubMenu/move-to-sprint'); %>
