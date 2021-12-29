@@ -3,34 +3,46 @@
     <div class="modal-dialog modal-dialog-centered" role="document">
 
         <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="modalTitle">Create New Project </h5> &nbsp; &nbsp; <i class="fas fa-user-astronaut"></i>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span> 
-                </button>
-                </div>
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalTitle">
 
-                <div class="modal-body">
+                    <span id="create-project-modal-title" style="display: none;">
+                        Create New Project 
+                    </span>
 
-                    <fieldset>
-                        <div class="form-group">
-                            <label for="projectName">Project Name</label>
-                            <input type="email" class="form-control" id="project-name" name="projectName" aria-describedby="nameHelp" placeholder="Enter name">
-                            <small id="projectNameSpanErr" class="text-danger invisible">Invalid option, please try again.</small>
-                        </div>
-                        <div class="form-group">
-                            <label for="projectDescription">Project Description</label>
-                            <textarea class="form-control" id="project-description" name="projectDescription" rows="3" placeholder="Enter Description"></textarea>
-                            <small id="projectDescriptionSpanErr" class="text-danger invisible">Invalid option, please try again.</small>
-                        </div>
-                    </fieldset>
+                    <span id="edit-project-modal-title" style="display: none;">
+                        Editing Project
+                    </span>
 
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                    <button id="create-project-submit-btn" class="btn btn-primary">Create</button>
-                </div>
+                    &nbsp; <i class="fas fa-user-astronaut"></i>
+                </h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span> 
+            </button>
+            </div>
+
+            <div class="modal-body">
+
+                <fieldset>
+                    <div class="form-group">
+                        <label for="projectName">Project Name</label>
+                        <input type="email" class="form-control" id="project-name" name="projectName" aria-describedby="nameHelp" placeholder="Enter name">
+                        <small id="projectNameSpanErr" class="text-danger invisible">Invalid option, please try again.</small>
+                    </div>
+                    <div class="form-group">
+                        <label for="projectDescription">Project Description</label>
+                        <textarea class="form-control" id="project-description" name="projectDescription" rows="3" placeholder="Enter Description"></textarea>
+                        <small id="projectDescriptionSpanErr" class="text-danger invisible">Invalid option, please try again.</small>
+                    </div>
+                </fieldset>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                <button id="create-project-submit-btn" class="btn btn-primary" style="display: none;">Create</button>
+                <button id="edit-project-submit-btn" class="btn btn-primary" style="display: none;">Update</button>
+            </div>
+            <input type="hidden" name="projectId" id="edit-project-id-input" value="0">
         </div>
-
     </div>
 </div>

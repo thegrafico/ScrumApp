@@ -4,7 +4,7 @@
 */
 
 // Create a project
-const CREATE_PROJECT_BTN = "#create-project-btn";
+const OPEN_CREATE_PROJECT_MODAL = "#create-project-btn";
 const CREATE_PROJECT_MODAL = "#create-project-modal";
 const CREATE_PROJECT_SUBMIT_BTN = "#create-project-submit-btn";
 const PROJECT_DESCRIPTION_INPUT = "#project-description";
@@ -27,8 +27,7 @@ const ROW_PROJECTS_CONTAINER = "#row-projects-container";
 
 
 // EDIT PROJECT
-const EDIT_PROJECT_BTN = ".edit-project-btn";
-const EDIT_PROJECT_MODAL = "#edit-project-modal";
+const OPEN_EDIT_PROJECT_MODAL = ".edit-project-btn";
 const EDIT_PROJECT_NAME = "#edit-project-name";
 const EDIT_PROJECT_DESCRIPTION = "#edit-project-description";
 const EDIT_PROJECT_SUBMIT_BTN = "#edit-project-submit-btn";
@@ -65,6 +64,10 @@ const PROJECT_FAVORITE = {
     },
     modalProjectNameSpan: ".favorite-project-name",
 }
+
+// MODAL FOR EDITING AND CREATING PROJECT
+const SPAN_CREATE_PROJECT_MODAL = "#create-project-modal-title";
+const SPAN_EDIT_PROJECT_MODAL = "#edit-project-modal-title";
 
 
 $(function () {
@@ -150,7 +153,7 @@ $(function () {
         $(PROJECT_FAVORITE["removeFavorite"]["projectIdHidden"]).val(projectId);
     });
 
-    // REMOVE PROJECT TO FAVORITE SUBMIT
+    // REMOVE PROJECT FROM FAVORITE SUBMIT
     $(document).on("click", PROJECT_FAVORITE["removeFavorite"]["submitBtnId"], async function(){
 
         // getting the id of the project to add to favorites
@@ -188,32 +191,15 @@ $(function () {
     // Create Project
     $(CREATE_PROJECT_SUBMIT_BTN).on("click", async function(){
 
-        let projectName = $(PROJECT_NAME_INPUT).val().trim();
-        let projectDescription = $(PROJECT_DESCRIPTION_INPUT).val().trim();
+        const projectName = $(PROJECT_NAME_INPUT).val().trim();
+        const projectDescription = $(PROJECT_DESCRIPTION_INPUT).val().trim();
 
-        if (_.isEmpty(projectName)){
-            showPopupMessage(PROJECT_NAME_INPUT, "Cannot be empty", "error", "top-right");
-            return;
-        }
-
-        if (projectName.length < MIN_LENGTH_TITLE){
-            showPopupMessage(PROJECT_NAME_INPUT, "Name is to short", "error", "top-right");
-            return;
-        }
-
-        if (projectDescription.length > MAX_LENGTH_DESCRIPTION){
-            showPopupMessage(PROJECT_DESCRIPTION_INPUT, "Description is too long", "error", "top-right");
-            return;
-        }
+        if (!projectAttributesAreValid(projectName, projectDescription)){return;}
 
         let {response, response_error} = await createProject(projectName, projectDescription);
 
         if (!response_error){
-            
-            // check where to add project
-            let addToFavorite = !($(FAVORITE_PROJECTS_CONTAINER).children().length >= MAX_NUMBER_OF_FAVORITE_PROJECTS);
-            console.log(addToFavorite)
-            
+                        
             addProjectToUI(response["project"], false);
 
             closeModal(CREATE_PROJECT_MODAL);
@@ -224,15 +210,92 @@ $(function () {
         }
     });
 
-    // Create project modal is closed
-    $(CREATE_PROJECT_MODAL).on("hide.bs.modal", function(){
+    // Open create project modal
+    $(document).on("click", OPEN_CREATE_PROJECT_MODAL, function(){
 
+        // Show title for create project and hide title for edit project
+        $(SPAN_EDIT_PROJECT_MODAL).hide();
+        $(EDIT_PROJECT_SUBMIT_BTN).hide();
+
+        $(SPAN_CREATE_PROJECT_MODAL).show();
+        $(CREATE_PROJECT_SUBMIT_BTN).show();
+    });
+  
+    // =============== EDIT PROJECT ==========
+    // Open edit project modal
+    $(document).on("click", OPEN_EDIT_PROJECT_MODAL, function(){
+        const projectId = $(this).attr("data-projectid");
+
+        if (_.isUndefined(projectId) || _.isNull(projectId) || _.isEmpty(projectId)){
+            $.notify("Sorry, cannot edit the project at this moment", "error");
+            return;
+        }
+
+        // Show title for create project and hide title for edit project
+        $(SPAN_CREATE_PROJECT_MODAL).hide();
+        $(CREATE_PROJECT_SUBMIT_BTN).hide();
+
+        $(SPAN_EDIT_PROJECT_MODAL).show();
+        $(EDIT_PROJECT_SUBMIT_BTN).show();
+
+        // getting project name
+        let projectName = $(`div#${projectId}`).find(PROJECT_TITLE_TEXT).text().trim();
+        let projectDescription = $(`div#${projectId}`).find(PROJECT_DESCRIPTION_TEXT).text().trim();
+
+        // updating modal with project information
+        $(PROJECT_NAME_INPUT).val(projectName);
+        $(PROJECT_DESCRIPTION_INPUT).val(projectDescription);
+        $(EDIT_PROJECT_HIDDEN_INPUT).val(projectId);
+    });
+
+    // SUBMIT CHANGES FOR PROJECT
+    $(EDIT_PROJECT_SUBMIT_BTN).on("click", async function(){
+        const projectId = $(EDIT_PROJECT_HIDDEN_INPUT).val();
+
+        if (_.isUndefined(projectId) || _.isNull(projectId) || _.isEmpty(projectId)){
+            $.notify("Sorry, cannot update the project at this moment", "error");
+            return;
+        }
+
+        let projectName = $(EDIT_PROJECT_NAME).val().trim();
+        let projectDescription = $(EDIT_PROJECT_DESCRIPTION).val().trim();
+
+        // validate project attributes
+        if (!projectAttributesAreValid(projectName, projectDescription)){return;}
+
+        let update = {
+            name: projectName,
+            description: projectDescription,
+        }
+
+        let {response, response_error} = await updateProject(projectId, update);
+        
+        if (!response_error){
+            $.notify(response.msg, "success");
+
+            // update title
+            $(`div#${projectId} ${PROJECT_TITLE_TEXT}`).text(projectName);
+
+            // update description
+            $(`div#${projectId} ${PROJECT_DESCRIPTION_TEXT}`).text(projectDescription);
+
+            // close modal
+            closeModal(CREATE_PROJECT_MODAL);
+
+            // reset hidden input
+            $(EDIT_PROJECT_HIDDEN_INPUT).val(UNNASIGNED_VALUE);
+        }else{
+            $.notify(response_error.data.responseJSON.msg, "error");
+        }
+    });
+
+    // Closing the modal for create or edit a project
+    $(CREATE_PROJECT_MODAL).on("hide.bs.modal", function(){
         // reset values to default. 
         $(PROJECT_NAME_INPUT).val("");
         $(PROJECT_DESCRIPTION_INPUT).val("");
+        $(EDIT_PROJECT_HIDDEN_INPUT).val(UNNASIGNED_VALUE);
     });
-    // =========================================
-
 
     // =============== REMOVE PROJECT ==========
     // Remove modal is opening
@@ -289,78 +352,6 @@ $(function () {
         }
     });
 
-    // =============== EDIT PROJECT ==========
-    $(document).on("click", EDIT_PROJECT_BTN, function(){
-        const projectId = $(this).attr("data-projectid");
-
-        if (_.isUndefined(projectId) || _.isNull(projectId) || _.isEmpty(projectId)){
-            $.notify("Sorry, cannot edit the project at this moment", "error");
-            return;
-        }
-
-        // getting project name
-        let projectName = $(`div#${projectId}`).find(PROJECT_TITLE_TEXT).text().trim();
-        let projectDescription = $(`div#${projectId}`).find(PROJECT_DESCRIPTION_TEXT).text().trim();
-
-        // updating modal with project information
-        $(EDIT_PROJECT_NAME).val(projectName);
-        $(EDIT_PROJECT_DESCRIPTION).val(projectDescription);
-        $(EDIT_PROJECT_HIDDEN_INPUT).val(projectId);
-    });
-
-    // SUBMIT CHANGES FOR PROJECT
-    $(EDIT_PROJECT_SUBMIT_BTN).on("click", async function(){
-        const projectId = $(EDIT_PROJECT_HIDDEN_INPUT).val();
-
-        if (_.isUndefined(projectId) || _.isNull(projectId) || _.isEmpty(projectId)){
-            $.notify("Sorry, cannot update the project at this moment", "error");
-            return;
-        }
-
-        let projectName = $(EDIT_PROJECT_NAME).val().trim();
-        let projectDescription = $(EDIT_PROJECT_DESCRIPTION).val().trim();
-
-        if (_.isEmpty(projectName)){
-            showPopupMessage(PROJECT_NAME_INPUT, "Cannot be empty", "error", "top-right");
-            return;
-        }
-
-        if (projectName.length < MIN_LENGTH_TITLE){
-            showPopupMessage(PROJECT_NAME_INPUT, "Name is to short", "error", "top-right");
-            return;
-        }
-
-        if (projectDescription.length > MAX_LENGTH_DESCRIPTION){
-            showPopupMessage(PROJECT_DESCRIPTION_INPUT, "Description is too long", "error", "top-right");
-            return;
-        }
-
-        let update = {
-            name: projectName,
-            description: projectDescription,
-        }
-
-        let {response, response_error} = await updateProject(projectId, update);
-        
-        if (!response_error){
-            $.notify(response.msg, "success");
-
-           // update title
-            $(`div#${projectId} ${PROJECT_TITLE_TEXT}`).text(projectName);
-
-            // update description
-            $(`div#${projectId} ${PROJECT_DESCRIPTION_TEXT}`).text(projectDescription);
-
-            // close modal
-            closeModal(EDIT_PROJECT_MODAL);
-
-            // reset hidden input
-            $(EDIT_PROJECT_HIDDEN_INPUT).val(UNNASIGNED_VALUE);
-        }else{
-            $.notify(response_error.data.responseJSON.msg, "error");
-        }
-    });
-
     // =============== FILTER PROJECT ==========
 
     // when the user types something in the search filter
@@ -387,6 +378,26 @@ $(function () {
     });
 });
 
+function projectAttributesAreValid(name, description){
+
+    if (_.isEmpty(name)){
+        showPopupMessage(PROJECT_NAME_INPUT, "Cannot be empty", "error", "top-right");
+        return false;
+    }
+    
+    if (name.length < MIN_LENGTH_TITLE){
+        showPopupMessage(PROJECT_NAME_INPUT, "Name is to short", "error", "top-right");
+        return false;
+    }
+
+    if (description.length > MAX_LENGTH_DESCRIPTION){
+        showPopupMessage(PROJECT_DESCRIPTION_INPUT, "Description is too long", "error", "top-right");
+        return false;
+    }
+
+    return true;
+}
+
 /**
  * Filter project in UI
  * @param {String} selector 
@@ -410,7 +421,6 @@ function filterProject(selector, userInput){
     });
 }
 
-
 /**
  * Add project to UI 
  * @param {Object} project 
@@ -431,7 +441,7 @@ function addProjectToUI(project, isFavorite){
         if (addUpdateOptions){
             editTemplate = `
             <div class="pr-4 project-icons" style="text-align: right;">
-                <span class="edit-project-btn" data-toggle="modal" data-target="#edit-project-modal" data-projectid="${project["_id"]}">
+                <span class="edit-project-btn" data-toggle="modal" data-target="#create-project-modal" data-projectid="${project["_id"]}">
                     <i class="fas fa-edit"></i>
                 </span>
                 <span class="remove-project-btn" data-toggle="modal" data-target="#remove-confirmation-modal" data-projectid="${project["_id"]}">
@@ -482,7 +492,7 @@ function addProjectToUI(project, isFavorite){
             editTemplate = `
             <div class="col-2">
                 <div class="pr-4 project-icons project-icons-row" style="text-align: right;">
-                    <span class="edit-project-btn" data-toggle="modal" data-target="#edit-project-modal" data-projectid="${project["_id"]}">
+                    <span class="edit-project-btn" data-toggle="modal" data-target="#create-project-modal" data-projectid="${project["_id"]}">
                         <i class="fas fa-edit"></i>
                     </span>
                     <span class="remove-project-btn" data-toggle="modal" data-target="#remove-confirmation-modal" data-projectid="${project["_id"]}">

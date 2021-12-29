@@ -124,7 +124,7 @@
                                                     <% if (userFavoriteProjects[i]["author"].toString() == currentUser["_id"].toString()) { %>
 
                                                         <div class="pr-4 project-icons" style="text-align: right;">
-                                                            <span class="edit-project-btn" data-toggle="modal" data-target="#edit-project-modal" data-projectid="<%= userFavoriteProjects[i]._id %>">
+                                                            <span class="edit-project-btn" data-toggle="modal" data-target="#create-project-modal" data-projectid="<%= userFavoriteProjects[i]._id %>">
                                                                 <i class="fas fa-edit"></i>
                                                             </span>
                                                             <span class="remove-project-btn" data-toggle="modal" data-target="#remove-confirmation-modal" data-projectid="<%= userFavoriteProjects[i]._id %>">
@@ -137,9 +137,6 @@
                                         <% } %>
 
                                     </div>
-
-
-                                    
 
                                     <!-- REMAINING PROJECTS -->
                                     <div class="row n-mb" style="width: 100% !important;">
@@ -195,7 +192,7 @@
                                                     <% if (project["author"].toString() == currentUser["_id"].toString()) { %>
                                                         <div class="col-2">
                                                             <div class="pr-4 project-icons project-icons-row" style="text-align: right;">
-                                                                <span class="edit-project-btn" data-toggle="modal" data-target="#edit-project-modal" data-projectid="<%= project._id %>"><i class="fas fa-edit"></i></span>
+                                                                <span class="edit-project-btn" data-toggle="modal" data-target="#create-project-modal" data-projectid="<%= project._id %>"><i class="fas fa-edit"></i></span>
                                                                 <span class="remove-project-btn" data-toggle="modal" data-target="#remove-confirmation-modal" data-projectid="<%= project._id %>"><i class="fas fa-trash"></i></span>
                                                             </div>
                                                         </div>
@@ -217,7 +214,6 @@
 </div>
 
 <%- include('modals/create-project'); %>
-<%- include('modals/edit-project'); %>
 
 <!-- Make project Favorite -->
 <%- include('modals/favoriteProject/make-project-favorite'); %>
