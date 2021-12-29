@@ -19,7 +19,7 @@ $(function () {
             event.preventDefault();
 
             // the work item url
-            let workItemId = $(this).attr("rel");
+            const workItemId = $(this).attr("rel");
             
             // need update this in order to send the reques to the good URL
             $(WORK_ITEM_ID).val(workItemId);
@@ -27,7 +27,7 @@ $(function () {
             await populateWorkItemModal(workItemId);
 
             $(WORK_ITEM_MODAL).modal("toggle");
-        }
+        } 
 
     });
 

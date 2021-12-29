@@ -477,7 +477,7 @@ function appendToWotkItemTable(workItems, index = null, showIfSprint = true, rem
 
 
         // ID
-        let id = `<td class="tableColumnID"> <span> ${workItem['itemId']} </span></td>`;
+        let id = `<td class="tableColumnID"> <span> ${workItem["team"]["initials"]} - ${workItem['itemId']} </span></td>`;
         headers_object["id"] = id;
 
 

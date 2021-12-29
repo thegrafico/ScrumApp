@@ -7,8 +7,6 @@
 // ============= CONST AND DEPENDENCIES =============
 const express                   = require("express");
 const _                         = require("lodash");
-const moment                    = require('moment');
-const projectCollection         = require("../dbSchema/projects");
 const sprintCollection          = require("../dbSchema/sprint");
 const workItemCollection        = require("../dbSchema/workItem");
 const middleware                = require("../middleware/auth");

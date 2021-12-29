@@ -1,6 +1,6 @@
 /**
  * This file is to save the work item when something has changed
- * WORK_ITEM is declared in planning-work-item.js
+ * WORK_ITEM is declared in work-items.js
  * swap function is inside helpers.js
 */
 

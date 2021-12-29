@@ -63,7 +63,7 @@ router.get("/:id/workitems", middleware.isUserInProject, async function (req, re
 
     // load all project work items
     }else{
-        workItems =  await WorkItemCollection.find({projectId, status: {$in: MAIN_WORK_ITEMS_TO_SHOW}}).catch(err => 
+        workItems =  await WorkItemCollection.find({projectId, status: {$in: MAIN_WORK_ITEMS_TO_SHOW}}).lean().catch(err => 
             console.error("Error getting work items: ", err)
         ) || [];
     }
@@ -72,12 +72,8 @@ router.get("/:id/workitems", middleware.isUserInProject, async function (req, re
     workItems = sortByDate(workItems, "createdAt");
 
     // Create new key (team/sprint) to store the work item team
-    joinData(workItems, teams, "teamId", "equal", "_id", "team", UNASSIGNED);
+    joinData(workItems, teams, "teamId", "equal", "_id", "team", UNASSIGNED, true);
     joinData(workItems, sprints, "_id", "is in", "tasks", "sprint", UNASSIGNED_SPRINT);
-
-    // since this is the work item page, not sprint or team should be selected
-    // so the user needs to select i
-    let activeSprintId = null;
 
     // adding defaults
     teams.unshift(UNASSIGNED);
@@ -96,7 +92,7 @@ router.get("/:id/workitems", middleware.isUserInProject, async function (req, re
         "projectTeams": teams, 
         "userTeam": null,
         "sprints": [UNASSIGNED],
-        "activeSprintId": activeSprintId,
+        "activeSprintId": null,
         "addUserModal": true,
         "workItems": workItems,
         "priorityPoints": PRIORITY_POINTS,
@@ -115,16 +111,7 @@ router.get("/:id/workitems/:workItemId", middleware.isUserInProject, async funct
 
     const projectId = req.params.id;
     const workItemId = req.params.workItemId;
-
-    // verify is the project exists
-    let projectInfo = await projectCollection.findOne({_id: projectId}).catch(err => {
-        console.error("Error is: ", err.reason);
-    });
-
-    if (_.isUndefined(projectInfo) || _.isEmpty(projectInfo)) {
-        req.flash("error", "Cannot the find the information of the project.");
-        return res.redirect('/');
-    }
+    const projectInfo = req.currentProject;
 
     // ============== CHECK WORK ITEM INFO ==============
     // Load work item specify data

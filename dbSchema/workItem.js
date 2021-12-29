@@ -152,14 +152,14 @@ workItemSchema.statics.getUserWorkItems = async function(projectId, userId, numb
 
         // get betwen 1 and 100 records
         if (numberOfRecords > 0 && numberOfRecords <= 100){
-            userWorkItems= await father.find(queryParams).limit(numberOfRecords).catch( err => {
+            userWorkItems= await father.find(queryParams).lean().limit(numberOfRecords).catch( err => {
                 console.error("Error getting user work items: ", err);
                 error = err;
             }) || [];
         }else{
 
             // get all records for the user
-            userWorkItems= await father.find(queryParams).catch( err => {
+            userWorkItems= await father.find(queryParams).lean().catch( err => {
                 console.error("Error getting user work items: ", err);
                 error = err;
             }) || [];
