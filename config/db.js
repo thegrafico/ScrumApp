@@ -19,7 +19,7 @@ const connectDB = async () => {
 
 const removeDB = async () => {
     try{
-        const conn = mongoose.createConnection(process.env.MONGO_URI);
+        const conn = mongoose.createConnection(process.env.MONGO_LOCAL_URI);
         await conn.dropDatabase();
         console.log("Database removed");
     }catch(err) {

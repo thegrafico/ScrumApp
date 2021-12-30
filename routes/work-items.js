@@ -25,6 +25,7 @@ const {
     joinData,
     sortByDate,
     addUserNameToComment,
+    getWorkItemTeam,
 } = require('../dbSchema/Constanst');
 
 /**
@@ -112,6 +113,8 @@ router.get("/:id/workitems/:workItemId", middleware.isUserInProject, async funct
     const projectId = req.params.id;
     const projectInfo = req.currentProject;
     const workItemId = (req.params.workItemId.split("-")[1]).trim();
+    let teams = [...projectInfo.teams];
+
 
     // ============== CHECK WORK ITEM INFO ==============
     // Load work item specify data
@@ -129,7 +132,7 @@ router.get("/:id/workitems/:workItemId", middleware.isUserInProject, async funct
     // ===================================================
 
     // set the links for the work item
-    await WorkItemCollection.setRelationship(workItem).catch(err => {
+    await WorkItemCollection.setRelationship(workItem, teams).catch(err => {
         console.error("Error setting the relationship for the work item: ", err);
     });
 
@@ -141,10 +144,11 @@ router.get("/:id/workitems/:workItemId", middleware.isUserInProject, async funct
 
 
     // get all the teams for this project
-    let teams = [...projectInfo.teams];
+    const workItemTeam = getWorkItemTeam(workItem, teams);
 
-    let workItemTeam = teams.filter( each => {return (each["_id"] || "").toString() ==( workItem["teamId"] || "").toString()})[0];
-
+    // assign team to work item
+    workItem["team"] = workItemTeam;
+ 
     let sprints = [];
     let workItemSprintId = UNASSIGNED["_id"];
 
@@ -175,7 +179,7 @@ router.get("/:id/workitems/:workItemId", middleware.isUserInProject, async funct
 
     // populating params
     let params = {
-        "title": (projectInfo["title"] + " - Work Item: " + workItem["itemId"]),
+        "title": (workItem["team"]["initials"] + ' - ' + workItem["itemId"]),
         "project": projectInfo,
         "projectId": projectId,
         "activeTab": "WorkItem,Planing",

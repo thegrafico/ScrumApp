@@ -84,7 +84,7 @@ async function populateWorkItemModal(workItemId){
     const assignedUserId =  workItem["assignedUser"]["id"] || "0";
 
     // SUB ID
-    $(UPDATE_WORK_ITEM["subId"]).text(workItem["itemId"]);
+    $(UPDATE_WORK_ITEM["subId"]).text(`${workItem["team"]["initials"] || "SCRUM"} - ${workItem["itemId"]}`);
 
     // TITLE
     $(UPDATE_WORK_ITEM["title"]).val(workItem["title"]);
@@ -188,9 +188,10 @@ async function populateWorkItemModal(workItemId){
     activeSaveButton();
     setWorkItemState();
 
-    let isCompletedWorkItem = (status == "Completed");
+    // check if the work item is completed
+    // const isCompletedWorkItem = (status == "Completed");
 
-    makeWorkItemUpdatableIfNotCompleted(UPDATE_WORK_ITEM, isCompletedWorkItem);
+    makeWorkItemUpdatableIfNotCompleted(UPDATE_WORK_ITEM, (status == "Completed"));
 }
 
 /**

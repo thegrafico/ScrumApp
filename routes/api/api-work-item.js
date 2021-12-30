@@ -27,6 +27,7 @@ const {
     UNASSIGNED_TEAM,
     addUserNameToComment,
     printError,
+    getWorkItemTeam,
 } = require('../../dbSchema/Constanst');
 
 
@@ -41,6 +42,8 @@ router.get("/api/:id/getWorkItem/:workItemId", middleware.isUserInProject, async
     const workItemId = req.params.workItemId;    
     const projectInfo = req.currentProject;
 
+    // get all the teams for this project
+    const teams = [...projectInfo.teams];
     let response = {};
 
     // ============== CHECK WORK ITEM INFO ==============
@@ -49,15 +52,15 @@ router.get("/api/:id/getWorkItem/:workItemId", middleware.isUserInProject, async
         console.error("Error getting work items: ", err);
     }) || {};
 
-    // get all users for this project -> expected an array
-    let users = await projectInfo.getUsers().catch(err => console.error("Error getting the users: ", err)) || [];
-
     if (_.isUndefined(workItem) || _.isEmpty(workItem)){
         response["msg"] = "Sorry, There was a problem getting the work item information.";
         return res.status(400).send(response);
     }
     
     workItem = workItem.toObject();
+
+    // get all users for this project -> expected an array
+    let users = await projectInfo.getUsers().catch(err => console.error("Error getting the users: ", err)) || [];
 
     // update the comments
     workItem["comments"] = addUserNameToComment(workItem["comments"], users, req.user["_id"]);
@@ -84,9 +87,11 @@ router.get("/api/:id/getWorkItem/:workItemId", middleware.isUserInProject, async
     }
 
     // add the relationship to the current work item
-    await WorkItemCollection.setRelationship(workItem).catch(err => {
+    await WorkItemCollection.setRelationship(workItem, teams).catch(err => {
         console.error("Error setting the relationship for the work item: ", err);
     });
+
+    workItem["team"] = getWorkItemTeam(workItem, teams);
 
     // sorting sprint
     sprints = sortByDate(sprints, "startDate");

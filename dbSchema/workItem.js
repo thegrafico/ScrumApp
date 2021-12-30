@@ -24,6 +24,7 @@ const {
     WORK_ITEM_RELATIONSHIP,
     arrayToObject,
     getRelationShipForWorkItem,
+    getWorkItemTeam,
 } = require("./Constanst");
 
 // get just the name since that will be in the db
@@ -295,7 +296,7 @@ workItemSchema.statics.addRelationToWorkItem = async function(projectId, related
  * @param {Array} relatedWorkItems 
  * @returns 
  */
-workItemSchema.statics.setRelationship = async function(workItem) {
+workItemSchema.statics.setRelationship = async function(workItem, teams) {
 
     let father = this;
 
@@ -319,27 +320,28 @@ workItemSchema.statics.setRelationship = async function(workItem) {
                 console.error("Error getting related work items: ", err);
             }) || [];
 
-            for (let realteWorkItem of relatedWorkItems){
+            for (let relatedWorkItem of relatedWorkItems){
                 
                 // getting One related work item at time
                 let relationshipWithWorkItem = workItem["links"].filter(each => {
-                    return each["workItemId"].toString() === realteWorkItem["_id"].toString();
+                    return each["workItemId"].toString() === relatedWorkItem["_id"].toString();
                 })[0];
 
                 // store the relationship with the current work item
                 const relationship = relationshipWithWorkItem["relationship"];
 
-                realteWorkItem["relationship"] = relationship;
-                realteWorkItem["lastUpdatedDate"] = moment(realteWorkItem["updatedAt"]).format(SPRINT_FORMAT_DATE);
+                relatedWorkItem["relationship"] = relationship;
+                relatedWorkItem["lastUpdatedDate"] = moment(relatedWorkItem["updatedAt"]).format(SPRINT_FORMAT_DATE);
+                relatedWorkItem["team"] = getWorkItemTeam(relatedWorkItem, teams);
 
                 // check if the relationship is already in our object
                 if (relationship in filterRelationship){
                     //if so, then append to the array
-                    filterRelationship[relationship].push(realteWorkItem);
+                    filterRelationship[relationship].push(relatedWorkItem);
                 }else{
-                    filterRelationship[relationship] = [realteWorkItem]
+                    filterRelationship[relationship] = [relatedWorkItem]
                 }
-            }
+           }
 
             workItem["relatedWorkItems"] = filterRelationship;
         }else {

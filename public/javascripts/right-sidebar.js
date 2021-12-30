@@ -221,7 +221,7 @@ function addRelationshipToWorkItemModal(relatedWorkItems, relationship, containe
 
         // create the container
         $(container).append(containerTemplate);
-        console.log("related work item added!");
+        // console.log("related work item added!");
     }
     for( let workItem of relatedWorkItems){
         let lastUpdatedDate = moment( workItem['updatedAt']).format(SPRINT_FORMAT_DATE);
@@ -235,11 +235,11 @@ function addRelationshipToWorkItemModal(relatedWorkItems, relationship, containe
 
             <div class="work-item-relationship-name-container">
                 
-                <a href="/dashboard/${projectId}/workitems/${workItem['_id']}">    
+                <a href="/dashboard/${projectId}/workitems/${workItem["team"]["initials"]}-${workItem['itemId']}">    
                     <span class="work-item-relationship-id">
                         <i class="fas ${WORK_ITEM_ICONS[workItem['type']].icon}"></i>
                         <span class="related-workitem-item-id"> 
-                            ${workItem['itemId']} 
+                            ${workItem["team"]["initials"]} - ${workItem['itemId']} 
                         </span>
                         
                     </span>

@@ -30,7 +30,9 @@
                                 <div class="d-inline-flex titleAndId">
                                     
                                     <div class="labelForTitle">
-                                        <label for="title"> <%=workItem["itemId"]%> </label>
+                                        <span>
+                                            <%=workItem["team"]["initials"]%> - <%=workItem["itemId"]%>
+                                        </span>
                                     </div>
                                     <!-- TITLE -->
                                     <div class="inputForTitle">
@@ -316,11 +318,13 @@
 
                                                         <div class="work-item-relationship-name-container">
                                                             
-                                                            <a href="<%=relatedWorkItem['_id']%>">    
+                                                            <a href="<%=relatedWorkItem['team']['initials']%>-<%=relatedWorkItem['itemId']%>">    
                                                                 <span class="work-item-relationship-id">
                                                                     <i class="fas <%=workItemType[relatedWorkItem['type']].icon%>"></i>
 
-                                                                    <span class="related-workitem-item-id"> <%=relatedWorkItem['itemId']%> </span>
+                                                                    <span class="related-workitem-item-id"> 
+                                                                        <%=relatedWorkItem['team']['initials']%> - <%=relatedWorkItem['itemId']%> 
+                                                                    </span>
                                                                 </span>
                     
                                                                 <span class="work-item-relationship-name">

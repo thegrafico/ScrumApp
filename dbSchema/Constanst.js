@@ -10,12 +10,13 @@ module.exports.UNASSIGNED = {
     selected: true
 };
 
-module.exports.UNASSIGNED_TEAM = {
+const UNASSIGNED_TEAM = {
     name: "unassigned",
     _id: "0",
     selected: true,
     initials: "SCRUM"
 };
+module.exports.UNASSIGNED_TEAM = UNASSIGNED_TEAM;
 
 module.exports.UNASSIGNED_SPRINT = {
     name: "unassigned",
@@ -1030,3 +1031,15 @@ function validateString(str, minLen, maxLen, checkSymbols, checkSpaces){
     return {isValid: errorMessage == null, reason: errorMessage};
 }
 module.exports.validateString = validateString;
+
+
+/**
+ * Return the team of the work item of the default team.
+ * @param {Object} workItem 
+ * @param {Object} teams
+ * @returns 
+ */
+function getWorkItemTeam(workItem, teams){
+    return teams.filter( each => {return (each["_id"] || "").toString() ==( workItem["teamId"] || "").toString()})[0] || [UNASSIGNED_TEAM];
+}
+module.exports.getWorkItemTeam = getWorkItemTeam;
