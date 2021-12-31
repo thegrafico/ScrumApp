@@ -603,9 +603,13 @@ function appendToWotkItemTable(workItems, index = null, showIfSprint = true, rem
  * Get the work item sub menu
  * @param {String} page 
  */
-function getPageSubMenu(page, workItemId, activeSprintId) {
+function getPageSubMenu(page, workItemId) {
 
     let subMenuHtml = "";
+
+    // if the page is my work items, then assign the same sub menu as work items
+    page = (page == PAGES["MY_WORK_ITEMS"] ? PAGES["WORK_ITEMS"]: page);
+    
     switch (page) {
 
         case PAGES["WORK_ITEMS"]:
@@ -624,7 +628,6 @@ function getPageSubMenu(page, workItemId, activeSprintId) {
                     </a>
             </td>`;
             break;
-
         case PAGES["BACKLOG"]:
             subMenuHtml = `
             <td class="tdWorkItemSubMenu">
@@ -1059,15 +1062,25 @@ function updateHtml(currentPage, updateType, valueToUpdate, inputType, others = 
     // since most of the page share the same top navbar, we can update those values just once
     updateUIFromTopNabvar(inputType, updateType, valueToUpdate);
 
+    const isMyPage = currentPage == PAGES["MY_WORK_ITEMS"];
+    currentPage = (isMyPage ? PAGES["WORK_ITEMS"]: currentPage);
+
     switch (currentPage) {
         case PAGES["STATISTICS"]:
             updateStatisticsHtml(updateType, valueToUpdate);
             break;
         case PAGES["WORK_ITEMS"]:
-
             // update from create work item
             if (inputType === UPDATE_INPUTS.CREATE_WORK_ITEM) {
-                appendToWotkItemTable([valueToUpdate], 0, true, false);
+
+                if (isMyPage){
+
+                    if (valueToUpdate["assignedUser"]["id"] == $(CURRENT_USER_ID).val()){
+                        appendToWotkItemTable([valueToUpdate], 0, true, false);
+                    }
+                }else{
+                    appendToWotkItemTable([valueToUpdate], 0, true, false);
+                }
             }
 
             // update from top navbar menu
@@ -1092,6 +1105,84 @@ function updateHtml(currentPage, updateType, valueToUpdate, inputType, others = 
 
             if (inputType === UPDATE_INPUTS.TEAM) {
                  // work item
+                updateSelectOption(WORK_ITEM["team"], updateType, valueToUpdate);
+                updateSelectOption(UPDATE_WORK_ITEM["team"], updateType, valueToUpdate);
+
+                // updating filter by team
+                updateOptionFromFilter(FILTER_OPTIONS["team"], updateType, valueToUpdate);
+                // remove team from table
+                if (updateType == UPDATE_TYPE["DELETE"]) {
+                    // change the name for unnasigned in the UI
+                    $(`.rowValues .teamColumnName.${valueToUpdate}`).text(UNNASIGNED_NAME);
+
+                    // if the team is deleted, then we should remove sprints reference in table
+                    $(`.rowValues .teamColumnName.${valueToUpdate}`).parent().find(".sprintColumnName").text(UNNASIGNED_NAME);
+
+                    // remove the team reference from the table
+                    $(`.rowValues .teamColumnName.${valueToUpdate}`).removeClass(valueToUpdate);
+
+                }
+            }
+
+            if (inputType === UPDATE_INPUTS.SPRINT) {
+
+                // check if we have sprint
+                if (others && others["sprint"]) {
+                    
+                    // now check the team for that sprint is selected
+                    let teamSelected = $(WORK_ITEM["team"]).val();
+
+                    // if the team is not the same of the sprint created, then ignored
+                    if (teamSelected.toString() != others["sprint"]["teamId"].toString()){
+                        break
+                    }
+                }
+
+                updateSelectOption(WORK_ITEM["sprint"], updateType, valueToUpdate);
+                updateSelectOption(UPDATE_WORK_ITEM["sprint"], updateType, valueToUpdate);
+
+                // remove team from table
+                if (updateType == UPDATE_TYPE["DELETE"]) {
+                    // change the name for unnasigned in the UI
+                    $(`.rowValues .sprintColumnName.${valueToUpdate}`).text(UNNASIGNED_NAME);
+
+                    $(`.rowValues .sprintColumnName.${valueToUpdate}`).removeClass(valueToUpdate);
+                }
+            }
+            break;
+        
+        case PAGES["MY_WORK_ITEMS"]:
+
+            // update from create work item
+            if (inputType === UPDATE_INPUTS.CREATE_WORK_ITEM) {
+
+                if (valueToUpdate["assignedUser"]["id"] == $(CURRENT_USER_ID).val()){
+                    appendToWotkItemTable([valueToUpdate], 0, true, false);
+                }
+            }
+
+            // update from top navbar menu
+            if (inputType === UPDATE_INPUTS.USER) {
+
+                // update create work item modal 
+                updateSelectOption(WORK_ITEM["user"], updateType, valueToUpdate);
+                updateSelectOption(UPDATE_WORK_ITEM["user"], updateType, valueToUpdate);
+
+                // update filter if user is removed from filter
+                updateOptionFromFilter(FILTER_OPTIONS["user"], updateType, valueToUpdate);
+
+                // remove user from table
+                if (updateType == UPDATE_TYPE["DELETE"]) {
+                    // change the name for unnasigned in the UI
+                    $(`.rowValues span.userName.${valueToUpdate}`).text(UNNASIGNED_NAME);
+
+                    // remove any record of the user in this row
+                    $(`.rowValues span.userName.${valueToUpdate}`).removeClass(valueToUpdate);
+                }
+            }
+
+            if (inputType === UPDATE_INPUTS.TEAM) {
+                    // work item
                 updateSelectOption(WORK_ITEM["team"], updateType, valueToUpdate);
                 updateSelectOption(UPDATE_WORK_ITEM["team"], updateType, valueToUpdate);
 
@@ -1400,7 +1491,6 @@ function updateHtml(currentPage, updateType, valueToUpdate, inputType, others = 
 
             break;
         case PAGES["QUERIES"]:
-
             break;
         default:
             break;

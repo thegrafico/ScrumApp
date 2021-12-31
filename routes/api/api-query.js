@@ -11,6 +11,7 @@ let router                      = express.Router();
 const {
     UNASSIGNED_SPRINT,
     UNASSIGNED,
+    UNASSIGNED_TEAM,
     QUERY_FIELD,
     joinData,
     cleanQuery,
@@ -74,28 +75,17 @@ router.post("/api/:id/getWorkItemsByQuery", middleware.isUserInProject, async fu
     console.log("request to get work item by query...");
 
     const projectId = req.params.id;
+    const projectInfo = req.currentProject;
 
     // getting query request
     let { query } = req.body;
 
     let response = {};
 
-    // getting project
-    const projectInfo = await projectCollection.findById(projectId).catch(err => {
-        console.error(err);
-    });
-    
-    // verify project
-    if (!projectInfo){
-        response["msg"] = "Sorry, Cannot get the information of the project.";
-        res.status(400).send(response);
-        return;
-    }
-
     // check if we received data
     if (!_.isArray(query) || _.isEmpty(query)){
         response["msg"] = "Oops, it seems the data received is empty";
-        res.status(200).send(response);
+        res.status(400).send(response);
         return;
     }
 
@@ -104,7 +94,7 @@ router.post("/api/:id/getWorkItemsByQuery", middleware.isUserInProject, async fu
 
     if (_.isEmpty(query)){
         response["msg"] = "Oops, it seems there was an error processing the query. Please try later.";
-        res.status(200).send(response);
+        res.status(400).send(response);
         return;
     }
 
@@ -116,7 +106,7 @@ router.post("/api/:id/getWorkItemsByQuery", middleware.isUserInProject, async fu
     // check if we have work items
     if (!_.isArray(workItems) || _.isEmpty(workItems) ){
         response["msg"] = "Sorry, it seems there is not work items for this project.";
-        res.status(200).send(response);
+        res.status(400).send(response);
         return;
     }
 
@@ -125,7 +115,7 @@ router.post("/api/:id/getWorkItemsByQuery", middleware.isUserInProject, async fu
 
     // get all sprints for project
     let sprints = await SprintCollection.find({projectId}).catch(err => console.error(err)) || [];
-    joinData(workItems, teams, "teamId", "equal", "_id", "team", UNASSIGNED);
+    joinData(workItems, teams, "teamId", "equal", "_id", "team", UNASSIGNED_TEAM, true);
     joinData(workItems, sprints, "_id", "is in", "tasks", "sprint", UNASSIGNED_SPRINT, true);
 
     const FIELDS = arrayToObject(Object.keys(QUERY_FIELD));
@@ -226,7 +216,6 @@ router.post("/api/:id/getWorkItemsByQuery", middleware.isUserInProject, async fu
         }
     }
 
-    console.log("ELEMENTS FOUND: ", currentWorkItems.length);
     // send response to user
     response["msg"] = "Success";
     response["workItems"] = currentWorkItems;

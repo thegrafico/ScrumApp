@@ -143,6 +143,7 @@ module.exports.PRIORITY_POINTS = {
 module.exports.PAGES = {
     STATISTICS: "statistics",
     WORK_ITEMS: "workItems",
+    MY_WORK_ITEMS: "myWorkItems",
     UNIQUE_WORK_ITEM: "workItem",
     BACKLOG: "sprintBacklog",
     SPRINT: "sprintPlaning",

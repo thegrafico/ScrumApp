@@ -87,7 +87,7 @@ router.get("/:id/workitems", middleware.isUserInProject, async function (req, re
         "projectId": projectId,
         "activeTab": (showOnlyMine ? "MyWorkItems" : "WorkItem"),
         "tabTitle": (showOnlyMine ? "My Work Items" : "Work Items"),
-        "currentPage": PAGES.WORK_ITEMS,
+        "currentPage": (showOnlyMine ? PAGES.MY_WORK_ITEMS: PAGES.WORK_ITEMS),
         "assignedUsers": users,
         "statusWorkItem": WORK_ITEM_STATUS_COLORS,
         "projectTeams": teams, 

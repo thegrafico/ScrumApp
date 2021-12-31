@@ -244,6 +244,7 @@ const UPDATE_INPUTS = {USER: "USER", TEAM: "TEAM", SPRINT: "SPRINT", CREATE_WORK
 const PAGES = {
     STATISTICS: "statistics",
     WORK_ITEMS: "workItems",
+    MY_WORK_ITEMS: "myWorkItems",
     UNIQUE_WORK_ITEM: "workItem",
     BACKLOG: "sprintBacklog",
     SPRINT: "sprintPlaning",
@@ -251,7 +252,7 @@ const PAGES = {
     MANAGE_TEAM: "manageTeam",
     MANAGE_USER: "manageUser",
     MANAGE_SPRINT: "manageSprint",
-    QUERIES: "queries",
+    QUERIES: "queries"
 }
 
 const INVALID_SYMBOLS = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]+/;
