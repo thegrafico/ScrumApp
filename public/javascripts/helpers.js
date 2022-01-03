@@ -2057,6 +2057,21 @@ function updateWorkItemFeedback() {
     updateNumberOfWorkItems("#numberOfReviewWorkItems", "Review");
     updateNumberOfWorkItems("#numberOfCompletedWorkItems", "Completed");
     getPointsAndUpdate("td.storyPointsRow");
+
+
+    // if there is somethin in the work item table
+    if ($(`${WORK_ITEM_TABLE_CONTAINER} tbody tr`).length > 0){
+
+        // hide the info for the work item
+        $(INFO_MODALS["WORK_ITEM"]).hide();
+
+        // make sure the table is shown 
+        $(WORK_ITEM_TABLE_CONTAINER).show();
+    }else{
+        // toggle actions above
+        $(INFO_MODALS["WORK_ITEM"]).show();
+        $(WORK_ITEM_TABLE_CONTAINER).hide();
+    }
 }
 
 /**

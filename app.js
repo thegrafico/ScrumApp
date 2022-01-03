@@ -95,7 +95,7 @@ passport.use(new LocalStrategy({
 	},
 	function (email, password, done) {
 		User.findOne({
-			email: email
+			email: email.toLowerCase() // TODO: add the email in lowercase format
 		}, function (err, user) {
 			if (err) {
 				return done(err);

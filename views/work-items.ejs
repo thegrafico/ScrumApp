@@ -57,53 +57,58 @@
                 <%- include('templates/filter'); %>
             </div>
 
-            <div class="p-4 hide-functional-scroll" id="table-container">
-                <table class="table table-hover" id="workItemTable">
-                    <thead>
-                        <%- include('templates/table-work-items/header'); %>
-                    </thead>
-                    <tbody>
-                        <% for (let i = 0; i < workItems.length; ++i) {%>
-                            <tr class="rowValues <%=workItems[i]['status']%>" id="<%=workItems[i]['_id']%>">
-                                
-                                <!-- CHECKBOX -->
-                                <%- include('templates/table-work-items/toggle-checkbox', {i}); %>
-                                
-                                <!-- ID -->
-                                <%- include('templates/table-work-items/id-column', {i}); %>
-                                
-                                <!-- TYPE: HIDDEN -->
-                                <%- include('templates/table-work-items/type-column', {i}); %>
-                                
-                                <!-- TITLE -->
-                                <%- include('templates/table-work-items/title-column', {i}); %>
+            <!-- SHOW WHEN EMPTY -->
+            <% if (workItems.length == 0) {%>
+                <%- include('templates/info/when-wi-empty'); %>      
+                <div class="p-4 hide-functional-scroll" id="table-container" style="display: none;">      
+            <% } else { %>
+                <div class="p-4 hide-functional-scroll" id="table-container">      
+            <% } %>
+                    <table class="table table-hover" id="workItemTable">
+                        <thead>
+                            <%- include('templates/table-work-items/header'); %>
+                        </thead>
+                        <tbody>
+                            <% for (let i = 0; i < workItems.length; ++i) {%>
+                                <tr class="rowValues <%=workItems[i]['status']%>" id="<%=workItems[i]['_id']%>">
+                                    
+                                    <!-- CHECKBOX -->
+                                    <%- include('templates/table-work-items/toggle-checkbox', {i}); %>
+                                    
+                                    <!-- ID -->
+                                    <%- include('templates/table-work-items/id-column', {i}); %>
+                                    
+                                    <!-- TYPE: HIDDEN -->
+                                    <%- include('templates/table-work-items/type-column', {i}); %>
+                                    
+                                    <!-- TITLE -->
+                                    <%- include('templates/table-work-items/title-column', {i}); %>
 
-                                <!-- SUB MENU - WORK ITEMS -->
-                                <%- include('templates/table-work-items/sub-menu/work-items', {i}); %>
-        
-                                <!-- ASSIGNED -->
-                                <%- include('templates/table-work-items/user-column', {i}); %>
+                                    <!-- SUB MENU - WORK ITEMS -->
+                                    <%- include('templates/table-work-items/sub-menu/work-items', {i}); %>
+            
+                                    <!-- ASSIGNED -->
+                                    <%- include('templates/table-work-items/user-column', {i}); %>
 
-                                <!-- STATUS -->
-                                <%- include('templates/table-work-items/status-column', {i}); %>
-                             
-                                <!-- TEAM -->
-                                <%- include('templates/table-work-items/team-column', {i}); %>
-        
-                                <!-- SPRINT -->
-                                <%- include('templates/table-work-items/sprint-column', {i}); %>
-        
-                                <!-- TAGS -->
-                                <%- include('templates/table-work-items/tags-column', {i}); %>
+                                    <!-- STATUS -->
+                                    <%- include('templates/table-work-items/status-column', {i}); %>
                                 
-                                <!-- COMMENTS -->
-                                <%- include('templates/table-work-items/comments-column', {i}); %>
-                            </tr>
-                        <%}%>
-                    </tbody>
-                </table>
+                                    <!-- TEAM -->
+                                    <%- include('templates/table-work-items/team-column', {i}); %>
+            
+                                    <!-- SPRINT -->
+                                    <%- include('templates/table-work-items/sprint-column', {i}); %>
+            
+                                    <!-- TAGS -->
+                                    <%- include('templates/table-work-items/tags-column', {i}); %>
+                                    
+                                    <!-- COMMENTS -->
+                                    <%- include('templates/table-work-items/comments-column', {i}); %>
+                                </tr>
+                            <%}%>
+                        </tbody>
+                    </table>
             </div>
-
         </div>
 
         <%- include('templates/right-sidebar-menu'); %>

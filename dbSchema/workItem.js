@@ -29,7 +29,6 @@ const {
 
 // get just the name since that will be in the db
 const workType = Object.keys(WORK_ITEM_ICONS);
-const RELATIONSHIP = arrayToObject(Object.keys(WORK_ITEM_RELATIONSHIP));
 
 // get work item an default value
 const workItemStatus = Object.keys(WORK_ITEM_STATUS_COLORS);
@@ -41,7 +40,6 @@ const ObjectId = mongoose.Schema.ObjectId;
 let workItemSchema = new mongoose.Schema({
     itemId: {
         type: Number, 
-        unique: true
     },
     title: {
         type: String,  //const MAX_LENGTH_TITLE = 80;

@@ -39,7 +39,6 @@ const TELESCOPE_IMAGE_SHOW_RESULTS = ".showQueryTelscopeImage";
 
 
 // Work item table container
-const WORK_ITEM_TABLE_CONTAINER = "#table-container";
 const MAX_SIZE_QUERY_NAME = 40;
 
 // SHOW QUERY MODAL

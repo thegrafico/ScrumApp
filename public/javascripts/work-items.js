@@ -93,8 +93,6 @@ $(function () {
         // get checked elements in table
         const rowsChecked = getCheckedElementIds(TABLE_ROW_CHECKBOX_ELEMENT_CHECKED, GET_ONLY_VISIBLES_CHECKED_ELEMENTS);
 
-        const projectId = getProjectId();
-
         let elementToRemove = $(REMOVE_OPTION_HIDDEN_INPUT).val();
 
         if (elementToRemove == UNNASIGNED_VALUE){

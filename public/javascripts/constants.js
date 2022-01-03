@@ -480,3 +480,9 @@ const NOTIFY = {
         $('.notifyjs-custom-base .text').text(text);
     }
 }
+
+const WORK_ITEM_TABLE_CONTAINER = "#table-container";
+
+const INFO_MODALS = {
+    WORK_ITEM: "#work-item-info"
+};
