@@ -1,17 +1,17 @@
-<%- include('templates/header'); %>
+<%- include('../templates/header'); %>
 
 <body>
 
-    <%- include('templates/top-navbar'); %>
+    <%- include('../templates/top-navbar'); %>
 
     <div class="wrapper d-flex align-items-stretch">
 
-        <%- include('templates/left-sidebar'); %>
+        <%- include('../templates/left-sidebar'); %>
 
         <!-- Page Content  -->
         <div id="content" class="p-4 p-md-5">
 
-            <%- include('templates/title-options-menu'); %>
+            <%- include('../templates/title-options-menu'); %>
 
             <div class="container-fluid statistics-boxs">
                 <nav class="navbar navbar-expand-lg navbar-dark bg-dark pb-2">
@@ -86,11 +86,14 @@
                     </div>
                     <!-- INCLUDE FILTER DIV HERE -->
                 </nav>
-
-
             </div>
 
-            <div class="p-4 hide-functional-scroll" id="table-container">
+            <% if (!sprints.length){ %>
+                <%- include('../templates/info/manage-sprints'); %>
+                <div class="p-4 hide-x-scroll hide-functional-scroll" id="table-container" style="display: none;">
+            <% } else { %>
+                <div class="p-4 hide-x-scroll hide-functional-scroll" id="table-container">
+            <% } %>
                 <table class="table table-hover managesSprintTable " id="manage-table">
                     <thead>
                         <tr class="tableHeader">
@@ -162,6 +165,6 @@
        
     </div>
 
-    <%- include('modals/team/add-user-team'); %>
+    <%- include('../modals/team/add-user-team'); %>
 
-<%- include('templates/footer'); %>
+<%- include('../templates/footer'); %>

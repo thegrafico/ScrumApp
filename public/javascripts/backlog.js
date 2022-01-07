@@ -5,20 +5,13 @@ $(function () {
 
     // make the request when the user changes the filter to another team
     $(FILTER_BY_TEAM_INPUT).change(async function(){
-
-        const projectId = getProjectId();
-
+        
         const teamId = $(this).val();
 
-        const API_LINK_GET_WORK_ITEMS_AND_SPRINTS_BY_TEAM = `/dashboard/api/${projectId}/getworkItemsAndSprintsByTeam/${teamId}`;
-
-        let response_error = null;
-        let response = await make_get_request(API_LINK_GET_WORK_ITEMS_AND_SPRINTS_BY_TEAM).catch(err=> {
-            response_error = err;
-        });
-
-        // Success message
+        // clean the table
         cleanTable(WORK_ITEM_TABLE);
+
+        const {response, response_error} = await getWorkItemsAndSprintsByTeamId(teamId);
 
         // change the select on the work item
         updateSelectOption(
@@ -36,6 +29,7 @@ $(function () {
                 $.notify("This team does not have any work item yet.", "error");
             }
 
+
             // clean the select option
             removeAllOptionsFromSelect(WORK_ITEM["sprint"], null);
 
@@ -45,7 +39,7 @@ $(function () {
                 // update the select option
                 for (const sprint of response.sprints) {    
                     let isSelected = sprint["_id"].toString() == response["activeSprint"].toString();
-
+                    
                     let optionText = formatSprintText(sprint, isSelected);
                     
                     updateSelectOption(

@@ -204,11 +204,7 @@ function updateStatisticsHtml(updateType, valueToUpdate){
 
     currentNumberOfMembers = parseInt(currentNumberOfMembers);
 
-    if (updateType === UPDATE_TYPE.ADD){
-        currentNumberOfMembers++;
-        $(NUMBERS_OF_MEMBERS_TEXT).text(`${currentNumberOfMembers} members`);
-        $(NUMBER_OF_MEMBERS_VALUE).val(currentNumberOfMembers);
-    }else if(updateType === UPDATE_TYPE.DELETE){
+   if(updateType === UPDATE_TYPE.DELETE){
 
         // updating text
         if (currentNumberOfMembers - 1 <= 1){

@@ -1149,8 +1149,7 @@ function updateHtml(currentPage, updateType, valueToUpdate, inputType, others = 
                     $(`.rowValues .sprintColumnName.${valueToUpdate}`).removeClass(valueToUpdate);
                 }
             }
-            break;
-        
+            break;       
         case PAGES["MY_WORK_ITEMS"]:
 
             // update from create work item
@@ -1231,7 +1230,9 @@ function updateHtml(currentPage, updateType, valueToUpdate, inputType, others = 
         case PAGES["BACKLOG"]:
             // adding work item to the backlog only if new work item does not have a sprint assigned
             if (inputType === UPDATE_INPUTS.CREATE_WORK_ITEM) {
-                if (valueToUpdate["sprint"] == null || valueToUpdate["sprint"]["_id"] === UNASSIGNED_SPRINT["_id"]) {
+                const teamId = valueToUpdate['team']['_id'];
+                const isCurrentTeam = (teamId != UNNASIGNED_VALUE && teamId == $(FILTER_BY_TEAM_INPUT).val())
+                if ((valueToUpdate["sprint"] == null || valueToUpdate["sprint"]["_id"] === UNASSIGNED_SPRINT["_id"] ) && isCurrentTeam) {
                     appendToWotkItemTable([valueToUpdate], 0, true, false);
                 }
             }
@@ -1265,6 +1266,7 @@ function updateHtml(currentPage, updateType, valueToUpdate, inputType, others = 
                 // work item
                 updateSelectOption(WORK_ITEM["team"], updateType, valueToUpdate);
                 updateSelectOption(UPDATE_WORK_ITEM["team"], updateType, valueToUpdate);
+                updateSelectOption(FILTER_BY_TEAM_INPUT, updateType, valueToUpdate);
 
                 // updating filter by team
                 updateOptionFromFilter(FILTER_OPTIONS["team"], updateType, valueToUpdate);
@@ -1483,6 +1485,8 @@ function updateHtml(currentPage, updateType, valueToUpdate, inputType, others = 
                 if (updateType == UPDATE_TYPE["ADD"]){
                     if (others && others["team"]){
                         addTeamToTable(others["team"]);
+                        $(INFO_MODALS["GENERAL_CONTAINER"]).hide();
+                        $(WORK_ITEM_TABLE_CONTAINER).show();
                     }
                 }else if (updateType == UPDATE_TYPE["DELETE"]){
                     $(`.rowValues#${valueToUpdate}`).remove();
@@ -1501,6 +1505,7 @@ function updateHtml(currentPage, updateType, valueToUpdate, inputType, others = 
  * Update User UI if there is any top nabvar update
  * @param {Enum} inputType 
  * @param {Enum} updateType 
+ * 
  * @param {Any} valueToUpdate 
  */
 function updateUIFromTopNabvar(inputType, updateType, valueToUpdate){
@@ -1947,6 +1952,7 @@ function addWorkItemEvents(element) {
             IS_UPDATE_SELECT_OPTION = false;
             return;
         }
+        console.log("Getting sprints for team...");
 
         // clean select opction
         removeAllOptionsFromSelect(
@@ -2049,7 +2055,7 @@ function addWorkItemEvents(element) {
 
 
 /**
- * Update the feedback message from the work item table
+ * Update the feedback message from the work item updateHtmltable
  */
 function updateWorkItemFeedback() {
     updateNumberOfWorkItems("#numberOfWorkItems");
@@ -2058,18 +2064,17 @@ function updateWorkItemFeedback() {
     updateNumberOfWorkItems("#numberOfCompletedWorkItems", "Completed");
     getPointsAndUpdate("td.storyPointsRow");
 
-
     // if there is somethin in the work item table
     if ($(`${WORK_ITEM_TABLE_CONTAINER} tbody tr`).length > 0){
 
-        // hide the info for the work item
-        $(INFO_MODALS["WORK_ITEM"]).hide();
+        // hide the info element
+        $(INFO_MODALS["GENERAL_CONTAINER"]).hide();
 
         // make sure the table is shown 
         $(WORK_ITEM_TABLE_CONTAINER).show();
     }else{
         // toggle actions above
-        $(INFO_MODALS["WORK_ITEM"]).show();
+        $(INFO_MODALS["GENERAL_CONTAINER"]).show();
         $(WORK_ITEM_TABLE_CONTAINER).hide();
     }
 }
@@ -2233,6 +2238,10 @@ function sumObjectValue(element, key) {
 function formatSprintText(sprint, isSelected = false) {
 
     let optionText = '';
+
+    if (sprint["_id"] === UNNASIGNED_VALUE){
+        return sprint["name"];
+    }
 
     if (isSelected) {
         optionText = `${sprint["name"]} : ${sprint["startDateFormated"]} - ${sprint["endDateFormated"]} (current)`;

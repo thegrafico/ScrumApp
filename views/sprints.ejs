@@ -126,7 +126,13 @@
                 <%- include('templates/filter'); %>
             </div>
 
-            <div class="p-4 hide-functional-scroll" id="table-container">
+            <!-- SHOW WHEN EMPTY -->
+            <% if (workItems.length == 0) {%>
+                <%- include('templates/info/when-not-sprint'); %>      
+                <div class="p-4 hide-functional-scroll" id="table-container" style="display: none;">      
+            <% } else { %>
+                <div class="p-4 hide-functional-scroll" id="table-container">      
+            <% } %>
                 <table class="table table-hover" id="workItemTable">
                     <thead>
                         <%- include('templates/table-work-items/header'); %>

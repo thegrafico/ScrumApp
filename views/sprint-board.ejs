@@ -345,6 +345,10 @@
                     </div>
                 </div>
             </div>
+
+            <% if (!workItemsAvailable) {%>
+                <%- include('templates/info/board'); %>      
+            <% } %>
         </div>
 
         <%- include('templates/right-sidebar-menu'); %>

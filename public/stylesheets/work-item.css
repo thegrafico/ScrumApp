@@ -236,3 +236,7 @@ textarea:disabled{
     opacity: .8;
     
 }
+
+.upper{
+    text-transform: uppercase;
+}

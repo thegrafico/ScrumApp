@@ -1,17 +1,17 @@
-<%- include('templates/header'); %>
+<%- include('../templates/header'); %>
 
 <body>
 
-    <%- include('templates/top-navbar'); %>
+    <%- include('../templates/top-navbar'); %>
 
     <div class="wrapper d-flex align-items-stretch">
 
-        <%- include('templates/left-sidebar'); %>
+        <%- include('../templates/left-sidebar'); %>
 
         <!-- Page Content  -->
         <div id="content" class="p-4 p-md-5">
 
-            <%- include('templates/title-options-menu'); %>
+            <%- include('../templates/title-options-menu'); %>
 
             <div class="container-fluid statistics-boxs">
                 <nav class="navbar navbar-expand-lg navbar-dark bg-dark pb-2">
@@ -114,6 +114,6 @@
         <input type="hidden" name="updateUserId" id="updateUserId" value="0">
     </div>
 
-    <%- include('modals/user/update-user'); %>
+    <%- include('../modals/user/update-user'); %>
 
-<%- include('templates/footer'); %>
+<%- include('../templates/footer'); %>

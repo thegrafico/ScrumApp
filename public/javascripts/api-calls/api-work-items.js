@@ -219,3 +219,22 @@ async function updateWorkItemComment(workItemId, commentId, comment){
 
     return {"response": response, "response_error": response_error};
 }
+
+/**
+ * Get work items and sprints by team id
+ * @param {String} teamId 
+ * @returns 
+ */
+async function getWorkItemsAndSprintsByTeamId(teamId){
+    // getting project id
+    const projectId = getProjectId();
+
+    const API_LINK_GET_WORK_ITEMS_AND_SPRINTS_BY_TEAM = `/dashboard/api/${projectId}/getworkItemsAndSprintsByTeam/${teamId}`;
+
+    let response_error = null;
+    let response = await make_get_request(API_LINK_GET_WORK_ITEMS_AND_SPRINTS_BY_TEAM).catch(err=> {
+        response_error = err;
+    });
+
+    return {"response": response, "response_error": response_error};
+}

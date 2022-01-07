@@ -9,6 +9,8 @@ $(function () {
     // show the active tab in the sidebar
     showActiveTab();
 
+    updateWorkItemFeedback();
+
     // make the sprint available when user view all sprints in sub menu
     $(document).on("click", OPEN_WORK_ITEM_SUB_MENU_BTN, function(){
         // console.log("reset scroll");
@@ -169,8 +171,6 @@ $(function () {
 
         await updateWorkItemComment(workItemId, commentId, comment);
     });
-
-    updateWorkItemFeedback();
 });
 
 

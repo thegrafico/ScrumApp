@@ -136,6 +136,8 @@ $(function () {
                 UPDATE_INPUTS.SPRINT,
                 { "sprint": response["sprint"]}
             );
+
+            updateWorkItemFeedback();
             
         }else{ // error messages
             $.notify(response_error.data.responseJSON.msg, "error");
@@ -217,8 +219,6 @@ $(function () {
 
         let {response, response_error} = await getSprintsForTeam(teamId);
         
-        console.log("GETTING SPRINTS FOR TEAM: ", response);
-
         // Success message
         if (!response_error){
 

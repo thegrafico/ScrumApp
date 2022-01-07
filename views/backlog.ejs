@@ -18,21 +18,27 @@
 
                     <i class="fas fa-users"></i>
                     <div class="filterByTeamContainer">
-                        <% if(userTeam){ %>
+                        <% if(userTeam && userTeam['_id'] != '0'){ %>
                             <select 
                             class="custom-select my-custon-select input-border seletedTeamToFilter"
                             name="filterByTeam" 
                             id="filterByTeam" 
                             aria-label="Default select example">
-                                <% for (let i = 1; i < projectTeams.length; i++) { %>
 
-                                    <% if (projectTeams[i]['id'] == userTeam.id) { %>
-                                        <option value="<%=projectTeams[i]['id']%>" selected><%=projectTeams[i]['name']%></option>
-                                    <% }else{ %>
-                                        <option value="<%=projectTeams[i]['id']%>"><%=projectTeams[i]['name']%></option>
+                                <% if (projectTeams.length > 1){ %>
+                                    <% for (let i = 0; i < projectTeams.length; i++) { %>
+
+                                        <% if (projectTeams[i]['id'] == userTeam._id) { %> 
+                                            <option value="<%=projectTeams[i]['id']%>" selected><%=projectTeams[i]['name']%></option>
+                                        <% }else{ %>
+                                            <option value="<%=projectTeams[i]['id']%>"><%=projectTeams[i]['name']%></option>
+                                        <% } %>
+                                    
                                     <% } %>
-                                
+                                <% } else { %>
+                                    <option value="0" selected>Not team found</option>
                                 <% } %>
+                                
                             </select>
                         <% }else{ %>
                             <select 
@@ -41,7 +47,6 @@
                             id="filterByTeam" 
                             aria-label="Default select example"
                             disabled>
-                            <option value="0" selected>Not team found</option>
                             </select>
                         <% } %>
                     </div>
@@ -74,10 +79,15 @@
                 </nav>
 
             <%- include('templates/filter'); %>
-
             </div>
 
-            <div class="p-4 hide-functional-scroll" id="table-container">
+            <!-- SHOW WHEN EMPTY -->
+            <% if (workItems.length == 0) {%>
+                <%- include('templates/info/when-not-team'); %>      
+                <div class="p-4 hide-functional-scroll" id="table-container" style="display: none;">      
+            <% } else { %>
+                <div class="p-4 hide-functional-scroll" id="table-container">      
+            <% } %>
                 <table class="table table-hover" id="workItemTable">
                     <thead>
                         <%- include('templates/table-work-items/header'); %>
